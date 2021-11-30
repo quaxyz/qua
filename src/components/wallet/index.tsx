@@ -13,6 +13,7 @@ import {
   Text,
   useDisclosure,
   useToast,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { truncateAddress } from "libs/utils";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
@@ -197,7 +198,7 @@ export const Wallet = () => {
 
   return (
     <>
-      <Button rounded="50px" onClick={account ? accountModal.onOpen : connectModal.onOpen} isLoading={pending}>
+      <Button variant="primary" onClick={account ? accountModal.onOpen : connectModal.onOpen} isLoading={pending}>
         {account ? truncateAddress(account || "", 4) : "Connect wallet"}
       </Button>
 
