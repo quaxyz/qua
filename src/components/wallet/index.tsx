@@ -25,13 +25,20 @@ const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
     <Modal isCentered size="xl" isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
 
-      <ModalContent rounded="0px" px={10}>
-        <ModalCloseButton rounded="full" bg="rgba(0, 0, 0, 0.02)" size="lg" fontSize="sm" top={5} right={10} />
-        <ModalHeader color="black" py={8}>
+      <ModalContent rounded="0px" px={[2, 10]}>
+        <ModalCloseButton
+          rounded="full"
+          bg="rgba(0, 0, 0, 0.02)"
+          size="lg"
+          fontSize="sm"
+          top={[3, 5]}
+          right={[3, 10]}
+        />
+        <ModalHeader borderBottom="none" color="black" px={[3, 6]} py={[4, 8]}>
           Connect your wallet
         </ModalHeader>
 
-        <ModalBody py={5} mb={8}>
+        <ModalBody px={[3, 6]} py={[2, 5]} mb={8}>
           <Text>
             Sign in with one of your crypto wallet providers or create a new wallet.{" "}
             <Link isExternal href="https://www.google.com/">
@@ -96,7 +103,7 @@ const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
               );
             })}
 
-            <Text fontSize="sm" align="center" fontWeight="600">
+            <Text fontSize={["xs", "sm"]} align="center" fontWeight="600">
               We do not own your private keys and cannot access your funds without your confirmation.
             </Text>
           </Stack>

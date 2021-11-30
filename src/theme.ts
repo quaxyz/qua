@@ -74,5 +74,16 @@ export default extendTheme({
         },
       },
     },
+
+    Modal: {
+      baseStyle: {
+        dialog: {
+          mx: 5,
+        },
+        header: {
+          borderBottom: "1px solid rgb(0 0 0 / 24%)",
+        },
+      },
+    },
   },
 });

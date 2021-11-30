@@ -17,7 +17,7 @@ import { FiChevronDown } from "react-icons/fi";
 
 export type SelectMenuProps = {
   value?: string;
-  onSelect: (value: string) => void;
+  onSelect: (value: string | number) => void;
   options: {
     value: string | number;
     label: string;
@@ -28,6 +28,11 @@ export type SelectMenuProps = {
 
 const SelectMenu = ({ value, onSelect, placeholder, options, title, ...props }: SelectMenuProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const onItemSelect = (value: string | number) => {
+    onSelect(value);
+    onClose();
+  };
 
   return (
     <>
@@ -55,7 +60,13 @@ const SelectMenu = ({ value, onSelect, placeholder, options, title, ...props }: 
           <ModalBody py={5}>
             <Stack direction="column" spacing={2}>
               {options.map((option) => (
-                <Button key={option.value} size="lg" variant="outline" isFullWidth>
+                <Button
+                  key={option.value}
+                  onClick={() => onItemSelect(option.value)}
+                  size="lg"
+                  variant="outline"
+                  isFullWidth
+                >
                   {option.label}
                 </Button>
               ))}
