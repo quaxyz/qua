@@ -1,7 +1,12 @@
-import type { NextPage } from "next";
+import type { NextPage } from 'next'
+import WebsiteLayout from '../components/layouts/website'
 
 const Home: NextPage = () => {
-  return <p>Hello world</p>;
-};
+  return (
+    <WebsiteLayout title="Home">
+      <h2>Connecting every bussiness to a customer</h2>
+    </WebsiteLayout>
+  )
+}
 
-export default Home;
+export default Home
