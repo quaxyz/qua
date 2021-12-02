@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react'
+import { Button, Tab, TabList, Tabs } from '@chakra-ui/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect } from 'react'
@@ -66,18 +66,21 @@ export default function WebsiteLayout(props: { children: any; title: string }) {
               />
             </a>
           </Link>
-          <ul className="nav-list-items">
-            <li>
-              <Link href="/">
-                <a>Home</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/store">
-                <a>P2P Stores</a>
-              </Link>
-            </li>
-          </ul>
+          <Tabs colorScheme="#000000">
+            <TabList border="none">
+              <Tab p="0" mr="8">
+                <Link href="/">
+                  <a>Home</a>
+                </Link>
+              </Tab>
+
+              <Tab p="0">
+                <Link href="/store">
+                  <a>P2P Stores</a>
+                </Link>
+              </Tab>
+            </TabList>
+          </Tabs>
           <Button key="metamask-install" size="md" variant="outline">
             Connect wallet
           </Button>

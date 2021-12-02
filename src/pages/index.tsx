@@ -16,7 +16,13 @@ const Home: NextPage = () => {
         >
           <Container maxW="container.lg" py="20" centerContent>
             <Box maxW="48rem" mb="8">
-              <Heading textAlign="center" size="lg" fontSize="64" mb="4">
+              <Heading
+                textAlign="center"
+                color="#000000"
+                size="lg"
+                fontSize="64"
+                mb="4"
+              >
                 Connecting every bussiness to a customer
               </Heading>
               <Text fontSize="2xl" textAlign="center">
@@ -26,12 +32,12 @@ const Home: NextPage = () => {
 
             <Flex p="4">
               <Box>
-                <Button variant="outline" mr="4">
+                <Button variant="outline" mr="4" size="lg">
                   Go Shopping
                 </Button>
               </Box>
               <Box>
-                <Button>Setup my store</Button>
+                <Button size="lg">Setup my store</Button>
               </Box>
             </Flex>
           </Container>
@@ -43,7 +49,7 @@ const Home: NextPage = () => {
           <Text fontSize="xl" textAlign="center" mb="2">
             <strong>Qua</strong> is bringing every bussiness online
           </Text>
-          <Heading textAlign="center" size="md" fontSize="36">
+          <Heading textAlign="center" color="#000000" size="md" fontSize="36">
             Sell to your customers in 3 easy steps...
           </Heading>
         </Box>
@@ -69,7 +75,13 @@ const Home: NextPage = () => {
 
       <Container maxW="container.lg" pt="20" centerContent>
         <Box maxW="48rem">
-          <Heading textAlign="center" size="md" fontSize="36" mb="4">
+          <Heading
+            textAlign="center"
+            color="#000000"
+            size="md"
+            fontSize="36"
+            mb="4"
+          >
             Customers shop in a breath with ease.
           </Heading>
           <Text fontSize="xl" textAlign="center">
