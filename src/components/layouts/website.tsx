@@ -17,13 +17,6 @@ const WebsiteLayout = (props: { children: any }) => {
           width: 100%;
         }
 
-        .nav-list-items {
-          display: flex;
-          justify-content: space-between;
-          width: 10%;
-          margin: auto;
-        }
-
         footer {
           background: #000000;
           color: #ffffff;

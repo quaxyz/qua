@@ -1,7 +1,7 @@
-import { Button } from '@chakra-ui/button'
-import { Box, Container, Flex, Heading, Text } from '@chakra-ui/react'
+import { Box, Container, Heading, Text } from '@chakra-ui/react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import React from 'react'
 import WebsiteLayout from '../components/layouts/website'
 
 const Stores: NextPage = () => {
@@ -12,7 +12,7 @@ const Stores: NextPage = () => {
       </Head>
       <header className="header">
         <Box
-          bgImage="url('/hedr-bg-home.svg')"
+          bgImage="url('/hedr-bg-store.svg')"
           bgPosition="center center"
           bgRepeat="no-repeat"
           bgSize="80% 120%"
@@ -24,26 +24,39 @@ const Stores: NextPage = () => {
                 textAlign="center"
                 color="#000000"
                 size="lg"
-                fontSize="64"
+                fontSize="48"
                 mb="4"
               >
-                Connecting every bussiness to a customer
+                Shop from the best stores of your dreams
               </Heading>
-              <Text fontSize="2xl" textAlign="center">
-                On the world’s largest P2P ecommerce stores
+              <Text fontSize="xl" textAlign="center">
+                Browse and shop directly from a collection of businesses{' '}
               </Text>
             </Box>
 
-            <Flex p="4">
-              <Box>
-                <Button variant="outline" mr="4" size="lg">
-                  Go Shopping
-                </Button>
-              </Box>
-              <Box>
-                <Button size="lg">Setup my store</Button>
-              </Box>
-            </Flex>
+            <Box>
+              <style jsx>{`
+                .input {
+                  width: 580px;
+                  borderradius: 0;
+                  background: #ffffff;
+                  border: 1px solid rgba(0, 0, 0, 0.24);
+                  padding: 1rem 1.4rem;
+                  outline: none;
+                }
+
+                .input:focus {
+                  border: 1px solid rgba(0, 0, 0, 1);
+                }
+              `}</style>
+              <form id="search" className="form-store">
+                <input
+                  className="input"
+                  type="search"
+                  placeholder="Search: “store name”, “industry”, “location”, “product name” ..."
+                />
+              </form>
+            </Box>
           </Container>
         </Box>
       </header>
