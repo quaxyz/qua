@@ -1,11 +1,15 @@
 import { Button } from '@chakra-ui/button'
 import { Box, Container, Flex, Heading, Text } from '@chakra-ui/react'
 import type { NextPage } from 'next'
+import Head from 'next/head'
 import WebsiteLayout from '../components/layouts/website'
 
 const Home: NextPage = () => {
   return (
-    <WebsiteLayout title="Home">
+    <WebsiteLayout>
+      <Head>
+        <title>Home - Qua</title>
+      </Head>
       <header className="header">
         <Box
           bgImage="url('/hedr-bg-home.svg')"
@@ -108,7 +112,39 @@ const Home: NextPage = () => {
           bgSize="contain"
           MaxW="100%"
           height="100vh"
-        />
+          position="relative"
+        >
+          <Box position="absolute" bottom="16rem" left="13em">
+            <Text fontSize="2xl" color="#fff">
+              Join the revolution
+            </Text>
+            <Flex pt="4" flexDirection="column">
+              <Box>
+                <Button
+                  variant="solid"
+                  size="lg"
+                  mb="4"
+                  width="248px"
+                  backgroundColor="#fff"
+                  color="#000"
+                >
+                  Start selling
+                </Button>
+              </Box>
+              <Box>
+                <Button
+                  variant="outline"
+                  borderColor="#fff"
+                  color="#fff"
+                  size="lg"
+                  width="248px"
+                >
+                  Go Shopping
+                </Button>
+              </Box>
+            </Flex>
+          </Box>
+        </Box>
       </Container>
     </WebsiteLayout>
   )

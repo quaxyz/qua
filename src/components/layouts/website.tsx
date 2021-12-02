@@ -1,13 +1,8 @@
 import { Button, Tab, TabList, Tabs } from '@chakra-ui/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useEffect } from 'react'
 
-export default function WebsiteLayout(props: { children: any; title: string }) {
-  useEffect(() => {
-    document.title = `${props.title} - Qua`
-  }, [props.title])
-
+const WebsiteLayout = (props: { children: any }) => {
   return (
     <div>
       <style jsx>{`
@@ -75,7 +70,7 @@ export default function WebsiteLayout(props: { children: any; title: string }) {
               </Tab>
 
               <Tab p="0">
-                <Link href="/store">
+                <Link href="/stores">
                   <a>P2P Stores</a>
                 </Link>
               </Tab>
@@ -127,3 +122,5 @@ export default function WebsiteLayout(props: { children: any; title: string }) {
     </div>
   )
 }
+
+export default WebsiteLayout
