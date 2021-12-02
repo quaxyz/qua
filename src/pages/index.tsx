@@ -61,7 +61,23 @@ const Home: NextPage = () => {
 
       <Container maxW="container.xl">
         <Box
-          bgImage="url('/images/setup-store.jpg')"
+          bgImage="url('/images/setup.png')"
+          bgPosition="center center"
+          bgRepeat="no-repeat"
+          bgSize="contain"
+          MaxW="100%"
+          height="100vh"
+        />
+        <Box
+          bgImage="url('/images/inventory.png')"
+          bgPosition="center center"
+          bgRepeat="no-repeat"
+          bgSize="contain"
+          MaxW="100%"
+          height="100vh"
+        />
+        <Box
+          bgImage="url('/images/orders.png')"
           bgPosition="center center"
           bgRepeat="no-repeat"
           bgSize="contain"
@@ -95,7 +111,15 @@ const Home: NextPage = () => {
       </Container>
       <Container maxW="container.xl">
         <Box
-          bgImage="url('/images/product-view.jpg')"
+          bgImage="url('/images/product-view.png')"
+          bgPosition="center center"
+          bgRepeat="no-repeat"
+          bgSize="contain"
+          MaxW="100%"
+          height="100vh"
+        />
+        <Box
+          bgImage="url('/images/track.png')"
           bgPosition="center center"
           bgRepeat="no-repeat"
           bgSize="contain"
