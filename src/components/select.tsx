@@ -17,7 +17,7 @@ import { FiChevronDown } from "react-icons/fi";
 
 export type SelectMenuProps = {
   value?: string;
-  onSelect: (value: string | number) => void;
+  onChange: (value: string | number) => void;
   options: {
     value: string | number;
     label: string;
@@ -26,11 +26,11 @@ export type SelectMenuProps = {
   placeholder?: string;
 };
 
-const SelectMenu = ({ value, onSelect, placeholder, options, title, ...props }: SelectMenuProps) => {
+const SelectMenu = ({ value, onChange, placeholder, options, title, ...props }: SelectMenuProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onItemSelect = (value: string | number) => {
-    onSelect(value);
+    onChange(value);
     onClose();
   };
 
