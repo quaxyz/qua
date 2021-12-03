@@ -1,9 +1,9 @@
 import { Button } from '@chakra-ui/button'
 import { Box, Container, Flex, Heading, Text } from '@chakra-ui/react'
 import type { NextPage } from 'next'
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from 'react-responsive-carousel';
 import Head from 'next/head'
+import { Carousel } from 'react-responsive-carousel'
+import 'react-responsive-carousel/lib/styles/carousel.min.css'
 import WebsiteLayout from '../components/layouts/website'
 
 const Home: NextPage = () => {
@@ -62,31 +62,31 @@ const Home: NextPage = () => {
       </Container>
 
       <Container maxW="container.xl">
-      <Carousel autoPlay  centerMode interval={2000} infiniteLoop >
-        <Box
-          bgImage="url('/images/setup.png')"
-          bgPosition="center center"
-          bgRepeat="no-repeat"
-          bgSize="contain"
-          MaxW="100%"
-          height="100vh"
-        />
-        <Box
-          bgImage="url('/images/inventory.png')"
-          bgPosition="center center"
-          bgRepeat="no-repeat"
-          bgSize="contain"
-          MaxW="100%"
-          height="100vh"
-        />
-        <Box
-          bgImage="url('/images/orders.png')"
-          bgPosition="center center"
-          bgRepeat="no-repeat"
-          bgSize="contain"
-          MaxW="100%"
-          height="100vh"
-        />
+        <Carousel autoPlay centerMode interval={3000} infiniteLoop>
+          <Box
+            bgImage="url('/images/setup.png')"
+            bgPosition="center center"
+            bgRepeat="no-repeat"
+            bgSize="contain"
+            MaxW="100%"
+            height="80vh"
+          />
+          <Box
+            bgImage="url('/images/inventory.png')"
+            bgPosition="center center"
+            bgRepeat="no-repeat"
+            bgSize="contain"
+            MaxW="100%"
+            height="80vh"
+          />
+          <Box
+            bgImage="url('/images/orders.png')"
+            bgPosition="center center"
+            bgRepeat="no-repeat"
+            bgSize="contain"
+            MaxW="100%"
+            height="80vh"
+          />
         </Carousel>
       </Container>
       <Container centerContent>
@@ -114,25 +114,25 @@ const Home: NextPage = () => {
         </Box>
       </Container>
       <Container maxW="container.xl">
-      <Carousel autoPlay  centerMode interval={2000} infiniteLoop >
-        <Box
-          bgImage="url('/images/product-view.png')"
-          bgPosition="center center"
-          bgRepeat="no-repeat"
-          bgSize="contain"
-          MaxW="100%"
-          height="100vh"
-          marginInline="12px"
+        <Carousel autoPlay centerMode interval={3000} infiniteLoop>
+          <Box
+            bgImage="url('/images/product-view.png')"
+            bgPosition="center center"
+            bgRepeat="no-repeat"
+            bgSize="contain"
+            MaxW="100%"
+            height="80vh"
+            marginInline="12px"
           />
-        <Box
-          bgImage="url('/images/track.png')"
-          bgPosition="center center"
-          bgRepeat="no-repeat"
-          bgSize="contain"
-          marginInline="12px"
-          MaxW="100%"
-          height="100vh"
-        />
+          <Box
+            bgImage="url('/images/track.png')"
+            bgPosition="center center"
+            bgRepeat="no-repeat"
+            bgSize="contain"
+            marginInline="12px"
+            MaxW="100%"
+            height="80vh"
+          />
         </Carousel>
       </Container>
 
