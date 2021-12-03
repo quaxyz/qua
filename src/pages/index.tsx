@@ -62,7 +62,7 @@ const Home: NextPage = () => {
       </Container>
 
       <Container maxW="container.xl">
-      <Carousel autoPlay  centerMode >
+      <Carousel autoPlay  centerMode interval={2000} infiniteLoop >
         <Box
           bgImage="url('/images/setup.png')"
           bgPosition="center center"
@@ -114,7 +114,7 @@ const Home: NextPage = () => {
         </Box>
       </Container>
       <Container maxW="container.xl">
-      <Carousel autoPlay  centerMode >
+      <Carousel autoPlay  centerMode interval={2000} infiniteLoop >
         <Box
           bgImage="url('/images/product-view.png')"
           bgPosition="center center"
