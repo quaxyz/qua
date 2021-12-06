@@ -1,12 +1,11 @@
-import type { NextPage } from "next";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 
-const Dashboard: NextPage = () => {
+const Products = () => {
   return (
     <StoreDashboardLayout>
-      <h2>interesting stuff </h2>
+      <h1>Products page</h1>
     </StoreDashboardLayout>
   );
 };
 
-export default Dashboard;
+export default Products;
