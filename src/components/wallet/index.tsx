@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Button,
+  ButtonProps,
   Link,
   Image,
   Modal,
@@ -158,7 +159,7 @@ const AccountModal = ({ isOpen, onClose }: any) => {
   );
 };
 
-export const Wallet = () => {
+export const Wallet = ({ ButtonProps }: { ButtonProps?: ButtonProps }) => {
   const toast = useToast();
   const { account, activate } = useWeb3React();
 
@@ -205,7 +206,12 @@ export const Wallet = () => {
 
   return (
     <>
-      <Button variant="primary" onClick={account ? accountModal.onOpen : connectModal.onOpen} isLoading={pending}>
+      <Button
+        variant="primary"
+        onClick={account ? accountModal.onOpen : connectModal.onOpen}
+        isLoading={pending}
+        {...ButtonProps}
+      >
         {account ? truncateAddress(account || "", 4) : "Connect wallet"}
       </Button>
 

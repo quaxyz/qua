@@ -1,18 +1,17 @@
 import React from "react";
 import Head from "next/head";
-import type { NextPage } from "next";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 
-const Dashboard: NextPage = () => {
+const Orders = () => {
   return (
     <StoreDashboardLayout>
       <Head>
-        <title>Dashboard - Frowth</title>
+        <title>Orders - Frowth</title>
       </Head>
 
-      <h2>interesting stuff </h2>
+      <h1>Orders page</h1>
     </StoreDashboardLayout>
   );
 };
 
-export default Dashboard;
+export default Orders;
