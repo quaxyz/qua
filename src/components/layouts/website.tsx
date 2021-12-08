@@ -82,7 +82,7 @@ const WebsiteLayout = (props: { children: any }) => {
           <List>
             <ListItem>
               <Link href="/about">
-                <a>About qua.xyz</a>
+                <a>About qua</a>
               </Link>
             </ListItem>
           </List>
