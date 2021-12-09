@@ -61,11 +61,23 @@ const About: NextPage = () => {
               />
             </Box>
             <Flex>
-              <Link href="#" color="#fff" textTransform="uppercase" isExternal>
+              <Link
+                href="#"
+                color="#fff"
+                textTransform="uppercase"
+                fontSize="sm"
+                isExternal
+              >
                 Instagram
               </Link>{' '}
               <Spacer mx="2" />
-              <Link href="#" color="#fff" textTransform="uppercase" isExternal>
+              <Link
+                href="#"
+                color="#fff"
+                textTransform="uppercase"
+                fontSize="sm"
+                isExternal
+              >
                 Twitter
               </Link>
             </Flex>
@@ -140,7 +152,8 @@ const About: NextPage = () => {
           Core principles
         </Heading>
         <br />
-        <Heading as="h4" size="md" color="#000">
+        <Spacer my="1rem" />
+        <Heading as="h4" size="md">
           Ecommerce trade on qua network is P2P based
         </Heading>
         <Spacer my="1rem" />
@@ -151,7 +164,9 @@ const About: NextPage = () => {
           stay connected with their customer base.
         </Text>
         <br />
-        <Heading as="h4" size="md" color="#000">
+        <Spacer my="1rem" />
+
+        <Heading as="h4" size="md">
           Qua utilizes web3 verification system
         </Heading>
         <Spacer my="1rem" />
@@ -161,8 +176,8 @@ const About: NextPage = () => {
           to be frictionless and less intrusive at best while making sure users
           are in control of what they do on the network.
           <Spacer my="1rem" />
-          By keeping it this way, customers and sellers will be able to access
-          qua by using crypto wallets like{' '}
+          By keeping it this way, customers and sellers will be able to use qua
+          with their crypto wallets like{' '}
           <Link href="https://metamask.io/" isExternal>
             metamask
           </Link>
@@ -173,7 +188,9 @@ const About: NextPage = () => {
           , and more.
         </Text>
         <br />
-        <Heading as="h4" size="md" color="#000">
+        <Spacer my="1rem" />
+
+        <Heading as="h4" size="md">
           Qua continues to evolve
         </Heading>
         <Spacer my="1rem" />
@@ -190,6 +207,167 @@ const About: NextPage = () => {
             Send Proposal
           </Link>
         </Text>
+        <br />
+        <Spacer my="4rem" />
+
+        <Heading as="h3" size="lg" textDecoration="underline" color="#000">
+          Brand assets
+        </Heading>
+        <br />
+        <Flex>
+          <Flex direction="column" alignItems="center" justifyContent="center">
+            <Box border="2px solid #000" px="4rem" width="100%" mb="4">
+              <Image
+                src="/svg/qua_logo_black.svg"
+                alt="Qua"
+                layout="fixed"
+                width={140}
+                height={60}
+              />
+            </Box>
+            <Text>Qua_logo_000.svg</Text>
+          </Flex>
+          <Flex
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            mx="8"
+          >
+            <Box border="2px solid #000" px="4rem" width="100%" mb="4">
+              <Image
+                src="/svg/qua_mark_black.svg"
+                alt="Qua"
+                layout="fixed"
+                width={140}
+                height={60}
+              />
+            </Box>
+            <Text>Qua_mark_000.svg</Text>
+          </Flex>
+          <Flex direction="column" alignItems="center" justifyContent="center">
+            <Box border="2px solid #000" px="4rem" width="100%" mb="4">
+              <Image
+                src="/svg/qua_wordmark_black.svg"
+                alt="Qua"
+                layout="fixed"
+                width={140}
+                height={60}
+              />
+            </Box>
+            <Text>Qua_wordmark_000.svg</Text>
+          </Flex>
+        </Flex>
+        <Spacer my="2.4rem" />
+        <Flex>
+          <Flex direction="column" alignItems="center" justifyContent="center">
+            <Box
+              background="#000"
+              border="2px solid #000"
+              px="4rem"
+              width="100%"
+              mb="4"
+            >
+              <Image
+                src="/svg/qua_logo_white.svg"
+                alt="Qua"
+                layout="fixed"
+                width={140}
+                height={60}
+              />
+            </Box>
+            <Text>Qua_logo_fff.svg</Text>
+          </Flex>
+          <Flex
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            mx="8"
+          >
+            <Box
+              background="#000"
+              border="2px solid #000"
+              px="4rem"
+              width="100%"
+              mb="4"
+            >
+              <Image
+                src="/svg/qua_mark_white.svg"
+                alt="Qua"
+                layout="fixed"
+                width={140}
+                height={60}
+              />
+            </Box>
+            <Text>Qua_mark_fff.svg</Text>
+          </Flex>
+          <Flex direction="column" alignItems="center" justifyContent="center">
+            <Box
+              background="#000"
+              border="2px solid #000"
+              px="4rem"
+              width="100%"
+              mb="4"
+            >
+              <Image
+                src="/svg/qua_wordmark_white.svg"
+                alt="Qua"
+                layout="fixed"
+                width={140}
+                height={60}
+              />
+            </Box>
+            <Text>Qua_wordmark_fff.svg</Text>
+          </Flex>
+        </Flex>
+        <Spacer my="4rem" />
+        <Heading as="h4" size="md">
+          Color
+        </Heading>
+        <Spacer my="2.4rem" />
+        <Flex>
+          <Flex direction="column" alignItems="center" justifyContent="center">
+            <Box
+              background="#000"
+              border="2px solid #000"
+              p="6rem"
+              width="100%"
+              mb="4"
+            >
+              <Text color="#fff">#000</Text>
+            </Box>
+            <Text>Black</Text>
+          </Flex>
+          <Flex
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            mx="8"
+          >
+            <Box border="2px solid #000" p="6rem" width="100%" mb="4">
+              <Text color="#000">#FFF</Text>
+            </Box>
+            <Text>White</Text>
+          </Flex>
+        </Flex>
+        <Spacer my="4rem" />
+        <Heading as="h4" size="md">
+          Partnership Guidelines
+        </Heading>
+        <Spacer my="2.4rem" />
+        <Box mb="6">
+          <Image
+            src="/svg/partnership_black.svg"
+            alt="Partnership"
+            layout="fixed"
+          />
+        </Box>
+        <Box>
+          <Image
+            src="/svg/partnership_white.svg"
+            alt="Partnership"
+            layout="fixed"
+          />
+        </Box>
       </Container>
     </WebsiteLayout>
   )
