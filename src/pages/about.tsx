@@ -111,7 +111,7 @@ const About: NextPage = () => {
         <br />
         <Text fontSize="lg" fontWeight="400">
           We&apos;re leveling the playing field in the e-commerce ecosystem by
-          providing small-medium businesses a peer-2-peer approach of selling
+          providing small-medium businesses a peer-2-peer approach for selling
           directly to their customers (with the tools they need)
           <br />
           <br />

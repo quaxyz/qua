@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  chakra,
   Flex,
   List,
   ListItem,
@@ -12,7 +13,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-const WebsiteLayout = (props: { children: any }) => {
+const WebsiteLayout: React.FC = ({ children }) => {
   return (
     <div>
       <header>
@@ -50,7 +51,7 @@ const WebsiteLayout = (props: { children: any }) => {
         <hr />
       </header>
 
-      <main>{props.children}</main>
+      <chakra.main>{children}</chakra.main>
 
       <Box
         maxWidth="100%"
