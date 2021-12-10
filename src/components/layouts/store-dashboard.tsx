@@ -1,56 +1,58 @@
-import React from 'react';
-import NextLink from 'next/link';
 import {
   chakra,
   Grid,
   Heading,
-  Stack,
-  Link,
   Icon,
-  Text,
-} from '@chakra-ui/react';
-import { Category, Graph, Bag } from 'react-iconly';
-import { CgMore } from 'react-icons/cg';
-import { useRouter } from 'next/router';
-import { Wallet } from 'components/wallet';
+  Link,
+  Stack,
+  Text
+} from '@chakra-ui/react'
+import { Wallet } from 'components/wallet'
+import NextLink from 'next/link'
+import { useRouter } from 'next/router'
+import React from 'react'
+import { Bag, Category, Graph } from 'react-iconly'
+import { CgMore } from 'react-icons/cg'
 
 const navLinks = [
   {
     name: 'Dashboard',
-    icon: (props: any) => <Category set='light' {...props} />,
-    url: '/dashboard',
+    icon: (props: any) => <Category set="light" {...props} />,
+    url: '/dashboard'
   },
   {
     name: 'Products',
-    icon: (props: any) => <Graph set='light' {...props} />,
-    url: '/products',
+    icon: (props: any) => <Graph set="light" {...props} />,
+    url: '/products'
   },
   {
     name: 'Orders',
-    icon: (props: any) => <Bag set='light' {...props} />,
-    url: '/orders',
-  },
-];
+    icon: (props: any) => <Bag set="light" {...props} />,
+    url: '/orders'
+  }
+]
 
 const DashboardLayout: React.FC = ({ children }) => {
-  const router = useRouter();
+  const router = useRouter()
   return (
     <Grid
-      templateColumns='240px 1fr'
-      templateRows='70px 1fr 70px'
+      templateColumns="280px 1fr"
+      templateRows="70px 1fr 70px"
       templateAreas={{
         base: `"topbar topbar" "main main" "bottombar bottombar"`,
-        md: `"sidebar main" "sidebar main" "sidebar main"`,
+        md: `"sidebar main" "sidebar main" "sidebar main"`
       }}
-      minH='100vh'>
+      minH="100vh"
+    >
       <chakra.aside
-        gridArea='sidebar'
-        bg='#000000'
-        px={4}
+        gridArea="sidebar"
+        bg="#000000"
+        px={8}
         py={8}
-        display={{ base: 'none', md: 'block' }}>
-        <Stack spacing={8} minH='100%'>
-          <Heading fontWeight='800' fontSize='2xl' color='#fff' px={3}>
+        display={{ base: 'none', md: 'block' }}
+      >
+        <Stack spacing={8} minH="100%">
+          <Heading fontWeight="800" fontSize="2xl" color="#fff" px={3}>
             Frowth
           </Heading>
 
@@ -59,23 +61,26 @@ const DashboardLayout: React.FC = ({ children }) => {
               <NextLink
                 key={idx}
                 href={`/${router.query?.store}/app${navLink.url}`}
-                passHref>
+                passHref
+              >
                 <Link
                   px={3}
-                  py={2}
-                  rounded='4px'
-                  borderBottom='none'
+                  py={3}
+                  rounded="4px"
+                  borderBottom="none"
                   _hover={{ transform: 'scale(1.05)' }}
                   {...(router.asPath.includes(navLink.url)
                     ? { color: '#000', bg: '#FFF' }
-                    : { color: '#FFF' })}>
-                  <Stack direction='row' spacing={2} align='center'>
+                    : { color: '#FFF' })}
+                >
+                  <Stack direction="row" spacing={4} align="center">
                     <Icon boxSize={5} as={navLink.icon} />
                     <Text
-                      fontWeight='normal'
-                      color='inherit'
-                      fontSize='inherit'
-                      as='span'>
+                      fontWeight="normal"
+                      color="inherit"
+                      fontSize="inherit"
+                      as="span"
+                    >
                       {navLink.name}
                     </Text>
                   </Stack>
@@ -94,25 +99,27 @@ const DashboardLayout: React.FC = ({ children }) => {
               leftIcon: <Icon as={CgMore} mr={3} />,
               _hover: {
                 bg: 'transparent',
-                borderColor: 'rgb(255 255 255 / 48%)',
-              },
+                borderColor: 'rgb(255 255 255 / 48%)'
+              }
             }}
           />
         </Stack>
       </chakra.aside>
 
       <chakra.header
-        gridArea='topbar'
-        bg='#000000'
+        gridArea="topbar"
+        bg="#000000"
         px={5}
-        display={{ base: 'block', md: 'none' }}>
+        display={{ base: 'block', md: 'none' }}
+      >
         <Stack
-          direction='row'
-          alignItems='center'
-          justify='space-between'
-          h='100%'
-          w='100%'>
-          <Heading fontWeight='800' fontSize='xl' color='#fff'>
+          direction="row"
+          alignItems="center"
+          justify="space-between"
+          h="100%"
+          w="100%"
+        >
+          <Heading fontWeight="800" fontSize="xl" color="#fff">
             Frowth
           </Heading>
 
@@ -126,37 +133,41 @@ const DashboardLayout: React.FC = ({ children }) => {
               rightIcon: <Icon as={CgMore} />,
               _hover: {
                 bg: 'transparent',
-                borderColor: 'rgb(255 255 255 / 48%)',
-              },
+                borderColor: 'rgb(255 255 255 / 48%)'
+              }
             }}
           />
         </Stack>
       </chakra.header>
 
-      <chakra.main gridArea='main'>{children}</chakra.main>
+      <chakra.main gridArea="main">{children}</chakra.main>
 
       <chakra.aside
-        gridArea='bottombar'
-        bg='#000000'
-        display={{ base: 'block', md: 'none' }}>
+        gridArea="bottombar"
+        bg="#000000"
+        display={{ base: 'block', md: 'none' }}
+      >
         <Stack
-          direction='row'
-          alignItems='center'
-          justify='space-around'
-          h='100%'
-          w='100%'>
+          direction="row"
+          alignItems="center"
+          justify="space-around"
+          h="100%"
+          w="100%"
+        >
           {navLinks.map((NavLink, idx) => (
             <NextLink
               key={idx}
               href={`/${router.query?.store}/app${NavLink.url}`}
-              passHref>
+              passHref
+            >
               <Link
-                borderBottom='none'
-                color='#FFF'
+                borderBottom="none"
+                color="#FFF"
                 {...(router.asPath.includes(NavLink.url)
                   ? { textDecoration: 'underline' }
-                  : {})}>
-                <Stack spacing={2} align='center'>
+                  : {})}
+              >
+                <Stack spacing={2} align="center">
                   <Icon
                     boxSize={5}
                     as={(props) => (
@@ -169,10 +180,11 @@ const DashboardLayout: React.FC = ({ children }) => {
                     )}
                   />
                   <Text
-                    fontWeight='normal'
-                    color='inherit'
-                    fontSize='xs'
-                    as='span'>
+                    fontWeight="normal"
+                    color="inherit"
+                    fontSize="xs"
+                    as="span"
+                  >
                     {NavLink.name}
                   </Text>
                 </Stack>
@@ -182,7 +194,7 @@ const DashboardLayout: React.FC = ({ children }) => {
         </Stack>
       </chakra.aside>
     </Grid>
-  );
-};
+  )
+}
 
-export default DashboardLayout;
+export default DashboardLayout
