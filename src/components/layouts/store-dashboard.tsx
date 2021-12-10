@@ -144,7 +144,7 @@ const DashboardLayout = ({ title, children }: any) => {
       </Head>
 
       <Grid
-        templateColumns="240px 1fr"
+        templateColumns="280px 1fr"
         templateRows="70px 1fr 70px"
         templateAreas={{
           base: `"topbar topbar" "main main" "bottombar bottombar"`,
@@ -157,6 +157,9 @@ const DashboardLayout = ({ title, children }: any) => {
           bg="#000000"
           px={4}
           py={8}
+          pos="fixed"
+          left="0"
+          h="100vh"
           display={{ base: "none", md: "block" }}
         >
           <Stack spacing={8} minH="100%">
