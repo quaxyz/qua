@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Box,
   Button,
@@ -7,11 +8,10 @@ import {
   ListItem,
   Tab,
   TabList,
-  Tabs
-} from '@chakra-ui/react'
-import Image from 'next/image'
-import Link from 'next/link'
-import React from 'react'
+  Tabs,
+} from "@chakra-ui/react";
+import Image from "next/image";
+import Link from "next/link";
 
 const WebsiteLayout: React.FC = ({ children }) => {
   return (
@@ -112,7 +112,7 @@ const WebsiteLayout: React.FC = ({ children }) => {
         </Box>
       </Box>
     </div>
-  )
-}
+  );
+};
 
-export default WebsiteLayout
+export default WebsiteLayout;

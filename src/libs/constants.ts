@@ -10,4 +10,10 @@ export const schemas = {
     { name: "timestamp", type: "uint64" },
     { name: "details", type: "string" },
   ],
+  GenerateSigningKey: [
+    { name: "from", type: "address" },
+    { name: "store", type: "string" },
+    { name: "timestamp", type: "uint64" },
+    { name: "publicKey", type: "string" },
+  ],
 };

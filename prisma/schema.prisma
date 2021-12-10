@@ -17,3 +17,8 @@ model Store {
   email    String?
   category String?
 }
+
+model User {
+  address   String   @unique
+  publicKey String[]
+}
