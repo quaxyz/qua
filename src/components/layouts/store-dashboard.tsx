@@ -49,6 +49,7 @@ const DashboardLayout: React.FC = ({ children }) => {
         bg="#000000"
         position="fixed"
         left="0"
+        width="280px"
         height="100vh"
         px={8}
         py={8}
