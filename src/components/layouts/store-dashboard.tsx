@@ -5,13 +5,13 @@ import {
   chakra,
   Grid,
   Heading,
-  Stack,
-  Link,
   Icon,
   Text,
   Container,
   Button,
   CircularProgress,
+  Stack,
+  Link,
 } from "@chakra-ui/react";
 import { Category, Graph, Bag } from "react-iconly";
 import { CgMore } from "react-icons/cg";
