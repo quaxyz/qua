@@ -14,12 +14,12 @@ import {
   Text,
   useDisclosure,
   useToast,
-  useBreakpointValue,
 } from "@chakra-ui/react";
 import { truncateAddress } from "libs/utils";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 import { injected, SUPPORTED_WALLETS, switchNetwork } from "libs/wallet";
 import { FiExternalLink } from "react-icons/fi";
+import { useLogout } from "hooks/auth";
 
 const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
   return (
@@ -27,21 +27,24 @@ const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
       <ModalOverlay />
 
       <ModalContent rounded="0px" px={[2, 10]}>
-        <ModalCloseButton
-          rounded="full"
-          bg="rgba(0, 0, 0, 0.02)"
-          size="lg"
-          fontSize="sm"
-          top={[3, 5]}
-          right={[3, 10]}
-        />
+        {onClose && (
+          <ModalCloseButton
+            rounded="full"
+            bg="rgba(0, 0, 0, 0.02)"
+            size="lg"
+            fontSize="sm"
+            top={[3, 5]}
+            right={[3, 10]}
+          />
+        )}
         <ModalHeader borderBottom="none" color="black" px={[3, 6]} py={[4, 8]}>
           Connect your wallet
         </ModalHeader>
 
         <ModalBody px={[3, 6]} py={[2, 5]} mb={8}>
           <Text>
-            Sign in with one of your crypto wallet providers or create a new wallet.{" "}
+            Sign in with one of your crypto wallet providers or create a new
+            wallet.{" "}
             <Link isExternal href="https://www.google.com/">
               What is a wallet?
             </Link>
@@ -62,7 +65,13 @@ const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
                     return (
                       <Button
                         key="metamask-install"
-                        leftIcon={<Image src="/wallets/metamask.png" boxSize={5} alt="metamask" />}
+                        leftIcon={
+                          <Image
+                            src="/wallets/metamask.png"
+                            boxSize={5}
+                            alt="metamask"
+                          />
+                        }
                         as={Link}
                         href="https://metamask.io/"
                         size="lg"
@@ -92,7 +101,9 @@ const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
               return (
                 <Button
                   key={wallet.name}
-                  leftIcon={<Image src={wallet.iconUrl} boxSize={5} alt={wallet.name} />}
+                  leftIcon={
+                    <Image src={wallet.iconUrl} boxSize={5} alt={wallet.name} />
+                  }
                   size="lg"
                   variant="outline"
                   onClick={() => onActivate(wallet.connector)}
@@ -105,7 +116,8 @@ const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
             })}
 
             <Text fontSize={["xs", "sm"]} align="center" fontWeight="600">
-              We do not own your private keys and cannot access your funds without your confirmation.
+              We do not own your private keys and cannot access your funds
+              without your confirmation.
             </Text>
           </Stack>
         </ModalBody>
@@ -115,13 +127,22 @@ const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
 };
 
 const AccountModal = ({ isOpen, onClose }: any) => {
-  const { account, deactivate } = useWeb3React();
+  const { account } = useWeb3React();
+  const logOut = useLogout();
+
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
 
       <ModalContent>
-        <ModalCloseButton rounded="full" bg="rgba(0, 0, 0, 0.02)" size="lg" fontSize="sm" top={6} right={5} />
+        <ModalCloseButton
+          rounded="full"
+          bg="rgba(0, 0, 0, 0.02)"
+          size="lg"
+          fontSize="sm"
+          top={6}
+          right={5}
+        />
         <ModalHeader align="center" color="black" py={8}>
           Account
         </ModalHeader>
@@ -142,7 +163,7 @@ const AccountModal = ({ isOpen, onClose }: any) => {
 
             <Button
               onClick={() => {
-                deactivate();
+                logOut();
                 onClose();
               }}
               color="red.500"
@@ -159,11 +180,20 @@ const AccountModal = ({ isOpen, onClose }: any) => {
   );
 };
 
-export const Wallet = ({ ButtonProps }: { ButtonProps?: ButtonProps }) => {
+type WalletProps = {
+  autoOpen?: boolean;
+  closeable?: boolean;
+  ButtonProps?: ButtonProps;
+};
+export const Wallet = ({
+  ButtonProps,
+  autoOpen = false,
+  closeable = true,
+}: WalletProps) => {
   const toast = useToast();
   const { account, activate } = useWeb3React();
 
-  const connectModal = useDisclosure();
+  const connectModal = useDisclosure({ defaultIsOpen: autoOpen });
   const accountModal = useDisclosure();
 
   const [pending, setPending] = React.useState<boolean>();
@@ -172,12 +202,14 @@ export const Wallet = ({ ButtonProps }: { ButtonProps?: ButtonProps }) => {
     if (!connector) return;
 
     // close modal
-    connectModal.onClose();
+    closeable && connectModal.onClose();
 
     setPending(true);
     try {
       await activate(connector, undefined, true);
 
+      // close modal
+      connectModal.onClose();
       console.log("[ConnectModal]", "Account activated", connector);
     } catch (error) {
       if (connector === injected && error instanceof UnsupportedChainIdError) {
@@ -190,6 +222,9 @@ export const Wallet = ({ ButtonProps }: { ButtonProps?: ButtonProps }) => {
             status: "error",
           });
         });
+
+        // close modal
+        connectModal.onClose();
       } else {
         console.warn("[ConnectModal] Error activating account", error);
         toast({
@@ -218,11 +253,14 @@ export const Wallet = ({ ButtonProps }: { ButtonProps?: ButtonProps }) => {
       <ConnectModal
         isOpen={connectModal.isOpen}
         isPending={pending}
-        onClose={connectModal.onClose}
+        onClose={closeable ? connectModal.onClose : null}
         onActivate={tryActivate}
       />
 
-      <AccountModal isOpen={accountModal.isOpen} onClose={accountModal.onClose} />
+      <AccountModal
+        isOpen={accountModal.isOpen}
+        onClose={accountModal.onClose}
+      />
     </>
   );
 };

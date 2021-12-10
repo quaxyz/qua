@@ -9,6 +9,9 @@ import {
   Link,
   Icon,
   Text,
+  Container,
+  Button,
+  CircularProgress,
 } from "@chakra-ui/react";
 import { Category, Graph, Bag } from "react-iconly";
 import { CgMore } from "react-icons/cg";
@@ -16,6 +19,7 @@ import { useRouter } from "next/router";
 import { Wallet } from "components/wallet";
 import { useInitializeStoreAuth } from "hooks/auth";
 import { AuthContext } from "libs/auth";
+import { useCreateSigningKey } from "hooks/signing";
 
 const navLinks = [
   {
@@ -37,23 +41,95 @@ const navLinks = [
 
 const AuthNoAccount = () => (
   <Stack minH="100%" align="center" justify="center">
-    <Text>No Account, Please connect your account to access the dashboard</Text>
+    <chakra.div
+      pos="absolute"
+      top="0"
+      left="0"
+      h="100vh"
+      w="100vw"
+      backdropFilter="blur(4px)"
+      bg="rgb(0 0 0 / 12%)"
+      zIndex="2"
+    />
+
+    <Wallet autoOpen closeable={false} />
   </Stack>
 );
 
 const AuthNotOwner = () => (
   <Stack minH="100%" align="center" justify="center">
-    <Text>
-      You {"can't"} access this dashboard, {"you're"} not the owner
-    </Text>
+    <chakra.div
+      pos="absolute"
+      top="0"
+      left="0"
+      h="100vh"
+      w="100vw"
+      backdropFilter="blur(4px)"
+      bg="rgb(0 0 0 / 12%)"
+      zIndex="2"
+    />
+
+    <Container maxW="lg" bg="#fff" pos="relative" zIndex="3" px={12} py={12}>
+      <Heading fontSize="xl" mb={10}>
+        Oops!
+      </Heading>
+
+      <Text fontWeight="400" mb={8}>
+        Your address does not match the owner of this store
+      </Text>
+
+      <Link fontSize="sm" href="/">
+        Go back to products
+      </Link>
+    </Container>
   </Stack>
 );
 
-const AuthNoSigningKey = () => (
-  <Stack minH="100%" align="center" justify="center">
-    <Text>You have no signing key, please create one and try again</Text>
-  </Stack>
-);
+const AuthNoSigningKey = () => {
+  const { loading, createSigningKey } = useCreateSigningKey();
+
+  return (
+    <Stack minH="100%" align="center" justify="center">
+      <chakra.div
+        pos="absolute"
+        top="0"
+        left="0"
+        h="100vh"
+        w="100vw"
+        backdropFilter="blur(4px)"
+        bg="rgb(0 0 0 / 12%)"
+        zIndex="2"
+      />
+
+      <Container maxW="lg" bg="#fff" pos="relative" zIndex="3" px={12} py={12}>
+        <Heading fontSize="xl" mb={8}>
+          Remember me
+        </Heading>
+
+        <Text fontWeight="400" mb={8}>
+          Skip approving every interaction with your wallet by allowing Qua to
+          remember you.
+        </Text>
+
+        <Button
+          size="lg"
+          variant="outline"
+          mb={5}
+          onClick={() => createSigningKey()}
+          isLoading={loading}
+          isFullWidth
+        >
+          Generate signing key
+        </Button>
+
+        <Text textAlign="center" fontSize="sm" fontWeight="600" mb={8}>
+          Signing keys can only sign messages and cannot hold funds. They are
+          stored securely in the browser database.
+        </Text>
+      </Container>
+    </Stack>
+  );
+};
 
 const DashboardLayout = ({ title, children }: any) => {
   const router = useRouter();
@@ -173,14 +249,18 @@ const DashboardLayout = ({ title, children }: any) => {
         </chakra.header>
 
         <chakra.main gridArea="main">
-          {!storeAuthData.loading
-            ? {
-                "": children,
-                "no-account": <AuthNoAccount />,
-                "not-owner": <AuthNotOwner />,
-                "no-signing-key": <AuthNoSigningKey />,
-              }[storeAuthData.status]
-            : null}
+          {!storeAuthData.loading ? (
+            {
+              "": children,
+              "no-account": <AuthNoAccount />,
+              "not-owner": <AuthNotOwner />,
+              "no-signing-key": <AuthNoSigningKey />,
+            }[storeAuthData.status]
+          ) : (
+            <Stack align="center" justify="center" minH="100%">
+              <CircularProgress isIndeterminate color="black" />
+            </Stack>
+          )}
         </chakra.main>
 
         <chakra.aside

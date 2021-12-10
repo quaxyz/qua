@@ -16,7 +16,8 @@ export default function Api() {
     if (!response.ok) {
       console.log({ payload, response });
       throw new Error(
-        `${options.method} ${pathWithSlash} - ${response.statusText}`
+        payload.error ||
+          `${options.method} ${pathWithSlash} - ${response.statusText}`
       );
     }
 
