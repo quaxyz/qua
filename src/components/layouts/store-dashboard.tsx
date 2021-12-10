@@ -1,3 +1,6 @@
+import React from "react";
+import NextLink from "next/link";
+import Head from "next/head";
 import {
   Button,
   chakra,
@@ -14,10 +17,7 @@ import { Wallet } from "components/wallet";
 import { useInitializeStoreAuth } from "hooks/auth";
 import { useCreateSigningKey } from "hooks/signing";
 import { AuthContext } from "libs/auth";
-import Head from "next/head";
-import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
 import { Bag, Category, Graph } from "react-iconly";
 import { CgMore } from "react-icons/cg";
 
