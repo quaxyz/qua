@@ -47,6 +47,9 @@ const DashboardLayout: React.FC = ({ children }) => {
       <chakra.aside
         gridArea="sidebar"
         bg="#000000"
+        position="fixed"
+        left="0"
+        height="100vh"
         px={8}
         py={8}
         display={{ base: 'none', md: 'block' }}

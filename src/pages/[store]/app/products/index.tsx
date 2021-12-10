@@ -6,30 +6,36 @@ import {
   Flex,
   Heading,
   Image,
-  Link,
   Text
 } from '@chakra-ui/react'
 import StoreDashboardLayout from 'components/layouts/store-dashboard'
 import Head from 'next/head'
+import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 const Products = () => {
+  const router = useRouter()
+
   return (
     <StoreDashboardLayout>
       <Head>
         <title>Products - Frowth</title>
       </Head>
-      <Container maxW="100%" px="4rem">
+
+      <Container maxW="100%">
         <chakra.header>
-          <Flex justify="space-between" py="8">
+          <Flex justify="space-between" py="8" px="4rem">
             <Heading as="h2" fontSize="24px" fontWeight="500" color="#000">
               Products
             </Heading>
-            <Button>
-              <Link href="/new">
-                <a>New Product</a>
-              </Link>
-            </Button>
+
+            <NextLink
+              href={`/${router?.query.store}/app/products/new`}
+              passHref
+            >
+              <Button>New Product</Button>
+            </NextLink>
           </Flex>
         </chakra.header>
 
