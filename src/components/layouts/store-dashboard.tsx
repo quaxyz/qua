@@ -1,25 +1,25 @@
-import React from "react";
-import NextLink from "next/link";
-import Head from "next/head";
 import {
+  Button,
   chakra,
+  CircularProgress,
+  Container,
   Grid,
   Heading,
   Icon,
-  Text,
-  Container,
-  Button,
-  CircularProgress,
-  Stack,
   Link,
+  Stack,
+  Text,
 } from "@chakra-ui/react";
-import { Category, Graph, Bag } from "react-iconly";
-import { CgMore } from "react-icons/cg";
-import { useRouter } from "next/router";
 import { Wallet } from "components/wallet";
 import { useInitializeStoreAuth } from "hooks/auth";
-import { AuthContext } from "libs/auth";
 import { useCreateSigningKey } from "hooks/signing";
+import { AuthContext } from "libs/auth";
+import Head from "next/head";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
+import { Bag, Category, Graph } from "react-iconly";
+import { CgMore } from "react-icons/cg";
 
 const navLinks = [
   {
@@ -155,11 +155,12 @@ const DashboardLayout = ({ title, children }: any) => {
         <chakra.aside
           gridArea="sidebar"
           bg="#000000"
-          px={4}
+          px={6}
           py={8}
           pos="fixed"
           left="0"
           h="100vh"
+          w="280px"
           display={{ base: "none", md: "block" }}
         >
           <Stack spacing={8} minH="100%">
@@ -176,7 +177,7 @@ const DashboardLayout = ({ title, children }: any) => {
                 >
                   <Link
                     px={3}
-                    py={2}
+                    py={3}
                     rounded="4px"
                     borderBottom="none"
                     _hover={{ transform: "scale(1.05)" }}
@@ -184,7 +185,7 @@ const DashboardLayout = ({ title, children }: any) => {
                       ? { color: "#000", bg: "#FFF" }
                       : { color: "#FFF" })}
                   >
-                    <Stack direction="row" spacing={2} align="center">
+                    <Stack direction="row" spacing={4} align="center">
                       <Icon boxSize={5} as={navLink.icon} />
                       <Text
                         fontWeight="normal"
