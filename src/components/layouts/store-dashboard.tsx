@@ -1,5 +1,6 @@
-import React from 'react';
-import NextLink from 'next/link';
+import React from "react";
+import NextLink from "next/link";
+import Head from "next/head";
 import {
   chakra,
   Grid,
@@ -8,180 +9,233 @@ import {
   Link,
   Icon,
   Text,
-} from '@chakra-ui/react';
-import { Category, Graph, Bag } from 'react-iconly';
-import { CgMore } from 'react-icons/cg';
-import { useRouter } from 'next/router';
-import { Wallet } from 'components/wallet';
+} from "@chakra-ui/react";
+import { Category, Graph, Bag } from "react-iconly";
+import { CgMore } from "react-icons/cg";
+import { useRouter } from "next/router";
+import { Wallet } from "components/wallet";
+import { useInitializeStoreAuth } from "hooks/auth";
+import { AuthContext } from "libs/auth";
 
 const navLinks = [
   {
-    name: 'Dashboard',
-    icon: (props: any) => <Category set='light' {...props} />,
-    url: '/dashboard',
+    name: "Dashboard",
+    icon: (props: any) => <Category set="light" {...props} />,
+    url: "/dashboard",
   },
   {
-    name: 'Products',
-    icon: (props: any) => <Graph set='light' {...props} />,
-    url: '/products',
+    name: "Products",
+    icon: (props: any) => <Graph set="light" {...props} />,
+    url: "/products",
   },
   {
-    name: 'Orders',
-    icon: (props: any) => <Bag set='light' {...props} />,
-    url: '/orders',
+    name: "Orders",
+    icon: (props: any) => <Bag set="light" {...props} />,
+    url: "/orders",
   },
 ];
 
-const DashboardLayout: React.FC = ({ children }) => {
-  const router = useRouter();
-  return (
-    <Grid
-      templateColumns='240px 1fr'
-      templateRows='70px 1fr 70px'
-      templateAreas={{
-        base: `"topbar topbar" "main main" "bottombar bottombar"`,
-        md: `"sidebar main" "sidebar main" "sidebar main"`,
-      }}
-      minH='100vh'>
-      <chakra.aside
-        gridArea='sidebar'
-        bg='#000000'
-        px={4}
-        py={8}
-        display={{ base: 'none', md: 'block' }}>
-        <Stack spacing={8} minH='100%'>
-          <Heading fontWeight='800' fontSize='2xl' color='#fff' px={3}>
-            Frowth
-          </Heading>
+const AuthNoAccount = () => (
+  <Stack minH="100%" align="center" justify="center">
+    <Text>No Account, Please connect your account to access the dashboard</Text>
+  </Stack>
+);
 
-          <Stack spacing={6}>
-            {navLinks.map((navLink, idx) => (
+const AuthNotOwner = () => (
+  <Stack minH="100%" align="center" justify="center">
+    <Text>
+      You {"can't"} access this dashboard, {"you're"} not the owner
+    </Text>
+  </Stack>
+);
+
+const AuthNoSigningKey = () => (
+  <Stack minH="100%" align="center" justify="center">
+    <Text>You have no signing key, please create one and try again</Text>
+  </Stack>
+);
+
+const DashboardLayout = ({ title, children }: any) => {
+  const router = useRouter();
+
+  // handle auth session here
+  const storeAuthData = useInitializeStoreAuth();
+
+  return (
+    <AuthContext.Provider value={storeAuthData}>
+      <Head>
+        <title>{title} - Frowth</title>
+      </Head>
+
+      <Grid
+        templateColumns="240px 1fr"
+        templateRows="70px 1fr 70px"
+        templateAreas={{
+          base: `"topbar topbar" "main main" "bottombar bottombar"`,
+          md: `"sidebar main" "sidebar main" "sidebar main"`,
+        }}
+        minH="100vh"
+      >
+        <chakra.aside
+          gridArea="sidebar"
+          bg="#000000"
+          px={4}
+          py={8}
+          display={{ base: "none", md: "block" }}
+        >
+          <Stack spacing={8} minH="100%">
+            <Heading fontWeight="800" fontSize="2xl" color="#fff" px={3}>
+              Frowth
+            </Heading>
+
+            <Stack spacing={6}>
+              {navLinks.map((navLink, idx) => (
+                <NextLink
+                  key={idx}
+                  href={`/${router.query?.store}/app${navLink.url}`}
+                  passHref
+                >
+                  <Link
+                    px={3}
+                    py={2}
+                    rounded="4px"
+                    borderBottom="none"
+                    _hover={{ transform: "scale(1.05)" }}
+                    {...(router.asPath.includes(navLink.url)
+                      ? { color: "#000", bg: "#FFF" }
+                      : { color: "#FFF" })}
+                  >
+                    <Stack direction="row" spacing={2} align="center">
+                      <Icon boxSize={5} as={navLink.icon} />
+                      <Text
+                        fontWeight="normal"
+                        color="inherit"
+                        fontSize="inherit"
+                        as="span"
+                      >
+                        {navLink.name}
+                      </Text>
+                    </Stack>
+                  </Link>
+                </NextLink>
+              ))}
+            </Stack>
+
+            <Wallet
+              ButtonProps={{
+                variant: "outline",
+                mt: "auto !important",
+                color: "#FFF",
+                rounded: "8px",
+                borderColor: "rgb(255 255 255 / 16%)",
+                leftIcon: <Icon as={CgMore} mr={3} />,
+                _hover: {
+                  bg: "transparent",
+                  borderColor: "rgb(255 255 255 / 48%)",
+                },
+              }}
+            />
+          </Stack>
+        </chakra.aside>
+
+        <chakra.header
+          gridArea="topbar"
+          bg="#000000"
+          px={5}
+          display={{ base: "block", md: "none" }}
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            justify="space-between"
+            h="100%"
+            w="100%"
+          >
+            <Heading fontWeight="800" fontSize="xl" color="#fff">
+              Frowth
+            </Heading>
+
+            <Wallet
+              ButtonProps={{
+                variant: "outline",
+                color: "#FFF",
+                rounded: "8px",
+                size: "sm",
+                borderColor: "rgb(255 255 255 / 16%)",
+                rightIcon: <Icon as={CgMore} />,
+                _hover: {
+                  bg: "transparent",
+                  borderColor: "rgb(255 255 255 / 48%)",
+                },
+              }}
+            />
+          </Stack>
+        </chakra.header>
+
+        <chakra.main gridArea="main">
+          {!storeAuthData.loading
+            ? {
+                "": children,
+                "no-account": <AuthNoAccount />,
+                "not-owner": <AuthNotOwner />,
+                "no-signing-key": <AuthNoSigningKey />,
+              }[storeAuthData.status]
+            : null}
+        </chakra.main>
+
+        <chakra.aside
+          gridArea="bottombar"
+          bg="#000000"
+          display={{ base: "block", md: "none" }}
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            justify="space-around"
+            h="100%"
+            w="100%"
+          >
+            {navLinks.map((NavLink, idx) => (
               <NextLink
                 key={idx}
-                href={`/${router.query?.store}/app${navLink.url}`}
-                passHref>
+                href={`/${router.query?.store}/app${NavLink.url}`}
+                passHref
+              >
                 <Link
-                  px={3}
-                  py={2}
-                  rounded='4px'
-                  borderBottom='none'
-                  _hover={{ transform: 'scale(1.05)' }}
-                  {...(router.asPath.includes(navLink.url)
-                    ? { color: '#000', bg: '#FFF' }
-                    : { color: '#FFF' })}>
-                  <Stack direction='row' spacing={2} align='center'>
-                    <Icon boxSize={5} as={navLink.icon} />
+                  borderBottom="none"
+                  color="#FFF"
+                  {...(router.asPath.includes(NavLink.url)
+                    ? { textDecoration: "underline" }
+                    : {})}
+                >
+                  <Stack spacing={2} align="center">
+                    <Icon
+                      boxSize={5}
+                      as={(props) => (
+                        <NavLink.icon
+                          {...(router.asPath.includes(NavLink.url)
+                            ? { set: "bold" }
+                            : {})}
+                          {...props}
+                        />
+                      )}
+                    />
                     <Text
-                      fontWeight='normal'
-                      color='inherit'
-                      fontSize='inherit'
-                      as='span'>
-                      {navLink.name}
+                      fontWeight="normal"
+                      color="inherit"
+                      fontSize="xs"
+                      as="span"
+                    >
+                      {NavLink.name}
                     </Text>
                   </Stack>
                 </Link>
               </NextLink>
             ))}
           </Stack>
-
-          <Wallet
-            ButtonProps={{
-              variant: 'outline',
-              mt: 'auto !important',
-              color: '#FFF',
-              rounded: '8px',
-              borderColor: 'rgb(255 255 255 / 16%)',
-              leftIcon: <Icon as={CgMore} mr={3} />,
-              _hover: {
-                bg: 'transparent',
-                borderColor: 'rgb(255 255 255 / 48%)',
-              },
-            }}
-          />
-        </Stack>
-      </chakra.aside>
-
-      <chakra.header
-        gridArea='topbar'
-        bg='#000000'
-        px={5}
-        display={{ base: 'block', md: 'none' }}>
-        <Stack
-          direction='row'
-          alignItems='center'
-          justify='space-between'
-          h='100%'
-          w='100%'>
-          <Heading fontWeight='800' fontSize='xl' color='#fff'>
-            Frowth
-          </Heading>
-
-          <Wallet
-            ButtonProps={{
-              variant: 'outline',
-              color: '#FFF',
-              rounded: '8px',
-              size: 'sm',
-              borderColor: 'rgb(255 255 255 / 16%)',
-              rightIcon: <Icon as={CgMore} />,
-              _hover: {
-                bg: 'transparent',
-                borderColor: 'rgb(255 255 255 / 48%)',
-              },
-            }}
-          />
-        </Stack>
-      </chakra.header>
-
-      <chakra.main gridArea='main'>{children}</chakra.main>
-
-      <chakra.aside
-        gridArea='bottombar'
-        bg='#000000'
-        display={{ base: 'block', md: 'none' }}>
-        <Stack
-          direction='row'
-          alignItems='center'
-          justify='space-around'
-          h='100%'
-          w='100%'>
-          {navLinks.map((NavLink, idx) => (
-            <NextLink
-              key={idx}
-              href={`/${router.query?.store}/app${NavLink.url}`}
-              passHref>
-              <Link
-                borderBottom='none'
-                color='#FFF'
-                {...(router.asPath.includes(NavLink.url)
-                  ? { textDecoration: 'underline' }
-                  : {})}>
-                <Stack spacing={2} align='center'>
-                  <Icon
-                    boxSize={5}
-                    as={(props) => (
-                      <NavLink.icon
-                        {...(router.asPath.includes(NavLink.url)
-                          ? { set: 'bold' }
-                          : {})}
-                        {...props}
-                      />
-                    )}
-                  />
-                  <Text
-                    fontWeight='normal'
-                    color='inherit'
-                    fontSize='xs'
-                    as='span'>
-                    {NavLink.name}
-                  </Text>
-                </Stack>
-              </Link>
-            </NextLink>
-          ))}
-        </Stack>
-      </chakra.aside>
-    </Grid>
+        </chakra.aside>
+      </Grid>
+    </AuthContext.Provider>
   );
 };
 

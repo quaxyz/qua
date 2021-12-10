@@ -1,14 +1,14 @@
-import type { AppProps } from 'next/app';
-import dynamic from 'next/dynamic';
-import theme from 'theme';
-import { ChakraProvider } from '@chakra-ui/react';
-import { Web3ReactProvider } from '@web3-react/core';
-import { Web3ReactManager } from 'components/wallet/web3-manager';
-import { getLibrary } from 'libs/wallet';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import type { AppProps } from "next/app";
+import dynamic from "next/dynamic";
+import theme from "theme";
+import { ChakraProvider } from "@chakra-ui/react";
+import { Web3ReactProvider } from "@web3-react/core";
+import { Web3ReactManager } from "components/wallet/web3-manager";
+import { getLibrary } from "libs/wallet";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const Web3ReactProviderDefault = dynamic(
-  () => import('components/wallet/network-connector'),
+  () => import("components/wallet/network-connector"),
   {
     ssr: false,
   }

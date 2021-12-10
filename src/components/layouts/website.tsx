@@ -1,16 +1,7 @@
-import {
-  Box,
-  Button,
-  Flex,
-  List,
-  ListItem,
-  Tab,
-  TabList,
-  Tabs
-} from '@chakra-ui/react'
-import Image from 'next/image'
-import Link from 'next/link'
-import React from 'react'
+import { Box, Button, Flex, List, ListItem, Tab, TabList, Tabs } from "@chakra-ui/react";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 
 const WebsiteLayout = (props: { children: any }) => {
   return (
@@ -19,13 +10,7 @@ const WebsiteLayout = (props: { children: any }) => {
         <Flex align="center" justify="space-between" px="4rem" maxW="100%">
           <Link href="/">
             <a>
-              <Image
-                src="/logo.svg"
-                alt="Qua logo"
-                layout="fixed"
-                width={100}
-                height={100}
-              />
+              <Image src="/logo.svg" alt="Qua logo" layout="fixed" width={100} height={100} />
             </a>
           </Link>
           <Tabs colorScheme="#000000">
@@ -62,13 +47,7 @@ const WebsiteLayout = (props: { children: any }) => {
         color="#fff"
         margin="1rem"
       >
-        <Image
-          src="/qua-mark-white.svg"
-          alt="Qua Mark"
-          layout="fixed"
-          width={150}
-          height={150}
-        />
+        <Image src="/qua-mark-white.svg" alt="Qua Mark" layout="fixed" width={150} height={150} />
 
         <Box
           display="flex"
@@ -111,7 +90,7 @@ const WebsiteLayout = (props: { children: any }) => {
         </Box>
       </Box>
     </div>
-  )
-}
+  );
+};
 
-export default WebsiteLayout
+export default WebsiteLayout;
