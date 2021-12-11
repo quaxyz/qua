@@ -3,18 +3,18 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { utils } from "ethers";
 import prisma from "libs/prisma";
 
-const LOG_TAG = "[store-setup]";
+const LOG_TAG = "[store-add-signing-key]";
 
 const DOMAIN_NAME = "Qua";
 const DOMAIN_VERSION = "1.0.0";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { method, body } = req;
+    const { method, body, query } = req;
 
     switch (method) {
       case "POST": {
-        console.log(LOG_TAG, "setup store", { body });
+        console.log(LOG_TAG, "adding device signing key", { body });
 
         const { domain, message, types } = body.data;
 
@@ -46,29 +46,36 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(400).send({ error: "wrong signature" });
         }
 
-        const data = JSON.parse(message.details);
-        console.log({ data });
-
-        // verify data
-        // - check if store name is unique
-        // - any other form of validation?
-        if (await prisma.store.findUnique({ where: { name: data.name } })) {
-          return res.status(400).send({ error: "name already in use" });
-        }
-
-        // store data in DB
-        const result = await prisma.store.create({
-          data: {
-            name: data.name,
-            email: data.email,
-            owner: body.address,
-            category: data.category,
+        // verify store owner
+        const data = await prisma.store.findFirst({
+          where: {
+            name: query.store as string,
           },
         });
 
-        console.log(LOG_TAG, "store created", { result });
+        if (data?.owner !== body.address) {
+          return res.status(400).send({ error: "invalid owner address" });
+        }
 
-        return res.status(200).send({ message: "store created" });
+        // store public key in relation to user
+        const result = await prisma.user.upsert({
+          where: {
+            address: body.address,
+          },
+          update: {
+            publicKey: {
+              push: message.publicKey,
+            },
+          },
+          create: {
+            address: body.address,
+            publicKey: [message.publicKey],
+          },
+        });
+
+        console.log(LOG_TAG, "added device signing key", { result });
+
+        return res.status(200).send({ message: "signing key stored" });
       }
       default:
         console.log(LOG_TAG, "[error]", "unauthorized method", method);

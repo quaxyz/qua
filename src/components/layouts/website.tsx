@@ -1,18 +1,19 @@
+import React from "react";
 import {
   Box,
   Button,
+  chakra,
   Flex,
   List,
   ListItem,
   Tab,
   TabList,
-  Tabs
-} from '@chakra-ui/react'
-import Image from 'next/image'
-import Link from 'next/link'
-import React from 'react'
+  Tabs,
+} from "@chakra-ui/react";
+import Image from "next/image";
+import Link from "next/link";
 
-const WebsiteLayout = (props: { children: any }) => {
+const WebsiteLayout: React.FC = ({ children }) => {
   return (
     <div>
       <header>
@@ -50,7 +51,7 @@ const WebsiteLayout = (props: { children: any }) => {
         <hr />
       </header>
 
-      <main>{props.children}</main>
+      <chakra.main>{children}</chakra.main>
 
       <Box
         maxWidth="100%"
@@ -82,7 +83,7 @@ const WebsiteLayout = (props: { children: any }) => {
           <List>
             <ListItem>
               <Link href="/about">
-                <a>About qua.xyz</a>
+                <a>About qua</a>
               </Link>
             </ListItem>
           </List>
@@ -111,7 +112,7 @@ const WebsiteLayout = (props: { children: any }) => {
         </Box>
       </Box>
     </div>
-  )
-}
+  );
+};
 
-export default WebsiteLayout
+export default WebsiteLayout;

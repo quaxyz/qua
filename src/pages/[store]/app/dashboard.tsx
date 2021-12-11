@@ -1,3 +1,4 @@
+
 import {
   Stack,
   Box,
@@ -15,7 +16,6 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
-
 import Head from 'next/head';
 import type { NextPage } from 'next';
 import StoreDashboardLayout from 'components/layouts/store-dashboard';
@@ -185,6 +185,7 @@ const OrderGrid = () => {
   );
 };
 
+
 const Dashboard: NextPage = () => {
   const cards = [
     {
@@ -305,6 +306,7 @@ const Dashboard: NextPage = () => {
 
         <OrderGrid />
       </Box>
+
     </StoreDashboardLayout>
   );
 };

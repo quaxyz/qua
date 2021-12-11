@@ -14,8 +14,11 @@ export default function Api() {
     }
 
     if (!response.ok) {
-      console.log({ payload });
-      throw new Error(`${options.method} ${pathWithSlash} - ${response.statusText}`);
+      console.log({ payload, response });
+      throw new Error(
+        payload.error ||
+          `${options.method} ${pathWithSlash} - ${response.statusText}`
+      );
     }
 
     return { payload, response };
