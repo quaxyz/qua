@@ -1,4 +1,3 @@
-
 import {
   Stack,
   Box,
@@ -12,17 +11,16 @@ import {
   PopoverContent,
   PopoverTrigger,
   Link,
-  Grid,
-} from '@chakra-ui/react';
-import { useRouter } from 'next/router';
-import NextLink from 'next/link';
-import Head from 'next/head';
-import type { NextPage } from 'next';
-import StoreDashboardLayout from 'components/layouts/store-dashboard';
-import { Bag, ArrowDown, ArrowUp, Calendar, ChevronDown } from 'react-iconly';
-import React, { FunctionComponent, useState } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+} from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import NextLink from "next/link";
+import Head from "next/head";
+import type { NextPage } from "next";
+import StoreDashboardLayout from "components/layouts/store-dashboard";
+import { Bag, ArrowDown, ArrowUp, Calendar, ChevronDown } from "react-iconly";
+import React, { FunctionComponent, useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface IInfoCard {
   bgColor?: string;
@@ -42,14 +40,16 @@ const InfoCard = (props: IInfoCard) => {
       justifyContent="space-between"
       p="24px"
       borderRadius="12px"
-      bgColor={props.bgColor ?? '#ffffff'}>
+      bgColor={props.bgColor ?? "#ffffff"}
+    >
       <div>
         <Box display="flex" alignItems="center">
           <Heading
             as="h3"
             fontSize="36px"
             fontWeight="400"
-            lineHeight="43.57px">
+            lineHeight="43.57px"
+          >
             {props.amount}
           </Heading>
           <Box display="flex" alignItems="center" ml="11px">
@@ -67,12 +67,13 @@ const InfoCard = (props: IInfoCard) => {
               <Text
                 color={
                   props.rateIsNegative
-                    ? 'rgba(235, 87, 87, 1)'
-                    : 'rgba(2, 120, 87, 1)'
+                    ? "rgba(235, 87, 87, 1)"
+                    : "rgba(2, 120, 87, 1)"
                 }
                 fontSize="16px"
                 fontWeight="500"
-                lineHeight="19.36px">
+                lineHeight="19.36px"
+              >
                 {props.rate}%
               </Text>
             )}
@@ -83,7 +84,8 @@ const InfoCard = (props: IInfoCard) => {
           lineHeight="18.15px"
           letterSpacing=".15px"
           fontWeight="400"
-          opacity=".48">
+          opacity=".48"
+        >
           {props.title}
         </Text>
       </div>
@@ -96,7 +98,8 @@ const InfoCard = (props: IInfoCard) => {
           bgColor="rgba(255, 255, 255, 0.48)"
           display="flex"
           justifyContent="center"
-          alignItems="center">
+          alignItems="center"
+        >
           <Icon boxSize={7} as={props.icon} />
         </Box>
       )}
@@ -109,9 +112,10 @@ const OrderGrid = () => {
     <Box pb="3rem">
       <Stack
         direction="row"
-        display={{ base: 'none', md: 'flex' }}
+        display={{ base: "none", md: "flex" }}
         mb="12px"
-        p="8px 24px 8px 24px">
+        p="8px 24px 8px 24px"
+      >
         <Flex w="100%">
           <Text>Order ID</Text>
         </Flex>
@@ -129,27 +133,28 @@ const OrderGrid = () => {
         <React.Fragment key={index}>
           <Stack
             mb="12px"
-            direction={{ base: 'column', md: 'row' }}
+            direction={{ base: "column", md: "row" }}
             border="0.5px solid rgba(0, 0, 0, 0.12)"
-            p="8px 24px 8px 24px">
+            p="8px 24px 8px 24px"
+          >
             <Flex w="100%">
-              <Text pr="1.5rem" display={{ base: 'inline-block', md: 'none' }}>
+              <Text pr="1.5rem" display={{ base: "inline-block", md: "none" }}>
                 Order ID
               </Text>
-              <Text fontSize="14px" fontWeight={{ base: '400', md: '600' }}>
+              <Text fontSize="14px" fontWeight={{ base: "400", md: "600" }}>
                 #1201
               </Text>
             </Flex>
             <Flex w="100%">
-              <Text pr="1.5rem" display={{ base: 'inline-block', md: 'none' }}>
+              <Text pr="1.5rem" display={{ base: "inline-block", md: "none" }}>
                 Customer
               </Text>
-              <Text fontSize="14px" fontWeight={{ base: '400', md: '600' }}>
+              <Text fontSize="14px" fontWeight={{ base: "400", md: "600" }}>
                 Maria Luiz 0x9Ca9...43aA
               </Text>
             </Flex>
             <Flex w="100%">
-              <Text pr="1.5rem" display={{ base: 'inline-block', md: 'none' }}>
+              <Text pr="1.5rem" display={{ base: "inline-block", md: "none" }}>
                 Status
               </Text>
               <Text
@@ -159,12 +164,13 @@ const OrderGrid = () => {
                 color="rgba(2, 120, 87, 1)"
                 lineHeight="1.5"
                 borderRadius="8px"
-                px="12px">
+                px="12px"
+              >
                 Unfulfilled
               </Text>
             </Flex>
             <Flex w="100%">
-              <Text pr="1.5rem" display={{ base: 'inline-block', md: 'none' }}>
+              <Text pr="1.5rem" display={{ base: "inline-block", md: "none" }}>
                 Payment
               </Text>
               <Text
@@ -174,7 +180,8 @@ const OrderGrid = () => {
                 color="rgba(120, 81, 2, 1)"
                 lineHeight="1.5"
                 borderRadius="8px"
-                px="12px">
+                px="12px"
+              >
                 Paid
               </Text>
             </Flex>
@@ -185,38 +192,37 @@ const OrderGrid = () => {
   );
 };
 
-
 const Dashboard: NextPage = () => {
   const cards = [
     {
-      bgColor: '#FEEECD',
+      bgColor: "#FEEECD",
       amount: 34,
       rateIsNegative: true,
-      title: 'Unfulfilled orders',
+      title: "Unfulfilled orders",
       icon: (props: any) => (
         <Bag set="light" {...props} primaryColor="rgba(251, 169, 4, 1)" />
       ),
     },
     {
-      bgColor: '',
+      bgColor: "",
       rate: 12,
       amount: 20,
       rateIsNegative: true,
-      title: 'Total orders',
+      title: "Total orders",
     },
     {
-      bgColor: '',
+      bgColor: "",
       rate: 16,
       amount: 520,
       rateIsNegative: false,
-      title: 'Product views',
+      title: "Product views",
     },
     {
-      bgColor: '',
+      bgColor: "",
       rate: 16,
-      amount: '$1,898.44',
+      amount: "$1,898.44",
       rateIsNegative: false,
-      title: 'Total revenue',
+      title: "Total revenue",
     },
   ];
 
@@ -232,26 +238,28 @@ const Dashboard: NextPage = () => {
         <title>Dashboard - Frowth</title>
       </Head>
 
-      <Box px={{ base: '1rem', md: '2.5rem' }}>
+      <Box px={{ base: "1rem", md: "2.5rem" }}>
         <Flex justifyContent="space-between" py="19.5px" alignItems="center">
           <Heading
             as="h1"
             fontSize="24px"
             fontWeight="600"
-            lineHeight="29.05px">
+            lineHeight="29.05px"
+          >
             Overview
           </Heading>
           <Popover matchWidth>
             <PopoverTrigger>
               <Button
                 _hover={{
-                  bg: 'transparent',
-                  borderColor: 'rgb(255 255 255 / 48%)',
+                  bg: "transparent",
+                  borderColor: "rgb(255 255 255 / 48%)",
                 }}
                 display="flex"
                 bgColor="#ffffff"
                 border="1px solid rgba(0, 0, 0, 0.08)"
-                color="black">
+                color="black"
+              >
                 <Icon
                   as={() => <Calendar set="light" primaryColor="#000000" />}
                 />
@@ -265,7 +273,8 @@ const Dashboard: NextPage = () => {
               w="fit-content"
               bgColor="transparent"
               border="none"
-              boxShadow="none">
+              boxShadow="none"
+            >
               <PopoverArrow />
               <DatePicker selected={startDate} onChange={handleChange} inline />
             </PopoverContent>
@@ -276,8 +285,9 @@ const Dashboard: NextPage = () => {
             width="100%"
             minW="max-content"
             justifyContent="space-between"
-            direction={{ base: 'column', md: 'row' }}
-            spacing={{ base: '8px', md: '24px' }}>
+            direction={{ base: "column", md: "row" }}
+            spacing={{ base: "8px", md: "24px" }}
+          >
             {cards.map((card, index) => (
               <Box key={index}>
                 <InfoCard {...card} key={index} />
@@ -288,15 +298,17 @@ const Dashboard: NextPage = () => {
 
         <Flex
           justifyContent="space-between"
-          mt={{ base: '1.5rem', md: '3rem' }}
-          mb={{ base: '1rem', md: '2rem' }}
+          mt={{ base: "1.5rem", md: "3rem" }}
+          mb={{ base: "1rem", md: "2rem" }}
           py="19.5px"
-          alignItems="center">
+          alignItems="center"
+        >
           <Heading
             as="h1"
             fontSize="24px"
             fontWeight="600"
-            lineHeight="29.05px">
+            lineHeight="29.05px"
+          >
             Activity
           </Heading>
           <NextLink href={`/${router.query?.store}/app/orders`}>
@@ -306,7 +318,6 @@ const Dashboard: NextPage = () => {
 
         <OrderGrid />
       </Box>
-
     </StoreDashboardLayout>
   );
 };
