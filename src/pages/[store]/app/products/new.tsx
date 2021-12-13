@@ -11,11 +11,14 @@ import {
   Input,
   Link,
   Stack,
+  StackDivider,
+  Text,
 } from "@chakra-ui/react";
 import { FormGroup } from "components/form-group";
 import { useRouter } from "next/router";
 import { ArrowLeft } from "react-iconly";
 import { FilePicker } from "components/file-picker";
+import SelectMenu from "components/select";
 
 const New: NextPage = () => {
   const router = useRouter();
@@ -42,8 +45,8 @@ const New: NextPage = () => {
           <Button variant="primary">Publish</Button>
         </Stack>
 
-        <Stack direction="row">
-          <Stack w="100%" flex={2} spacing={10}>
+        <Stack direction="row" spacing={14}>
+          <Stack w="full" flex={2} spacing={10}>
             <FormGroup id="name" label="Product Name">
               <Input
                 isRequired
@@ -62,7 +65,51 @@ const New: NextPage = () => {
             </FormGroup>
           </Stack>
 
-          <Stack flex={1}>{/*  */}</Stack>
+          <Stack w="full" flex={1} spacing={5}>
+            <Stack
+              divider={<StackDivider borderColor="rgb(0 0 0 / 8%)" />}
+              border="1px solid rgb(0 0 0 / 16%)"
+            >
+              <chakra.article p={4}>
+                <Heading fontSize="lg" mb={2}>
+                  Category
+                </Heading>
+                <Text fontSize="sm" mb={4}>
+                  Add this product to a category or create a new category.
+                </Text>
+
+                <FormGroup id="category">
+                  <SelectMenu
+                    title="Select Category"
+                    placeholder="Select"
+                    variant="outline"
+                    value="food"
+                    size="md"
+                    onChange={() => null}
+                    options={[
+                      { value: "clothing", label: "Clothing" },
+                      { value: "cosmetics", label: "Cosmetics" },
+                      { value: "food", label: "Food" },
+                    ]}
+                  />
+                </FormGroup>
+              </chakra.article>
+
+              <chakra.article p={4}>
+                <FormGroup
+                  id="tag"
+                  label="Tags"
+                  labelProps={{ fontSize: "sm" }}
+                >
+                  <Input
+                    placeholder="Vintage, cotton, summer"
+                    value=""
+                    onChange={() => null}
+                  />
+                </FormGroup>
+              </chakra.article>
+            </Stack>
+          </Stack>
         </Stack>
       </Container>
 

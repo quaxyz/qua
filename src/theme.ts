@@ -150,6 +150,11 @@ export default extendTheme({
       },
 
       sizes: {
+        md: {
+          fontWeight: 600,
+          fontSize: "md",
+        },
+
         lg: {
           fontWeight: 700,
           fontSize: "2xl",
@@ -157,6 +162,19 @@ export default extendTheme({
       },
 
       variants: {
+        outline: {
+          rounded: "0px",
+          border: "1px solid",
+          borderColor: "rgb(0 0 0 / 12%)",
+          color: "black",
+          py: 3,
+          px: 4,
+
+          _hover: {
+            borderColor: "rgb(0 0 0 / 60%)",
+          },
+        },
+
         flushed: {
           borderBottom: "1px solid rgb(0 0 0 / 24%)",
           pt: 3,
