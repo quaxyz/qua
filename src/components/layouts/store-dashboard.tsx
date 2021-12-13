@@ -135,10 +135,10 @@ const DashboardLayout = ({ title, children }: any) => {
   const router = useRouter();
 
   // handle auth session here
-  const storeAuthData = useInitializeStoreAuth();
+  // const storeAuthData = useInitializeStoreAuth();
 
   return (
-    <AuthContext.Provider value={storeAuthData}>
+    <AuthContext.Provider value={null}>
       <Head>
         <title>{title} - Frowth</title>
       </Head>
@@ -253,7 +253,7 @@ const DashboardLayout = ({ title, children }: any) => {
         </chakra.header>
 
         <chakra.main gridArea="main">
-          {!storeAuthData.loading ? (
+          {/* {!storeAuthData.loading ? (
             {
               "": children,
               "no-account": <AuthNoAccount />,
@@ -264,7 +264,8 @@ const DashboardLayout = ({ title, children }: any) => {
             <Stack align="center" justify="center" minH="100%">
               <CircularProgress isIndeterminate color="black" />
             </Stack>
-          )}
+          )} */}
+          {children}
         </chakra.main>
 
         <chakra.aside
