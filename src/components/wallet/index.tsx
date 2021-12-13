@@ -1,9 +1,8 @@
-import React from "react";
 import {
   Button,
   ButtonProps,
-  Link,
   Image,
+  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -15,11 +14,14 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { truncateAddress } from "libs/utils";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
-import { injected, SUPPORTED_WALLETS, switchNetwork } from "libs/wallet";
-import { FiExternalLink } from "react-icons/fi";
 import { useLogout } from "hooks/auth";
+import { truncateAddress } from "libs/utils";
+import { injected, SUPPORTED_WALLETS, switchNetwork } from "libs/wallet";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
+import { FiExternalLink } from "react-icons/fi";
 
 const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
   return (
@@ -127,6 +129,7 @@ const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
 };
 
 const AccountModal = ({ isOpen, onClose }: any) => {
+  const router = useRouter();
   const { account } = useWeb3React();
   const logOut = useLogout();
 
@@ -161,6 +164,18 @@ const AccountModal = ({ isOpen, onClose }: any) => {
               {truncateAddress(account || "", 4)}
             </Button>
 
+            <NextLink href={`/${router?.query.store}/app/settings/`} passHref>
+              <Button
+                onClick={() => {
+                  onClose();
+                }}
+                size="lg"
+                variant="outline"
+                isFullWidth
+              >
+                Settings
+              </Button>
+            </NextLink>
             <Button
               onClick={() => {
                 logOut();

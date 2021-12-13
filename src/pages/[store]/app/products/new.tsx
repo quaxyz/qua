@@ -16,30 +16,30 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  Textarea
-} from '@chakra-ui/react'
-import StoreDashboardLayout from 'components/layouts/store-dashboard'
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import NextLink from 'next/link'
-import { useRouter } from 'next/router'
-import React from 'react'
-import { ArrowLeft } from 'react-iconly'
+  Textarea,
+} from "@chakra-ui/react";
+import StoreDashboardLayout from "components/layouts/store-dashboard";
+import type { NextPage } from "next";
+import Head from "next/head";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
+import { ArrowLeft } from "react-iconly";
 
 type FormGroupProps = {
-  id: string
-  label?: string
-  helperText?: string
-  required?: boolean
-  children: any
-}
+  id: string;
+  label?: string;
+  helperText?: string;
+  required?: boolean;
+  children: any;
+};
 
 const FormGroup = ({
   id,
   label,
   helperText,
   required,
-  children
+  children,
 }: FormGroupProps) => (
   <FormControl id={id} isRequired={required}>
     <FormLabel fontWeight="500">{label}</FormLabel>
@@ -50,36 +50,36 @@ const FormGroup = ({
       direction="row"
       border="1px solid rgb(0 0 0 / 24%)"
       _hover={{
-        borderColor: 'rgb(0 0 0 / 60%)'
+        borderColor: "rgb(0 0 0 / 60%)",
       }}
     >
       {React.cloneElement(children, {
-        border: 'none',
-        rounded: '0px',
+        border: "none",
+        rounded: "0px",
         px: 0,
         py: 6,
         fontWeight: 500,
-        fontSize: 'xl',
+        fontSize: "xl",
         flex: 1,
         _placeholder: {
-          color: 'rgb(0 0 0 / 12%)'
+          color: "rgb(0 0 0 / 12%)",
         },
         _focus: {
-          outline: 'none'
-        }
+          outline: "none",
+        },
       })}
     </Stack>
 
     {helperText && <FormHelperText>{helperText}</FormHelperText>}
   </FormControl>
-)
+);
 
 const New: NextPage = () => {
-  const router = useRouter()
+  const router = useRouter();
 
   const [formValue, setFormValue] = React.useState({
-    name: ''
-  })
+    name: "",
+  });
 
   return (
     <StoreDashboardLayout>
@@ -94,7 +94,7 @@ const New: NextPage = () => {
                 <ArrowLeft
                   set="light"
                   primaryColor="#000"
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: "pointer" }}
                 />
               </NextLink>
               <Heading
@@ -200,7 +200,7 @@ const New: NextPage = () => {
         </chakra.aside>
       </Container>
     </StoreDashboardLayout>
-  )
-}
+  );
+};
 
-export default New
+export default New;
