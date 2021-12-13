@@ -242,7 +242,7 @@ const Dashboard: NextPage = () => {
         <Flex justifyContent="space-between" py="19.5px" alignItems="center">
           <Heading
             as="h1"
-            fontSize="24px"
+            fontSize={{ base: "18px", md: "24px" }}
             fontWeight="600"
             lineHeight="29.05px"
           >
@@ -305,7 +305,7 @@ const Dashboard: NextPage = () => {
         >
           <Heading
             as="h1"
-            fontSize="24px"
+            fontSize={{ base: "18px", md: "24px" }}
             fontWeight="600"
             lineHeight="29.05px"
           >

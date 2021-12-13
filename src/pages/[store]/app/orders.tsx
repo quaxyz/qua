@@ -12,9 +12,12 @@ import {
   PopoverArrow,
   PopoverContent,
   PopoverTrigger,
+  InputGroup,
+  InputLeftElement,
+  Input,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
-import { Calendar, ChevronDown } from "react-iconly";
+import { Calendar, ChevronDown, Search } from "react-iconly";
 
 const OrderGrid = () => {
   return (
@@ -112,13 +115,33 @@ const Orders = () => {
         <Flex justifyContent="space-between" py="19.5px" alignItems="center">
           <Heading
             as="h1"
-            fontSize="24px"
+            fontSize={{ base: "18px", md: "24px" }}
             fontWeight="600"
             lineHeight="29.05px"
           >
             All orders
           </Heading>
         </Flex>
+
+        <Box maxW="403px" pt="5px" pb={{ base: "28px", md: "45px" }}>
+          <InputGroup>
+            <InputLeftElement
+              fontSize="1rem"
+              pointerEvents="none"
+              children={
+                <Icon
+                  boxSize="10px"
+                  as={() => <Search set="light" primaryColor="#0E0F0F" />}
+                />
+              }
+            />
+            <Input
+              type="text"
+              color="rgba(180, 182, 184, 1)"
+              placeholder="Search"
+            />
+          </InputGroup>
+        </Box>
         <OrderGrid />
       </Box>
     </StoreDashboardLayout>
