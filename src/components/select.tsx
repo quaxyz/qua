@@ -12,6 +12,7 @@ import {
   Stack,
   Text,
   useDisclosure,
+  useStyleConfig,
 } from "@chakra-ui/react";
 import { FiChevronDown } from "react-icons/fi";
 
@@ -24,9 +25,21 @@ export type SelectMenuProps = {
   }[];
   title?: string;
   placeholder?: string;
+  variant?: string;
+  size?: string;
 };
 
-const SelectMenu = ({ value, onChange, placeholder, options, title, ...props }: SelectMenuProps) => {
+const SelectMenu = ({
+  value,
+  onChange,
+  placeholder,
+  options,
+  title,
+  variant,
+  size,
+  ...props
+}: SelectMenuProps) => {
+  const styles = useStyleConfig("SelectMenu", { variant, size });
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onItemSelect = (value: string | number) => {
@@ -36,12 +49,14 @@ const SelectMenu = ({ value, onChange, placeholder, options, title, ...props }: 
 
   return (
     <>
-      <Box {...props} onClick={onOpen} cursor="pointer" pt={3} pb={2}>
+      <Box __css={styles} onClick={onOpen} {...props}>
         <Stack w="100%" direction="row" align="center" justify="space-between">
           {value ? (
             <Text>{options.find((o) => o.value === value)?.label}</Text>
           ) : (
-            <Text color="rgb(0 0 0 / 12%)">{placeholder || "Select option"}</Text>
+            <Text color="rgb(0 0 0 / 12%)">
+              {placeholder || "Select option"}
+            </Text>
           )}
 
           <Icon as={FiChevronDown} />
@@ -52,8 +67,20 @@ const SelectMenu = ({ value, onChange, placeholder, options, title, ...props }: 
         <ModalOverlay />
 
         <ModalContent>
-          <ModalCloseButton rounded="full" bg="rgba(0, 0, 0, 0.02)" size="lg" fontSize="sm" top={6} right={5} />
-          <ModalHeader borderBottom="1px solid rgb(0 0 0 / 24%)" align="center" color="black" py={8}>
+          <ModalCloseButton
+            rounded="full"
+            bg="rgba(0, 0, 0, 0.02)"
+            size="lg"
+            fontSize="sm"
+            top={6}
+            right={5}
+          />
+          <ModalHeader
+            borderBottom="1px solid rgb(0 0 0 / 24%)"
+            align="center"
+            color="black"
+            py={8}
+          >
             {title}
           </ModalHeader>
 

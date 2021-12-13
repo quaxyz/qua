@@ -8,9 +8,6 @@ import {
   Stack,
   Image,
   Text,
-  FormControl,
-  FormHelperText,
-  FormLabel,
   Input,
   Button,
   useBreakpointValue,
@@ -23,54 +20,7 @@ import { useActiveWeb3React } from "hooks/web3";
 import { domain, schemas } from "libs/constants";
 import { providers } from "ethers";
 import { useRouter } from "next/router";
-
-type FormGroupProps = {
-  id: string;
-  label?: string;
-  helperText?: string;
-  rightAddonText?: string;
-  required?: boolean;
-  children: any;
-};
-const FormGroup = ({ id, label, helperText, rightAddonText, required, children }: FormGroupProps) => (
-  <FormControl id={id} isRequired={required}>
-    <FormLabel fontWeight="500">{label}</FormLabel>
-
-    <Stack
-      pr={3}
-      alignItems="center"
-      direction="row"
-      borderBottom="1px solid rgb(0 0 0 / 24%)"
-      _hover={{
-        borderColor: "rgb(0 0 0 / 60%)",
-      }}
-    >
-      {React.cloneElement(children, {
-        border: "none",
-        rounded: "0px",
-        px: 0,
-        py: 6,
-        fontWeight: 700,
-        fontSize: "2xl",
-        flex: 1,
-        _placeholder: {
-          color: "rgb(0 0 0 / 12%)",
-        },
-        _focus: {
-          outline: "none",
-        },
-      })}
-
-      {rightAddonText && (
-        <Text fontSize="2xl" fontWeight="500">
-          {rightAddonText}
-        </Text>
-      )}
-    </Stack>
-
-    {helperText && <FormHelperText>{helperText}</FormHelperText>}
-  </FormControl>
-);
+import { FormGroup } from "components/form-group";
 
 function useCreateStore() {
   const { library, account } = useActiveWeb3React();
@@ -83,7 +33,10 @@ function useCreateStore() {
 
   return async (details: any) => {
     if (!library || !account) {
-      console.error("useClient:", "Library or account is not ready", { library, account });
+      console.error("useClient:", "Library or account is not ready", {
+        library,
+        account,
+      });
       toast({
         title: "Error saving details",
         description: "Please connect your wallet",
@@ -112,10 +65,18 @@ function useCreateStore() {
     };
 
     try {
-      const sig = await signer._signTypedData(data.domain, data.types, data.message);
+      const sig = await signer._signTypedData(
+        data.domain,
+        data.types,
+        data.message
+      );
       console.log("Sign", { address: account, sig, data });
 
-      const { payload: result } = await createStoreMutation.mutateAsync({ address: account, sig, data });
+      const { payload: result } = await createStoreMutation.mutateAsync({
+        address: account,
+        sig,
+        data,
+      });
       console.log("Result", result);
 
       router.push(`${message.store}/app/dashboard`);
@@ -174,7 +135,10 @@ const OnboardSetup: NextPage = () => {
 
       <chakra.main>
         <Container maxW="container.lg" py={14}>
-          <Stack direction={useBreakpointValue({ base: "column", md: "row" })} justify="space-between">
+          <Stack
+            direction={useBreakpointValue({ base: "column", md: "row" })}
+            justify="space-between"
+          >
             <chakra.form flex="3" onSubmit={onSubmit}>
               <Text>
                 Welcome 🎉, <br />{" "}
@@ -184,32 +148,57 @@ const OnboardSetup: NextPage = () => {
               </Text>
 
               <Stack py={12} spacing={12}>
-                <FormGroup id="name" label="Business name" rightAddonText=".qua.xyz">
+                <FormGroup
+                  id="name"
+                  label="Business name"
+                  labelProps={{ variant: "flushed" }}
+                  rightAddonText=".qua.xyz"
+                >
                   <Input
                     isRequired
                     type="text"
                     placeholder="shooshow"
+                    variant="flushed"
+                    size="lg"
                     value={formValue.name}
-                    onChange={(e) => setFormValue({ ...formValue, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormValue({ ...formValue, name: e.target.value })
+                    }
                   />
                 </FormGroup>
 
-                <FormGroup id="email" label="Email address">
+                <FormGroup
+                  id="email"
+                  label="Email address"
+                  labelProps={{ variant: "flushed" }}
+                >
                   <Input
                     isRequired
                     type="email"
                     placeholder="shoo@mail.com"
+                    variant="flushed"
+                    size="lg"
                     value={formValue.email}
-                    onChange={(e) => setFormValue({ ...formValue, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormValue({ ...formValue, email: e.target.value })
+                    }
                   />
                 </FormGroup>
 
-                <FormGroup id="category" label="Business category">
+                <FormGroup
+                  id="category"
+                  label="Business category"
+                  labelProps={{ variant: "flushed" }}
+                >
                   <SelectMenu
                     title="Select Category"
                     placeholder="Select"
+                    variant="flushed"
+                    size="lg"
                     value={formValue.category}
-                    onChange={(item) => setFormValue({ ...formValue, category: item })}
+                    onChange={(item) =>
+                      setFormValue({ ...formValue, category: item })
+                    }
                     options={[
                       { value: "clothing", label: "Clothing" },
                       { value: "cosmetics", label: "Cosmetics" },

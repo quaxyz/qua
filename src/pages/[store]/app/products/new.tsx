@@ -1,117 +1,72 @@
+import React from "react";
+import type { NextPage } from "next";
+import StoreDashboardLayout from "components/layouts/store-dashboard";
+import NextLink from "next/link";
 import {
   Box,
   Button,
   chakra,
   Container,
-  Flex,
-  FormControl,
-  FormHelperText,
-  FormLabel,
   Heading,
   Input,
-  Spacer,
+  Link,
   Stack,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Textarea
-} from '@chakra-ui/react'
-import StoreDashboardLayout from 'components/layouts/store-dashboard'
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import NextLink from 'next/link'
-import { useRouter } from 'next/router'
-import React from 'react'
-import { ArrowLeft } from 'react-iconly'
-
-type FormGroupProps = {
-  id: string
-  label?: string
-  helperText?: string
-  required?: boolean
-  children: any
-}
-
-const FormGroup = ({
-  id,
-  label,
-  helperText,
-  required,
-  children
-}: FormGroupProps) => (
-  <FormControl id={id} isRequired={required}>
-    <FormLabel fontWeight="500">{label}</FormLabel>
-
-    <Stack
-      pr={3}
-      alignItems="center"
-      direction="row"
-      border="1px solid rgb(0 0 0 / 24%)"
-      _hover={{
-        borderColor: 'rgb(0 0 0 / 60%)'
-      }}
-    >
-      {React.cloneElement(children, {
-        border: 'none',
-        rounded: '0px',
-        px: 0,
-        py: 6,
-        fontWeight: 500,
-        fontSize: 'xl',
-        flex: 1,
-        _placeholder: {
-          color: 'rgb(0 0 0 / 12%)'
-        },
-        _focus: {
-          outline: 'none'
-        }
-      })}
-    </Stack>
-
-    {helperText && <FormHelperText>{helperText}</FormHelperText>}
-  </FormControl>
-)
+} from "@chakra-ui/react";
+import { FormGroup } from "components/form-group";
+import { useRouter } from "next/router";
+import { ArrowLeft } from "react-iconly";
+import { FilePicker } from "components/file-picker";
 
 const New: NextPage = () => {
-  const router = useRouter()
+  const router = useRouter();
 
+  const [files, setFiles] = React.useState<any>([]);
   const [formValue, setFormValue] = React.useState({
-    name: ''
-  })
+    name: "",
+  });
 
   return (
-    <StoreDashboardLayout>
-      <Head>
-        <title>Add product - Qua</title>
-      </Head>
-      <Container maxW="100%">
-        <chakra.header>
-          <Flex justify="space-between" py="8" px="4rem">
-            <Flex alignItems="center">
-              <NextLink href={`/${router?.query.store}/app/products/`} passHref>
-                <ArrowLeft
-                  set="light"
-                  primaryColor="#000"
-                  style={{ cursor: 'pointer' }}
-                />
-              </NextLink>
-              <Heading
-                as="h2"
-                fontSize="xl"
-                fontWeight="500"
-                color="#000"
-                pl="4"
-              >
+    <StoreDashboardLayout title="Add product">
+      <Container maxW="100%" py={8} px={12}>
+        <Stack direction="row" justify="space-between" mb={10}>
+          <NextLink href={`/${router?.query.store}/app/products/`} passHref>
+            <Stack as={Link} border="none" direction="row" alignItems="center">
+              <ArrowLeft set="light" />
+
+              <Heading as="h2" fontSize="lg" fontWeight="600">
                 Add Product
               </Heading>
-            </Flex>
-            <Button>Publish</Button>
-          </Flex>
-        </chakra.header>
+            </Stack>
+          </NextLink>
 
-        <chakra.aside px="4rem" maxW="824">
+          <Button variant="primary">Publish</Button>
+        </Stack>
+
+        <Stack direction="row">
+          <Stack w="100%" flex={2} spacing={10}>
+            <FormGroup id="name" label="Product Name">
+              <Input
+                isRequired
+                type="text"
+                placeholder="Hair growth oil"
+                variant="outline"
+                value={formValue.name}
+                onChange={(e) =>
+                  setFormValue({ ...formValue, name: e.target.value })
+                }
+              />
+            </FormGroup>
+
+            <FormGroup id="media" label="Media">
+              <FilePicker files={files} setFiles={setFiles} />
+            </FormGroup>
+          </Stack>
+
+          <Stack flex={1}>{/*  */}</Stack>
+        </Stack>
+      </Container>
+
+      {/* <chakra.aside px="4rem" maxW="824">
           <FormGroup id="name" label="Title">
             <Input
               isRequired
@@ -197,10 +152,9 @@ const New: NextPage = () => {
               </TabPanel>
             </TabPanels>
           </Tabs>
-        </chakra.aside>
-      </Container>
+        </chakra.aside> */}
     </StoreDashboardLayout>
-  )
-}
+  );
+};
 
-export default New
+export default New;
