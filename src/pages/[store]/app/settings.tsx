@@ -161,7 +161,7 @@ const Settings = () => {
                 outlineColor="rgba(0, 0, 0, 0.80)"
                 borderRadius="0"
                 type="text"
-                placeholder="Link 1"
+                placeholder="Add Link"
               />
               <Input
                 transition=".2s"
@@ -169,7 +169,7 @@ const Settings = () => {
                 outlineColor="rgba(0, 0, 0, 0.80)"
                 borderRadius="0"
                 type="text"
-                placeholder="Link 2"
+                placeholder="Add Link"
               />
               <Input
                 transition=".2s"
@@ -177,7 +177,7 @@ const Settings = () => {
                 outlineColor="rgba(0, 0, 0, 0.80)"
                 borderRadius="0"
                 type="text"
-                placeholder="Link3"
+                placeholder="Add Link"
               />
             </HStack>
             {/* <FormHelperText></FormHelperText> */}
