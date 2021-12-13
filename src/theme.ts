@@ -167,7 +167,7 @@ export default extendTheme({
           border: "1px solid",
           borderColor: "rgb(0 0 0 / 12%)",
           color: "black",
-          py: 3,
+          py: 2,
           px: 4,
 
           _hover: {

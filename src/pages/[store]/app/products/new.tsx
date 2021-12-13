@@ -18,7 +18,7 @@ import { FormGroup } from "components/form-group";
 import { useRouter } from "next/router";
 import { ArrowLeft } from "react-iconly";
 import { FilePicker } from "components/file-picker";
-import SelectMenu from "components/select";
+import { CreateableSelectMenu } from "components/select";
 
 const New: NextPage = () => {
   const router = useRouter();
@@ -79,7 +79,7 @@ const New: NextPage = () => {
                 </Text>
 
                 <FormGroup id="category">
-                  <SelectMenu
+                  <CreateableSelectMenu
                     title="Select Category"
                     placeholder="Select"
                     variant="outline"
