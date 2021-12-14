@@ -203,5 +203,58 @@ export default extendTheme({
         variant: "outlined",
       },
     },
+
+    Tabs: {
+      variants: {
+        line: {
+          tablist: {
+            borderBottom: "1px solid",
+            borderColor: "rgba(0, 0, 0, 0.24)",
+          },
+
+          tab: {
+            color: "rgb(0 0 0 / 48%)",
+            borderBottom: "1px solid",
+            borderColor: "transparent",
+
+            _selected: {
+              color: "rgb(0 0 0 / 72%)",
+              fontWeight: "600",
+            },
+            _active: {
+              bg: "transparent",
+            },
+            _focus: {
+              boxShadow: "none",
+            },
+          },
+        },
+      },
+    },
+
+    Textarea: {
+      variants: {
+        outline: {
+          rounded: "0px",
+          border: "1px solid",
+          borderColor: "rgb(0 0 0 / 26%)",
+          color: "black",
+
+          _hover: {
+            borderColor: "rgb(0 0 0 / 60%)",
+          },
+
+          _placeholder: {
+            color: "rgb(0 0 0 / 36%)",
+          },
+
+          _focus: {
+            borderColor: "rgb(0 0 0 / 60%)",
+            outline: "none",
+            boxShadow: "none",
+          },
+        },
+      },
+    },
   },
 });

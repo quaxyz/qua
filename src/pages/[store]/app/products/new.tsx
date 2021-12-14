@@ -3,7 +3,6 @@ import type { NextPage } from "next";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 import NextLink from "next/link";
 import {
-  Box,
   Button,
   chakra,
   Container,
@@ -12,7 +11,13 @@ import {
   Link,
   Stack,
   StackDivider,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
+  Textarea,
 } from "@chakra-ui/react";
 import { FormGroup } from "components/form-group";
 import { useRouter } from "next/router";
@@ -20,7 +25,7 @@ import { ArrowLeft } from "react-iconly";
 import { FilePicker } from "components/file-picker";
 import { CreateableSelectMenu } from "components/select";
 
-const New: NextPage = () => {
+const NewProduct: NextPage = () => {
   const router = useRouter();
 
   const [files, setFiles] = React.useState<any>([]);
@@ -63,6 +68,72 @@ const New: NextPage = () => {
             <FormGroup id="media" label="Media">
               <FilePicker files={files} setFiles={setFiles} />
             </FormGroup>
+
+            <Tabs>
+              <TabList>
+                <Tab>Description</Tab>
+                <Tab>Details</Tab>
+              </TabList>
+
+              <TabPanels>
+                <TabPanel>
+                  <FormGroup id="description">
+                    <Textarea
+                      rows={8}
+                      placeholder="Tell customers more about the product..."
+                    />
+                  </FormGroup>
+                </TabPanel>
+
+                <TabPanel>
+                  <Stack>
+                    <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
+                      <Heading fontSize="md" fontWeight="600" mb={6}>
+                        Pricing
+                      </Heading>
+
+                      <Stack
+                        direction="row"
+                        justify="space-between"
+                        spacing={6}
+                      >
+                        <FormGroup id="price" label="Price">
+                          <Input
+                            isRequired
+                            type="number"
+                            placeholder="0.00"
+                            variant="flushed"
+                            value={formValue.name}
+                            onChange={(e) =>
+                              setFormValue({
+                                ...formValue,
+                                name: e.target.value,
+                              })
+                            }
+                          />
+                        </FormGroup>
+
+                        <FormGroup id="discountPrice" label="Discount Price">
+                          <Input
+                            isRequired
+                            type="number"
+                            placeholder="0.00"
+                            variant="flushed"
+                            value={formValue.name}
+                            onChange={(e) =>
+                              setFormValue({
+                                ...formValue,
+                                name: e.target.value,
+                              })
+                            }
+                          />
+                        </FormGroup>
+                      </Stack>
+                    </chakra.article>
+                  </Stack>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
           </Stack>
 
           <Stack w="full" flex={1} spacing={5}>
@@ -204,4 +275,4 @@ const New: NextPage = () => {
   );
 };
 
-export default New;
+export default NewProduct;
