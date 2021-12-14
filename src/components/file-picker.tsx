@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import { useDropzone } from "react-dropzone";
 import {
-  chakra,
   Button,
+  Center,
+  chakra,
+  Icon,
+  IconButton,
+  Image,
   Stack,
   Text,
-  Image,
-  Icon,
-  Center,
-  IconButton,
 } from "@chakra-ui/react";
-import { HiUpload } from "react-icons/hi";
+import React, { useState } from "react";
+import { useDropzone } from "react-dropzone";
 import { Delete } from "react-iconly";
+import { HiUpload } from "react-icons/hi";
 import { useUnmount } from "react-use";
 
 type FilePickerProps = {
@@ -52,7 +52,7 @@ export const FilePicker = ({ files, setFiles }: FilePickerProps) => {
   return (
     <Stack w="full" spacing={4}>
       {!files.length ? (
-        <chakra.section h="sm" w="full" bg="rgba(0, 0, 0, 0.04)">
+        <chakra.section h="xl" w="full" bg="rgba(0, 0, 0, 0.04)">
           <chakra.div h="full" {...getRootProps()}>
             <Stack h="full" align="center" justify="center">
               <Button
@@ -73,7 +73,7 @@ export const FilePicker = ({ files, setFiles }: FilePickerProps) => {
           </chakra.div>
         </chakra.section>
       ) : (
-        <chakra.section h="sm" w="full" pos="relative">
+        <chakra.section h="xl" w="full" pos="relative">
           <IconButton
             pos="absolute"
             top="10px"

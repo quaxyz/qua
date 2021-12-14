@@ -1,10 +1,8 @@
-import React from "react";
-import type { NextPage } from "next";
-import StoreDashboardLayout from "components/layouts/store-dashboard";
-import NextLink from "next/link";
 import {
+  Box,
   Button,
   chakra,
+  Checkbox,
   Container,
   Heading,
   Input,
@@ -19,11 +17,15 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
-import { FormGroup } from "components/form-group";
-import { useRouter } from "next/router";
-import { ArrowLeft } from "react-iconly";
 import { FilePicker } from "components/file-picker";
+import { FormGroup } from "components/form-group";
+import StoreDashboardLayout from "components/layouts/store-dashboard";
 import { CreateableSelectMenu } from "components/select";
+import type { NextPage } from "next";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
+import { ArrowLeft } from "react-iconly";
 
 const NewProduct: NextPage = () => {
   const router = useRouter();
@@ -36,7 +38,7 @@ const NewProduct: NextPage = () => {
   return (
     <StoreDashboardLayout title="Add product">
       <Container maxW="100%" py={8} px={12}>
-        <Stack direction="row" justify="space-between" mb={10}>
+        <Stack direction="row" justify="space-between" aling="center" mb={10}>
           <NextLink href={`/${router?.query.store}/app/products/`} passHref>
             <Stack as={Link} border="none" direction="row" alignItems="center">
               <ArrowLeft set="light" />
@@ -86,7 +88,7 @@ const NewProduct: NextPage = () => {
                 </TabPanel>
 
                 <TabPanel>
-                  <Stack>
+                  <Stack spacing={4}>
                     <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
                       <Heading fontSize="md" fontWeight="600" mb={6}>
                         Pricing
@@ -129,6 +131,123 @@ const NewProduct: NextPage = () => {
                           />
                         </FormGroup>
                       </Stack>
+                    </chakra.article>
+
+                    <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
+                      <Stack
+                        direction="row"
+                        justify="space-between"
+                        align="center"
+                        spacing={6}
+                        mb={6}
+                      >
+                        <Heading fontSize="md" fontWeight="600">
+                          Shipping
+                        </Heading>
+                        <Button variant="outline">Edit Locations</Button>
+                      </Stack>
+                      <Checkbox colorScheme="blue" size="lg" mb={4}>
+                        This is a physical product
+                      </Checkbox>
+                      <Text>
+                        {/* this displays when checkbox is false */}
+                        Customers won&apos;t enter their shipping address or
+                        choose a shipping method when buying this product.
+                      </Text>
+
+                      {/* this displays when checkbox is true */}
+                      {/* <Stack
+                        divider={<StackDivider borderColor="gray.200" />}
+                        spacing={2}
+                      >
+                        <Stack
+                          direction="row"
+                          justify="space-between"
+                          spacing={6}
+                        >
+                          <Heading
+                            as="h5"
+                            textTransform="uppercase"
+                            fontSize="sm"
+                          >
+                            Pickup Stores
+                          </Heading>
+                          <Text fontSize="sm" textTransform="uppercase">
+                            In stock
+                          </Text>
+                        </Stack>
+
+                        <Stack>
+                          <Text fontSize="lg" fontWeight="600">
+                            Store Name
+                          </Text>
+                        </Stack>
+                      </Stack> */}
+                    </chakra.article>
+
+                    <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
+                      <Heading fontSize="md" fontWeight="600" mb={6}>
+                        Properties
+                      </Heading>
+
+                      <Checkbox
+                        colorScheme="blue"
+                        size="lg"
+                        mb={4}
+                        defaultIsChecked
+                      >
+                        This product has multiple options, like different sizes
+                        or colors
+                      </Checkbox>
+
+                      {/* this displays when checkbox is true */}
+                      <Box>
+                        <Stack
+                          direction="row"
+                          justify="space-between"
+                          align="center"
+                          spacing={2}
+                        >
+                          <FormGroup id="options" label="Option 1">
+                            <CreateableSelectMenu
+                              title="Choose Option"
+                              placeholder="Choose"
+                              variant="flushed"
+                              value="size"
+                              size="sm"
+                              onChange={() => null}
+                              options={[
+                                { value: "title", label: "Title" },
+                                { value: "color", label: "Color" },
+                                { value: "size", label: "Size" },
+                                { value: "material", label: "Material" },
+                                { value: "style", label: "Style" },
+                              ]}
+                            />
+                          </FormGroup>
+
+                          <FormGroup id="discountPrice">
+                            <Input
+                              isRequired
+                              w="548px"
+                              mb="-2rem"
+                              type="number"
+                              placeholder="Seperate options with a comma"
+                              variant="outline"
+                              value={formValue.name}
+                              onChange={(e) =>
+                                setFormValue({
+                                  ...formValue,
+                                  name: e.target.value,
+                                })
+                              }
+                            />
+                          </FormGroup>
+                        </Stack>
+                        <Button variant="outline" mt={4}>
+                          Add another option
+                        </Button>
+                      </Box>
                     </chakra.article>
                   </Stack>
                 </TabPanel>
