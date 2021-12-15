@@ -134,60 +134,28 @@ const NewProduct: NextPage = () => {
                     </chakra.article>
 
                     <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
-                      <Stack
-                        direction="row"
-                        justify="space-between"
-                        align="center"
-                        spacing={6}
-                        mb={6}
+                      <Heading fontSize="md" fontWeight="600" mb={6}>
+                        Shipping
+                      </Heading>
+
+                      <Checkbox
+                        colorScheme="blue"
+                        size="lg"
+                        mb={4}
+                        defaultIsChecked
                       >
-                        <Heading fontSize="md" fontWeight="600">
-                          Shipping
-                        </Heading>
-                        <Button variant="outline">Edit Locations</Button>
-                      </Stack>
-                      <Checkbox colorScheme="blue" size="lg" mb={4}>
                         This is a physical product
                       </Checkbox>
-                      <Text>
-                        {/* this displays when checkbox is false */}
+                      {/* this displays when checkbox is false */}
+                      {/* <Text>
                         Customers won&apos;t enter their shipping address or
                         choose a shipping method when buying this product.
-                      </Text>
-
-                      {/* this displays when checkbox is true */}
-                      {/* <Stack
-                        divider={<StackDivider borderColor="gray.200" />}
-                        spacing={2}
-                      >
-                        <Stack
-                          direction="row"
-                          justify="space-between"
-                          spacing={6}
-                        >
-                          <Heading
-                            as="h5"
-                            textTransform="uppercase"
-                            fontSize="sm"
-                          >
-                            Pickup Stores
-                          </Heading>
-                          <Text fontSize="sm" textTransform="uppercase">
-                            In stock
-                          </Text>
-                        </Stack>
-
-                        <Stack>
-                          <Text fontSize="lg" fontWeight="600">
-                            Store Name
-                          </Text>
-                        </Stack>
-                      </Stack> */}
+                      </Text> */}
                     </chakra.article>
 
                     <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
                       <Heading fontSize="md" fontWeight="600" mb={6}>
-                        Properties
+                        Variants
                       </Heading>
 
                       <Checkbox
@@ -302,94 +270,6 @@ const NewProduct: NextPage = () => {
           </Stack>
         </Stack>
       </Container>
-
-      {/* <chakra.aside px="4rem" maxW="824">
-          <FormGroup id="name" label="Title">
-            <Input
-              isRequired
-              type="text"
-              pl="4"
-              placeholder="Olive hair oil"
-              value={formValue.name}
-              onChange={(e) =>
-                setFormValue({ ...formValue, name: e.target.value })
-              }
-            />
-          </FormGroup>
-          <Spacer my="8" />
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            height="448"
-            background="linear-gradient(0deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.04))"
-            border="1px solid rgba(0, 0, 0, 0.12)"
-          >
-            <FormGroup id="file">
-              <Input isRequired type="file" />
-            </FormGroup>
-          </Box>
-          <Spacer my="8" />
-
-          <Tabs>
-            <TabList>
-              <Tab>Description</Tab>
-              <Tab>Details</Tab>
-            </TabList>
-
-            <TabPanels>
-              <TabPanel>
-                <Textarea
-                  //   value={value}
-                  //   onChange={handleInputChange}
-                  placeholder="Tell customers more about this product..."
-                  size="md"
-                  borderRadius="0"
-                  height="248"
-                />
-              </TabPanel>
-              <TabPanel>
-                <Box border="0.5px solid rgb(0 0 0 / 12%)" p="4">
-                  <Heading as="h4" fontSize="lg">
-                    Pricing
-                  </Heading>
-                  <Flex>
-                    <FormGroup id="number" label="PRICE">
-                      <Input
-                        isRequired
-                        type="number"
-                        pl="4"
-                        placeholder="$&nbsp;0.00"
-                        value={formValue.name}
-                        onChange={(e) =>
-                          setFormValue({ ...formValue, name: e.target.value })
-                        }
-                      />
-                    </FormGroup>
-                    <FormGroup id="number" label="DISCOUNT PRICE">
-                      <Input
-                        isRequired
-                        type="number"
-                        pl="4"
-                        placeholder="$&nbsp;0.00"
-                        value={formValue.name}
-                        onChange={(e) =>
-                          setFormValue({ ...formValue, name: e.target.value })
-                        }
-                      />
-                    </FormGroup>
-                  </Flex>
-                </Box>
-                <Spacer my="8" />
-                <Box border="0.5px solid rgb(0 0 0 / 12%)" p="4">
-                  <Heading as="h4" fontSize="lg">
-                    Shipping
-                  </Heading>
-                </Box>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </chakra.aside> */}
     </StoreDashboardLayout>
   );
 };
