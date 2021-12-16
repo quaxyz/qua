@@ -37,7 +37,7 @@ const NewProduct: NextPage = () => {
 
   return (
     <StoreDashboardLayout title="Add product">
-      <Container maxW="100%" py={8} px={12}>
+      <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
         <Stack direction="row" justify="space-between" aling="center" mb={10}>
           <NextLink href={`/${router?.query.store}/app/products/`} passHref>
             <Stack as={Link} border="none" direction="row" alignItems="center">
@@ -52,7 +52,10 @@ const NewProduct: NextPage = () => {
           <Button variant="primary">Publish</Button>
         </Stack>
 
-        <Stack direction="row" spacing={14}>
+        <Stack
+          direction={{ base: "column", md: "row" }}
+          spacing={{ base: "8", md: "14" }}
+        >
           <Stack w="full" flex={2} spacing={10}>
             <FormGroup id="name" label="Product Name">
               <Input
@@ -82,6 +85,7 @@ const NewProduct: NextPage = () => {
                   <FormGroup id="description">
                     <Textarea
                       rows={8}
+                      fontSize={{ base: "0.9375rem", md: "1rem" }}
                       placeholder="Tell customers more about the product..."
                     />
                   </FormGroup>
@@ -144,7 +148,9 @@ const NewProduct: NextPage = () => {
                         mb={4}
                         defaultIsChecked
                       >
-                        This is a physical product
+                        <Text fontSize={{ base: "0.9375rem", md: "1rem" }}>
+                          This is a physical product
+                        </Text>
                       </Checkbox>
                       {/* this displays when checkbox is false */}
                       {/* <Text>
@@ -164,14 +170,16 @@ const NewProduct: NextPage = () => {
                         mb={4}
                         defaultIsChecked
                       >
-                        This product has multiple options, like different sizes
-                        or colors
+                        <Text fontSize={{ base: "0.9375rem", md: "1rem" }}>
+                          This product has multiple options, like different
+                          sizes or colors
+                        </Text>
                       </Checkbox>
 
                       {/* this displays when checkbox is true */}
                       <Box>
                         <Stack
-                          direction="row"
+                          direction={{ base: "column", md: "row" }}
                           justify="space-between"
                           align="center"
                           spacing={2}
@@ -198,7 +206,7 @@ const NewProduct: NextPage = () => {
                             <Input
                               isRequired
                               w="548px"
-                              mb="-2rem"
+                              mb={{ base: "none", md: "-2rem" }}
                               type="number"
                               placeholder="Seperate options with a comma"
                               variant="outline"

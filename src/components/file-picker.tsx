@@ -52,7 +52,11 @@ export const FilePicker = ({ files, setFiles }: FilePickerProps) => {
   return (
     <Stack w="full" spacing={4}>
       {!files.length ? (
-        <chakra.section h="xl" w="full" bg="rgba(0, 0, 0, 0.04)">
+        <chakra.section
+          h={{ base: "sm", md: "xl" }}
+          w="full"
+          bg="rgba(0, 0, 0, 0.04)"
+        >
           <chakra.div h="full" {...getRootProps()}>
             <Stack h="full" align="center" justify="center">
               <Button
@@ -73,7 +77,7 @@ export const FilePicker = ({ files, setFiles }: FilePickerProps) => {
           </chakra.div>
         </chakra.section>
       ) : (
-        <chakra.section h="xl" w="full" pos="relative">
+        <chakra.section h={{ base: "sm", md: "xl" }} w="full" pos="relative">
           <IconButton
             pos="absolute"
             top="10px"
