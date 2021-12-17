@@ -1,10 +1,10 @@
-import { Button } from '@chakra-ui/button'
-import { Box, Container, Flex, Heading, Text } from '@chakra-ui/react'
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import { Carousel } from 'react-responsive-carousel'
-import 'react-responsive-carousel/lib/styles/carousel.min.css'
-import WebsiteLayout from '../components/layouts/website'
+import { Button } from "@chakra-ui/button";
+import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react";
+import type { NextPage } from "next";
+import Head from "next/head";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import WebsiteLayout from "../components/layouts/website";
 
 const Home: NextPage = () => {
   return (
@@ -38,7 +38,7 @@ const Home: NextPage = () => {
 
             <Flex p="4">
               <Box>
-                <Button variant="outline" mr="4" size="lg">
+                <Button variant="solid-outline" mr="4" size="lg">
                   Go Shopping
                 </Button>
               </Box>
@@ -91,7 +91,7 @@ const Home: NextPage = () => {
       </Container>
       <Container centerContent>
         <Flex p="4" mt="-16">
-          <Button variant="outline" size="lg" width="348px">
+          <Button variant="solid-outline" size="lg" width="348px">
             Setup my store
           </Button>
         </Flex>
@@ -165,7 +165,7 @@ const Home: NextPage = () => {
               </Box>
               <Box>
                 <Button
-                  variant="outline"
+                  variant="solid-outline"
                   borderColor="#fff"
                   color="#fff"
                   size="lg"
@@ -179,7 +179,7 @@ const Home: NextPage = () => {
         </Box>
       </Container>
     </WebsiteLayout>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

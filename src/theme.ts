@@ -40,12 +40,6 @@ export default extendTheme({
       },
 
       variants: {
-        outline: {
-          borderColor: "1px solid black",
-          backgroundColor: "transparent",
-          rounded: "0px",
-        },
-
         primary: {
           backgroundColor: "black",
           rounded: "8px",
@@ -57,6 +51,12 @@ export default extendTheme({
               backgroundColor: "rgb(0 0 0 / 90%)",
             },
           },
+        },
+
+        "primary-outline": {
+          border: "1px solid rgb(0 0 0 / 26%)",
+          backgroundColor: "transparent",
+          rounded: "8px",
         },
 
         solid: {
@@ -71,6 +71,12 @@ export default extendTheme({
               backgroundColor: "rgb(0 0 0 / 95%)",
             },
           },
+        },
+
+        "solid-outline": {
+          border: "1px solid rgb(0 0 0 / 26%)",
+          backgroundColor: "transparent",
+          rounded: "0px",
         },
       },
     },
@@ -254,6 +260,34 @@ export default extendTheme({
             boxShadow: "none",
           },
         },
+      },
+    },
+
+    Checkbox: {
+      baseStyle: {
+        control: {
+          _checked: {
+            bg: "#212121",
+            borderColor: "#212121",
+
+            _hover: {
+              bg: "#212121",
+              borderColor: "#212121",
+            },
+          },
+        },
+        label: {
+          fontWeight: "500",
+          ml: 4,
+        },
+      },
+
+      md: {
+        label: { fontSize: "sm" },
+      },
+
+      lg: {
+        label: { fontSize: "md" },
       },
     },
   },

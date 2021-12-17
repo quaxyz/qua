@@ -96,7 +96,7 @@ const SelectMenu = ({
                   key={option.value}
                   onClick={() => onItemSelect(option.value)}
                   size="lg"
-                  variant="outline"
+                  variant="solid-outline"
                   isFullWidth
                 >
                   {option.label}
@@ -208,7 +208,7 @@ export const CreateableSelectMenu = ({
                     key={option.value}
                     onClick={() => onItemSelect(option.value)}
                     size="lg"
-                    variant="outline"
+                    variant="solid-outline"
                     isFullWidth
                   >
                     {option.label}

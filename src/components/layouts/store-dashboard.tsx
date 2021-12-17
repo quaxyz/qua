@@ -111,7 +111,7 @@ const AuthNoSigningKey = () => {
 
         <Button
           size="lg"
-          variant="outline"
+          variant="solid-outline"
           mb={5}
           onClick={() => createSigningKey()}
           isLoading={loading}
