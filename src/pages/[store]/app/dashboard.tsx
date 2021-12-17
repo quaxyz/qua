@@ -1,26 +1,27 @@
 import {
-  Stack,
   Box,
-  Heading,
-  Text,
-  Icon,
-  Flex,
   Button,
+  Flex,
+  Heading,
+  Icon,
+  Link,
   Popover,
   PopoverArrow,
   PopoverContent,
   PopoverTrigger,
-  Link,
+  Spacer,
+  Stack,
+  Text,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import NextLink from "next/link";
-import Head from "next/head";
-import type { NextPage } from "next";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
-import { Bag, ArrowDown, ArrowUp, Calendar, ChevronDown } from "react-iconly";
+import type { NextPage } from "next";
+import Head from "next/head";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
 import React, { FunctionComponent, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { ArrowDown, ArrowUp, Bag, Calendar, ChevronDown } from "react-iconly";
 
 interface IInfoCard {
   bgColor?: string;
@@ -34,11 +35,12 @@ interface IInfoCard {
 const InfoCard = (props: IInfoCard) => {
   return (
     <Box
+      maxW="100%"
       border="0.5px solid rgba(0, 0, 0, 0.12)"
       display="flex"
       alignItems="center"
       justifyContent="space-between"
-      p="24px"
+      p={{ base: "2.2rem", md: "4rem" }}
       borderRadius="12px"
       bgColor={props.bgColor ?? "#ffffff"}
     >
@@ -46,7 +48,7 @@ const InfoCard = (props: IInfoCard) => {
         <Box display="flex" alignItems="center">
           <Heading
             as="h3"
-            fontSize="36px"
+            fontSize={{ base: "24px", md: "36px" }}
             fontWeight="400"
             lineHeight="43.57px"
           >
@@ -113,8 +115,8 @@ const OrderGrid = () => {
       <Stack
         direction="row"
         display={{ base: "none", md: "flex" }}
-        mb="12px"
-        p="8px 24px 8px 24px"
+        mb="8px"
+        p="2rem"
       >
         <Flex w="100%">
           <Text>Order ID</Text>
@@ -132,55 +134,65 @@ const OrderGrid = () => {
       {[1, 2, 3, 4, 5].map((index) => (
         <React.Fragment key={index}>
           <Stack
-            mb="12px"
+            mb="1rem"
             direction={{ base: "column", md: "row" }}
             border="0.5px solid rgba(0, 0, 0, 0.12)"
-            p="8px 24px 8px 24px"
+            p="1.4rem"
+            alignItems="center"
           >
-            <Flex w="100%">
-              <Text pr="1.5rem" display={{ base: "inline-block", md: "none" }}>
-                Order ID
+            <Flex w="100%" justify="space-between">
+              <Text display={{ base: "inline-block", md: "none" }}>
+                Order ID:
               </Text>
-              <Text fontSize="14px" fontWeight={{ base: "400", md: "600" }}>
+              <Text fontSize="16px" fontWeight={{ base: "400", md: "600" }}>
                 #1201
               </Text>
             </Flex>
-            <Flex w="100%">
-              <Text pr="1.5rem" display={{ base: "inline-block", md: "none" }}>
-                Customer
+            <Flex w="100%" justify="space-between">
+              <Text display={{ base: "inline-block", md: "none" }}>
+                Customer:
               </Text>
-              <Text fontSize="14px" fontWeight={{ base: "400", md: "600" }}>
+              <Text
+                textAlign="right"
+                fontSize="14px"
+                fontWeight={{ base: "600", md: "600" }}
+                mb={{ base: "2", md: "0" }}
+              >
                 Maria Luiz 0x9Ca9...43aA
               </Text>
             </Flex>
-            <Flex w="100%">
-              <Text pr="1.5rem" display={{ base: "inline-block", md: "none" }}>
-                Status
+            <Flex w="100%" justifyContent="space-between">
+              <Text display={{ base: "inline-block", md: "none" }}>
+                Status:
               </Text>
               <Text
                 fontSize="14px"
-                fontWeight="400"
-                bgColor="rgba(205, 254, 240, 1)"
-                color="rgba(2, 120, 87, 1)"
-                lineHeight="1.5"
-                borderRadius="8px"
-                px="12px"
-              >
-                Unfulfilled
-              </Text>
-            </Flex>
-            <Flex w="100%">
-              <Text pr="1.5rem" display={{ base: "inline-block", md: "none" }}>
-                Payment
-              </Text>
-              <Text
-                fontSize="14px"
-                fontWeight="400"
+                fontWeight="500"
                 bgColor="rgba(254, 238, 205, 1)"
                 color="rgba(120, 81, 2, 1)"
                 lineHeight="1.5"
                 borderRadius="8px"
                 px="12px"
+                py="4px"
+                textAlign="center"
+              >
+                Unfulfilled
+              </Text>
+            </Flex>
+            <Flex w="100%" justifyContent="space-between">
+              <Text pr="1.5rem" display={{ base: "inline-block", md: "none" }}>
+                Payment:
+              </Text>
+              <Text
+                fontSize="14px"
+                fontWeight="500"
+                bgColor="rgba(205, 254, 240, 1)"
+                color="rgba(2, 120, 87, 1)"
+                lineHeight="1.5"
+                borderRadius="8px"
+                px="12px"
+                py="4px"
+                textAlign="center"
               >
                 Paid
               </Text>
@@ -238,16 +250,17 @@ const Dashboard: NextPage = () => {
         <title>Dashboard - Frowth</title>
       </Head>
 
-      <Box px={{ base: "1rem", md: "2.5rem" }}>
-        <Flex justifyContent="space-between" py="19.5px" alignItems="center">
+      <Box px={{ base: "1rem", md: "4rem" }}>
+        <Flex justifyContent="space-between" py="2rem" alignItems="center">
           <Heading
-            as="h1"
+            as="h2"
             fontSize={{ base: "18px", md: "24px" }}
-            fontWeight="600"
-            lineHeight="29.05px"
+            fontWeight="500"
+            color="#000"
           >
             Overview
           </Heading>
+
           <Popover matchWidth>
             <PopoverTrigger>
               <Button
@@ -283,10 +296,10 @@ const Dashboard: NextPage = () => {
         <Box>
           <Stack
             width="100%"
-            minW="max-content"
+            // minW="max-content"
             justifyContent="space-between"
             direction={{ base: "column", md: "row" }}
-            spacing={{ base: "8px", md: "24px" }}
+            spacing={{ base: "1rem", md: "24px" }}
           >
             {cards.map((card, index) => (
               <Box key={index}>
@@ -295,19 +308,21 @@ const Dashboard: NextPage = () => {
             ))}
           </Stack>
         </Box>
+        <Spacer py="6" />
+        <hr />
 
         <Flex
           justifyContent="space-between"
-          mt={{ base: "1.5rem", md: "3rem" }}
+          mt={{ base: "1.5rem", md: "2rem" }}
           mb={{ base: "1rem", md: "2rem" }}
-          py="19.5px"
+          pt="1rem"
           alignItems="center"
         >
           <Heading
-            as="h1"
+            as="h2"
             fontSize={{ base: "18px", md: "24px" }}
-            fontWeight="600"
-            lineHeight="29.05px"
+            fontWeight="500"
+            color="#000"
           >
             Activity
           </Heading>
