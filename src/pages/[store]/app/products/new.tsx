@@ -20,7 +20,7 @@ import {
 import { FilePicker } from "components/file-picker";
 import { FormGroup } from "components/form-group";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
-import { CreateableSelectMenu } from "components/select";
+import SelectMenu, { CreateableSelectMenu } from "components/select";
 import type { NextPage } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -142,21 +142,15 @@ const NewProduct: NextPage = () => {
                         Shipping
                       </Heading>
 
-                      <Checkbox
-                        colorScheme="blue"
-                        size="lg"
-                        mb={4}
-                        defaultIsChecked
-                      >
-                        <Text fontSize={{ base: "0.9375rem", md: "1rem" }}>
-                          This is a physical product
-                        </Text>
+                      <Checkbox mb={6} defaultIsChecked>
+                        This is a physical product
                       </Checkbox>
+
                       {/* this displays when checkbox is false */}
-                      {/* <Text>
-                        Customers won&apos;t enter their shipping address or
+                      <Text fontSize="sm" color="rgb(0 0 0 / 62%)">
+                        * Customers won&apos;t enter their shipping address or
                         choose a shipping method when buying this product.
-                      </Text> */}
+                      </Text>
                     </chakra.article>
 
                     <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
@@ -164,32 +158,25 @@ const NewProduct: NextPage = () => {
                         Variants
                       </Heading>
 
-                      <Checkbox
-                        colorScheme="blue"
-                        size="lg"
-                        mb={4}
-                        defaultIsChecked
-                      >
-                        <Text fontSize={{ base: "0.9375rem", md: "1rem" }}>
-                          This product has multiple options, like different
-                          sizes or colors
-                        </Text>
+                      <Checkbox mb={8} defaultIsChecked>
+                        This product has multiple options, like different sizes
+                        or colors
                       </Checkbox>
 
-                      {/* this displays when checkbox is true */}
-                      <Box>
-                        <Stack
-                          direction={{ base: "column", md: "row" }}
-                          justify="space-between"
-                          align="center"
-                          spacing={2}
-                        >
+                      <Stack
+                        direction={{ base: "column", md: "row" }}
+                        justify="space-between"
+                        align="flex-end"
+                        spacing={5}
+                        mb={6}
+                      >
+                        <Box flex={1}>
                           <FormGroup id="options" label="Option 1">
-                            <CreateableSelectMenu
+                            <SelectMenu
                               title="Choose Option"
                               placeholder="Choose"
                               variant="flushed"
-                              value="size"
+                              value=""
                               size="sm"
                               onChange={() => null}
                               options={[
@@ -201,13 +188,12 @@ const NewProduct: NextPage = () => {
                               ]}
                             />
                           </FormGroup>
+                        </Box>
 
+                        <Box flex={2}>
                           <FormGroup id="discountPrice">
                             <Input
                               isRequired
-                              w="548px"
-                              mb={{ base: "none", md: "-2rem" }}
-                              type="number"
                               placeholder="Seperate options with a comma"
                               variant="outline"
                               value={formValue.name}
@@ -219,11 +205,12 @@ const NewProduct: NextPage = () => {
                               }
                             />
                           </FormGroup>
-                        </Stack>
-                        <Button variant="outline" mt={4}>
-                          Add another option
-                        </Button>
-                      </Box>
+                        </Box>
+                      </Stack>
+
+                      <Button variant="solid-outline">
+                        Add another option
+                      </Button>
                     </chakra.article>
                   </Stack>
                 </TabPanel>

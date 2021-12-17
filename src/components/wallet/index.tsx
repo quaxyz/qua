@@ -77,7 +77,7 @@ const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
                         as={Link}
                         href="https://metamask.io/"
                         size="lg"
-                        variant="outline"
+                        variant="solid-outline"
                         isExternal
                         isFullWidth
                       >
@@ -107,7 +107,7 @@ const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
                     <Image src={wallet.iconUrl} boxSize={5} alt={wallet.name} />
                   }
                   size="lg"
-                  variant="outline"
+                  variant="solid-outline"
                   onClick={() => onActivate(wallet.connector)}
                   disabled={isPending}
                   isFullWidth
@@ -157,7 +157,7 @@ const AccountModal = ({ isOpen, onClose }: any) => {
               href={`https://etherscan.io/address/${account}`}
               rightIcon={<FiExternalLink />}
               size="lg"
-              variant="outline"
+              variant="solid-outline"
               isFullWidth
               isExternal
             >
@@ -170,7 +170,7 @@ const AccountModal = ({ isOpen, onClose }: any) => {
                   onClose();
                 }}
                 size="lg"
-                variant="outline"
+                variant="solid-outline"
                 isFullWidth
               >
                 Settings
@@ -183,7 +183,7 @@ const AccountModal = ({ isOpen, onClose }: any) => {
               }}
               color="red.500"
               size="lg"
-              variant="outline"
+              variant="solid-outline"
               isFullWidth
             >
               Log out

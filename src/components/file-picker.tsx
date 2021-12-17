@@ -60,8 +60,7 @@ export const FilePicker = ({ files, setFiles }: FilePickerProps) => {
           <chakra.div h="full" {...getRootProps()}>
             <Stack h="full" align="center" justify="center">
               <Button
-                variant="outline"
-                rounded="8px"
+                variant="primary-outline"
                 color="rgb(0 0 0 / 72%)"
                 borderColor="rgb(0 0 0 / 12%)"
                 fontSize="md"

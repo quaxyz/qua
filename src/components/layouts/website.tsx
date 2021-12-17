@@ -44,7 +44,7 @@ const WebsiteLayout: React.FC = ({ children }) => {
               </Tab>
             </TabList>
           </Tabs>
-          <Button key="metamask-install" size="md" variant="outline">
+          <Button key="metamask-install" size="md" variant="solid-outline">
             Connect wallet
           </Button>
         </Flex>

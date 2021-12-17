@@ -176,7 +176,7 @@ const Settings = () => {
             href={`https://etherscan.io/address/${account}`}
             rightIcon={<FiExternalLink />}
             size="lg"
-            variant="outline"
+            variant="solid-outline"
             // w="300px"
             isFullWidth
             isExternal
