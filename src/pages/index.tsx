@@ -1,5 +1,13 @@
 import { Button } from "@chakra-ui/button";
-import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react";
+import {
+  Box,
+  chakra,
+  Container,
+  Flex,
+  Heading,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { Carousel } from "react-responsive-carousel";
@@ -12,111 +20,156 @@ const Home: NextPage = () => {
       <Head>
         <title>Home - Qua</title>
       </Head>
-      <header className="header">
+      <chakra.header maxW="100%">
         <Box
           bgImage="url('/hedr-bg-home.svg')"
           bgPosition="center center"
           bgRepeat="no-repeat"
-          bgSize="80% 120%"
+          bgSize={{ base: "cover", md: "80% 120%" }}
           mt="12"
         >
-          <Container maxW="container.lg" py="20" centerContent>
-            <Box maxW="48rem" mb="8">
+          <Container maxW="100%" py="20" centerContent>
+            <Box maxW={{ base: "100%", md: "48rem" }} mb="8">
               <Heading
                 textAlign="center"
                 color="#000000"
                 size="lg"
-                fontSize="64"
+                fontSize={{ base: "1.6rem", md: "64" }}
                 mb="4"
               >
                 Connecting every bussiness to a customer
               </Heading>
-              <Text fontSize="2xl" textAlign="center">
+              <Text fontSize={{ base: "xl", md: "2xl" }} textAlign="center">
                 On the world’s largest P2P ecommerce stores
               </Text>
             </Box>
 
-            <Flex p="4">
-              <Box>
-                <Button variant="solid-outline" mr="4" size="lg">
-                  Go Shopping
-                </Button>
-              </Box>
-              <Box>
-                <Button size="lg">Setup my store</Button>
-              </Box>
-            </Flex>
+            <Stack
+              display={{ base: "none", md: "flex" }}
+              direction="row"
+              width="100%"
+              justify="center"
+              align="center"
+              p="4"
+            >
+              <Button variant="solid-outline" size="lg">
+                Go Shopping
+              </Button>
+              <Button size="lg">Setup my store</Button>
+            </Stack>
+
+            <Stack
+              display={{ base: "flex", md: "none" }}
+              direction="row"
+              justify="center"
+              width="100%"
+              align="center"
+            >
+              <Button variant="solid-outline" width="100%" size="lg">
+                Go Shopping
+              </Button>
+              <Button width="100%" size="lg">
+                Setup my store
+              </Button>
+            </Stack>
           </Container>
         </Box>
-      </header>
+      </chakra.header>
 
-      <Container maxW="container.lg" pt="20" centerContent>
-        <Box maxW="48rem">
-          <Text fontSize="xl" textAlign="center" mb="2">
-            <strong>Qua</strong> is bringing every bussiness online
-          </Text>
-          <Heading textAlign="center" color="#000000" size="md" fontSize="36">
-            Sell to your customers in 3 easy steps...
-          </Heading>
-        </Box>
+      <Container
+        maxW="100%"
+        pt="20"
+        mb={{ base: "2rem", md: "4rem" }}
+        centerContent
+      >
+        <Text fontSize={{ base: "lg", md: "xl" }} textAlign="center" mb="2">
+          <strong>Qua</strong> is bringing every bussiness online
+        </Text>
+        <Heading
+          textAlign="center"
+          color="#000000"
+          size="md"
+          fontSize={{ base: "1.5rem", md: "36" }}
+        >
+          Sell to your customers in 3 easy steps...
+        </Heading>
       </Container>
 
-      <Container maxW="container.xl">
-        <Carousel autoPlay centerMode interval={3000} infiniteLoop>
+      <Container maxW="100%">
+        <Carousel centerMode interval={8000} infiniteLoop>
           <Box
-            bgImage="url('/images/setup.png')"
+            bgImage={{
+              base: "url('/images/m_setup-store.png')",
+              md: "url('/images/setup.png')",
+            }}
             bgPosition="center center"
             bgRepeat="no-repeat"
             bgSize="contain"
             MaxW="100%"
             height="80vh"
+            m="1"
           />
           <Box
-            bgImage="url('/images/inventory.png')"
+            bgImage={{
+              base: "url('/images/m_add-product.png')",
+              md: "url('/images/inventory.png')",
+            }}
             bgPosition="center center"
             bgRepeat="no-repeat"
             bgSize="contain"
             MaxW="100%"
             height="80vh"
+            m="1"
           />
           <Box
-            bgImage="url('/images/orders.png')"
+            bgImage={{
+              base: "url('/images/m_fufill-orders.png')",
+              md: "url('/images/orders.png')",
+            }}
             bgPosition="center center"
             bgRepeat="no-repeat"
             bgSize="contain"
             MaxW="100%"
             height="80vh"
+            m="1"
           />
         </Carousel>
       </Container>
-      <Container centerContent>
-        <Flex p="4" mt="-16">
+      <Container maxW="100%" centerContent>
+        <Flex p="4">
           <Button variant="solid-outline" size="lg" width="348px">
             Setup my store
           </Button>
         </Flex>
       </Container>
 
-      <Container maxW="container.lg" pt="20" centerContent>
-        <Box maxW="48rem">
-          <Heading
-            textAlign="center"
-            color="#000000"
-            size="md"
-            fontSize="36"
-            mb="4"
-          >
-            Customers shop in a breath with ease.
-          </Heading>
-          <Text fontSize="xl" textAlign="center">
-            Direct shopping from your favorite dealer is breez·y
-          </Text>
-        </Box>
+      <Container
+        maxW="100%"
+        pt="20"
+        mb={{ base: "2rem", md: "4rem" }}
+        centerContent
+      >
+        <Heading
+          textAlign="center"
+          color="#000000"
+          size="md"
+          fontSize={{ base: "1.8rem", md: "36" }}
+          mb="4"
+        >
+          Customers shop in a breath with ease.
+        </Heading>
+        <Text fontSize="xl" textAlign="center">
+          Direct shopping from your favorite dealer is breez·y
+        </Text>
       </Container>
-      <Container maxW="container.xl">
-        <Carousel autoPlay centerMode interval={3000} infiniteLoop>
+
+      <Container maxW="100%">
+        <Carousel centerMode interval={8000} infiniteLoop>
           <Box
-            bgImage="url('/images/product-view.png')"
+            bgImage={{
+              base: "url('/images/m_product-view.png')",
+              md: "url('/images/product-view.png')",
+            }}
             bgPosition="center center"
             bgRepeat="no-repeat"
             bgSize="contain"
@@ -125,7 +178,10 @@ const Home: NextPage = () => {
             marginInline="12px"
           />
           <Box
-            bgImage="url('/images/track.png')"
+            bgImage={{
+              base: "url('/images/m_track.png')",
+              md: "url('/images/track.png')",
+            }}
             bgPosition="center center"
             bgRepeat="no-repeat"
             bgSize="contain"
@@ -136,9 +192,12 @@ const Home: NextPage = () => {
         </Carousel>
       </Container>
 
-      <Container maxW="container.lg">
+      <Container maxW="container.lg" display={{ base: "none", md: "block" }}>
         <Box
-          bgImage="url('/images/footer-cta.svg')"
+          bgImage={{
+            base: "url('/images/m_footer-cta.svg')",
+            md: "url('/images/footer-cta.svg')",
+          }}
           bgPosition="center center"
           bgRepeat="no-repeat"
           bgSize="contain"
@@ -146,17 +205,20 @@ const Home: NextPage = () => {
           height="100vh"
           position="relative"
         >
-          <Box position="absolute" bottom="16rem" left="13em">
-            <Text fontSize="2xl" color="#fff">
+          <Box
+            position="absolute"
+            bottom={{ base: "11rem", md: "16rem" }}
+            left={{ base: "5rem", md: "13em" }}
+          >
+            <Text fontSize={{ base: "1xl", md: "2xl" }} color="#fff">
               Join the revolution
             </Text>
             <Flex pt="4" flexDirection="column">
               <Box>
                 <Button
                   variant="solid"
-                  size="lg"
                   mb="4"
-                  width="248px"
+                  width={{ base: "100%", md: "248px" }}
                   backgroundColor="#fff"
                   color="#000"
                 >
@@ -168,7 +230,6 @@ const Home: NextPage = () => {
                   variant="solid-outline"
                   borderColor="#fff"
                   color="#fff"
-                  size="lg"
                   width="248px"
                 >
                   Go Shopping
@@ -177,6 +238,32 @@ const Home: NextPage = () => {
             </Flex>
           </Box>
         </Box>
+      </Container>
+
+      <Container maxW="100%" display={{ base: "block", md: "none" }}>
+        <Text fontSize="2xl" align="center" color="#000">
+          Join the revolution
+        </Text>
+        <Stack pt="4" direction="column" spacing="4">
+          <Button
+            variant="solid"
+            size="lg"
+            width="100%"
+            backgroundColor="#000"
+            color="#fff"
+          >
+            Start selling
+          </Button>
+          <Button
+            variant="solid-outline"
+            size="lg"
+            width="100%"
+            borderColor="#000"
+            color="#000"
+          >
+            Go Shopping
+          </Button>
+        </Stack>
       </Container>
     </WebsiteLayout>
   );

@@ -1,67 +1,67 @@
-import { Box, Container, Heading, Text } from '@chakra-ui/react'
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import React from 'react'
-import WebsiteLayout from '../components/layouts/website'
+import { Box, chakra, Container, Heading, Input, Text } from "@chakra-ui/react";
+import { FormGroup } from "components/form-group";
+import type { NextPage } from "next";
+import Head from "next/head";
+import React from "react";
+import WebsiteLayout from "../components/layouts/website";
 
 const Stores: NextPage = () => {
+  const [formValue, setFormValue] = React.useState({
+    name: "",
+  });
+
   return (
     <WebsiteLayout>
       <Head>
         <title>P2P Stores - Qua</title>
       </Head>
-      <header className="header">
+      <chakra.header>
         <Box
           bgImage="url('/hedr-bg-store.svg')"
           bgPosition="center center"
           bgRepeat="no-repeat"
-          bgSize="80% 120%"
-          mt="12"
+          bgSize={{ base: "cover", md: "80% 120%" }}
+          mt={{ base: "2", md: "12" }}
         >
-          <Container maxW="container.lg" py="20" centerContent>
-            <Box maxW="48rem" mb="8">
+          <Container maxW="100%" py="20" centerContent>
+            <Box maxW={{ base: "100%", md: "48rem" }} mb="8">
               <Heading
                 textAlign="center"
                 color="#000000"
                 size="lg"
-                fontSize="48"
+                fontSize={{ base: "1.5rem", md: "3rem" }}
                 mb="4"
               >
                 Shop from the best stores of your dreams
               </Heading>
-              <Text fontSize="xl" textAlign="center">
-                Browse and shop directly from a collection of businesses{' '}
+              <Text fontSize={{ base: "xl", md: "2xl" }} textAlign="center">
+                Browse and shop directly from a collection of businesses{" "}
               </Text>
             </Box>
 
-            <Box>
-              <style jsx>{`
-                .input {
-                  width: 580px;
-                  borderradius: 0;
-                  background: #ffffff;
-                  border: 1px solid rgba(0, 0, 0, 0.24);
-                  padding: 1rem 1.4rem;
-                  outline: none;
-                }
-
-                .input:focus {
-                  border: 1px solid rgba(0, 0, 0, 1);
-                }
-              `}</style>
-              <form id="search" className="form-store">
-                <input
-                  className="input"
+            <Box maxW="100%">
+              <FormGroup id="name">
+                <Input
+                  style={{
+                    width: "36.25rem",
+                    height: "4rem",
+                    backgroundColor: "#fff",
+                  }}
                   type="search"
                   placeholder="Search: “store name”, “industry”, “location”, “product name” ..."
+                  variant="outline"
+                  value={formValue.name}
+                  onChange={(e) =>
+                    setFormValue({ ...formValue, name: e.target.value })
+                  }
                 />
-              </form>
+              </FormGroup>
             </Box>
           </Container>
         </Box>
-      </header>
+      </chakra.header>
     </WebsiteLayout>
-  )
-}
+  );
+};
 
-export default Stores
+export default Stores;
