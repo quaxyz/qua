@@ -103,14 +103,15 @@ const About: NextPage = () => {
       <Container
         maxW={{ base: "100%", md: "container.xl" }}
         pr={{ base: "none", md: "8rem" }}
+        px={{ base: "4", md: "none" }}
         mb="8rem"
       >
-        <Stack direction="column" spacing="8">
+        <Stack direction="column" spacing={{ base: "4", md: "8" }}>
           <Text fontSize="lg" fontWeight="600" color="#000">
             Qua is a technology provider building a decentralized network for
             the e-commerce ecosystem.
           </Text>
-          <Spacer py="4" />
+          <Spacer py={{ base: "2", md: "4" }} />
           <Heading as="h3" size="lg" textDecoration="underline" color="#000">
             Our vision
           </Heading>
@@ -228,28 +229,40 @@ const About: NextPage = () => {
               </Stack>
               <Text fontSize="sm">Qua_logo_000.svg</Text>
             </Stack>
-            <Flex
+            <Stack
               direction="column"
               alignItems="center"
               justifyContent="center"
               mx="8"
             >
-              <Box border="2px solid #000" px="2.8rem" width="100%" mb="4">
+              <Stack
+                border="2px solid #000"
+                align="center"
+                px="2.8rem"
+                width="100%"
+                mb="4"
+              >
                 <Image
                   src="/svg/qua_mark_black.svg"
                   alt="Qua"
                   width={140}
                   height={60}
                 />
-              </Box>
+              </Stack>
               <Text fontSize="sm">Qua_mark_000.svg</Text>
-            </Flex>
-            <Flex
+            </Stack>
+            <Stack
               direction="column"
               alignItems="center"
               justifyContent="center"
             >
-              <Box border="2px solid #000" px="4rem" width="100%" mb="4">
+              <Stack
+                border="2px solid #000"
+                align="center"
+                px="2.8rem"
+                width="100%"
+                mb="4"
+              >
                 <Image
                   src="/svg/qua_wordmark_black.svg"
                   alt="Qua"
@@ -257,21 +270,22 @@ const About: NextPage = () => {
                   width={140}
                   height={60}
                 />
-              </Box>
+              </Stack>
               <Text>Qua_wordmark_000.svg</Text>
-            </Flex>
+            </Stack>
           </Stack>
           <Spacer py="4" />
           <Stack direction={{ base: "column", md: "row" }}>
-            <Flex
+            <Stack
               direction="column"
               alignItems="center"
               justifyContent="center"
             >
-              <Box
+              <Stack
                 background="#000"
                 border="2px solid #000"
-                px="4rem"
+                align="center"
+                px="2.8rem"
                 width="100%"
                 mb="4"
               >
@@ -282,19 +296,20 @@ const About: NextPage = () => {
                   width={140}
                   height={60}
                 />
-              </Box>
+              </Stack>
               <Text>Qua_logo_fff.svg</Text>
-            </Flex>
-            <Flex
+            </Stack>
+            <Stack
               direction="column"
               alignItems="center"
               justifyContent="center"
               mx="8"
             >
-              <Box
+              <Stack
                 background="#000"
                 border="2px solid #000"
-                px="4rem"
+                align="center"
+                px="2.8rem"
                 width="100%"
                 mb="4"
               >
@@ -305,18 +320,20 @@ const About: NextPage = () => {
                   width={140}
                   height={60}
                 />
-              </Box>
+              </Stack>
+
               <Text>Qua_mark_fff.svg</Text>
-            </Flex>
-            <Flex
+            </Stack>
+            <Stack
               direction="column"
               alignItems="center"
               justifyContent="center"
             >
-              <Box
+              <Stack
                 background="#000"
                 border="2px solid #000"
-                px="4rem"
+                align="center"
+                px="2.8rem"
                 width="100%"
                 mb="4"
               >
@@ -327,56 +344,11 @@ const About: NextPage = () => {
                   width={140}
                   height={60}
                 />
-              </Box>
-              <Text>Qua_wordmark_fff.svg</Text>
-            </Flex>
-          </Stack>
-          <Spacer py="4" />
-          <Heading as="h4" size="md">
-            Color
-          </Heading>
+              </Stack>
 
-          <Stack direction={{ base: "column", md: "row" }}>
-            <Flex
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Box
-                background="#000"
-                border="2px solid #000"
-                p="6rem"
-                width="100%"
-                mb="4"
-              >
-                <Text color="#fff">#000</Text>
-              </Box>
-              <Text>Black</Text>
-            </Flex>
-            <Flex
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-              mx="8"
-            >
-              <Box border="2px solid #000" p="6rem" width="100%" mb="4">
-                <Text color="#000">#FFF</Text>
-              </Box>
-              <Text>White</Text>
-            </Flex>
+              <Text>Qua_wordmark_fff.svg</Text>
+            </Stack>
           </Stack>
-          <Spacer my="4rem" />
-          <Heading as="h4" size="md">
-            Partnership Guideline
-          </Heading>
-          <Spacer my="2.4rem" />
-          <Box mb="6">
-            <Image
-              src="/svg/partnership_black.svg"
-              alt="Partnership"
-              layout="fixed"
-            />
-          </Box>
         </Stack>
       </Container>
     </WebsiteLayout>
