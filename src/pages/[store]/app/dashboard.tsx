@@ -110,6 +110,7 @@ const InfoCard = (props: IInfoCard) => {
 };
 
 const OrderGrid = () => {
+  const router = useRouter();
   return (
     <Box pb="3rem">
       <Stack
@@ -144,9 +145,11 @@ const OrderGrid = () => {
               <Text display={{ base: "inline-block", md: "none" }}>
                 Order ID:
               </Text>
-              <Text fontSize="16px" fontWeight={{ base: "400", md: "600" }}>
-                #1201
-              </Text>
+              <NextLink href={`/${router.query?.store}/app/orders/${index}`}>
+                <Link fontSize="16px" fontWeight={{ base: "400", md: "600" }}>
+                  #1201
+                </Link>
+              </NextLink>
             </Flex>
             <Flex w="100%" justify="space-between">
               <Text display={{ base: "inline-block", md: "none" }}>
