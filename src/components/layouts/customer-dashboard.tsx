@@ -59,7 +59,7 @@ const CustomerLayout = ({ title, children }: any) => {
             <NextLink href={`/${router?.query.store}/products/`} passHref>
               <Link borderBottom="none" _hover={{ transform: "scale(1.05)" }}>
                 <Heading fontWeight="800" fontSize="2xl" px={3}>
-                  Frowth
+                  shooshow
                 </Heading>
               </Link>
             </NextLink>
@@ -139,7 +139,7 @@ const CustomerLayout = ({ title, children }: any) => {
             <NextLink href={`/${router?.query.store}/products/`} passHref>
               <Link borderBottom="none" _hover={{ transform: "scale(1.05)" }}>
                 <Heading fontWeight="800" fontSize="xl">
-                  Frowth
+                  shooshow
                 </Heading>
               </Link>
             </NextLink>
@@ -149,7 +149,7 @@ const CustomerLayout = ({ title, children }: any) => {
                 variant: "outline",
                 bg: " rgba(0, 0, 0, 0.04)",
                 rounded: "50px",
-                leftIcon: <Icon as={CgMore} mr={1} />,
+                leftIcon: <Icon as={CgMore} mr={0} />,
                 _hover: {
                   bg: "transparent",
                   borderColor: "rgb(0 0 0 / 12%)",
