@@ -9,13 +9,16 @@ import {
   Stack,
   Text,
   Link,
+  Button,
+  Container,
+  Image,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
-import { Search } from "react-iconly";
+import { Plus, Search } from "react-iconly";
 
 const OrderGrid = () => {
   const router = useRouter();
@@ -114,6 +117,8 @@ const OrderGrid = () => {
 };
 
 const Orders = () => {
+  const router = useRouter();
+  const isOrderList = false;
   return (
     <StoreDashboardLayout>
       <Head>
@@ -132,26 +137,69 @@ const Orders = () => {
           </Heading>
         </Flex>
 
-        <Box maxW="403px" pt="5px" pb={{ base: "28px", md: "45px" }}>
-          <InputGroup>
-            <InputLeftElement
-              fontSize="1rem"
-              pointerEvents="none"
-              children={
-                <Icon
-                  boxSize="10px"
-                  as={() => <Search set="light" primaryColor="#0E0F0F" />}
+        {isOrderList ? (
+          <>
+            <Box maxW="403px" pt="5px" pb={{ base: "28px", md: "45px" }}>
+              <InputGroup>
+                <InputLeftElement
+                  fontSize="1rem"
+                  pointerEvents="none"
+                  children={
+                    <Icon
+                      boxSize="10px"
+                      as={() => <Search set="light" primaryColor="#0E0F0F" />}
+                    />
+                  }
                 />
-              }
-            />
-            <Input
-              type="text"
-              color="rgba(180, 182, 184, 1)"
-              placeholder="Search"
-            />
-          </InputGroup>
-        </Box>
-        <OrderGrid />
+                <Input
+                  type="text"
+                  color="rgba(180, 182, 184, 1)"
+                  placeholder="Search"
+                />
+              </InputGroup>
+            </Box>
+            <OrderGrid />
+          </>
+        ) : (
+          <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
+            <Stack
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+              mt={{ base: "8rem", md: "14rem" }}
+            >
+              <Image
+                src="/svg/Bag.svg"
+                alt="Add Icon"
+                layout="fixed"
+                w={{ base: "20", md: "100" }}
+                h={{ base: "20", md: "100" }}
+                mb="1"
+              />
+              <Stack alignItems="center" textAlign="center" justify="center">
+                <Text fontSize="xl" fontWeight="bold" color="#000">
+                  No recent orders
+                </Text>
+                <Text fontSize="lg" pb="14px">
+                  Add a product to your store to recieve orders
+                </Text>
+                <NextLink
+                  href={`/${router?.query.store}/app/products/new`}
+                  passHref
+                >
+                  <Button variant="primary">
+                    <Plus
+                      set="bold"
+                      primaryColor="#ffffff"
+                      style={{ marginRight: "14px" }}
+                    />
+                    New Product
+                  </Button>
+                </NextLink>
+              </Stack>
+            </Stack>
+          </Container>
+        )}
       </Box>
     </StoreDashboardLayout>
   );

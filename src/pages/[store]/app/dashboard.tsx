@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Container,
   Flex,
   Heading,
   Icon,
@@ -12,6 +13,7 @@ import {
   Spacer,
   Stack,
   Text,
+  Image,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 import type { NextPage } from "next";
@@ -21,7 +23,14 @@ import { useRouter } from "next/router";
 import React, { FunctionComponent, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { ArrowDown, ArrowUp, Bag, Calendar, ChevronDown } from "react-iconly";
+import {
+  ArrowDown,
+  ArrowUp,
+  Bag,
+  Calendar,
+  ChevronDown,
+  Plus,
+} from "react-iconly";
 
 interface IInfoCard {
   bgColor?: string;
@@ -52,18 +61,23 @@ const InfoCard = (props: IInfoCard) => {
             fontWeight="400"
             lineHeight="43.57px"
           >
-            {props.amount}
+            {props.amount ?? 0}
           </Heading>
           <Box display="flex" alignItems="center" ml="11px">
-            <Icon
-              as={() =>
-                props.rateIsNegative ? (
-                  <ArrowDown set="light" primaryColor="rgba(235, 87, 87, 1)" />
-                ) : (
-                  <ArrowUp set="light" primaryColor="rgba(2, 120, 87, 1)" />
-                )
-              }
-            />
+            {props.rate && (
+              <Icon
+                as={() =>
+                  props.rateIsNegative ? (
+                    <ArrowDown
+                      set="light"
+                      primaryColor="rgba(235, 87, 87, 1)"
+                    />
+                  ) : (
+                    <ArrowUp set="light" primaryColor="rgba(2, 120, 87, 1)" />
+                  )
+                }
+              />
+            )}
 
             {props.rate && (
               <Text
@@ -76,7 +90,7 @@ const InfoCard = (props: IInfoCard) => {
                 fontWeight="500"
                 lineHeight="19.36px"
               >
-                {props.rate}%
+                {props.rate ? `${props.rate}%` : 0}
               </Text>
             )}
           </Box>
@@ -241,6 +255,7 @@ const Dashboard: NextPage = () => {
     },
   ];
 
+  const isOrderList = false;
   const router = useRouter();
   const [startDate, setStartDate] = useState(new Date());
   const handleChange = (e: any) => {
@@ -334,7 +349,40 @@ const Dashboard: NextPage = () => {
           </NextLink>
         </Flex>
 
-        <OrderGrid />
+        {isOrderList ? (
+          <OrderGrid />
+        ) : (
+          <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
+            <Stack
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+              mt={{ base: "3rem", md: "6rem" }}
+            >
+              <Stack alignItems="center" textAlign="center" justify="center">
+                <Text fontSize="xl" fontWeight="bold" color="#000">
+                  No recent orders
+                </Text>
+                <Text fontSize="lg" pb="14px">
+                  Add a product to your store to recieve orders
+                </Text>
+                <NextLink
+                  href={`/${router?.query.store}/app/products/new`}
+                  passHref
+                >
+                  <Button variant="primary">
+                    <Plus
+                      set="bold"
+                      primaryColor="#ffffff"
+                      style={{ marginRight: "14px" }}
+                    />
+                    New Product
+                  </Button>
+                </NextLink>
+              </Stack>
+            </Stack>
+          </Container>
+        )}
       </Box>
     </StoreDashboardLayout>
   );
