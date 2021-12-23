@@ -147,7 +147,7 @@ const AboutStore: NextPage = () => {
             color="#000"
             textTransform="uppercase"
           >
-            Store Address:
+            Store Location:
           </Text>
           <Text>100 Sansom St, San Francisco</Text>
         </Stack>
