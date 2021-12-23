@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   chakra,
   Container,
@@ -60,7 +61,9 @@ const Details: NextPage = () => {
                 alt="Product image"
                 objectFit="cover"
                 // objectPosition="center 70%"
-                boxSize={{ base: "100%", md: "44rem" }}
+                w="full"
+                height="full"
+                // boxSize={{ base: "100%", md: "44rem" }}
               />
             </chakra.section>
           </Stack>
@@ -102,6 +105,18 @@ const Details: NextPage = () => {
                   >
                     Quantity:
                   </Text>
+                  <Box width="8rem">
+                    <Text
+                      fontSize="14px"
+                      fontWeight="500"
+                      bgColor="#000"
+                      color="#fff"
+                      px="12px"
+                      py="4px"
+                    >
+                      Incrementor
+                    </Text>
+                  </Box>
                 </Stack>
               </Stack>
 
@@ -131,7 +146,7 @@ const Details: NextPage = () => {
           </Stack>
         </Stack>
 
-        <Stack py={{ base: "8", md: "12rem" }}>
+        <Stack py={{ base: "4", md: "24" }}>
           <Tabs colorScheme="#000000">
             <TabList borderColor="rgba(0, 0, 0, 8%)">
               <Tab>Description</Tab>

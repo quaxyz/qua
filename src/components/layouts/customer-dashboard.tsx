@@ -46,11 +46,14 @@ const CustomerLayout = ({ title, children }: any) => {
       >
         <chakra.nav
           gridArea="topbar"
+          pos="fixed"
+          top="0"
+          w="100%"
           bg="#fff"
           color="#000"
           borderBottom="1px solid rgba(0, 0, 0, 0.08)"
           px={16}
-          py={8}
+          py={5}
           display={{ base: "none", md: "flex" }}
           alignItems="center"
           justifyContent="space-between"
@@ -123,10 +126,15 @@ const CustomerLayout = ({ title, children }: any) => {
 
         <chakra.header
           gridArea="topbar"
+          pos="fixed"
+          top="0"
+          w="100%"
           bg="#fff"
           color="#000"
           borderBottom="1px solid rgba(0, 0, 0, 0.08)"
           px={5}
+          py={5}
+          zIndex="2"
           display={{ base: "block", md: "none" }}
         >
           <Stack
@@ -167,6 +175,7 @@ const CustomerLayout = ({ title, children }: any) => {
           color="#000"
           borderTop="1px solid rgba(0, 0, 0, 0.08)"
           pos="fixed"
+          zIndex="2"
           bottom="0"
           h="4.938rem"
           w="100%"
@@ -182,7 +191,7 @@ const CustomerLayout = ({ title, children }: any) => {
             {navLinks.map((NavLink, idx) => (
               <NextLink
                 key={idx}
-                href={`/${router.query?.store}/app${NavLink.url}`}
+                href={`/${router.query?.store}/${NavLink.url}`}
                 passHref
               >
                 <Link

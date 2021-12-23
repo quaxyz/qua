@@ -176,7 +176,7 @@ const Cart: NextPage = () => {
         </Stack>
         <CartList />
         <Stack
-          width={{ base: "100%", md: "21.813rem" }}
+          width={{ base: "100%", md: "24.813rem" }}
           p={4}
           my={4}
           float="right"
@@ -184,17 +184,17 @@ const Cart: NextPage = () => {
           border="0.5px solid rgba(0, 0, 0, 12%)"
         >
           <Stack direction="row" justify="space-between" py={2}>
-            <Stack direction="column">
+            <Stack direction="column" spacing={4}>
               <Text>Subtotal</Text>
               <Text>Network Fee</Text>
               <Text>Total</Text>
             </Stack>
-            <Stack direction="column">
+            <Stack direction="column" spacing={4}>
               <Text>:</Text>
               <Text>:</Text>
               <Text>:</Text>
             </Stack>
-            <Stack direction="column" fontWeight="bold">
+            <Stack direction="column" fontWeight="bold" spacing={4}>
               <Text>$200</Text>
               <Text>$1</Text>
               <Text>$200</Text>
@@ -203,7 +203,7 @@ const Cart: NextPage = () => {
           <Text fontSize="0.938rem">
             Shipping will be calculated at next step
           </Text>
-          <Button size="md" variant="solid" width="100%">
+          <Button size="lg" variant="solid" width="100%">
             Proceed to Checkout
           </Button>
         </Stack>
