@@ -182,7 +182,7 @@ const CustomerLayout = ({ title, children }: any) => {
             {navLinks.map((NavLink, idx) => (
               <NextLink
                 key={idx}
-                href={`/${router.query?.store}/app${NavLink.url}`}
+                href={`/${router.query?.store}/${NavLink.url}`}
                 passHref
               >
                 <Link
