@@ -78,6 +78,13 @@ export default extendTheme({
           backgroundColor: "transparent",
           rounded: "0px",
         },
+
+        "solid-disabled": {
+          background: "black",
+          color: "#fff",
+          opacity: "0.24",
+          rounded: "0px",
+        },
       },
     },
 
