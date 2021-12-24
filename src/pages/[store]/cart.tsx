@@ -168,7 +168,7 @@ const Cart: NextPage = () => {
 
   return (
     <CustomerLayout title="Cart">
-      <Container maxW="100%" px={{ base: "2", md: "16" }}>
+      <Container maxW="100%" px={{ base: "2", md: "24" }}>
         <Stack w="100%" align="center" p={{ base: "4", md: "8" }}>
           <Heading fontSize={{ base: "xl", md: "3xl" }} fontWeight="300">
             Your Cart (1 item)
