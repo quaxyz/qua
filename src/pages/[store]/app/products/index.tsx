@@ -2,17 +2,17 @@ import {
   Box,
   Button,
   Container,
-  Flex,
   Heading,
+  Icon,
   Image,
-  Link,
+  Input,
+  InputGroup,
+  InputLeftElement,
   Stack,
   Table,
-  TableCaption,
   Tbody,
   Td,
   Text,
-  Tfoot,
   Th,
   Thead,
   Tr,
@@ -21,11 +21,21 @@ import StoreDashboardLayout from "components/layouts/store-dashboard";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
+import { Plus, Search } from "react-iconly";
 import { FiMoreHorizontal } from "react-icons/fi";
 
 const img = `https://images.unsplash.com/photo-1640195516488-1fb03e574057?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=900&q=60`;
 
-const ProductCardMobile = () => {
+interface IProductCard {
+  imageUrl?: string;
+  description?: string;
+  price?: string;
+  inStock?: string;
+  sold?: string;
+  id?: string;
+}
+
+const ProductCardMobile = (props: IProductCard) => {
   return (
     <Stack
       direction="row"
@@ -36,8 +46,7 @@ const ProductCardMobile = () => {
     >
       <Box w="100%" maxW="100px" minW="80px">
         <Image
-          src={img}
-          // src="/images/orders.png"
+          src={props.imageUrl ?? img}
           alt="Add Icon"
           layout="fixed"
           w={{ base: "20", md: "100" }}
@@ -47,15 +56,16 @@ const ProductCardMobile = () => {
       </Box>
       <Box w="100%">
         <Text fontSize="14px" fontWeight="400" lineHeight="16.94px" pb="4px">
-          WD 16TB Elements Desktop Hard Drive HDD, USB 3.0, Compatible with PC,
-          Mac, PS4 & Xbox - WDBWLG0160HBK-NESN
+          {props.description ??
+            `WD 16TB Elements Desktop Hard Drive HDD, USB 3.0, Compatible with PC,
+          Mac, PS4 & Xbox - WDBWLG0160HBK-NESN`}
         </Text>
         <Stack direction="row" spacing="12px" pt="8px">
           <Text textTransform="capitalize" fontSize="12px" fontWeight="400">
             Price:
           </Text>
           <Text textTransform="capitalize" fontSize="12px" fontWeight="500">
-            $200
+            {props.price ? `$${props.price}` : `$200`}
           </Text>
         </Stack>
         <Stack direction="row" spacing="12px" pt="8px">
@@ -63,7 +73,7 @@ const ProductCardMobile = () => {
             In stock:
           </Text>
           <Text textTransform="capitalize" fontSize="12px" fontWeight="500">
-            20
+            {props.inStock ?? `20`}
           </Text>
         </Stack>
         <Stack direction="row" spacing="12px" pt="8px">
@@ -71,7 +81,7 @@ const ProductCardMobile = () => {
             sold:
           </Text>
           <Text textTransform="capitalize" fontSize="12px" fontWeight="500">
-            65
+            {props.sold ?? `65`}
           </Text>
         </Stack>
       </Box>
@@ -84,172 +94,74 @@ const ProductCardMobile = () => {
   );
 };
 
-const ProductCardDesktop: React.FC<{ id: string | number }> = ({ id }) => {
+const ProductCardDesktop = (props: IProductCard) => {
   const router = useRouter();
-
   return (
-    <Table>
-      <Thead>
-        <Tr>
-          <Th>Product Name</Th>
-          <Th>Price</Th>
-          <Th isNumeric>in stock</Th>
-          <Th isNumeric>sold</Th>
-          <Th>Action</Th>
-        </Tr>
-      </Thead>
-      <Tbody fontWeight="400" fontSize="15px" lineHeight="16.94px">
-        <Tr border="0.5px solid rgba(0, 0, 0, 0.12)" p="8px" mt="12px">
-          <Td
-            display="flex"
-            justifyContent="start"
-            maxW="430px"
-            alignItems="center"
-          >
-            <Box w="100%" maxW="100px">
-              <Image
-                src="/images/orders.png"
-                alt="Add Icon"
-                layout="fixed"
-                w="100%"
-                h="100%"
-                maxH="100px"
-                maxW="100px"
-                minH="60px"
-                minW="60px"
-                mb="1"
-              />
-            </Box>
-            <Text
-              pl="12px"
-              fontWeight="300"
-              fontSize="14px"
-              lineHeight="16.94px"
-            >
-              WD 16TB Elements Desktop Hard Drive HDD, USB 3.0, Compatible with
-              PC, Mac, PS4 & Xbox - WDBWLG0160HBK-NESN
-            </Text>
-          </Td>
-          <Td>$24</Td>
-          <Td isNumeric>20</Td>
-          <Td isNumeric>65</Td>
-          <Td>
-            <Button variant="primary-outline" border="none">
-              <FiMoreHorizontal />
-            </Button>
-          </Td>
-        </Tr>
-      </Tbody>
-    </Table>
+    <Tr border="0.5px solid rgba(0, 0, 0, 0.12)" p="8px" mt="12px">
+      <Td
+        display="flex"
+        justifyContent="start"
+        maxW="430px"
+        alignItems="center"
+      >
+        <Box w="100%" maxW="100px">
+          <Image
+            src={props.imageUrl}
+            alt="Add Icon"
+            layout="fixed"
+            w="100%"
+            h="100%"
+            maxH="100px"
+            maxW="100px"
+            minH="60px"
+            minW="60px"
+            mb="1"
+          />
+        </Box>
+        <Text pl="12px" fontWeight="300" fontSize="14px" lineHeight="16.94px">
+          {props.description ??
+            `WD 16TB Elements Desktop Hard Drive HDD, USB 3.0, Compatible with PC,
+          Mac, PS4 & Xbox - WDBWLG0160HBK-NESN`}
+        </Text>
+      </Td>
+      <Td>$ {props.price ?? `24`}</Td>
+      <Td isNumeric>{props.inStock ?? `20`}</Td>
+      <Td isNumeric>{props.sold ?? `65`}</Td>
+      <Td>
+        <Button variant="primary-outline" border="none">
+          <FiMoreHorizontal />
+        </Button>
+      </Td>
+    </Tr>
   );
-  // return (
-  //   <Stack
-  //     mb="1rem"
-  //     direction="row"
-  //     border="0.5px solid rgba(0, 0, 0, 0.12)"
-  //     p="1.4rem"
-  //     alignItems="center"
-  //     textTransform="capitalize"
-  //   >
-  //     <Flex>
-  //       <Box w="250px">
-  //         <Image
-  //           src="/images/orders.png"
-  //           alt="Add Icon"
-  //           layout="fixed"
-  //           w="50px"
-  //           h="50px"
-  //           mb="1"
-  //         />
-  //       </Box>
-  //       <NextLink href={`/${router.query?.store}/app/orders/${id}`}>
-  //         <Link fontSize="16px" fontWeight={{ base: "400", md: "600" }}>
-  //           WD 16TB Elements Desktop Hard Drive HDD, USB 3.0, Compatible with
-  //           PC, Mac, PS4 & Xbox - WDBWLG0160HBK-NESN
-  //         </Link>
-  //       </NextLink>
-  //     </Flex>
-  //     <Flex w="100%" justifyContent="safe">
-  //       <Text display={{ base: "inline-block", md: "none" }} pr="12px">
-  //         Price
-  //       </Text>
-  //       <Text
-  //         fontSize="14px"
-  //         textAlign="right"
-  //         fontWeight={{ base: "600", md: "600" }}
-  //         mb={{ base: "2", md: "0" }}
-  //       >
-  //         $24
-  //       </Text>
-  //     </Flex>
-  //     <Flex w="100%" justify="safe">
-  //       <Text display={{ base: "inline-block", md: "none" }} pr="12px">
-  //         In stock
-  //       </Text>
-  //       <Text
-  //         fontSize="14px"
-  //         fontWeight="500"
-  //         bgColor="rgba(254, 238, 205, 1)"
-  //         color="rgba(120, 81, 2, 1)"
-  //         lineHeight="1.5"
-  //         borderRadius="8px"
-  //         px="12px"
-  //         py="4px"
-  //         textAlign="center"
-  //       >
-  //         20
-  //       </Text>
-  //     </Flex>
-  //     <Flex w="100%" justify="safe">
-  //       <Text display={{ base: "inline-block", md: "none" }} pr="12px">
-  //         sold
-  //       </Text>
-  //       <Text
-  //         fontSize="14px"
-  //         fontWeight="500"
-  //         bgColor="rgba(205, 254, 240, 1)"
-  //         color="rgba(2, 120, 87, 1)"
-  //         lineHeight="1.5"
-  //         borderRadius="8px"
-  //         px="12px"
-  //         py="4px"
-  //         textAlign="center"
-  //       >
-  //         65
-  //       </Text>
-  //     </Flex>
-  //     <Flex w="100%" justify="space-between">
-  //       <Text
-  //         fontSize="14px"
-  //         fontWeight="500"
-  //         bgColor="rgba(205, 254, 240, 1)"
-  //         color="rgba(2, 120, 87, 1)"
-  //         lineHeight="1.5"
-  //         borderRadius="8px"
-  //         px="12px"
-  //         py="4px"
-  //         textAlign="center"
-  //       >
-  //         Paid
-  //       </Text>
-  //     </Flex>
-  //   </Stack>
-  // );
 };
 
 const ProductGrid = () => {
   return (
     <Box pb="3rem">
-      {[1].map((index) => (
-        <>
-          <Box display={{ base: "block", md: "none" }} key={index}>
-            <ProductCardMobile />
-          </Box>
-          <Box display={{ base: "none", md: "block" }} key={index}>
-            <ProductCardDesktop id={index} />
-          </Box>
-        </>
-      ))}
+      <Box display={{ base: "block", md: "none" }}>
+        {[1, 2, 3].map((index) => (
+          <ProductCardMobile key={index} imageUrl={img} />
+        ))}
+      </Box>
+      <Box display={{ base: "none", md: "block" }}>
+        <Table style={{ borderSpacing: "12px 0" }}>
+          <Thead>
+            <Tr>
+              <Th>Product Name</Th>
+              <Th>Price</Th>
+              <Th isNumeric>in stock</Th>
+              <Th isNumeric>sold</Th>
+              <Th>Action</Th>
+            </Tr>
+          </Thead>
+          <Tbody fontWeight="400" fontSize="15px" lineHeight="16.94px">
+            {[1, 2, 3].map((index) => (
+              <ProductCardDesktop key={index} imageUrl={img} />
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
     </Box>
   );
 };
@@ -265,12 +177,41 @@ const Products = () => {
           </Heading>
 
           <NextLink href={`/${router?.query.store}/app/products/new`} passHref>
-            <Button>New Product</Button>
+            <Button variant="primary">
+              <Plus
+                set="bold"
+                primaryColor="#ffffff"
+                style={{ marginRight: "14px" }}
+              />
+              New Product
+            </Button>
           </NextLink>
         </Stack>
 
         {isProductList ? (
-          <ProductGrid />
+          <>
+            <Box maxW="403px" pt="5px" pb={{ base: "28px", md: "45px" }}>
+              <InputGroup>
+                <InputLeftElement
+                  fontSize="1rem"
+                  pointerEvents="none"
+                  // eslint-disable-next-line react/no-children-prop
+                  children={
+                    <Icon
+                      boxSize="10px"
+                      as={() => <Search set="light" primaryColor="#0E0F0F" />}
+                    />
+                  }
+                />
+                <Input
+                  type="text"
+                  color="rgba(180, 182, 184, 1)"
+                  placeholder="Search"
+                />
+              </InputGroup>
+            </Box>
+            <ProductGrid />
+          </>
         ) : (
           <Stack
             direction="column"
