@@ -13,6 +13,44 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 
+const ProductList = () => {
+  const router = useRouter();
+
+  return (
+    <chakra.section>
+      <Stack
+        direction={{ base: "column", md: "row" }}
+        spacing={{ base: "4", md: "8" }}
+        pb={{ base: "none", md: "8" }}
+      >
+        {[1, 2, 3, 4].map((index) => (
+          <NextLink
+            href={`/${router?.query.store}/products/productId`}
+            passHref
+            key={index}
+          >
+            <Stack
+              w={{ base: "100%", md: "25rem" }}
+              height={{ base: "100%", md: "25rem" }}
+            >
+              <Image
+                boxSize="25rem"
+                objectFit="cover"
+                src="/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg"
+                alt="Product Image"
+              />
+              <Heading as="h1" size="md" fontWeight="300">
+                VESONAL Spring Nike shoes Footwear Big Size 38-46{" "}
+              </Heading>
+              <chakra.strong>$200.00</chakra.strong>
+            </Stack>
+          </NextLink>
+        ))}
+      </Stack>
+    </chakra.section>
+  );
+};
+
 const Products: NextPage = () => {
   const router = useRouter();
 
@@ -40,35 +78,10 @@ const Products: NextPage = () => {
             </Stack>
           </Link>
         </NextLink>
-
-        <chakra.section>
-          <Stack
-            direction={{ base: "column", md: "row" }}
-            spacing={{ base: "4", md: "8" }}
-            pb={{ base: "none", md: "8" }}
-          >
-            <NextLink
-              href={`/${router?.query.store}/products/productId`}
-              passHref
-            >
-              <Stack
-                w={{ base: "100%", md: "25rem" }}
-                height={{ base: "100%", md: "25rem" }}
-              >
-                <Image
-                  boxSize="25rem"
-                  objectFit="cover"
-                  src="/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg"
-                  alt="Product Image"
-                />
-                <Heading as="h1" size="md" fontWeight="300">
-                  VESONAL Spring Nike shoes Footwear Big Size 38-46{" "}
-                </Heading>
-                <chakra.strong>$200.00</chakra.strong>
-              </Stack>
-            </NextLink>
-          </Stack>
-        </chakra.section>
+        <Stack spacing={{ base: "4", md: "24" }} mb={{ base: "8", md: "24" }}>
+          <ProductList />
+          <ProductList />
+        </Stack>
       </Container>
     </CustomerLayout>
   );
