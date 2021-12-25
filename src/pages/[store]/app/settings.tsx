@@ -87,7 +87,7 @@ const Settings = () => {
           About
         </Text>
         <Textarea
-          placeholder="Tell customers who you are..."
+          placeholder="What should customers know about your business?"
           size="md"
           borderRadius="0"
           height="248"
