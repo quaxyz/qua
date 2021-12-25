@@ -25,7 +25,9 @@ export default function Api() {
   };
 
   return {
+    request,
     get: (path: string) => request(path, { method: "GET" }),
+    delete: (path: string) => request(path, { method: "DELETE" }),
     post: (path: string, payload: any = {}, options: any = {}) =>
       request(path, {
         ...options,

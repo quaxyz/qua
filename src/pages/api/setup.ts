@@ -47,7 +47,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         const data = JSON.parse(message.details);
-        console.log({ data });
 
         // verify data
         // - check if store name is unique
