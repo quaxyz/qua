@@ -60,10 +60,8 @@ const Details: NextPage = () => {
                 src="/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg"
                 alt="Product image"
                 objectFit="cover"
-                // objectPosition="center 70%"
                 w="full"
                 height="full"
-                // boxSize={{ base: "100%", md: "44rem" }}
               />
             </chakra.section>
           </Stack>
