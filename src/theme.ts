@@ -1,4 +1,4 @@
-import { baseStyle, extendTheme } from "@chakra-ui/react";
+import { extendTheme } from "@chakra-ui/react";
 
 export default extendTheme({
   fonts: {
@@ -27,7 +27,7 @@ export default extendTheme({
         borderBottom: "1px solid",
         _hover: {
           textDecoration: "none",
-          color: "black",
+          transform: "scale(1.05)",
         },
       },
     },
