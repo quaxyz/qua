@@ -8,6 +8,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import { CostSummary } from "components/cost-summary";
 import CustomerLayout from "components/layouts/customer-dashboard";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -168,7 +169,7 @@ const Cart: NextPage = () => {
 
   return (
     <CustomerLayout title="Cart">
-      <Container maxW="100%" px={{ base: "2", md: "16" }}>
+      <Container maxW="100%" px={{ base: "2", md: "24" }}>
         <Stack w="100%" align="center" p={{ base: "4", md: "8" }}>
           <Heading fontSize={{ base: "xl", md: "3xl" }} fontWeight="300">
             Your Cart (1 item)
@@ -183,23 +184,7 @@ const Cart: NextPage = () => {
           position="relative"
           border="0.5px solid rgba(0, 0, 0, 12%)"
         >
-          <Stack direction="row" justify="space-between" py={2}>
-            <Stack direction="column" spacing={4}>
-              <Text>Subtotal</Text>
-              <Text>Network Fee</Text>
-              <Text>Total</Text>
-            </Stack>
-            <Stack direction="column" spacing={4}>
-              <Text>:</Text>
-              <Text>:</Text>
-              <Text>:</Text>
-            </Stack>
-            <Stack direction="column" fontWeight="bold" spacing={4}>
-              <Text>$200</Text>
-              <Text>$1</Text>
-              <Text>$200</Text>
-            </Stack>
-          </Stack>
+          <CostSummary />
           <Text fontSize="0.938rem">
             Shipping will be calculated at next step
           </Text>
