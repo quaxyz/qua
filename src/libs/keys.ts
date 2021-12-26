@@ -13,8 +13,8 @@ export const generateKeyPair = async () => {
   );
 };
 
-export const extractPublicKey = async (keyPair: CryptoKeyPair) => {
-  if (!keyPair.publicKey) throw Error("No public key to extract");
+export const extractPublicKey = async (keyPair: CryptoKeyPair | undefined) => {
+  if (!keyPair?.publicKey) throw Error("No public key to extract");
   return await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
 };
 

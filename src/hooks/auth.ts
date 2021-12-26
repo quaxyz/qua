@@ -17,7 +17,7 @@ export function useInitializeStoreAuth() {
     staleTime: Infinity,
     queryFn: async () => {
       const { payload } = await Api().get(
-        `/api/${router.query?.store}/verify-owner?address=${account}`
+        `/api/${router.query?.store}/app/verify-owner?address=${account}`
       );
 
       return payload;

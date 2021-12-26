@@ -111,9 +111,9 @@ const SelectMenu = ({
 };
 
 type CreateableSelectMenuProps = {
-  onChange: (value: string | number) => void;
-  options: {
-    value: string | number;
+  onChange: (value: string) => void;
+  defaultOptions: {
+    value: string;
     label: string;
   }[];
 
@@ -124,6 +124,7 @@ type CreateableSelectMenuProps = {
 
   variant?: string;
   size?: string;
+  disabled?: boolean;
 };
 
 export const CreateableSelectMenu = ({
@@ -133,27 +134,34 @@ export const CreateableSelectMenu = ({
 }: CreateableSelectMenuProps) => {
   const styles = useStyleConfig("SelectMenu", { variant, size });
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [options, setOptions] = useState(props.defaultOptions);
 
   const onInputChange = (e: any) => {
     e.preventDefault();
 
-    props.onChange(_snakeCase(e.target["search"].value));
+    setOptions([
+      {
+        value: e.target["search"].value?.toLowerCase(),
+        label: e.target["search"].value,
+      },
+      ...options,
+    ]);
+
+    props.onChange(e.target["search"].value?.toLowerCase());
     onClose();
   };
 
-  const onItemSelect = (value: string | number) => {
+  const onItemSelect = (value: string) => {
     props.onChange(value);
     onClose();
   };
 
   return (
     <>
-      <Box __css={styles} onClick={onOpen}>
+      <Box __css={styles} onClick={props.disabled ? undefined : onOpen}>
         <Stack w="100%" direction="row" align="center" justify="space-between">
           {props.value ? (
-            <Text>
-              {props.options.find((o) => o.value === props.value)?.label}
-            </Text>
+            <Text>{options.find((o) => o.value === props.value)?.label}</Text>
           ) : (
             <Text color="rgb(0 0 0 / 12%)">
               {props.placeholder || "Select option"}
@@ -203,7 +211,7 @@ export const CreateableSelectMenu = ({
 
             <Box py={5} px={5}>
               <Stack direction="column" spacing={2}>
-                {props.options.map((option) => (
+                {options.map((option) => (
                   <Button
                     key={option.value}
                     onClick={() => onItemSelect(option.value)}

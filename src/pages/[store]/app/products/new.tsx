@@ -1,9 +1,18 @@
+import React from "react";
+import Api from "libs/api";
+import type { NextPage } from "next";
+import { useRouter } from "next/router";
+import NextLink from "next/link";
+import StoreDashboardLayout from "components/layouts/store-dashboard";
 import {
   Box,
   Button,
   chakra,
   Checkbox,
   Container,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   Heading,
   Input,
   Link,
@@ -16,24 +25,188 @@ import {
   Tabs,
   Text,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import { FilePicker } from "components/file-picker";
 import { FormGroup } from "components/form-group";
-import StoreDashboardLayout from "components/layouts/store-dashboard";
-import SelectMenu, { CreateableSelectMenu } from "components/select";
-import type { NextPage } from "next";
-import NextLink from "next/link";
-import { useRouter } from "next/router";
-import React from "react";
+import { CreateableSelectMenu } from "components/select";
 import { ArrowLeft } from "react-iconly";
+import { useWeb3React } from "@web3-react/core";
+import { getKeyPair } from "libs/keys";
+import { signData } from "libs/signing";
 
-const NewProduct: NextPage = () => {
+const Variants = (props: { onChange: (variants: any[]) => void }) => {
+  const [variants, setVariants] = React.useState([{ type: "", options: "" }]);
+
+  const onVariantChange = (data: any, variantIdx: number) => {
+    setVariants(
+      variants.map((variant, idx) => {
+        if (idx === variantIdx) return data;
+        return variant;
+      })
+    );
+
+    props.onChange(variants);
+  };
+
+  const addVariant = () => {
+    setVariants(variants.concat({ type: "", options: "" }));
+
+    props.onChange(variants);
+  };
+
+  return (
+    <>
+      {variants.map((variant, idx) => (
+        <Stack
+          key={idx}
+          direction={{ base: "column", md: "row" }}
+          justify="space-between"
+          align="flex-end"
+          spacing={5}
+          mb={6}
+        >
+          <Box flex={1}>
+            <FormGroup id="options" label="Option 1">
+              <CreateableSelectMenu
+                title="Choose Option"
+                placeholder="Choose"
+                variant="flushed"
+                value={variant.type}
+                size="sm"
+                onChange={(value) =>
+                  onVariantChange(
+                    {
+                      ...variant,
+                      type: value,
+                    },
+                    idx
+                  )
+                }
+                defaultOptions={[
+                  { value: "title", label: "Title" },
+                  { value: "color", label: "Color" },
+                  { value: "size", label: "Size" },
+                  { value: "material", label: "Material" },
+                  { value: "style", label: "Style" },
+                ]}
+              />
+            </FormGroup>
+          </Box>
+
+          <Box flex={3}>
+            <FormGroup id="discountPrice">
+              <Input
+                isRequired
+                placeholder="Seperate options with a comma"
+                variant="outline"
+                value={variant.options}
+                onChange={(e) =>
+                  onVariantChange(
+                    {
+                      ...variant,
+                      options: e.target.value,
+                    },
+                    idx
+                  )
+                }
+              />
+            </FormGroup>
+          </Box>
+        </Stack>
+      ))}
+
+      <Button onClick={addVariant} variant="solid-outline">
+        Add another option
+      </Button>
+    </>
+  );
+};
+
+const Page: NextPage = () => {
+  const toast = useToast();
   const router = useRouter();
+  const { account } = useWeb3React();
 
-  const [files, setFiles] = React.useState<any>([]);
+  const [saving, setSaving] = React.useState(false);
+  const [hasVariant, setHasVariant] = React.useState(false);
+  const [isLimited, setIsLimited] = React.useState(false);
+
+  const [errors, setErrors] = React.useState<any>({});
   const [formValue, setFormValue] = React.useState({
     name: "",
+    description: "",
+    images: [] as File[],
+    price: "",
+    discountPrice: "",
+    stock: "",
+    physical: false,
+    category: "",
+    tags: "",
+    variants: [] as any[],
   });
+
+  const checkForErrors = (state: any) => ({
+    name: !state.name || state.name.length < 1,
+    price: !state.price || state.price.length < 1,
+  });
+
+  const onPublish = async () => {
+    try {
+      // verify input
+      const formErrors: any = checkForErrors(formValue);
+
+      const formHasError = Object.keys(formErrors).filter(
+        (field) => formErrors[field]
+      ).length;
+
+      if (formHasError) {
+        setErrors({ ...formErrors });
+        return;
+      }
+
+      setSaving(true);
+
+      // upload images
+
+      // sign data
+      const timestamp = parseInt((Date.now() / 1000).toFixed());
+      const keyPair = await getKeyPair();
+      const data = {
+        ...formValue,
+        timestamp,
+      };
+
+      console.log("Data", data);
+
+      const signedContent = await signData(keyPair, data);
+      console.log("Sig", signedContent);
+
+      // send data to server
+      const { payload: result } = await Api().post(
+        `/api/${router.query?.store}/app/products/new`,
+        {
+          address: account,
+          digest: signedContent.digest,
+          key: JSON.stringify(signedContent.publicKey),
+          payload: JSON.stringify(data),
+          signature: signedContent.signature,
+          timestamp,
+        }
+      );
+
+      console.log("Result", result);
+    } catch (error: any) {
+      toast({
+        title: "Error saving product",
+        description: error.message,
+        position: "bottom-right",
+        status: "error",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <StoreDashboardLayout title="Add product">
@@ -49,7 +222,9 @@ const NewProduct: NextPage = () => {
             </Stack>
           </NextLink>
 
-          <Button variant="primary">Publish</Button>
+          <Button variant="primary" onClick={onPublish} isLoading={saving}>
+            Publish
+          </Button>
         </Stack>
 
         <Stack
@@ -57,22 +232,31 @@ const NewProduct: NextPage = () => {
           spacing={{ base: "8", md: "14" }}
         >
           <Stack w="full" flex={2} spacing={10}>
-            <FormGroup id="name" label="Product Name">
+            <FormControl id="name" isInvalid={errors.name}>
+              <FormLabel htmlFor="name">Product Name</FormLabel>
               <Input
                 isRequired
                 type="text"
                 placeholder="Hair growth oil"
                 variant="outline"
+                disabled={saving}
                 value={formValue.name}
                 onChange={(e) =>
                   setFormValue({ ...formValue, name: e.target.value })
                 }
               />
-            </FormGroup>
+              <FormErrorMessage>Name is required</FormErrorMessage>
+            </FormControl>
 
-            <FormGroup id="media" label="Media">
-              <FilePicker files={files} setFiles={setFiles} />
-            </FormGroup>
+            <FormControl id="images">
+              <FormLabel htmlFor="images">Media</FormLabel>
+              <FilePicker
+                files={formValue.images}
+                bucket={router.query.store as string}
+                disabled={saving}
+                setFiles={(images) => setFormValue({ ...formValue, images })}
+              />
+            </FormControl>
 
             <Tabs>
               <TabList>
@@ -87,6 +271,14 @@ const NewProduct: NextPage = () => {
                       rows={8}
                       fontSize={{ base: "0.9375rem", md: "1rem" }}
                       placeholder="Tell customers more about the product..."
+                      disabled={saving}
+                      value={formValue.description}
+                      onChange={(e) =>
+                        setFormValue({
+                          ...formValue,
+                          description: e.target.value,
+                        })
+                      }
                     />
                   </FormGroup>
                 </TabPanel>
@@ -103,21 +295,24 @@ const NewProduct: NextPage = () => {
                         justify="space-between"
                         spacing={6}
                       >
-                        <FormGroup id="price" label="Price">
+                        <FormControl id="price" isInvalid={errors.price}>
+                          <FormLabel htmlFor="price">Price</FormLabel>
                           <Input
                             isRequired
                             type="number"
                             placeholder="0.00"
                             variant="flushed"
-                            value={formValue.name}
+                            disabled={saving}
+                            value={formValue.price}
                             onChange={(e) =>
                               setFormValue({
                                 ...formValue,
-                                name: e.target.value,
+                                price: e.target.value,
                               })
                             }
                           />
-                        </FormGroup>
+                          <FormErrorMessage>Price is required</FormErrorMessage>
+                        </FormControl>
 
                         <FormGroup id="discountPrice" label="Discount Price">
                           <Input
@@ -125,11 +320,12 @@ const NewProduct: NextPage = () => {
                             type="number"
                             placeholder="0.00"
                             variant="flushed"
-                            value={formValue.name}
+                            disabled={saving}
+                            value={formValue.discountPrice}
                             onChange={(e) =>
                               setFormValue({
                                 ...formValue,
-                                name: e.target.value,
+                                discountPrice: e.target.value,
                               })
                             }
                           />
@@ -139,18 +335,73 @@ const NewProduct: NextPage = () => {
 
                     <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
                       <Heading fontSize="md" fontWeight="600" mb={6}>
+                        Stock
+                      </Heading>
+
+                      <Checkbox
+                        mb={6}
+                        disabled={saving}
+                        checked={isLimited}
+                        onChange={(e) => setIsLimited(e.target.checked)}
+                      >
+                        This is a limited product
+                      </Checkbox>
+
+                      {isLimited && (
+                        <Stack
+                          direction="row"
+                          justify="space-between"
+                          spacing={6}
+                        >
+                          <FormControl
+                            w="50%"
+                            id="stock"
+                            isInvalid={errors.stock}
+                          >
+                            <FormLabel htmlFor="stock">Total stocks</FormLabel>
+                            <Input
+                              type="number"
+                              placeholder="0"
+                              variant="flushed"
+                              disabled={saving}
+                              value={formValue.stock}
+                              onChange={(e) =>
+                                setFormValue({
+                                  ...formValue,
+                                  stock: e.target.value,
+                                })
+                              }
+                            />
+                          </FormControl>
+                        </Stack>
+                      )}
+                    </chakra.article>
+
+                    <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
+                      <Heading fontSize="md" fontWeight="600" mb={6}>
                         Shipping
                       </Heading>
 
-                      <Checkbox mb={6} defaultIsChecked>
+                      <Checkbox
+                        mb={6}
+                        disabled={saving}
+                        checked={formValue.physical}
+                        onChange={(e) =>
+                          setFormValue({
+                            ...formValue,
+                            physical: e.target.checked,
+                          })
+                        }
+                      >
                         This is a physical product
                       </Checkbox>
 
-                      {/* this displays when checkbox is false */}
-                      <Text fontSize="sm" color="rgb(0 0 0 / 62%)">
-                        * Customers won&apos;t enter their shipping address or
-                        choose a shipping method when buying this product.
-                      </Text>
+                      {!formValue.physical && (
+                        <Text fontSize="sm" color="rgb(0 0 0 / 62%)">
+                          * Customers won&apos;t enter their shipping address or
+                          choose a shipping method when buying this product.
+                        </Text>
+                      )}
                     </chakra.article>
 
                     <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
@@ -158,59 +409,23 @@ const NewProduct: NextPage = () => {
                         Variants
                       </Heading>
 
-                      <Checkbox mb={8} defaultIsChecked>
+                      <Checkbox
+                        mb={8}
+                        disabled={saving}
+                        checked={hasVariant}
+                        onChange={(e) => setHasVariant(e.target.checked)}
+                      >
                         This product has multiple options, like different sizes
                         or colors
                       </Checkbox>
 
-                      <Stack
-                        direction={{ base: "column", md: "row" }}
-                        justify="space-between"
-                        align="flex-end"
-                        spacing={5}
-                        mb={6}
-                      >
-                        <Box flex={1}>
-                          <FormGroup id="options" label="Option 1">
-                            <SelectMenu
-                              title="Choose Option"
-                              placeholder="Choose"
-                              variant="flushed"
-                              value=""
-                              size="sm"
-                              onChange={() => null}
-                              options={[
-                                { value: "title", label: "Title" },
-                                { value: "color", label: "Color" },
-                                { value: "size", label: "Size" },
-                                { value: "material", label: "Material" },
-                                { value: "style", label: "Style" },
-                              ]}
-                            />
-                          </FormGroup>
-                        </Box>
-
-                        <Box flex={2}>
-                          <FormGroup id="discountPrice">
-                            <Input
-                              isRequired
-                              placeholder="Seperate options with a comma"
-                              variant="outline"
-                              value={formValue.name}
-                              onChange={(e) =>
-                                setFormValue({
-                                  ...formValue,
-                                  name: e.target.value,
-                                })
-                              }
-                            />
-                          </FormGroup>
-                        </Box>
-                      </Stack>
-
-                      <Button variant="solid-outline">
-                        Add another option
-                      </Button>
+                      {hasVariant && (
+                        <Variants
+                          onChange={(variants) =>
+                            setFormValue({ ...formValue, variants })
+                          }
+                        />
+                      )}
                     </chakra.article>
                   </Stack>
                 </TabPanel>
@@ -236,10 +451,13 @@ const NewProduct: NextPage = () => {
                     title="Select Category"
                     placeholder="Select"
                     variant="outline"
-                    value="food"
                     size="md"
-                    onChange={() => null}
-                    options={[
+                    disabled={saving}
+                    value={formValue.category}
+                    onChange={(value) =>
+                      setFormValue({ ...formValue, category: value })
+                    }
+                    defaultOptions={[
                       { value: "clothing", label: "Clothing" },
                       { value: "cosmetics", label: "Cosmetics" },
                       { value: "food", label: "Food" },
@@ -256,8 +474,11 @@ const NewProduct: NextPage = () => {
                 >
                   <Input
                     placeholder="Vintage, cotton, summer"
-                    value=""
-                    onChange={() => null}
+                    disabled={saving}
+                    value={formValue.tags}
+                    onChange={(e) =>
+                      setFormValue({ ...formValue, tags: e.target.value })
+                    }
                   />
                 </FormGroup>
               </chakra.article>
@@ -269,4 +490,4 @@ const NewProduct: NextPage = () => {
   );
 };
 
-export default NewProduct;
+export default Page;

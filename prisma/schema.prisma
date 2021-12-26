@@ -16,9 +16,39 @@ model Store {
   owner    String
   email    String?
   category String?
+
+  products Product[]
 }
 
 model User {
   address   String   @unique
   publicKey String[]
+}
+
+model Product {
+  id            Int      @id @default(autoincrement())
+  name          String
+  images        Image[]
+  price         Float
+  physical      Boolean
+  description   String?
+  discountPrice Float?
+  totalStocks   Int?
+  variants      Json[]
+  category      String?
+  tags          String[]
+  createdAt     DateTime
+  updatedAt     DateTime
+
+  Store   Store @relation(fields: [storeId], references: [id])
+  storeId Int
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  key       String
+  url       String
+  hash      String
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId Int?
 }

@@ -7,47 +7,91 @@ import {
   Image,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
+import Api from "libs/api";
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Delete } from "react-iconly";
 import { HiUpload } from "react-icons/hi";
-import { useUnmount } from "react-use";
 
 type FilePickerProps = {
   files: any[];
+  bucket: string;
+  disabled: boolean;
   setFiles: (value: any) => void;
 };
 
-export const FilePicker = ({ files, setFiles }: FilePickerProps) => {
+export const FilePicker = ({
+  files,
+  setFiles,
+  disabled,
+  bucket,
+}: FilePickerProps) => {
+  const toast = useToast();
   const [activeImage, setActiveImage] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
   const { getRootProps, getInputProps, open } = useDropzone({
     accept: "image/*",
     maxFiles: 8,
-    onDrop: (acceptedFiles) => {
-      const newFiles = acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        })
-      );
+    disabled: disabled || loading,
+    onDrop: async (acceptedFiles) => {
+      const fileData: any[] = [];
+      setLoading(true);
 
-      setActiveImage(newFiles[0]);
-      setFiles(files.concat(...newFiles));
+      for (let file of acceptedFiles) {
+        try {
+          // upload file
+          const { payload: uploadedFile } = await Api().request(
+            `/api/upload?filename=${file.name}&bucket=${bucket}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": file.type },
+              body: file,
+            }
+          );
+
+          fileData.push({
+            key: uploadedFile.key,
+            url: uploadedFile.publicUrl,
+            hash: uploadedFile.hash,
+          });
+        } catch (e) {
+          console.log("Error uploading file", e);
+        } finally {
+          continue;
+        }
+      }
+
+      if (fileData[0]) setActiveImage(fileData[0].url);
+      setFiles(files.concat(...fileData));
+      setLoading(false);
     },
   });
 
-  const removeImage = (file: any) => {
-    const newFiles = files.filter((f: any) => f !== file);
-    URL.revokeObjectURL(file.preview);
+  const removeImage = async (fileUrl: any) => {
+    const file = files.find((file) => file.url === fileUrl);
+    setLoading(true);
 
-    setActiveImage(newFiles[newFiles.length - 1]);
-    setFiles(newFiles);
+    // send api request to delete image
+    try {
+      await Api().delete(`/api/upload?filename=${file.key}&bucket=${bucket}`);
+      const newFiles = files.filter((f: any) => f.key !== file.key);
+
+      setActiveImage(newFiles[newFiles.length - 1]?.url || null);
+      setFiles(newFiles);
+    } catch (e: any) {
+      toast({
+        title: "Error deleting file",
+        description: e.message,
+        position: "bottom-right",
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
-
-  useUnmount(() => {
-    files.forEach((file: any) => URL.revokeObjectURL(file.preview));
-  });
 
   return (
     <Stack w="full" spacing={4}>
@@ -65,6 +109,7 @@ export const FilePicker = ({ files, setFiles }: FilePickerProps) => {
                 borderColor="rgb(0 0 0 / 12%)"
                 fontSize="md"
                 fontWeight="400"
+                isLoading={loading}
               >
                 Add Files
               </Button>
@@ -95,7 +140,7 @@ export const FilePicker = ({ files, setFiles }: FilePickerProps) => {
           />
 
           <Image
-            src={activeImage.preview}
+            src={activeImage}
             alt="Product image"
             objectFit="cover"
             objectPosition="center 70%"
@@ -110,14 +155,16 @@ export const FilePicker = ({ files, setFiles }: FilePickerProps) => {
             key={idx}
             boxSize="50px"
             cursor="pointer"
-            p={activeImage === file ? 1 : undefined}
+            p={activeImage === file.url ? 1 : undefined}
             border={
-              activeImage === file ? "1px solid rgb(0 0 0 / 80%)" : undefined
+              activeImage === file.url
+                ? "1px solid rgb(0 0 0 / 80%)"
+                : undefined
             }
-            onClick={() => setActiveImage(file)}
+            onClick={() => setActiveImage(file.url)}
           >
             <Image
-              src={file.preview}
+              src={file.url}
               alt="Product image"
               objectFit="cover"
               objectPosition="center 70%"
@@ -126,16 +173,19 @@ export const FilePicker = ({ files, setFiles }: FilePickerProps) => {
           </Center>
         ))}
 
-        <Center
-          border="1px dashed rgba(0, 0, 0, 0.24)"
-          bg="rgba(0, 0, 0, 0.04)"
-          rounded="2px"
-          cursor="pointer"
+        <IconButton
+          aria-label="Add Image"
           boxSize="50px"
+          border="1px dashed rgba(0, 0, 0, 0.24)"
+          bgColor="rgba(0, 0, 0, 0.04)"
+          color="inherit"
+          rounded="2px"
           onClick={open}
-        >
-          <Icon boxSize={5} as={HiUpload} />
-        </Center>
+          isLoading={loading}
+          isDisabled={disabled}
+          _hover={{ bgColor: "rgba(0, 0, 0, 0.04)" }}
+          icon={<Icon boxSize={5} as={HiUpload} />}
+        />
       </Stack>
 
       <input {...getInputProps()} />

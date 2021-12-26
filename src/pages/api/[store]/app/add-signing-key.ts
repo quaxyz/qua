@@ -24,13 +24,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const underTs = (ts - 180).toFixed(); /// -3 min
 
         if (message.timestamp > overTs || message.timestamp < underTs) {
-          console.log(LOG_TAG, "[error]", "wrong timestamp", method);
+          console.log(LOG_TAG, "[warning]", "wrong timestamp", method);
           return res.status(400).send({ error: "wrong timestamp" });
         }
 
         // verify domain
         if (domain.name !== DOMAIN_NAME || domain.version !== DOMAIN_VERSION) {
-          console.log(LOG_TAG, "[error]", "wrong doamin", method);
+          console.log(LOG_TAG, "[warning]", "wrong doamin", method);
           return res.status(400).send({ error: "wrong domain" });
         }
 
@@ -42,7 +42,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           body.sig
         );
         if (body.address !== recoveredAddress) {
-          console.log(LOG_TAG, "[error]", "wrong signature", method);
+          console.log(LOG_TAG, "[warning]", "wrong signature", method);
           return res.status(400).send({ error: "wrong signature" });
         }
 
