@@ -18,7 +18,7 @@ const Account: NextPage = () => {
   const router = useRouter();
 
   return (
-    <CustomerLayout title="Orders">
+    <CustomerLayout title="Account">
       <Container
         maxW={{ base: "100%", md: "container.xl" }}
         px={{ base: "4", md: "16" }}

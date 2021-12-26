@@ -55,7 +55,7 @@ const Products: NextPage = () => {
   const router = useRouter();
 
   return (
-    <CustomerLayout title="Product">
+    <CustomerLayout title="Products">
       <Container maxW="100%" px={{ base: "4", md: "16" }}>
         <NextLink href={`/${router?.query.store}/products/`} passHref>
           <Link
