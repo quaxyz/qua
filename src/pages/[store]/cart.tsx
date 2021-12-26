@@ -53,8 +53,7 @@ const CartList = () => {
               <Stack direction="row" align="center">
                 <IconButton
                   variant="flushed"
-                  colorScheme="teal"
-                  aria-label="Send email"
+                  aria-label="Delete"
                   icon={<Delete set="light" />}
                 />
                 <Image
@@ -124,8 +123,7 @@ const CartList = () => {
                   </Heading>
                   <IconButton
                     variant="flushed"
-                    colorScheme="teal"
-                    aria-label="Send email"
+                    aria-label="Delete"
                     icon={<Delete set="light" />}
                   />
                 </Stack>
