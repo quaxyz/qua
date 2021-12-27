@@ -223,7 +223,7 @@ const Page: NextPage = () => {
           </NextLink>
 
           <Button variant="primary" onClick={onPublish} isLoading={saving}>
-            Publish
+            Update
           </Button>
         </Stack>
 
