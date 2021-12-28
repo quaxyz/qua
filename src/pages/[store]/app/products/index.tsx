@@ -4,7 +4,7 @@ import Api from "libs/api";
 import prisma from "libs/prisma";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
-import { dehydrate, QueryClient, useInfiniteQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import {
   Button,
   Container,
@@ -15,25 +15,27 @@ import {
   chakra,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
-import { getStorePaths } from "libs/store-paths";
 
-const Products = () => {
+const Products = ({ initialData }: any) => {
   const router = useRouter();
   const queryResp = useInfiniteQuery({
     queryKey: "store-products",
+    initialData: { pages: [initialData], pageParams: [] },
     getNextPageParam: (lastPage: any) => {
       if (lastPage?.length > 0) {
         return lastPage[lastPage?.length - 1].id;
       }
     },
     queryFn: async ({ pageParam = 0 }) => {
-      const payload: any = await Api().get(
+      const { payload }: any = await Api().get(
         `/api/${router.query.store}/app/products?cursor=${pageParam}`
       );
 
       return payload;
     },
   });
+
+  console.log(queryResp);
 
   return (
     <StoreDashboardLayout title="Products">
@@ -100,43 +102,48 @@ const Products = () => {
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => getStorePaths();
+export const getStaticPaths: GetStaticPaths = async () => {
+  const stores = await prisma.store.findMany({
+    select: {
+      name: true,
+    },
+  });
+
+  return {
+    paths: stores.map((store) => ({ params: { store: store.name as string } })),
+    fallback: false,
+  };
+};
+
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const queryClient = new QueryClient();
   const store = params?.store || "";
 
-  await queryClient.prefetchInfiniteQuery(
-    "store-products",
-    async () => {
-      return prisma.product.findMany({
-        take: 10,
-        where: {
-          Store: {
-            name: store as string,
-          },
-        },
-        orderBy: {
-          updatedAt: "desc",
-        },
-        select: {
-          id: true,
-          name: true,
-          price: true,
-          images: {
-            take: 1,
-            select: {
-              url: true,
-            },
-          },
-        },
-      });
+  const data = await prisma.product.findMany({
+    take: 10,
+    where: {
+      Store: {
+        name: store as string,
+      },
     },
-    { getNextPageParam: (lastPage: any) => lastPage.id }
-  );
+    orderBy: {
+      updatedAt: "desc",
+    },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      images: {
+        take: 1,
+        select: {
+          url: true,
+        },
+      },
+    },
+  });
 
   return {
     props: {
-      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+      initialData: data,
     },
   };
 };

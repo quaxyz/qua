@@ -167,8 +167,6 @@ const Page: NextPage = () => {
 
       setSaving(true);
 
-      // upload images
-
       // sign data
       const timestamp = parseInt((Date.now() / 1000).toFixed());
       const keyPair = await getKeyPair();
@@ -196,6 +194,12 @@ const Page: NextPage = () => {
       );
 
       console.log("Result", result);
+
+      toast({
+        title: "Product updated",
+        position: "top-right",
+        status: "success",
+      });
     } catch (error: any) {
       toast({
         title: "Error saving product",

@@ -46,9 +46,9 @@ model Product {
 
 model Image {
   id        Int      @id @default(autoincrement())
+  hash      String   @unique
   key       String
   url       String
-  hash      String
   Product   Product? @relation(fields: [productId], references: [id])
   productId Int?
 }

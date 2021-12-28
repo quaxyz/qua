@@ -16,33 +16,29 @@ const Web3ReactProviderDefault = dynamic(
   }
 );
 
-function QuaApp({ Component, pageProps }: AppProps) {
-  const [queryClient] = React.useState(() => {
-    return new QueryClient({
-      defaultOptions: {
-        queries: {
-          refetchOnWindowFocus: false,
-          staleTime: 240 * 1000,
-          retry: 1,
-        },
-      },
-    });
-  });
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      staleTime: 240 * 1000,
+      retry: 1,
+    },
+  },
+});
 
+function QuaApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
-        <Hydrate state={pageProps.dehydratedState}>
-          <Web3ReactProvider getLibrary={getLibrary}>
-            <Web3ReactProviderDefault getLibrary={getLibrary}>
-              <Web3ReactManager>
-                <Component {...pageProps} />
-              </Web3ReactManager>
-            </Web3ReactProviderDefault>
-          </Web3ReactProvider>
+        <Web3ReactProvider getLibrary={getLibrary}>
+          <Web3ReactProviderDefault getLibrary={getLibrary}>
+            <Web3ReactManager>
+              <Component {...pageProps} />
+            </Web3ReactManager>
+          </Web3ReactProviderDefault>
+        </Web3ReactProvider>
 
-          <ReactQueryDevtools initialIsOpen />
-        </Hydrate>
+        <ReactQueryDevtools initialIsOpen />
       </QueryClientProvider>
     </ChakraProvider>
   );
