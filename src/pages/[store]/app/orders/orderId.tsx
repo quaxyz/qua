@@ -21,7 +21,7 @@ const Details: NextPage = () => {
   const router = useRouter();
 
   return (
-    <StoreDashboardLayout title="Product Details">
+    <StoreDashboardLayout title="Order Details">
       <Container maxW="100%" px={{ base: "4", md: "16" }} mb={8}>
         <NextLink href={`/${router?.query.store}/app/orders/`} passHref>
           <Link borderBottom="none">
@@ -190,9 +190,14 @@ const Details: NextPage = () => {
                 </Stack>
 
                 <Stack direction="row" w="100%">
-                  <Button size="lg" variant="solid" width="100%">
-                    Fufill Order
-                  </Button>
+                  <NextLink
+                    href={`/${router?.query.store}/app/orders/shipping`}
+                    passHref
+                  >
+                    <Button size="lg" variant="solid" width="100%">
+                      Fufill Order
+                    </Button>
+                  </NextLink>
                   <Button size="lg" w="24rem" variant="solid-outline">
                     Cancel Order
                   </Button>
