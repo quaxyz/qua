@@ -1,17 +1,17 @@
 import {
   Box,
+  Button,
+  Container,
   Flex,
   Heading,
   Icon,
+  Image,
   Input,
   InputGroup,
   InputLeftElement,
+  Link,
   Stack,
   Text,
-  Link,
-  Button,
-  Container,
-  Image,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 import Head from "next/head";
@@ -20,7 +20,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { Plus, Search } from "react-iconly";
 
-const OrderGrid = () => {
+const OrderList = () => {
   const router = useRouter();
   return (
     <Box pb="3rem">
@@ -56,7 +56,8 @@ const OrderGrid = () => {
               <Text display={{ base: "inline-block", md: "none" }}>
                 Order ID
               </Text>
-              <NextLink href={`/${router.query?.store}/app/orders/${index}`}>
+              {/* <NextLink href={`/${router.query?.store}/app/orders/${index}`}> */}
+              <NextLink href={`/${router.query?.store}/app/orders/orderId`}>
                 <Link fontSize="16px" fontWeight={{ base: "400", md: "600" }}>
                   #1201
                 </Link>
@@ -118,7 +119,7 @@ const OrderGrid = () => {
 
 const Orders = () => {
   const router = useRouter();
-  const isOrderList = false;
+  const isOrderList = true;
   return (
     <StoreDashboardLayout>
       <Head>
@@ -159,7 +160,7 @@ const Orders = () => {
                 />
               </InputGroup>
             </Box>
-            <OrderGrid />
+            <OrderList />
           </>
         ) : (
           <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
