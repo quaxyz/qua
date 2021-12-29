@@ -215,7 +215,7 @@ const Page: NextPage = () => {
   return (
     <StoreDashboardLayout title="Add product">
       <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
-        <Stack direction="row" justify="space-between" aling="center" mb={10}>
+        <Stack direction="row" justify="space-between" align="center" mb={10}>
           <NextLink href={`/${router?.query.store}/app/products/`} passHref>
             <Stack as={Link} border="none" direction="row" alignItems="center">
               <ArrowLeft set="light" />
