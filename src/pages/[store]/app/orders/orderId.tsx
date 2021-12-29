@@ -174,8 +174,8 @@ const Details: NextPage = () => {
                 <Stack direction="row" justify="space-between" py={2} mb={4}>
                   <Stack direction="column" spacing={4}>
                     <Text>Subtotal</Text>
-                    <Text>Network Fee</Text>
-                    <Text>Total</Text>
+                    <Text>Delivery</Text>
+                    <Text fontWeight="bold">Total paid by customer</Text>
                   </Stack>
                   <Stack direction="column" spacing={4}>
                     <Text>:</Text>
@@ -184,8 +184,8 @@ const Details: NextPage = () => {
                   </Stack>
                   <Stack direction="column" fontWeight="bold" spacing={4}>
                     <Text>$200</Text>
-                    <Text>$1</Text>
-                    <Text>$200</Text>
+                    <Text>$10</Text>
+                    <Text>$300</Text>
                   </Stack>
                 </Stack>
 
@@ -204,7 +204,7 @@ const Details: NextPage = () => {
           <Stack w="full" flex={1}>
             <Stack
               direction="column"
-              p={{ base: "4", md: "8" }}
+              p={{ base: "4", md: "6" }}
               spacing={6}
               border="0.5px solid rgba(0, 0, 0, 12%)"
             >
