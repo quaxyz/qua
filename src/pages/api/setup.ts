@@ -58,7 +58,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         // store data in DB
         const result = await prisma.store.create({
           data: {
-            name: data.name,
+            name: data.name?.toLowerCase(),
             email: data.email,
             owner: body.address,
             category: data.category,

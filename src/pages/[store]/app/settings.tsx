@@ -1,3 +1,7 @@
+import React from "react";
+import Api from "libs/api";
+import prisma from "libs/prisma";
+import { GetStaticPaths, GetStaticProps } from "next";
 import {
   Box,
   Button,
@@ -10,22 +14,123 @@ import {
   FormLabel,
   Heading,
   Input,
-  Link,
-  Spacer,
   Stack,
   Text,
   Textarea,
+  Grid,
+  GridItem,
+  InputGroup,
+  InputLeftElement,
+  Icon,
+  useToast,
 } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
-import { truncateAddress } from "libs/utils";
 import { useRouter } from "next/router";
-import React from "react";
-import { FiExternalLink } from "react-icons/fi";
+import { useWeb3React } from "@web3-react/core";
+import { AiFillInstagram } from "react-icons/ai";
+import { IoLogoWhatsapp } from "react-icons/io";
+import { getKeyPair } from "libs/keys";
+import { signData } from "libs/signing";
+import { useFileUpload } from "components/file-picker";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
-const Settings = () => {
-  const router = useRouter();
+function useSaveSettings() {
+  const [loading, setLoading] = React.useState(false);
   const { account } = useWeb3React();
+  const toast = useToast();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const updateStoreMutation = useMutation(
+    async (payload: any) => {
+      return Api().post(`/api/${router.query?.store}/app/settings`, payload);
+    },
+    {
+      onSuccess: ({ payload: result }) => {
+        queryClient.setQueryData("store-details", result.settings);
+      },
+    }
+  );
+
+  const saveStore = async (details: any) => {
+    try {
+      setLoading(true);
+
+      // sign data
+      const timestamp = parseInt((Date.now() / 1000).toFixed());
+
+      const keyPair = await getKeyPair();
+      const data = {
+        ...details,
+        timestamp,
+      };
+      console.log("Data", data);
+
+      const signedContent = await signData(keyPair, data);
+      console.log("Sig", signedContent);
+
+      // send data to server
+      const { payload: result } = await updateStoreMutation.mutateAsync({
+        address: account,
+        digest: signedContent.digest,
+        key: JSON.stringify(signedContent.publicKey),
+        payload: JSON.stringify(data),
+        signature: signedContent.signature,
+        timestamp,
+      });
+
+      console.log("Result", result);
+
+      toast({
+        title: "Settings updated",
+        position: "top-right",
+        status: "success",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error saving details",
+        description: error.message,
+        position: "bottom-right",
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { loading, saveStore };
+}
+
+const Page = ({ storeDetails }: any) => {
+  const router = useRouter();
+
+  const { data } = useQuery({
+    queryKey: "store-details",
+    queryFn: async () => {},
+    initialData: storeDetails,
+    staleTime: Infinity,
+  });
+
+  const saveSettings = useSaveSettings();
+  const filePicker = useFileUpload({
+    bucket: router.query.store as string,
+    onUpload: async ([file]) => saveSettings.saveStore({ image: file }),
+  });
+
+  const onDetailsSubmit = (e: any) => {
+    e.preventDefault();
+
+    const details = {
+      about: e.target["about"].value,
+      location: e.target["location"].value,
+      socialLinks: {
+        whatsapp: e.target["whatsapp"].value,
+        instagram: e.target["instagram"].value,
+      },
+    };
+
+    saveSettings.saveStore(details);
+  };
 
   return (
     <StoreDashboardLayout title="Settings">
@@ -37,7 +142,9 @@ const Settings = () => {
         justifyContent="center"
         flexDirection="column"
         // we could fetch unsplash image here based on store category
-        bgImage="linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24)),url('/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg')"
+        bgImage={`linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24)),url('${
+          data?.image?.url ?? "/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg"
+        }')`}
         bgPosition="center center"
         bgRepeat="no-repeat"
         bgSize="cover"
@@ -56,10 +163,16 @@ const Settings = () => {
           borderRadius="50"
           userSelect="none"
         >
-          Fashion
+          {data?.category}
         </Text>
         <Heading as="h2" fontSize={{ base: "2rem", md: "4rem" }}>
-          <Editable defaultValue="Store Title">
+          <Editable
+            defaultValue={data?.title ?? "Store Title"}
+            onSubmit={(title) => {
+              if (data?.title !== title) saveSettings.saveStore({ title });
+            }}
+            isDisabled={saveSettings.loading}
+          >
             <EditablePreview />
             <EditableInput
               textAlign="center"
@@ -71,6 +184,7 @@ const Settings = () => {
           </Editable>
         </Heading>
       </Box>
+
       <Flex
         justifyContent="flex-end"
         alignItems="center"
@@ -78,118 +192,188 @@ const Settings = () => {
         mt="-4rem"
         pr="2rem"
       >
-        <Button variant="primary">Upload image</Button>
-      </Flex>
-      <Spacer my="6rem" />
-
-      <Container maxW="100%" px={{ base: "4", md: "12" }}>
-        <Text fontSize="xl" pb="2" pl="2">
-          About
-        </Text>
-        <Textarea
-          placeholder="What should customers know about your business?"
-          size="md"
-          borderRadius="0"
-          height="248"
-        />
-        <Spacer my="4rem" />
-
-        <Text
-          fontSize="xl"
-          textTransform="uppercase"
-          fontWeight="bold"
-          pb="2"
-          pl="2"
+        <Button
+          onClick={() => filePicker.open()}
+          isLoading={saveSettings.loading || filePicker.loading}
+          isDisabled={saveSettings.loading}
+          variant="primary"
         >
-          Settings
-        </Text>
+          Upload image
+        </Button>
 
-        <Stack spacing="2.4rem" p="2" mt="2">
-          <FormControl id="name">
-            <FormLabel textTransform="uppercase">Store name</FormLabel>
-            <Input
-              transition=".2s"
-              outline="0.5px solid"
-              outlineColor="rgba(0, 0, 0, 0.80)"
+        <input {...filePicker.getInputProps()} />
+      </Flex>
+
+      <Container maxW="100%" px={{ base: "4", md: "12" }} py={20}>
+        <Stack
+          spacing="4rem"
+          align="flex-start"
+          as="form"
+          onSubmit={onDetailsSubmit}
+        >
+          <Stack w="full" spacing={6}>
+            <Heading fontSize="lg" textTransform="uppercase">
+              About
+            </Heading>
+            <Textarea
+              id="about"
+              placeholder="What should customers know about your business?"
+              defaultValue={data?.about}
+              size="md"
               borderRadius="0"
-              type="text"
-              value="Frowth"
+              rows={10}
             />
-          </FormControl>
+          </Stack>
 
-          <FormControl id="text" isDisabled>
-            <FormLabel textTransform="uppercase">Category</FormLabel>
-            <Input borderRadius="0" type="text" value="Cosmetics" />
-          </FormControl>
-        </Stack>
+          <Stack w="full" spacing={6}>
+            <Heading fontSize="lg" fontWeight="bold" textTransform="uppercase">
+              Settings
+            </Heading>
 
-        <Stack spacing="2.4rem" p="2" mt="2">
-          <FormControl id="name">
-            <FormLabel textTransform="uppercase">Bussiness Location</FormLabel>
-            <Input
-              transition=".2s"
-              outline="0.5px solid"
-              outlineColor="rgba(0, 0, 0, 0.80)"
-              borderRadius="0"
-              type="text"
-              placeholder="Enter store address"
-            />
-          </FormControl>
+            <Grid templateColumns="repeat(2, 1fr)" gridGap={5}>
+              <GridItem>
+                <FormControl id="location">
+                  <FormLabel textTransform="uppercase">
+                    Bussiness Location
+                  </FormLabel>
+                  <Input
+                    id="location"
+                    variant="outline"
+                    type="address"
+                    defaultValue={data?.location}
+                    placeholder="Enter store address"
+                  />
+                </FormControl>
+              </GridItem>
 
-          <FormControl id="name">
-            <FormLabel textTransform="uppercase">Social Links</FormLabel>
-            <Stack>
-              <Input
-                transition=".2s"
-                outline="0.5px solid"
-                outlineColor="rgba(0, 0, 0, 0.80)"
-                borderRadius="0"
-                type="text"
-                placeholder="Add Link"
-              />
-              <Input
-                transition=".2s"
-                outline="0.5px solid"
-                outlineColor="rgba(0, 0, 0, 0.80)"
-                borderRadius="0"
-                type="text"
-                placeholder="Add Link"
-              />
-              <Input
-                transition=".2s"
-                outline="0.5px solid"
-                outlineColor="rgba(0, 0, 0, 0.80)"
-                borderRadius="0"
-                type="text"
-                placeholder="Add Link"
-              />
-            </Stack>
-          </FormControl>
-        </Stack>
+              <GridItem>
+                <FormControl id="name">
+                  <FormLabel textTransform="uppercase">Social Links</FormLabel>
+                  <Stack direction="row">
+                    <InputGroup>
+                      <InputLeftElement pointerEvents="none">
+                        <Icon
+                          as={AiFillInstagram}
+                          boxSize="5"
+                          color="#C13584"
+                        />
+                      </InputLeftElement>
 
-        <Box spacing="2.4rem" p="2" mt="2">
-          <Text fontSize="md" textTransform="uppercase" pb="2">
-            Verified owner address
-          </Text>
+                      <Input
+                        id="instagram"
+                        type="text"
+                        variant="outline"
+                        fontSize="sm"
+                        defaultValue={data?.socialLinks?.instagram}
+                        placeholder="@myusername"
+                      />
+                    </InputGroup>
+
+                    <InputGroup>
+                      <InputLeftElement pointerEvents="none">
+                        <Icon as={IoLogoWhatsapp} boxSize="5" color="#25D366" />
+                      </InputLeftElement>
+
+                      <Input
+                        id="whatsapp"
+                        type="text"
+                        variant="outline"
+                        fontSize="sm"
+                        defaultValue={data?.socialLinks?.whatsapp}
+                        placeholder="+01 234 567 890"
+                      />
+                    </InputGroup>
+                  </Stack>
+                </FormControl>
+              </GridItem>
+
+              <GridItem>
+                <FormControl id="name" isDisabled>
+                  <FormLabel textTransform="uppercase">Store name</FormLabel>
+                  <Input
+                    variant="outline"
+                    type="text"
+                    defaultValue={storeDetails.name}
+                  />
+                </FormControl>
+              </GridItem>
+
+              <GridItem>
+                <FormControl id="category" isDisabled>
+                  <FormLabel textTransform="uppercase">Category</FormLabel>
+                  <Input
+                    variant="outline"
+                    type="text"
+                    defaultValue={storeDetails.category}
+                  />
+                </FormControl>
+              </GridItem>
+
+              <GridItem>
+                <FormControl id="address" isDisabled>
+                  <FormLabel textTransform="uppercase">Owner Address</FormLabel>
+                  <Input
+                    variant="outline"
+                    type="text"
+                    defaultValue={storeDetails.owner}
+                  />
+                </FormControl>
+              </GridItem>
+            </Grid>
+          </Stack>
+
           <Button
-            as={Link}
-            href={`https://etherscan.io/address/${account}`}
-            rightIcon={<FiExternalLink />}
+            type="submit"
             size="lg"
-            variant="solid-outline"
-            // w="300px"
-            isFullWidth
-            isExternal
+            isLoading={saveSettings.loading}
+            isDisabled={saveSettings.loading}
           >
-            {truncateAddress(account || "", 4)}
+            Save Changes
           </Button>
-        </Box>
-        <Stack p="2" my="4">
-          <Button size="lg">Save Changes</Button>
         </Stack>
       </Container>
     </StoreDashboardLayout>
   );
 };
 
-export default Settings;
+export const getStaticPaths: GetStaticPaths = async () => {
+  const stores = await prisma.store.findMany({
+    select: {
+      name: true,
+    },
+  });
+
+  return {
+    paths: stores.map((store) => ({ params: { store: store.name as string } })),
+    fallback: false,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const store = (params?.store || "") as string;
+
+  const storeDetails = await prisma.store.findUnique({
+    where: { name: store },
+    include: {
+      image: {
+        select: {
+          url: true,
+        },
+      },
+    },
+  });
+
+  if (!storeDetails) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      storeDetails,
+    },
+  };
+};
+
+export default Page;
