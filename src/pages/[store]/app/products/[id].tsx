@@ -1,6 +1,7 @@
 import React from "react";
+import prisma from "libs/prisma";
 import Api from "libs/api";
-import type { NextPage } from "next";
+import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
@@ -35,18 +36,22 @@ import { useWeb3React } from "@web3-react/core";
 import { getKeyPair } from "libs/keys";
 import { signData } from "libs/signing";
 
-const Variants = (props: { onChange: (variants: any[]) => void }) => {
-  const [variants, setVariants] = React.useState([{ type: "", options: "" }]);
+const Variants = (props: {
+  variants: any[];
+  onChange: (variants: any[]) => void;
+}) => {
+  const [variants, setVariants] = React.useState(
+    props.variants || [{ type: "", options: "" }]
+  );
 
   const onVariantChange = (data: any, variantIdx: number) => {
-    setVariants(
-      variants.map((variant, idx) => {
-        if (idx === variantIdx) return data;
-        return variant;
-      })
-    );
+    const newVariants = variants.map((variant, idx) => {
+      if (idx === variantIdx) return data;
+      return variant;
+    });
 
-    props.onChange(variants);
+    setVariants(newVariants);
+    props.onChange(newVariants);
   };
 
   const addVariant = () => {
@@ -123,27 +128,32 @@ const Variants = (props: { onChange: (variants: any[]) => void }) => {
   );
 };
 
-const Page: NextPage = () => {
+const Page: NextPage = ({ product }: any) => {
   const toast = useToast();
   const router = useRouter();
   const { account } = useWeb3React();
 
   const [saving, setSaving] = React.useState(false);
-  const [hasVariant, setHasVariant] = React.useState(false);
-  const [isLimited, setIsLimited] = React.useState(false);
+  const [hasVariant, setHasVariant] = React.useState(!!product.variants);
+  const [isLimited, setIsLimited] = React.useState(
+    (product.totalStocks || 0) > 0 || false
+  );
 
   const [errors, setErrors] = React.useState<any>({});
   const [formValue, setFormValue] = React.useState({
-    name: "",
-    description: "",
-    images: [] as File[],
-    price: "",
-    discountPrice: "",
-    stock: "",
-    physical: false,
-    category: "",
-    tags: "",
-    variants: [] as any[],
+    name: product.name || "",
+    description: product.description || "",
+    images: product.images || [],
+    price: product.price || "",
+    discountPrice: product.discountPrice || "",
+    stock: product.totalStocks || "",
+    physical: product.physical || false,
+    category: product.category || "",
+    tags: product.tags.join(",") || "",
+    variants: (product.variants || []).map((variant: any) => ({
+      ...variant,
+      options: variant.options.join(","),
+    })),
   });
 
   const checkForErrors = (state: any) => ({
@@ -182,7 +192,7 @@ const Page: NextPage = () => {
 
       // send data to server
       const { payload: result } = await Api().post(
-        `/api/${router.query?.store}/app/products/new`,
+        `/api/${router.query?.store}/app/products/${product.id}`,
         {
           address: account,
           digest: signedContent.digest,
@@ -213,9 +223,9 @@ const Page: NextPage = () => {
   };
 
   return (
-    <StoreDashboardLayout title="Add product">
+    <StoreDashboardLayout title="Edit product">
       <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
-        <Stack direction="row" justify="space-between" align="center" mb={10}>
+        <Stack direction="row" justify="space-between" aling="center" mb={10}>
           <NextLink href={`/${router?.query.store}/app/products/`} passHref>
             <Stack as={Link} border="none" direction="row" alignItems="center">
               <ArrowLeft set="light" />
@@ -227,7 +237,7 @@ const Page: NextPage = () => {
           </NextLink>
 
           <Button variant="primary" onClick={onPublish} isLoading={saving}>
-            Publish
+            Update
           </Button>
         </Stack>
 
@@ -345,7 +355,7 @@ const Page: NextPage = () => {
                       <Checkbox
                         mb={6}
                         disabled={saving}
-                        checked={isLimited}
+                        isChecked={isLimited}
                         onChange={(e) => setIsLimited(e.target.checked)}
                       >
                         This is a limited product
@@ -389,7 +399,7 @@ const Page: NextPage = () => {
                       <Checkbox
                         mb={6}
                         disabled={saving}
-                        checked={formValue.physical}
+                        isChecked={formValue.physical}
                         onChange={(e) =>
                           setFormValue({
                             ...formValue,
@@ -416,7 +426,7 @@ const Page: NextPage = () => {
                       <Checkbox
                         mb={8}
                         disabled={saving}
-                        checked={hasVariant}
+                        isChecked={hasVariant}
                         onChange={(e) => setHasVariant(e.target.checked)}
                       >
                         This product has multiple options, like different sizes
@@ -425,6 +435,7 @@ const Page: NextPage = () => {
 
                       {hasVariant && (
                         <Variants
+                          variants={formValue.variants}
                           onChange={(variants) =>
                             setFormValue({ ...formValue, variants })
                           }
@@ -492,6 +503,72 @@ const Page: NextPage = () => {
       </Container>
     </StoreDashboardLayout>
   );
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const stores = await prisma.store.findMany({
+    select: {
+      name: true,
+    },
+  });
+
+  const paths: any[] = [];
+
+  for (let store of stores) {
+    const products = await prisma.product.findMany({
+      select: {
+        id: true,
+      },
+      where: {
+        Store: {
+          name: store.name,
+        },
+      },
+    });
+
+    paths.push(
+      ...products.map((product) => ({
+        params: {
+          store: store.name,
+          id: `${product.id}`,
+        },
+      }))
+    );
+  }
+
+  return {
+    paths,
+    fallback: false,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const store = params?.store as string;
+  const id = params?.id as string;
+
+  const product = await prisma.product.findFirst({
+    include: {
+      images: {
+        select: {
+          key: true,
+          url: true,
+          hash: true,
+        },
+      },
+    },
+    where: {
+      id: parseInt(id, 10),
+      Store: {
+        name: store,
+      },
+    },
+  });
+
+  return {
+    props: {
+      product: JSON.parse(JSON.stringify(product)),
+    },
+  };
 };
 
 export default Page;

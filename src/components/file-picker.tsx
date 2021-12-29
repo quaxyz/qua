@@ -10,7 +10,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import Api from "libs/api";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Delete } from "react-iconly";
 import { HiUpload } from "react-icons/hi";
@@ -29,7 +29,7 @@ export const FilePicker = ({
   bucket,
 }: FilePickerProps) => {
   const toast = useToast();
-  const [activeImage, setActiveImage] = useState<any>(null);
+  const [activeImage, setActiveImage] = useState<any>(files[0]?.url || null);
   const [loading, setLoading] = useState(false);
 
   const { getRootProps, getInputProps, open } = useDropzone({
