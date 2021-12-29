@@ -1,3 +1,5 @@
+import React from "react";
+import NextLink from "next/link";
 import {
   Button,
   ButtonProps,
@@ -14,13 +16,11 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 import { useLogout } from "hooks/auth";
 import { truncateAddress } from "libs/utils";
 import { injected, SUPPORTED_WALLETS, switchNetwork } from "libs/wallet";
-import NextLink from "next/link";
-import { useRouter } from "next/router";
-import React from "react";
 import { FiExternalLink } from "react-icons/fi";
 
 const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
@@ -128,7 +128,7 @@ const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
   );
 };
 
-const AccountModal = ({ isOpen, onClose }: any) => {
+const AccountModal = ({ isOpen, onClose, menuOptions = [] }: any) => {
   const router = useRouter();
   const { account } = useWeb3React();
   const logOut = useLogout();
@@ -160,22 +160,29 @@ const AccountModal = ({ isOpen, onClose }: any) => {
               variant="solid-outline"
               isFullWidth
               isExternal
+              _hover={{ transform: "none" }}
             >
               {truncateAddress(account || "", 4)}
             </Button>
 
-            <NextLink href={`/${router?.query.store}/app/settings/`} passHref>
-              <Button
-                onClick={() => {
-                  onClose();
-                }}
-                size="lg"
-                variant="solid-outline"
-                isFullWidth
-              >
-                Settings
-              </Button>
-            </NextLink>
+            {menuOptions.map((menu: any, idx: number) => (
+              <NextLink key={idx} href={menu.href} passHref>
+                <Button
+                  as={Link}
+                  onClick={() => {
+                    onClose();
+                  }}
+                  size="lg"
+                  variant="solid-outline"
+                  isFullWidth
+                  _hover={{ transform: "none" }}
+                  {...menu.props}
+                >
+                  {menu.label}
+                </Button>
+              </NextLink>
+            ))}
+
             <Button
               onClick={() => {
                 logOut();
@@ -199,9 +206,11 @@ type WalletProps = {
   autoOpen?: boolean;
   closeable?: boolean;
   ButtonProps?: ButtonProps;
+  menuOptions?: { label: string; href: string; props?: ButtonProps }[];
 };
 export const Wallet = ({
   ButtonProps,
+  menuOptions,
   autoOpen = false,
   closeable = true,
 }: WalletProps) => {
@@ -275,6 +284,7 @@ export const Wallet = ({
       <AccountModal
         isOpen={accountModal.isOpen}
         onClose={accountModal.onClose}
+        menuOptions={menuOptions}
       />
     </>
   );

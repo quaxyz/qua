@@ -37,6 +37,13 @@ const navLinks = [
   },
 ];
 
+const walletMenuLinks = [
+  {
+    label: "Settings",
+    href: `/app/settings`,
+  },
+];
+
 const AuthNoAccount = () => (
   <Stack minH="100%" align="center" justify="center">
     <chakra.div
@@ -135,6 +142,9 @@ const DashboardLayout = ({ title, children }: any) => {
   // handle auth session here
   // const storeAuthData = useInitializeStoreAuth();
 
+  console.log(walletMenuLinks.some((m) => router.asPath.includes(m.href)));
+  console.log(router.asPath);
+
   return (
     <AuthContext.Provider value={null}>
       <Head>
@@ -200,17 +210,30 @@ const DashboardLayout = ({ title, children }: any) => {
             </Stack>
 
             <Wallet
+              menuOptions={walletMenuLinks.map((m) => ({
+                ...m,
+                href: `/${router.query?.store}${m.href}`,
+              }))}
               ButtonProps={{
                 variant: "outline",
                 mt: "auto !important",
-                color: "#FFF",
+
                 rounded: "8px",
                 borderColor: "rgb(255 255 255 / 16%)",
                 leftIcon: <Icon as={CgMore} mr={3} />,
-                _hover: {
-                  bg: "transparent",
-                  borderColor: "rgb(255 255 255 / 48%)",
-                },
+                ...(walletMenuLinks.some((m) => router.asPath.includes(m.href))
+                  ? {
+                      color: "#000",
+                      bg: "#FFF",
+                      _hover: { bg: "white" },
+                    }
+                  : {
+                      color: "#FFF",
+                      _hover: {
+                        bg: "transparent",
+                        borderColor: "rgb(255 255 255 / 48%)",
+                      },
+                    }),
               }}
             />
           </Stack>
@@ -234,17 +257,29 @@ const DashboardLayout = ({ title, children }: any) => {
             </Heading>
 
             <Wallet
+              menuOptions={walletMenuLinks.map((m) => ({
+                ...m,
+                href: `/${router.query?.store}${m.href}`,
+              }))}
               ButtonProps={{
                 variant: "outline",
-                color: "#FFF",
                 rounded: "8px",
                 size: "sm",
                 borderColor: "rgb(255 255 255 / 16%)",
                 rightIcon: <Icon as={CgMore} />,
-                _hover: {
-                  bg: "transparent",
-                  borderColor: "rgb(255 255 255 / 48%)",
-                },
+                ...(walletMenuLinks.some((m) => router.asPath.includes(m.href))
+                  ? {
+                      color: "#000",
+                      bg: "#FFF",
+                      _hover: { bg: "white" },
+                    }
+                  : {
+                      color: "#FFF",
+                      _hover: {
+                        bg: "transparent",
+                        borderColor: "rgb(255 255 255 / 48%)",
+                      },
+                    }),
               }}
             />
           </Stack>
