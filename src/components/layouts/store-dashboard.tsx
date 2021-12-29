@@ -142,9 +142,6 @@ const DashboardLayout = ({ title, children }: any) => {
   // handle auth session here
   // const storeAuthData = useInitializeStoreAuth();
 
-  console.log(walletMenuLinks.some((m) => router.asPath.includes(m.href)));
-  console.log(router.asPath);
-
   return (
     <AuthContext.Provider value={null}>
       <Head>

@@ -10,10 +10,69 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import Api from "libs/api";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Delete } from "react-iconly";
 import { HiUpload } from "react-icons/hi";
+
+type useFileUploadProps = {
+  bucket: string;
+  disabled?: boolean;
+  onUpload: (files: any[]) => void;
+};
+
+export function useFileUpload({
+  bucket,
+  onUpload,
+  disabled,
+}: useFileUploadProps) {
+  const [loading, setLoading] = useState(false);
+
+  const { getRootProps, getInputProps, open } = useDropzone({
+    accept: "image/*",
+    maxFiles: 8,
+    disabled: disabled || loading,
+    onDrop: async (acceptedFiles) => {
+      const fileData: any[] = [];
+      setLoading(true);
+
+      for (let file of acceptedFiles) {
+        try {
+          // upload file
+          const { payload: uploadedFile } = await Api().request(
+            `/api/upload?filename=${file.name}&bucket=${bucket}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": file.type },
+              body: file,
+            }
+          );
+
+          fileData.push({
+            key: uploadedFile.key,
+            url: uploadedFile.publicUrl,
+            hash: uploadedFile.hash,
+          });
+        } catch (e) {
+          console.log("Error uploading file", e);
+        } finally {
+          continue;
+        }
+      }
+
+      await onUpload(fileData);
+
+      setLoading(false);
+    },
+  });
+
+  return {
+    open,
+    loading,
+    getInputProps,
+    getRootProps,
+  };
+}
 
 type FilePickerProps = {
   files: any[];
@@ -21,7 +80,6 @@ type FilePickerProps = {
   disabled: boolean;
   setFiles: (value: any) => void;
 };
-
 export const FilePicker = ({
   files,
   setFiles,

@@ -11,13 +11,19 @@ datasource db {
 }
 
 model Store {
-  id       Int     @id @default(autoincrement())
-  name     String  @unique
-  owner    String
-  email    String?
-  category String?
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  owner       String
+  email       String?
+  category    String?
+  title       String?
+  image       Image?  @relation(fields: [imageId], references: [id])
+  about       String?
+  location    String?
+  socialLinks Json?
 
   products Product[]
+  imageId  Int?
 }
 
 model User {
@@ -45,10 +51,13 @@ model Product {
 }
 
 model Image {
-  id        Int      @id @default(autoincrement())
-  hash      String   @unique
-  key       String
-  url       String
+  id   Int    @id @default(autoincrement())
+  hash String @unique
+  key  String
+  url  String
+
   Product   Product? @relation(fields: [productId], references: [id])
   productId Int?
+
+  Store Store[]
 }
