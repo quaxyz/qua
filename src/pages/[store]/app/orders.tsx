@@ -144,6 +144,7 @@ const Orders = () => {
                 <InputLeftElement
                   fontSize="1rem"
                   pointerEvents="none"
+                  // eslint-disable-next-line react/no-children-prop
                   children={
                     <Icon
                       boxSize="10px"
