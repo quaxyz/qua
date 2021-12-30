@@ -30,6 +30,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const dbPayload: any = {
           title: bodyPayload.title,
           about: bodyPayload.about,
+          currency: bodyPayload.currency,
           location: bodyPayload.location,
           socialLinks: bodyPayload.socialLinks,
         };

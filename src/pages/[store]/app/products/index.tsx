@@ -29,6 +29,7 @@ import {
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 import { Plus, Search } from "react-iconly";
 import { FiMoreHorizontal } from "react-icons/fi";
+import { formatCurrency } from "libs/currency";
 
 const ActionMenu = ({ id }: any) => {
   const router = useRouter();
@@ -73,7 +74,7 @@ const ActionMenu = ({ id }: any) => {
   );
 };
 
-const Page = ({ initialData }: any) => {
+const Page = ({ initialData, storeDetails }: any) => {
   const router = useRouter();
   const queryResp = useInfiniteQuery({
     queryKey: "store-dashboard-products",
@@ -234,7 +235,7 @@ const Page = ({ initialData }: any) => {
                       <Stack direction="row" spacing={2}>
                         <Text fontSize="sm">Price:</Text>
                         <Text fontSize="sm" fontWeight="600">
-                          {data.price}
+                          {formatCurrency(data.price, storeDetails?.currency)}
                         </Text>
                       </Stack>
 
@@ -298,8 +299,7 @@ const Page = ({ initialData }: any) => {
                       fontWeight="600"
                       textAlign="center"
                     >
-                      {/* TODO:: use store currency */}
-                      {data.price}
+                      {formatCurrency(data.price, storeDetails?.currency)}
                     </GridItem>
 
                     <GridItem
@@ -337,13 +337,13 @@ const Page = ({ initialData }: any) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const store = params?.store || "";
+  const store = (params?.store as string) || "";
 
   const data = await prisma.product.findMany({
     take: 10,
     where: {
       Store: {
-        name: store as string,
+        name: store,
       },
     },
     orderBy: {
@@ -363,9 +363,15 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
   });
 
+  const storeDetails = await prisma.store.findUnique({
+    where: { name: store },
+    select: { currency: true },
+  });
+
   return {
     props: {
       initialData: data,
+      storeDetails,
     },
   };
 };

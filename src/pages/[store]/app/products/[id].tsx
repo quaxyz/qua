@@ -1,7 +1,7 @@
 import React from "react";
 import prisma from "libs/prisma";
 import Api from "libs/api";
-import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
@@ -524,7 +524,7 @@ const Page: NextPage = ({ product }: any) => {
   );
 };
 
-export const getServerSideProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const store = params?.store as string;
   const id = params?.id as string;
 

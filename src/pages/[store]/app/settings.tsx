@@ -33,6 +33,9 @@ import { getKeyPair } from "libs/keys";
 import { signData } from "libs/signing";
 import { useFileUpload } from "components/file-picker";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { FormGroup } from "components/form-group";
+import SelectMenu from "components/select";
+import { allCurrencies } from "libs/currency";
 
 function useSaveSettings() {
   const [loading, setLoading] = React.useState(false);
@@ -103,6 +106,13 @@ function useSaveSettings() {
 
 const Page = ({ storeDetails }: any) => {
   const router = useRouter();
+  const [formValue, setFormValue] = React.useState({
+    about: storeDetails.about,
+    location: storeDetails.location,
+    whatsapp: storeDetails.socialLinks?.whatsapp,
+    instagram: storeDetails.socialLinks?.instagram,
+    currency: storeDetails.currency,
+  });
 
   const { data } = useQuery({
     queryKey: "store-details",
@@ -121,11 +131,12 @@ const Page = ({ storeDetails }: any) => {
     e.preventDefault();
 
     const details = {
-      about: e.target["about"].value,
-      location: e.target["location"].value,
+      about: formValue.about,
+      location: formValue.location,
+      currency: formValue.currency,
       socialLinks: {
-        whatsapp: e.target["whatsapp"].value,
-        instagram: e.target["instagram"].value,
+        whatsapp: formValue.whatsapp,
+        instagram: formValue.instagram,
       },
     };
 
@@ -218,7 +229,10 @@ const Page = ({ storeDetails }: any) => {
             <Textarea
               id="about"
               placeholder="What should customers know about your business?"
-              defaultValue={data?.about}
+              value={formValue?.about}
+              onChange={(e) =>
+                setFormValue({ ...formValue, about: e.target.value })
+              }
               size="md"
               borderRadius="0"
               rows={10}
@@ -240,7 +254,10 @@ const Page = ({ storeDetails }: any) => {
                     id="location"
                     variant="outline"
                     type="address"
-                    defaultValue={data?.location}
+                    value={formValue.location}
+                    onChange={(e) =>
+                      setFormValue({ ...formValue, location: e.target.value })
+                    }
                     placeholder="Enter store address"
                   />
                 </FormControl>
@@ -264,8 +281,14 @@ const Page = ({ storeDetails }: any) => {
                         type="text"
                         variant="outline"
                         fontSize="sm"
-                        defaultValue={data?.socialLinks?.instagram}
                         placeholder="@myusername"
+                        value={formValue.instagram}
+                        onChange={(e) =>
+                          setFormValue({
+                            ...formValue,
+                            instagram: e.target.value,
+                          })
+                        }
                       />
                     </InputGroup>
 
@@ -279,12 +302,37 @@ const Page = ({ storeDetails }: any) => {
                         type="text"
                         variant="outline"
                         fontSize="sm"
-                        defaultValue={data?.socialLinks?.whatsapp}
                         placeholder="+01 234 567 890"
+                        value={formValue.whatsapp}
+                        onChange={(e) =>
+                          setFormValue({
+                            ...formValue,
+                            whatsapp: e.target.value,
+                          })
+                        }
                       />
                     </InputGroup>
                   </Stack>
                 </FormControl>
+              </GridItem>
+
+              <GridItem>
+                <FormGroup id="currency" label="Currency">
+                  <SelectMenu
+                    title="Select Currency"
+                    placeholder="Select"
+                    variant="outline"
+                    size="md"
+                    value={formValue.currency}
+                    onChange={(item) =>
+                      setFormValue({ ...formValue, currency: item })
+                    }
+                    options={allCurrencies.map((curr) => ({
+                      value: curr.cc,
+                      label: `${curr.cc} - ${curr.name}`,
+                    }))}
+                  />
+                </FormGroup>
               </GridItem>
 
               <GridItem>

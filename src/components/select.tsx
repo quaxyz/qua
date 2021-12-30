@@ -68,7 +68,13 @@ const SelectMenu = ({
         </Stack>
       </Box>
 
-      <Modal isCentered isOpen={isOpen} onClose={onClose}>
+      <Modal
+        isCentered
+        isOpen={isOpen}
+        onClose={onClose}
+        size="md"
+        scrollBehavior="inside"
+      >
         <ModalOverlay />
 
         <ModalContent>
@@ -98,6 +104,7 @@ const SelectMenu = ({
                   size="lg"
                   variant="solid-outline"
                   isFullWidth
+                  whiteSpace="initial"
                 >
                   {option.label}
                 </Button>
