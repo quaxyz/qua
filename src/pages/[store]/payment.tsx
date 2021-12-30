@@ -23,7 +23,6 @@ const Payment: NextPage = () => {
   return (
     <CustomerLayout title="Shipping">
       <chakra.main>
-        {/* <Container maxW="container.lg" py={14}> */}
         <Container
           maxW={{ base: "100%", md: "container.lg" }}
           borderLeft="0.5px solid rgba(0, 0, 0, 8%)"
@@ -35,7 +34,6 @@ const Payment: NextPage = () => {
             w="100%"
             px={{ base: "2", md: "24" }}
             height="100vh"
-
             // pb={{ base: "12", md: "0" }}
           >
             <Stack spacing="4">
@@ -103,7 +101,7 @@ const Payment: NextPage = () => {
             </Stack>
 
             <chakra.form>
-              <Stack py="4">
+              <Stack py="4" mb={{ base: "4", md: "8" }}>
                 <Heading
                   as="h2"
                   py={{ base: "4", md: "4" }}
@@ -135,7 +133,6 @@ const Payment: NextPage = () => {
           </Stack>
         </Container>
       </chakra.main>
-      {/* </Container> */}
     </CustomerLayout>
   );
 };
