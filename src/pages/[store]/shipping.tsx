@@ -18,7 +18,7 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 
-const Cart: NextPage = () => {
+const Shipping: NextPage = () => {
   const router = useRouter();
 
   const [value, setValue] = React.useState("1");
@@ -540,4 +540,4 @@ const Cart: NextPage = () => {
   );
 };
 
-export default Cart;
+export default Shipping;
