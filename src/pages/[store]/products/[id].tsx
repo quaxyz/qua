@@ -1,6 +1,12 @@
+import React from "react";
+import type { GetServerSideProps, NextPage } from "next";
+import NextLink from "next/link";
+import prisma from "libs/prisma";
+import { useRouter } from "next/router";
 import {
   Box,
   Button,
+  Center,
   chakra,
   Container,
   Heading,
@@ -9,78 +15,62 @@ import {
   Stack,
   Tab,
   TabList,
+  TabPanel,
+  TabPanels,
   Tabs,
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import type { NextPage } from "next";
-import NextLink from "next/link";
-import { useRouter } from "next/router";
-import React from "react";
+import { FileGallery } from "components/file-gallery";
+import { Quantity } from "components/quantity";
 
-const Details: NextPage = () => {
+const Page: NextPage = ({ product }: any) => {
   const router = useRouter();
+  const [quantity, setQuantity] = React.useState(1);
 
   return (
-    <CustomerLayout title="Product Details">
+    <CustomerLayout title={product.name}>
       <Container maxW="100%" px={{ base: "4", md: "16" }}>
-        <NextLink href={`/${router?.query.store}/products/`} passHref>
+        <NextLink href={`/${router?.query.store}`} passHref>
           <Link
             borderBottom="none"
+            textDecoration="underline"
             _hover={{ transform: "scale(1.05)" }}
-            {...(router.asPath.includes("/products")
-              ? { textDecoration: "underline" }
-              : { color: "#000" })}
           >
-            <Stack
-              direction="row"
-              spacing={4}
+            <Text
               px={4}
-              py={{ base: "4", md: "8" }}
-              align="center"
+              py={{ base: 4, md: 8 }}
+              fontSize="inherit"
+              fontWeight="600"
             >
-              <Text fontSize="inherit" fontWeight="600">
-                Back
-              </Text>
-            </Stack>
+              Back
+            </Text>
           </Link>
         </NextLink>
 
         <Stack
           direction={{ base: "column", md: "row" }}
-          spacing={{ base: "8", md: "14" }}
+          spacing={{ base: 8, md: 14 }}
         >
-          <Stack w="full" flex={1} spacing={10}>
-            <chakra.section
-              h={{ base: "sm", md: "xl" }}
-              w="full"
-              pos="relative"
-            >
-              <Image
-                src="/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg"
-                alt="Product image"
-                objectFit="cover"
-                w="full"
-                height="full"
-              />
-            </chakra.section>
-          </Stack>
+          <FileGallery images={product.images} alt={product.name} />
 
           <Stack w="full" flex={1}>
             <chakra.article p={2}>
               <Stack direction="column" py={{ base: "2", md: "4" }} spacing={4}>
                 <Heading as="h1" size="lg" mb={4} fontWeight="300">
-                  VESONAL Spring Nike shoes Footwear Big Size 38-46{" "}
+                  {product.name}
                 </Heading>
-                <Text
-                  as="span"
-                  fontSize="sm"
-                  textTransform="uppercase"
-                  color="#027857"
-                  mb={4}
-                >
-                  In stock
-                </Text>
+                {!!product.totalStocks && (
+                  <Text
+                    as="span"
+                    fontSize="sm"
+                    textTransform="uppercase"
+                    color="#027857"
+                    mb={4}
+                  >
+                    In stock
+                  </Text>
+                )}
                 <Stack>
                   <Text
                     as="span"
@@ -91,9 +81,10 @@ const Details: NextPage = () => {
                   >
                     Price:
                   </Text>
-                  <chakra.strong>$200.00</chakra.strong>
+                  {/* TODO: currency display */}
+                  <Text fontWeight="700">${product.price}</Text>
                 </Stack>
-                <Stack>
+                <Stack align="flex-start">
                   <Text
                     as="span"
                     color="#000"
@@ -103,18 +94,13 @@ const Details: NextPage = () => {
                   >
                     Quantity:
                   </Text>
-                  <Box width="8rem">
-                    <Text
-                      fontSize="14px"
-                      fontWeight="500"
-                      bgColor="#000"
-                      color="#fff"
-                      px="12px"
-                      py="4px"
-                    >
-                      Incrementor
-                    </Text>
-                  </Box>
+
+                  <Quantity
+                    quantity={quantity}
+                    setQuantity={(v) => setQuantity(v)}
+                    max={product.totalStocks || Infinity}
+                    min={1}
+                  />
                 </Stack>
               </Stack>
 
@@ -148,8 +134,13 @@ const Details: NextPage = () => {
           <Tabs colorScheme="#000000">
             <TabList borderColor="rgba(0, 0, 0, 8%)">
               <Tab>Description</Tab>
-              <Tab>Reviews</Tab>
             </TabList>
+
+            <TabPanels>
+              <TabPanel>
+                <Text>{product.description}</Text>
+              </TabPanel>
+            </TabPanels>
           </Tabs>
         </Stack>
       </Container>
@@ -157,4 +148,41 @@ const Details: NextPage = () => {
   );
 };
 
-export default Details;
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const store = params?.store as string;
+  const id = params?.id as string;
+
+  const product = await prisma.product.findFirst({
+    where: {
+      id: parseInt(id, 10),
+      Store: {
+        name: store,
+      },
+    },
+
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      description: true,
+      totalStocks: true,
+      images: {
+        select: {
+          url: true,
+        },
+      },
+    },
+  });
+
+  if (!product) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: { product },
+  };
+};
+
+export default Page;
