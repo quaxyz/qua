@@ -1,7 +1,7 @@
 import React from "react";
 import Api from "libs/api";
 import prisma from "libs/prisma";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import {
   Box,
   Button,
@@ -336,20 +336,7 @@ const Page = ({ storeDetails }: any) => {
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const stores = await prisma.store.findMany({
-    select: {
-      name: true,
-    },
-  });
-
-  return {
-    paths: stores.map((store) => ({ params: { store: store.name as string } })),
-    fallback: false,
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const store = (params?.store || "") as string;
 
   const storeDetails = await prisma.store.findUnique({

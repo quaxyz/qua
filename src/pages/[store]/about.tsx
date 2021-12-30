@@ -1,3 +1,7 @@
+import React from "react";
+import prisma from "libs/prisma";
+import type { GetServerSideProps, NextPage } from "next";
+import { useRouter } from "next/router";
 import {
   Box,
   Button,
@@ -11,17 +15,20 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import { truncateAddress } from "libs/utils";
-import type { NextPage } from "next";
-import React from "react";
+import { mapSocialLink, truncateAddress } from "libs/utils";
 import { FiExternalLink } from "react-icons/fi";
 
-const AboutStore: NextPage = () => {
+const Page: NextPage = ({ storeDetails }: any) => {
+  const router = useRouter();
+
   return (
-    <CustomerLayout title="About">
+    <CustomerLayout title={`About ${router.query.store}`}>
       <chakra.header>
         <Box
-          bgImage="linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24)),url('/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg')"
+          bgImage={`linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24)),url('${
+            storeDetails.image?.url ||
+            "/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg"
+          }')`}
           bgPosition="center center"
           bgRepeat="no-repeat"
           bgSize="cover"
@@ -54,39 +61,36 @@ const AboutStore: NextPage = () => {
                 mb="2"
                 borderRadius="50"
               >
-                Fashion
+                {storeDetails.category}
               </Text>
               <Heading
                 as="h1"
                 color="#fff"
                 fontSize={{ base: "2rem", md: "4rem" }}
               >
-                Shoe Show
+                {storeDetails.title}
               </Heading>
             </Box>
-            <Flex>
-              <Link
-                href="#"
-                color="#fff"
-                textTransform="uppercase"
-                fontSize="sm"
-                isExternal
-              >
-                Instagram
-              </Link>{" "}
-              <Spacer mx="2" />
-              <Link
-                href="#"
-                color="#fff"
-                textTransform="uppercase"
-                fontSize="sm"
-                isExternal
-              >
-                Twitter
-              </Link>
-            </Flex>
+
+            <Stack direction="row" spacing={2}>
+              {Object.entries(storeDetails.socialLinks || {})
+                .filter(([_, value]: any) => value.length)
+                .map(([social, link]: any) => (
+                  <Link
+                    key={social}
+                    href={mapSocialLink(social, link)}
+                    color="#fff"
+                    textTransform="uppercase"
+                    fontSize="sm"
+                    isExternal
+                  >
+                    {social}
+                  </Link>
+                ))}
+            </Stack>
           </Container>
         </Box>
+
         <Box
           background="#fff"
           width={{ base: "140px", md: "16%" }}
@@ -112,10 +116,7 @@ const AboutStore: NextPage = () => {
         px={{ base: "4", md: "none" }}
         mb="8rem"
       >
-        <Text>
-          shooshow is a collection showcasing of the best industry leading sport
-          wears.
-        </Text>
+        <Text>{storeDetails.about}</Text>
         <Box spacing="2.4rem" mt="12">
           <Text
             fontSize="sm"
@@ -128,32 +129,58 @@ const AboutStore: NextPage = () => {
           </Text>
           <Button
             as={Link}
-            href={`#`}
+            href={`https://etherscan.io/address/${storeDetails.owner}`}
             rightIcon={<FiExternalLink />}
             size="md"
             variant="solid-outline"
             isExternal
           >
-            {truncateAddress(
-              "0x1F86E192e75BFEdC227F148f67a88B38Ab14687c" || "",
-              6
-            )}
+            {truncateAddress(storeDetails.owner || "", 6)}
           </Button>
         </Box>
-        <Stack spacing="2" mt="8">
-          <Text
-            fontSize="sm"
-            opacity="36%"
-            color="#000"
-            textTransform="uppercase"
-          >
-            Store Location:
-          </Text>
-          <Text>100 Sansom St, San Francisco</Text>
-        </Stack>
+        {storeDetails.location && (
+          <Stack spacing="2" mt="8">
+            <Text
+              fontSize="sm"
+              opacity="36%"
+              color="#000"
+              textTransform="uppercase"
+            >
+              Store Location:
+            </Text>
+            <Text>{storeDetails.location}</Text>
+          </Stack>
+        )}
       </Container>
     </CustomerLayout>
   );
 };
 
-export default AboutStore;
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const store = (params?.store || "") as string;
+
+  const storeDetails = await prisma.store.findUnique({
+    where: { name: store },
+    include: {
+      image: {
+        select: {
+          url: true,
+        },
+      },
+    },
+  });
+
+  if (!storeDetails) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      storeDetails,
+    },
+  };
+};
+
+export default Page;
