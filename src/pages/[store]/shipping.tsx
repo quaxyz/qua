@@ -44,9 +44,9 @@ const Shipping: NextPage = () => {
             w="100%"
             px={{ base: "2", md: "24" }}
             overflowY="scroll"
-            height="100vh"
+            // height="100vh"
 
-            // pb={{ base: "12", md: "0" }}
+            pb={{ base: "12", md: "0" }}
           >
             <chakra.form>
               <chakra.header pt={{ base: "8", md: "16" }}>
