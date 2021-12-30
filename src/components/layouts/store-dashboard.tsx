@@ -1,6 +1,10 @@
+import React from "react";
+import Head from "next/head";
+import NextLink from "next/link";
 import {
   Button,
   chakra,
+  CircularProgress,
   Container,
   Grid,
   Heading,
@@ -10,12 +14,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { Wallet } from "components/wallet";
+import { useInitializeStoreAuth } from "hooks/auth";
 import { useCreateSigningKey } from "hooks/signing";
 import { AuthContext } from "libs/auth";
-import Head from "next/head";
-import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
 import { Bag, Category, Graph } from "react-iconly";
 import { CgMore } from "react-icons/cg";
 
@@ -140,10 +142,10 @@ const DashboardLayout = ({ title, children }: any) => {
   const router = useRouter();
 
   // handle auth session here
-  // const storeAuthData = useInitializeStoreAuth();
+  const storeAuthData = useInitializeStoreAuth();
 
   return (
-    <AuthContext.Provider value={null}>
+    <AuthContext.Provider value={storeAuthData}>
       <Head>
         <title>{title} - Frowth</title>
       </Head>
@@ -283,7 +285,7 @@ const DashboardLayout = ({ title, children }: any) => {
         </chakra.header>
 
         <chakra.main gridArea="main">
-          {/* {!storeAuthData.loading ? (
+          {!storeAuthData.loading ? (
             {
               "": children,
               "no-account": <AuthNoAccount />,
@@ -294,8 +296,7 @@ const DashboardLayout = ({ title, children }: any) => {
             <Stack align="center" justify="center" minH="100%">
               <CircularProgress isIndeterminate color="black" />
             </Stack>
-          )} */}
-          {children}
+          )}
         </chakra.main>
 
         <chakra.aside
