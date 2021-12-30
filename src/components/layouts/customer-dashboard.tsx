@@ -7,8 +7,8 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import { useWeb3React } from "@web3-react/core";
 import { Wallet } from "components/wallet";
-import { AuthContext } from "libs/auth";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -18,7 +18,7 @@ import { CgMore } from "react-icons/cg";
 const navLinks = [
   {
     name: "Products",
-    url: "/products",
+    url: "",
   },
   {
     name: "About",
@@ -28,9 +28,10 @@ const navLinks = [
 
 const CustomerLayout = ({ title, children }: any) => {
   const router = useRouter();
+  const { account } = useWeb3React();
 
   return (
-    <AuthContext.Provider value={null}>
+    <>
       <Head>
         <title>{title} - Frowth</title>
       </Head>
@@ -59,10 +60,10 @@ const CustomerLayout = ({ title, children }: any) => {
           justifyContent="space-between"
         >
           <Stack direction="row" align="center" spacing={24}>
-            <NextLink href={`/${router?.query.store}/products/`} passHref>
+            <NextLink href={`/${router?.query.store}`} passHref>
               <Link borderBottom="none" _hover={{ transform: "scale(1.05)" }}>
                 <Heading fontWeight="800" fontSize="2xl" px={3}>
-                  shooshow
+                  {router.query.store}
                 </Heading>
               </Link>
             </NextLink>
@@ -71,18 +72,18 @@ const CustomerLayout = ({ title, children }: any) => {
               {navLinks.map((navLink, idx) => (
                 <NextLink
                   key={idx}
-                  href={`/${router.query?.store}/${navLink.url}`}
+                  href={`/${router.query?.store}${navLink.url}`}
                   passHref
                 >
                   <Link
                     borderBottom="none"
                     _hover={{ transform: "scale(1.05)" }}
-                    {...(router.asPath.includes(navLink.url)
+                    {...(router.asPath ===
+                    `/${router.query?.store}${navLink.url}`
                       ? { textDecoration: "underline" }
                       : { color: "#000" })}
                   >
                     <Stack direction="row" spacing={4} align="center">
-                      {/* <Icon boxSize={5} as={navLink.icon} /> */}
                       <Text color="inherit" fontSize="inherit" fontWeight="600">
                         {navLink.name}
                       </Text>
@@ -96,14 +97,8 @@ const CustomerLayout = ({ title, children }: any) => {
           <Stack direction="row" spacing={12} align="center">
             <Wallet
               ButtonProps={{
-                variant: "outline",
-                bg: " rgba(0, 0, 0, 0.04)",
-                rounded: "50px",
-                leftIcon: <Icon as={CgMore} mr={2} />,
-                _hover: {
-                  bg: "transparent",
-                  borderColor: "rgb(0 0 0 / 12%)",
-                },
+                variant: "primary",
+                leftIcon: account ? <Icon as={CgMore} mr={2} /> : undefined,
               }}
             />
             <NextLink href={`/${router?.query.store}/cart/`} passHref>
@@ -144,10 +139,10 @@ const CustomerLayout = ({ title, children }: any) => {
             h="100%"
             w="100%"
           >
-            <NextLink href={`/${router?.query.store}/products/`} passHref>
+            <NextLink href={`/${router?.query.store}`} passHref>
               <Link borderBottom="none" _hover={{ transform: "scale(1.05)" }}>
                 <Heading fontWeight="800" fontSize="xl">
-                  shooshow
+                  {router.query.store}
                 </Heading>
               </Link>
             </NextLink>
@@ -157,7 +152,7 @@ const CustomerLayout = ({ title, children }: any) => {
                 variant: "outline",
                 bg: " rgba(0, 0, 0, 0.04)",
                 rounded: "50px",
-                leftIcon: <Icon as={CgMore} mr={0} />,
+                leftIcon: account ? <Icon as={CgMore} mr={0} /> : undefined,
                 _hover: {
                   bg: "transparent",
                   borderColor: "rgb(0 0 0 / 12%)",
@@ -191,27 +186,16 @@ const CustomerLayout = ({ title, children }: any) => {
             {navLinks.map((NavLink, idx) => (
               <NextLink
                 key={idx}
-                href={`/${router.query?.store}/${NavLink.url}`}
+                href={`/${router.query?.store}${NavLink.url}`}
                 passHref
               >
                 <Link
                   borderBottom="none"
-                  {...(router.asPath.includes(NavLink.url)
+                  {...(router.asPath === `/${router.query?.store}${NavLink.url}`
                     ? { textDecoration: "underline" }
                     : {})}
                 >
                   <Stack spacing={2} align="center">
-                    {/* <Icon
-                      boxSize={5}
-                      as={(props) => (
-                        <NavLink.icon
-                          {...(router.asPath.includes(NavLink.url)
-                            ? { set: "bold" }
-                            : {})}
-                          {...props}
-                        />
-                      )}
-                    /> */}
                     <Text
                       fontWeight="normal"
                       color="inherit"
@@ -244,7 +228,7 @@ const CustomerLayout = ({ title, children }: any) => {
           </Stack>
         </chakra.nav>
       </Grid>
-    </AuthContext.Provider>
+    </>
   );
 };
 

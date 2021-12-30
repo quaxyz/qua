@@ -78,6 +78,7 @@ type FilePickerProps = {
   files: any[];
   bucket: string;
   disabled: boolean;
+  maxFiles?: number;
   setFiles: (value: any) => void;
 };
 export const FilePicker = ({
@@ -85,6 +86,7 @@ export const FilePicker = ({
   setFiles,
   disabled,
   bucket,
+  maxFiles,
 }: FilePickerProps) => {
   const toast = useToast();
   const [activeImage, setActiveImage] = useState<any>(files[0]?.url || null);
@@ -92,7 +94,7 @@ export const FilePicker = ({
 
   const { getRootProps, getInputProps, open } = useDropzone({
     accept: "image/*",
-    maxFiles: 8,
+    maxFiles: maxFiles,
     disabled: disabled || loading,
     onDrop: async (acceptedFiles) => {
       const fileData: any[] = [];
