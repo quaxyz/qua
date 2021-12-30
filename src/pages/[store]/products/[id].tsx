@@ -4,13 +4,10 @@ import NextLink from "next/link";
 import prisma from "libs/prisma";
 import { useRouter } from "next/router";
 import {
-  Box,
   Button,
-  Center,
   chakra,
   Container,
   Heading,
-  Image,
   Link,
   Stack,
   Tab,
@@ -23,8 +20,9 @@ import {
 import CustomerLayout from "components/layouts/customer-dashboard";
 import { FileGallery } from "components/file-gallery";
 import { Quantity } from "components/quantity";
+import { formatCurrency } from "libs/currency";
 
-const Page: NextPage = ({ product }: any) => {
+const Page: NextPage = ({ product, storeDetails }: any) => {
   const router = useRouter();
   const [quantity, setQuantity] = React.useState(1);
 
@@ -82,7 +80,9 @@ const Page: NextPage = ({ product }: any) => {
                     Price:
                   </Text>
                   {/* TODO: currency display */}
-                  <Text fontWeight="700">${product.price}</Text>
+                  <Text fontWeight="700">
+                    {formatCurrency(product.price, storeDetails?.currency)}
+                  </Text>
                 </Stack>
                 <Stack align="flex-start">
                   <Text
@@ -174,6 +174,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
   });
 
+  const storeDetails = await prisma.store.findUnique({
+    where: { name: store },
+    select: { currency: true },
+  });
+
   if (!product) {
     return {
       notFound: true,
@@ -181,7 +186,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   }
 
   return {
-    props: { product },
+    props: { product, storeDetails },
   };
 };
 

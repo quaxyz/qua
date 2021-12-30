@@ -21,6 +21,7 @@ import {
 import CustomerLayout from "components/layouts/customer-dashboard";
 import { useInfiniteQuery } from "react-query";
 import { useIntersection } from "react-use";
+import { formatCurrency } from "libs/currency";
 
 function useQueryProducts({ initialData }: any) {
   const router = useRouter();
@@ -61,7 +62,7 @@ function useQueryProducts({ initialData }: any) {
   };
 }
 
-const Page: NextPage = ({ initialData }: any) => {
+const Page: NextPage = ({ initialData, storeDetails }: any) => {
   const router = useRouter();
   const { ref, queryResp } = useQueryProducts({ initialData });
 
@@ -127,7 +128,7 @@ const Page: NextPage = ({ initialData }: any) => {
                       </NextLink>
 
                       <Text fontSize="sm" fontWeight="700" mt={3}>
-                        {data.price}
+                        {formatCurrency(data.price, storeDetails?.currency)}
                       </Text>
                     </chakra.section>
                   </LinkBox>
@@ -169,9 +170,15 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
   });
 
+  const storeDetails = await prisma.store.findUnique({
+    where: { name: store },
+    select: { currency: true },
+  });
+
   return {
     props: {
       initialData: data,
+      storeDetails,
     },
   };
 };

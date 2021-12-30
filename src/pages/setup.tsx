@@ -21,6 +21,7 @@ import { domain, schemas } from "libs/constants";
 import { providers } from "ethers";
 import { useRouter } from "next/router";
 import { FormGroup } from "components/form-group";
+import { allCurrencies } from "libs/currency";
 
 function useCreateStore() {
   const { library, account } = useActiveWeb3React();
@@ -79,7 +80,7 @@ function useCreateStore() {
       });
       console.log("Result", result);
 
-      router.push(`${message.store}/app/dashboard`);
+      router.push(`${message.store}/app/settings`);
     } catch (err: any) {
       toast({
         title: "Error saving details",
@@ -91,13 +92,14 @@ function useCreateStore() {
   };
 }
 
-const OnboardSetup: NextPage = () => {
+const Page: NextPage = () => {
   const createStore = useCreateStore();
 
   const [formValue, setFormValue] = React.useState({
     name: "",
     email: "",
     category: null as any,
+    currency: null as any,
   });
 
   const [sending, setSending] = React.useState(false);
@@ -207,6 +209,27 @@ const OnboardSetup: NextPage = () => {
                   />
                 </FormGroup>
 
+                <FormGroup
+                  id="currency"
+                  label="Local Currency"
+                  labelProps={{ variant: "flushed" }}
+                >
+                  <SelectMenu
+                    title="Select Currency"
+                    placeholder="Select"
+                    variant="flushed"
+                    size="lg"
+                    value={formValue.currency}
+                    onChange={(item) =>
+                      setFormValue({ ...formValue, currency: item })
+                    }
+                    options={allCurrencies.map((curr) => ({
+                      value: curr.cc,
+                      label: `${curr.cc} - ${curr.name}`,
+                    }))}
+                  />
+                </FormGroup>
+
                 <div>
                   <Button
                     size="lg"
@@ -229,4 +252,4 @@ const OnboardSetup: NextPage = () => {
   );
 };
 
-export default OnboardSetup;
+export default Page;
