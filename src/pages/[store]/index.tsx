@@ -147,7 +147,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const store = params?.store as string;
 
   const data = await prisma.product.findMany({
-    take: 1,
+    take: 12,
     where: {
       Store: {
         name: store as string,

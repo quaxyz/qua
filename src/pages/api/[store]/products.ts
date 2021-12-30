@@ -20,7 +20,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const store = query.store as string;
         const products = await prisma.product.findMany({
           // pagination
-          take: 10,
+          take: 12,
           skip: 1,
           cursor: {
             id: parseInt(query.cursor as string, 10),
