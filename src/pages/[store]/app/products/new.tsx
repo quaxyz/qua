@@ -34,6 +34,7 @@ import { ArrowLeft } from "react-iconly";
 import { useWeb3React } from "@web3-react/core";
 import { getKeyPair } from "libs/keys";
 import { signData } from "libs/signing";
+import { useMutation, useQueryClient } from "react-query";
 
 const Variants = (props: { onChange: (variants: any[]) => void }) => {
   const [variants, setVariants] = React.useState([{ type: "", options: "" }]);
@@ -126,6 +127,7 @@ const Variants = (props: { onChange: (variants: any[]) => void }) => {
 const Page: NextPage = () => {
   const toast = useToast();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { account } = useWeb3React();
 
   const [saving, setSaving] = React.useState(false);
@@ -146,9 +148,24 @@ const Page: NextPage = () => {
     variants: [] as any[],
   });
 
+  const addProductMutation = useMutation(
+    async (payload: any) => {
+      return Api().post(
+        `/api/${router.query?.store}/app/products/new`,
+        payload
+      );
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("store-dashboard-products");
+      },
+    }
+  );
+
   const checkForErrors = (state: any) => ({
     name: !state.name || state.name.length < 1,
     price: !state.price || state.price.length < 1,
+    images: !state.images || state.images.length < 1 || state.images.length > 8,
   });
 
   const onPublish = async () => {
@@ -181,22 +198,18 @@ const Page: NextPage = () => {
       console.log("Sig", signedContent);
 
       // send data to server
-      const { payload: result } = await Api().post(
-        `/api/${router.query?.store}/app/products/new`,
-        {
-          address: account,
-          digest: signedContent.digest,
-          key: JSON.stringify(signedContent.publicKey),
-          payload: JSON.stringify(data),
-          signature: signedContent.signature,
-          timestamp,
-        }
-      );
-
+      const { payload: result } = await addProductMutation.mutateAsync({
+        address: account,
+        digest: signedContent.digest,
+        key: JSON.stringify(signedContent.publicKey),
+        payload: JSON.stringify(data),
+        signature: signedContent.signature,
+        timestamp,
+      });
       console.log("Result", result);
 
       toast({
-        title: "Product updated",
+        title: "Product saved",
         position: "top-right",
         status: "success",
       });
@@ -252,14 +265,18 @@ const Page: NextPage = () => {
               <FormErrorMessage>Name is required</FormErrorMessage>
             </FormControl>
 
-            <FormControl id="images">
+            <FormControl id="images" isInvalid={errors.images}>
               <FormLabel htmlFor="images">Media</FormLabel>
               <FilePicker
                 files={formValue.images}
                 bucket={router.query.store as string}
                 disabled={saving}
+                maxFiles={8}
                 setFiles={(images) => setFormValue({ ...formValue, images })}
               />
+              <FormErrorMessage>
+                Each product needs at least 1 image and no more than 8 images
+              </FormErrorMessage>
             </FormControl>
 
             <Tabs>

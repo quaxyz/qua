@@ -35,6 +35,7 @@ import { ArrowLeft } from "react-iconly";
 import { useWeb3React } from "@web3-react/core";
 import { getKeyPair } from "libs/keys";
 import { signData } from "libs/signing";
+import { useMutation, useQueryClient } from "react-query";
 
 const Variants = (props: {
   variants: any[];
@@ -131,10 +132,13 @@ const Variants = (props: {
 const Page: NextPage = ({ product }: any) => {
   const toast = useToast();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { account } = useWeb3React();
 
   const [saving, setSaving] = React.useState(false);
-  const [hasVariant, setHasVariant] = React.useState(!!product.variants);
+  const [hasVariant, setHasVariant] = React.useState(
+    product.variants && product.variants.length
+  );
   const [isLimited, setIsLimited] = React.useState(
     (product.totalStocks || 0) > 0 || false
   );
@@ -156,9 +160,24 @@ const Page: NextPage = ({ product }: any) => {
     })),
   });
 
+  const updateProductMutation = useMutation(
+    async (payload: any) => {
+      return Api().post(
+        `/api/${router.query?.store}/app/products/${product.id}`,
+        payload
+      );
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("store-dashboard-products");
+      },
+    }
+  );
+
   const checkForErrors = (state: any) => ({
     name: !state.name || state.name.length < 1,
     price: !state.price || state.price.length < 1,
+    images: !state.images || state.images.length < 1 || state.images.length > 8,
   });
 
   const onPublish = async () => {
@@ -191,18 +210,14 @@ const Page: NextPage = ({ product }: any) => {
       console.log("Sig", signedContent);
 
       // send data to server
-      const { payload: result } = await Api().post(
-        `/api/${router.query?.store}/app/products/${product.id}`,
-        {
-          address: account,
-          digest: signedContent.digest,
-          key: JSON.stringify(signedContent.publicKey),
-          payload: JSON.stringify(data),
-          signature: signedContent.signature,
-          timestamp,
-        }
-      );
-
+      const { payload: result } = await updateProductMutation.mutateAsync({
+        address: account,
+        digest: signedContent.digest,
+        key: JSON.stringify(signedContent.publicKey),
+        payload: JSON.stringify(data),
+        signature: signedContent.signature,
+        timestamp,
+      });
       console.log("Result", result);
 
       toast({
@@ -262,14 +277,18 @@ const Page: NextPage = ({ product }: any) => {
               <FormErrorMessage>Name is required</FormErrorMessage>
             </FormControl>
 
-            <FormControl id="images">
+            <FormControl id="images" isInvalid={errors.images}>
               <FormLabel htmlFor="images">Media</FormLabel>
               <FilePicker
                 files={formValue.images}
                 bucket={router.query.store as string}
                 disabled={saving}
+                maxFiles={8}
                 setFiles={(images) => setFormValue({ ...formValue, images })}
               />
+              <FormErrorMessage>
+                Each product needs at least 1 image and no more than 8 images
+              </FormErrorMessage>
             </FormControl>
 
             <Tabs>
@@ -505,44 +524,7 @@ const Page: NextPage = ({ product }: any) => {
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const stores = await prisma.store.findMany({
-    select: {
-      name: true,
-    },
-  });
-
-  const paths: any[] = [];
-
-  for (let store of stores) {
-    const products = await prisma.product.findMany({
-      select: {
-        id: true,
-      },
-      where: {
-        Store: {
-          name: store.name,
-        },
-      },
-    });
-
-    paths.push(
-      ...products.map((product) => ({
-        params: {
-          store: store.name,
-          id: `${product.id}`,
-        },
-      }))
-    );
-  }
-
-  return {
-    paths,
-    fallback: false,
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetStaticProps = async ({ params }) => {
   const store = params?.store as string;
   const id = params?.id as string;
 

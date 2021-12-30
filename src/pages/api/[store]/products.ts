@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
 
-const LOG_TAG = "[store-dashboard-products]";
+const LOG_TAG = "[store-products]";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -40,7 +40,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             id: true,
             name: true,
             price: true,
-            totalStocks: true,
             images: {
               take: 1,
               select: {
