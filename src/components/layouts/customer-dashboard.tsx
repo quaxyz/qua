@@ -54,6 +54,7 @@ const CustomerLayout = ({ title, children }: any) => {
           borderBottom="1px solid rgba(0, 0, 0, 0.08)"
           px={16}
           py={5}
+          zIndex="2"
           display={{ base: "none", md: "flex" }}
           alignItems="center"
           justifyContent="space-between"

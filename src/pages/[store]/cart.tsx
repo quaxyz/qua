@@ -11,6 +11,7 @@ import {
 import { CostSummary } from "components/cost-summary";
 import CustomerLayout from "components/layouts/customer-dashboard";
 import type { NextPage } from "next";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { Delete } from "react-iconly";
@@ -186,9 +187,11 @@ const Cart: NextPage = () => {
           <Text fontSize="0.938rem">
             Shipping will be calculated at next step
           </Text>
-          <Button size="lg" variant="solid" width="100%">
-            Proceed to Checkout
-          </Button>
+          <NextLink href={`/${router?.query.store}/shipping`} passHref>
+            <Button size="lg" variant="solid" width="100%">
+              Proceed to Checkout
+            </Button>
+          </NextLink>
         </Stack>
       </Container>
     </CustomerLayout>
