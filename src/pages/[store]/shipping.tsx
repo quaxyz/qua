@@ -32,7 +32,6 @@ const Shipping: NextPage = () => {
   return (
     <CustomerLayout title="Shipping">
       <chakra.main>
-        {/* <Container maxW="container.lg" py={14}> */}
         <Container
           maxW={{ base: "100%", md: "container.lg" }}
           borderLeft="0.5px solid rgba(0, 0, 0, 8%)"
@@ -44,9 +43,9 @@ const Shipping: NextPage = () => {
             w="100%"
             px={{ base: "2", md: "24" }}
             overflowY="scroll"
-            height="100vh"
+            // height="100vh"
 
-            // pb={{ base: "12", md: "0" }}
+            pb={{ base: "12", md: "0" }}
           >
             <chakra.form>
               <chakra.header pt={{ base: "8", md: "16" }}>
@@ -535,7 +534,6 @@ const Shipping: NextPage = () => {
           </Stack>
         </Container>
       </chakra.main>
-      {/* </Container> */}
     </CustomerLayout>
   );
 };

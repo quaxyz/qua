@@ -297,5 +297,33 @@ export default extendTheme({
         label: { fontSize: "md" },
       },
     },
+
+    Radio: {
+      baseStyle: {
+        control: {
+          _checked: {
+            bg: "#000000",
+            borderColor: "#000000",
+
+            _hover: {
+              bg: "#000000",
+              borderColor: "#000000",
+            },
+          },
+        },
+        label: {
+          fontWeight: "500",
+          ml: 4,
+        },
+      },
+
+      md: {
+        label: { fontSize: "sm" },
+      },
+
+      lg: {
+        label: { fontSize: "md" },
+      },
+    },
   },
 });
