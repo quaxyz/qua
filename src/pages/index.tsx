@@ -42,7 +42,7 @@ const Home: NextPage = () => {
                 Connecting every bussiness to a customer
               </Heading>
               <Text fontSize={{ base: "xl", md: "2xl" }} textAlign="center">
-                On the world&apos;s largest P2P ecommerce stores
+                On the world&apos;s best P2P ecommerce stores
               </Text>
             </Box>
 
