@@ -5,11 +5,13 @@ import {
   Container,
   Flex,
   Heading,
+  Image,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
+import NextLink from "next/link";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import WebsiteLayout from "../components/layouts/website";
@@ -40,7 +42,7 @@ const Home: NextPage = () => {
                 Connecting every bussiness to a customer
               </Heading>
               <Text fontSize={{ base: "xl", md: "2xl" }} textAlign="center">
-                On the world’s largest P2P ecommerce stores
+                On the world&apos;s largest P2P ecommerce stores
               </Text>
             </Box>
 
@@ -52,10 +54,14 @@ const Home: NextPage = () => {
               align="center"
               p="4"
             >
-              <Button variant="solid-outline" size="lg">
-                Go Shopping
-              </Button>
-              <Button size="lg">Setup my store</Button>
+              <NextLink href="/stores" passHref>
+                <Button variant="solid-outline" size="lg">
+                  Go Shopping
+                </Button>
+              </NextLink>
+              <NextLink href="/setup" passHref>
+                <Button size="lg">Setup my store</Button>
+              </NextLink>
             </Stack>
 
             <Stack
@@ -65,12 +71,14 @@ const Home: NextPage = () => {
               width="100%"
               align="center"
             >
-              <Button variant="solid-outline" width="100%" size="lg">
-                Go Shopping
-              </Button>
-              <Button width="100%" size="lg">
-                Setup my store
-              </Button>
+              <NextLink href="/stores" passHref>
+                <Button variant="solid-outline" size="lg">
+                  Go Shopping
+                </Button>
+              </NextLink>
+              <NextLink href="/setup" passHref>
+                <Button size="lg">Setup my store</Button>
+              </NextLink>
             </Stack>
           </Container>
         </Box>
@@ -82,8 +90,13 @@ const Home: NextPage = () => {
         mb={{ base: "2rem", md: "4rem" }}
         centerContent
       >
-        <Text fontSize={{ base: "lg", md: "xl" }} textAlign="center" mb="2">
-          <strong>Qua</strong> is bringing every bussiness online
+        <Text
+          fontSize={{ base: "sm", md: "xl" }}
+          // px={{ base: "2rem", md: "0" }}
+          textAlign="center"
+          mb="2"
+        >
+          <strong>Qua</strong> is decentralizing every bussiness online
         </Text>
         <Heading
           textAlign="center"
@@ -137,9 +150,11 @@ const Home: NextPage = () => {
       </Container>
       <Container maxW="100%" centerContent>
         <Flex p="4">
-          <Button variant="solid-outline" size="lg" width="348px">
-            Setup my store
-          </Button>
+          <NextLink href="/setup" passHref>
+            <Button variant="solid-outline" size="lg" width="348px">
+              Setup my store
+            </Button>
+          </NextLink>
         </Flex>
       </Container>
 
@@ -158,9 +173,9 @@ const Home: NextPage = () => {
         >
           Customers shop in a breath with ease.
         </Heading>
-        <Text fontSize="xl" textAlign="center">
+        {/* <Text fontSize="xl" textAlign="center">
           Direct shopping from your favorite dealer is breez·y
-        </Text>
+        </Text> */}
       </Container>
 
       <Container maxW="100%">
@@ -192,77 +207,128 @@ const Home: NextPage = () => {
         </Carousel>
       </Container>
 
-      <Container maxW="container.lg" display={{ base: "none", md: "block" }}>
-        <Box
-          bgImage={{
-            base: "url('/images/m_footer-cta.svg')",
-            md: "url('/images/footer-cta.svg')",
-          }}
+      <Container
+        maxW={{ base: "100%", md: "container.xl" }}
+        px={{ base: "0", md: "24" }}
+        py={{ base: "8", md: "48" }}
+        centerContent
+      >
+        <Stack
+          bgImage="radial-gradient(120.68% 530.23% at 80.3% -12.06%, rgba(253, 118, 203, 0.8) 25.18%, rgba(255, 172, 48, 0.8) 100%),url('/images/cta_bg.png')"
           bgPosition="center center"
           bgRepeat="no-repeat"
-          bgSize="contain"
+          bgSize="cover"
+          // marginInline="12px"
           MaxW="100%"
-          height="100vh"
-          position="relative"
+          px={{ base: "0", md: "64" }}
+          py={{ base: "0", md: "24" }}
+          // align="center"
+          pos="relative"
+          boxShadow="0px 10px 180px 10px rgba(253, 118, 203, 0.72)"
+
+          // justify="center"
         >
-          <Box
-            position="absolute"
-            bottom={{ base: "11rem", md: "16rem" }}
-            left={{ base: "5rem", md: "13em" }}
-          >
-            <Text fontSize={{ base: "1xl", md: "2xl" }} color="#fff">
-              Join the revolution
-            </Text>
-            <Flex pt="4" flexDirection="column">
-              <Box>
-                <Button
-                  variant="solid"
-                  mb="4"
-                  width={{ base: "100%", md: "248px" }}
-                  backgroundColor="#fff"
+          <Image
+            boxSize="4rem"
+            display={{ base: "block", md: "none" }}
+            objectFit="cover"
+            src="/svg/qua_mark_white.svg"
+            alt="Qua Mark"
+            pos="absolute"
+            right="2"
+            top="16"
+          />
+          <Image
+            boxSize="100"
+            display={{ base: "none", md: "block" }}
+            objectFit="cover"
+            src="/qua-mark-white.svg"
+            alt="Qua Mark"
+            pos="absolute"
+            right="12"
+            top="12"
+          />
+
+          <Stack pr={{ base: "0", md: "24" }} p={{ base: "8", md: "0" }}>
+            <Stack
+              direction="row"
+              color="#fff"
+              spacing={{ base: "4", md: "8" }}
+            >
+              <Text color="#fff" fontSize="lg">
+                Fast
+              </Text>
+              <Text color="#fff" fontSize="lg">
+                Global
+              </Text>
+              <Text color="#fff" fontSize="lg">
+                Secure
+              </Text>
+              <Text color="#fff" fontSize="lg">
+                interoperable
+              </Text>
+            </Stack>
+
+            <Stack py={5} spacing={{ base: "0", md: "0" }}>
+              <Text color="#000" fontSize="2xl" fontWeight="400">
+                The future of{" "}
+              </Text>
+              <Stack spacing={{ base: "4", md: "8" }}>
+                <Heading
+                  fontFamily="Darker Grotesque"
+                  fontSize={{ base: "4xl", md: "5xl" }}
                   color="#000"
                 >
-                  Start selling
-                </Button>
-              </Box>
-              <Box>
-                <Button
-                  variant="solid-outline"
-                  borderColor="#fff"
-                  color="#fff"
-                  width="248px"
+                  payments it crypto!
+                </Heading>
+                <Heading
+                  fontFamily="Darker Grotesque"
+                  fontSize={{ base: "4xl", md: "5xl" }}
+                  color="#000"
                 >
-                  Go Shopping
-                </Button>
-              </Box>
-            </Flex>
-          </Box>
-        </Box>
-      </Container>
+                  eCommerce It P2P!
+                </Heading>
+              </Stack>
+            </Stack>
 
-      <Container maxW="100%" display={{ base: "block", md: "none" }}>
-        <Text fontSize="2xl" align="center" color="#000">
-          Join the revolution
-        </Text>
-        <Stack pt="4" direction="column" spacing="4">
-          <Button
-            variant="solid"
-            size="lg"
-            width="100%"
-            backgroundColor="#000"
-            color="#fff"
-          >
-            Start selling
-          </Button>
-          <Button
-            variant="solid-outline"
-            size="lg"
-            width="100%"
-            borderColor="#000"
-            color="#000"
-          >
-            Go Shopping
-          </Button>
+            <Stack py={5} spacing={{ base: "4", md: "4" }}>
+              <Text
+                color="#fff"
+                fontSize="lg"
+                fontWeight="600"
+                letterSpacing="0.5px"
+                textTransform="uppercase"
+              >
+                Join the revolution
+              </Text>
+              <Stack direction={{ base: "column", md: "row" }}>
+                <NextLink href="/setup" passHref>
+                  <Button
+                    w={{ base: "100%", md: "15.5rem" }}
+                    variant="solid"
+                    bgColor="#fff"
+                    color="#000"
+                    size="lg"
+                    _hover={{ bgColor: "#fff" }}
+                  >
+                    Start selling
+                  </Button>
+                </NextLink>
+                <NextLink href="/stores" passHref>
+                  <Button
+                    w={{ base: "100%", md: "15.5rem" }}
+                    variant="solid-outline"
+                    size="lg"
+                    textDecoration="2px underline"
+                    border="1px solid #000000"
+                    color="#000"
+                  >
+                    Go shopping
+                  </Button>
+                </NextLink>
+              </Stack>
+            </Stack>
+          </Stack>
         </Stack>
       </Container>
     </WebsiteLayout>
