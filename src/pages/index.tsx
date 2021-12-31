@@ -96,7 +96,7 @@ const Home: NextPage = () => {
           textAlign="center"
           mb="2"
         >
-          <strong>Qua</strong> is decentralizing every bussiness online
+          <strong>Qua</strong> is decentralizing every store online
         </Text>
         <Heading
           textAlign="center"
