@@ -13,6 +13,7 @@ import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
+import { Bag2 } from "react-iconly";
 import { CgMore } from "react-icons/cg";
 
 const navLinks = [
@@ -111,7 +112,8 @@ const CustomerLayout = ({ title, children }: any) => {
                   ? { textDecoration: "underline" }
                   : { color: "#000" })}
               >
-                <Stack direction="row" spacing={4} align="center">
+                <Stack direction="row" spacing={2} align="center">
+                  <Bag2 set="light" />
                   <Text color="inherit" fontSize="inherit" fontWeight="600">
                     Cart
                   </Text>
@@ -219,7 +221,8 @@ const CustomerLayout = ({ title, children }: any) => {
                     ? { textDecoration: "underline" }
                     : { color: "#000" })}
                 >
-                  <Stack direction="row" spacing={4} align="center">
+                  <Stack direction="row" spacing={2} align="center">
+                    <Bag2 set="light" />
                     <Text color="inherit" fontSize="inherit" fontWeight="600">
                       Cart
                     </Text>
