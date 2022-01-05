@@ -80,7 +80,7 @@ const Page = ({ initialData, storeDetails }: any) => {
     queryKey: "store-dashboard-products",
     initialData: { pages: [initialData], pageParams: [] },
     getNextPageParam: (lastPage: any) => {
-      if (lastPage?.length > 0) {
+      if (lastPage?.length >= 10) {
         return lastPage[lastPage?.length - 1].id;
       }
     },
@@ -211,7 +211,7 @@ const Page = ({ initialData, storeDetails }: any) => {
             </Grid>
 
             {queryResp.data?.pages?.map((page) =>
-              page.map((data: any, idx: number) => (
+              page.map((data: any) => (
                 <React.Fragment key={data.id}>
                   <Stack
                     direction="row"
@@ -328,6 +328,18 @@ const Page = ({ initialData, storeDetails }: any) => {
                   </Grid>
                 </React.Fragment>
               ))
+            )}
+
+            {queryResp.hasNextPage && (
+              <Stack align="center">
+                <Button
+                  onClick={() => queryResp.fetchNextPage()}
+                  isLoading={queryResp.isFetchingNextPage}
+                  variant="solid-outline"
+                >
+                  Load more
+                </Button>
+              </Stack>
             )}
           </Stack>
         )}
