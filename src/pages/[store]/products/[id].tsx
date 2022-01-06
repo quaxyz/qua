@@ -21,10 +21,19 @@ import CustomerLayout from "components/layouts/customer-dashboard";
 import { FileGallery } from "components/file-gallery";
 import { Quantity } from "components/quantity";
 import { formatCurrency } from "libs/currency";
+import { useCartStore } from "hooks/useCart";
 
 const Page: NextPage = ({ product, storeDetails }: any) => {
   const router = useRouter();
   const [quantity, setQuantity] = React.useState(1);
+  const useCart = useCartStore();
+
+  const handleAddToCart = () => {
+    useCart?.addCartItem({
+      productId: product.id,
+      quantity,
+    });
+  };
 
   return (
     <CustomerLayout title={product.name}>
@@ -115,6 +124,7 @@ const Page: NextPage = ({ product, storeDetails }: any) => {
                   variant="solid-outline"
                   textDecoration="2px underline"
                   width={{ base: "100%", md: "16rem" }}
+                  onClick={handleAddToCart}
                 >
                   Add to cart
                 </Button>

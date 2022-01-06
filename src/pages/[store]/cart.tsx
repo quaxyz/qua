@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { CostSummary } from "components/cost-summary";
 import CustomerLayout from "components/layouts/customer-dashboard";
+import { useCartStore } from "hooks/useCart";
 import type { NextPage } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -17,6 +18,8 @@ import React from "react";
 import { Delete } from "react-iconly";
 
 const CartList = () => {
+  const useCart = useCartStore();
+  const subtotal = (item: any) => (item.subtotal = item.price * item.quantity);
   return (
     <Stack>
       <Stack
@@ -39,7 +42,7 @@ const CartList = () => {
           <Text>Subtotal</Text>
         </Stack>
       </Stack>
-      {[1, 2, 3].map((index) => (
+      {useCart?.items.map((item, index) => (
         <React.Fragment key={index}>
           <Stack
             direction="row"
@@ -53,6 +56,7 @@ const CartList = () => {
             <Stack direction="row" w="100%" spacing={4}>
               <Stack direction="row" align="center">
                 <IconButton
+                  onClick={() => useCart?.removeCartItem(item.productId)}
                   variant="flushed"
                   aria-label="Delete"
                   icon={<Delete set="light" />}
@@ -72,7 +76,7 @@ const CartList = () => {
 
             <Stack w="100%" align="center">
               <Text fontSize="14px">
-                <chakra.strong>$200.00</chakra.strong>
+                <chakra.strong>{`$${200 ?? 0}.00`}</chakra.strong>
               </Text>
             </Stack>
 
@@ -91,7 +95,7 @@ const CartList = () => {
 
             <Stack w="100%" align="center">
               <Text fontSize="14px">
-                <chakra.strong>$200.00</chakra.strong>
+                <chakra.strong>{`$${subtotal(item) ?? 0}.00`}</chakra.strong>
               </Text>
             </Stack>
           </Stack>
@@ -163,39 +167,45 @@ const CartList = () => {
   );
 };
 
-const Cart: NextPage = () => {
+const CartLayout = () => {
   const router = useRouter();
-
+  const cartStore = useCartStore();
   return (
-    <CustomerLayout title="Cart">
-      <Container maxW="100%" px={{ base: "2", md: "24" }}>
-        <Stack w="100%" align="center" p={{ base: "4", md: "8" }}>
-          <Heading fontSize={{ base: "xl", md: "3xl" }} fontWeight="300">
-            Your Cart (1 item)
-          </Heading>
-        </Stack>
-        <CartList />
-        <Stack
-          width={{ base: "100%", md: "24.813rem" }}
-          p={4}
-          my={4}
-          float="right"
-          position="relative"
-          border="0.5px solid rgba(0, 0, 0, 12%)"
-        >
-          <CostSummary />
-          <Text fontSize="0.938rem">
-            Shipping will be calculated at next step
-          </Text>
-          <NextLink href={`/${router?.query.store}/shipping`} passHref>
-            <Button size="lg" variant="solid" width="100%">
-              Proceed to Checkout
-            </Button>
-          </NextLink>
-        </Stack>
-      </Container>
-    </CustomerLayout>
+    <Container maxW="100%" px={{ base: "2", md: "24" }}>
+      <Stack w="100%" align="center" p={{ base: "4", md: "8" }}>
+        <Heading fontSize={{ base: "xl", md: "3xl" }} fontWeight="300">
+          Your Cart ({cartStore?.items.length ?? 0} item)
+        </Heading>
+      </Stack>
+      <CartList />
+
+      <Stack
+        width={{ base: "100%", md: "24.813rem" }}
+        p={4}
+        my={4}
+        float="right"
+        position="relative"
+        border="0.5px solid rgba(0, 0, 0, 12%)"
+      >
+        <CostSummary />
+        <Text fontSize="0.938rem">
+          Shipping will be calculated at next step
+        </Text>
+        <NextLink href={`/${router?.query.store}/shipping`} passHref>
+          <Button size="lg" variant="solid" width="100%">
+            Proceed to Checkout
+          </Button>
+        </NextLink>
+      </Stack>
+    </Container>
   );
 };
 
+const Cart: NextPage = () => {
+  return (
+    <CustomerLayout title="Cart">
+      <CartLayout />
+    </CustomerLayout>
+  );
+};
 export default Cart;

@@ -9,6 +9,8 @@ import {
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import { Wallet } from "components/wallet";
+import useCart from "hooks/useCart";
+import { CartContext } from "libs/cart";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -30,9 +32,10 @@ const navLinks = [
 const CustomerLayout = ({ title, children }: any) => {
   const router = useRouter();
   const { account } = useWeb3React();
+  const cartStore = useCart();
 
   return (
-    <>
+    <CartContext.Provider value={cartStore}>
       <Head>
         <title>{title} - Frowth</title>
       </Head>
@@ -233,7 +236,7 @@ const CustomerLayout = ({ title, children }: any) => {
           </Stack>
         </chakra.nav>
       </Grid>
-    </>
+    </CartContext.Provider>
   );
 };
 

@@ -8,6 +8,7 @@ import { Web3ReactManager } from "components/wallet/web3-manager";
 import { getLibrary } from "libs/wallet";
 import { QueryClient, QueryClientProvider, Hydrate } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { CartContext } from "libs/cart";
 
 const Web3ReactProviderDefault = dynamic(
   () => import("components/wallet/network-connector"),
