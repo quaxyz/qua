@@ -64,7 +64,7 @@ const About: NextPage = () => {
             </Box>
             <Flex>
               <Link
-                href="#"
+                href="https://www.instagram.com/qua_xyz/"
                 color="#fff"
                 textTransform="uppercase"
                 fontSize="sm"
@@ -74,7 +74,7 @@ const About: NextPage = () => {
               </Link>{" "}
               <Spacer mx="2" />
               <Link
-                href="#"
+                href="https://twitter.com/qua_xyz"
                 color="#fff"
                 textTransform="uppercase"
                 fontSize="sm"
