@@ -1,6 +1,11 @@
+import React from "react";
+import NextLink from "next/link";
+import Api from "libs/api";
+import type { NextPage } from "next";
 import {
   Button,
   chakra,
+  CircularProgress,
   Container,
   Heading,
   IconButton,
@@ -8,168 +13,127 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { CostSummary } from "components/cost-summary";
 import CustomerLayout from "components/layouts/customer-dashboard";
+import { CostSummary } from "components/cost-summary";
 import { useCartStore } from "hooks/useCart";
-import type { NextPage } from "next";
-import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
 import { Delete } from "react-iconly";
+import { useWeb3React } from "@web3-react/core";
+import { useQuery } from "react-query";
+import { Quantity } from "components/quantity";
+import { useDebounce } from "react-use";
 
-const CartList = () => {
-  const useCart = useCartStore();
-  const subtotal = (item: any) => (item.subtotal = item.price * item.quantity);
+const CartItem = ({ item }: any) => {
+  const cartStore = useCartStore();
+  const [quantity, setQuantity] = React.useState(item.quantity);
+
+  const [, cancel] = useDebounce(
+    () => {
+      if (quantity !== item.quantity) {
+        cartStore?.updateCartItem(item.productId, quantity);
+      }
+    },
+    1000,
+    [quantity]
+  );
+
+  // TODO:: disable item when available stocks is 0
   return (
-    <Stack>
-      <Stack
-        direction="row"
-        display={{ base: "none", md: "flex" }}
-        mb="2"
-        p="2rem"
-        borderBottom="0.5px solid rgba(0, 0, 0, 8%)"
-      >
-        <Stack w="100%">
-          <Text pl="9">Product</Text>
+    <Stack
+      direction="row"
+      display={{ base: "none", md: "flex" }}
+      borderBottom="0.5px solid rgba(0, 0, 0, 6%)"
+      p="4"
+      alignItems="center"
+      justify="space-between"
+      maxWidth="100%"
+    >
+      <Stack direction="row" w="100%" spacing={4}>
+        <Stack direction="row" align="center">
+          <IconButton
+            onClick={() => cartStore?.removeCartItem(item.productId)}
+            variant="flushed"
+            aria-label="Delete"
+            icon={<Delete set="light" />}
+          />
+          <Image
+            width="100px"
+            height="100px"
+            objectFit="cover"
+            src={item.image}
+            alt="Product Image"
+          />
         </Stack>
-        <Stack w="100%" align="center">
-          <Text>Price</Text>
-        </Stack>
-        <Stack w="100%" align="center">
-          <Text>Qty</Text>
-        </Stack>
-        <Stack w="100%" align="center">
-          <Text>Subtotal</Text>
-        </Stack>
+        <Heading as="h1" size="sm" pt={4} fontWeight="300">
+          {item.name}
+        </Heading>
       </Stack>
-      {useCart?.items.map((item, index) => (
-        <React.Fragment key={index}>
-          <Stack
-            direction="row"
-            display={{ base: "none", md: "flex" }}
-            borderBottom="0.5px solid rgba(0, 0, 0, 6%)"
-            p="4"
-            alignItems="center"
-            justify="space-between"
-            maxWidth="100%"
-          >
-            <Stack direction="row" w="100%" spacing={4}>
-              <Stack direction="row" align="center">
-                <IconButton
-                  onClick={() => useCart?.removeCartItem(item.productId)}
-                  variant="flushed"
-                  aria-label="Delete"
-                  icon={<Delete set="light" />}
-                />
-                <Image
-                  width="12rem"
-                  height="6.25rem"
-                  objectFit="cover"
-                  src="/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg"
-                  alt="Product Image"
-                />
-              </Stack>
-              <Heading as="h1" size="sm" pt={4} fontWeight="300">
-                VESONAL Spring Nike shoes Footwear Big Size 38-46{" "}
-              </Heading>
-            </Stack>
 
-            <Stack w="100%" align="center">
-              <Text fontSize="14px">
-                <chakra.strong>{`$${200 ?? 0}.00`}</chakra.strong>
-              </Text>
-            </Stack>
+      <Stack w="100%" align="center">
+        <Text fontSize="14px">
+          <chakra.strong>{`$${item.price ?? 0}.00`}</chakra.strong>
+        </Text>
+      </Stack>
 
-            <Stack w="100%" align="center">
-              <Text
-                fontSize="14px"
-                fontWeight="500"
-                bgColor="#000"
-                color="#fff"
-                px="12px"
-                py="4px"
-              >
-                Incrementor
-              </Text>
-            </Stack>
+      <Stack w="100%" align="center">
+        <Quantity
+          quantity={quantity}
+          setQuantity={(v) => setQuantity(v)}
+          max={item.availableStocks || Infinity}
+          min={1}
+        />
+      </Stack>
 
-            <Stack w="100%" align="center">
-              <Text fontSize="14px">
-                <chakra.strong>{`$${subtotal(item) ?? 0}.00`}</chakra.strong>
-              </Text>
-            </Stack>
-          </Stack>
-
-          <Stack
-            display={{ base: "flex", md: "none" }}
-            direction="column"
-            w="100%"
-            pb={2}
-          >
-            <Stack
-              direction="row"
-              w="100%"
-              p={2}
-              spacing={2}
-              border="0.5px solid rgba(0, 0, 0, 16%)"
-            >
-              <Image
-                width="12rem"
-                height="6.25rem"
-                objectFit="cover"
-                src="/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg"
-                alt="Product Image"
-              />
-
-              <Stack>
-                <Stack direction="row" w="100%" spacing={2}>
-                  <Heading as="h1" size="sm" fontWeight="300">
-                    VESONAL Spring Nike shoes Footwear Big Size 38-46{" "}
-                  </Heading>
-                  <IconButton
-                    variant="flushed"
-                    aria-label="Delete"
-                    icon={<Delete set="light" />}
-                  />
-                </Stack>
-                <Text fontSize="0.938rem">
-                  <chakra.strong>$200.00</chakra.strong>
-                </Text>
-
-                <Stack>
-                  <Stack direction="row" align="center" w="100%" spacing={2}>
-                    <Text fontSize="0.938rem">Subtotal:</Text>
-                    <Text fontSize="0.938rem">
-                      <chakra.strong>$200.00</chakra.strong>
-                    </Text>
-                  </Stack>
-                  <Stack direction="row" w="100%" spacing={2}>
-                    <Text>Qty:</Text>
-                    <Text
-                      as="div"
-                      fontSize="0.938rem"
-                      fontWeight="500"
-                      bgColor="#000"
-                      color="#fff"
-                      px="12px"
-                      py="4px"
-                    >
-                      Incrementor
-                    </Text>
-                  </Stack>
-                </Stack>
-              </Stack>
-            </Stack>
-          </Stack>
-        </React.Fragment>
-      ))}
+      <Stack w="100%" align="center">
+        <Text fontSize="14px">
+          <chakra.strong>{`$${item.price * quantity ?? 0}.00`}</chakra.strong>
+        </Text>
+      </Stack>
     </Stack>
   );
 };
 
 const CartLayout = () => {
+  const { account } = useWeb3React();
   const router = useRouter();
   const cartStore = useCartStore();
+
+  const items = cartStore?.items.map((c) => c.productId);
+  const queryResp = useQuery({
+    queryKey: ["cartItemsDetails", items],
+    onError: () => console.warn("Error fetching cart details from API"),
+    queryFn: async () => {
+      const { payload } = await Api().post(
+        `/api/${router.query.store}/cart/details?address=${account}`,
+        {
+          cart: items,
+        }
+      );
+
+      return payload;
+    },
+    select: (data) =>
+      data.map((product: any) => {
+        const cartItem = cartStore?.items.find(
+          (item) => product.id === item.productId
+        );
+        return {
+          productId: product.id,
+          quantity: cartItem?.quantity,
+          name: product.name,
+          image: product.images[0].url,
+          price: product.price,
+          // todo: substract total sold
+          availableStocks: product.totalStocks,
+        };
+      }),
+  });
+
+  const total = queryResp.data?.reduce(
+    (acc: any, item: any) => acc + item.quantity * item.price,
+    0
+  );
+
   return (
     <Container maxW="100%" px={{ base: "2", md: "24" }}>
       <Stack w="100%" align="center" p={{ base: "4", md: "8" }}>
@@ -177,7 +141,45 @@ const CartLayout = () => {
           Your Cart ({cartStore?.items.length ?? 0} item)
         </Heading>
       </Stack>
-      <CartList />
+
+      <Stack>
+        <Stack
+          direction="row"
+          display={{ base: "none", md: "flex" }}
+          mb="2"
+          p="2rem"
+          borderBottom="0.5px solid rgba(0, 0, 0, 8%)"
+        >
+          <Stack w="100%">
+            <Text pl="9">Product</Text>
+          </Stack>
+          <Stack w="100%" align="center">
+            <Text>Price</Text>
+          </Stack>
+          <Stack w="100%" align="center">
+            <Text>Qty</Text>
+          </Stack>
+          <Stack w="100%" align="center">
+            <Text>Subtotal</Text>
+          </Stack>
+        </Stack>
+
+        {queryResp.isLoading && (
+          <Stack align="center" justify="center" h="200px">
+            <CircularProgress isIndeterminate color="black" />
+          </Stack>
+        )}
+
+        {!queryResp.isLoading && !queryResp.data?.length && (
+          <Stack align="center" justify="center">
+            <Text>Your cart is empty</Text>
+          </Stack>
+        )}
+
+        {queryResp.data?.map((item: any) => (
+          <CartItem item={item} key={item.productId} />
+        ))}
+      </Stack>
 
       <Stack
         width={{ base: "100%", md: "24.813rem" }}
@@ -187,10 +189,26 @@ const CartLayout = () => {
         position="relative"
         border="0.5px solid rgba(0, 0, 0, 12%)"
       >
-        <CostSummary />
-        <Text fontSize="0.938rem">
-          Shipping will be calculated at next step
-        </Text>
+        <Stack direction="row" justify="space-between" py={2}>
+          <Stack direction="column" spacing={4}>
+            <Text>Subtotal</Text>
+            <Text>Network Fee</Text>
+            <Text>Total</Text>
+          </Stack>
+          <Stack direction="column" spacing={4}>
+            <Text>:</Text>
+            <Text>:</Text>
+            <Text>:</Text>
+          </Stack>
+          <Stack direction="column" fontWeight="bold" spacing={4}>
+            <Text>${total}</Text>
+            <Text>$1</Text>
+            <Text>${total + 1}</Text>
+          </Stack>
+        </Stack>
+
+        <Text fontSize="sm">Shipping will be calculated at next step</Text>
+
         <NextLink href={`/${router?.query.store}/shipping`} passHref>
           <Button size="lg" variant="solid" width="100%">
             Proceed to Checkout

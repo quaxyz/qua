@@ -1,4 +1,6 @@
 import {
+  Box,
+  Center,
   chakra,
   Grid,
   Heading,
@@ -60,7 +62,6 @@ const CustomerLayout = ({ title, children }: any) => {
           borderBottom="1px solid rgba(0, 0, 0, 0.08)"
           px={16}
           py={5}
-          zIndex="2"
           display={{ base: "none", md: "flex" }}
           alignItems="center"
           justifyContent="space-between"
@@ -115,9 +116,30 @@ const CustomerLayout = ({ title, children }: any) => {
                   ? { textDecoration: "underline" }
                   : { color: "#000" })}
               >
-                <Stack direction="row" spacing={2} align="center">
-                  <Bag2 set="light" />
-                  <Text color="inherit" fontSize="inherit" fontWeight="600">
+                <Stack direction="row" spacing={3} align="center">
+                  <Box pos="relative">
+                    <Bag2 set="light" />
+                    <Center
+                      boxSize="20px"
+                      pos="absolute"
+                      top="-5px"
+                      left="12px"
+                      bgColor="#000"
+                      color="#fff"
+                      rounded="50%"
+                      p={2}
+                    >
+                      <Text fontSize="xs" lineHeight="1" color="inherit">
+                        {cartStore?.totalInCart}
+                      </Text>
+                    </Center>
+                  </Box>
+
+                  <Text
+                    color="rgb(0 0 0 / 68%)"
+                    fontSize="inherit"
+                    fontWeight="600"
+                  >
                     Cart
                   </Text>
                 </Stack>

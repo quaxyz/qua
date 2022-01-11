@@ -16,7 +16,6 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 import { useLogout } from "hooks/auth";
 import { truncateAddress } from "libs/utils";
@@ -129,7 +128,6 @@ const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
 };
 
 const AccountModal = ({ isOpen, onClose, menuOptions = [] }: any) => {
-  const router = useRouter();
   const { account } = useWeb3React();
   const logOut = useLogout();
 

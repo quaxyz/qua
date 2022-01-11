@@ -73,30 +73,37 @@ const Page: NextPage = ({ initialData, storeDetails }: any) => {
         px={{ base: "4", md: "16" }}
         mb={{ base: "8", md: "24" }}
       >
-        <NextLink href={`/${router?.query.store}`} passHref>
-          <Link
-            borderBottom="none"
-            _hover={{ transform: "scale(1.05)" }}
-            textDecoration="underline"
-          >
-            <Stack
-              direction="row"
-              spacing={4}
-              px={4}
-              py={{ base: "4", md: "8" }}
-              align="center"
+        <chakra.div>
+          <NextLink href={`/${router?.query.store}`} passHref>
+            <Link
+              borderBottom="none"
+              _hover={{ transform: "scale(1.05)" }}
+              textDecoration="underline"
             >
-              <Text fontSize="inherit" fontWeight="600">
-                All
-              </Text>
-            </Stack>
-          </Link>
-        </NextLink>
+              <Stack
+                direction="row"
+                spacing={4}
+                px={4}
+                py={{ base: "4", md: "8" }}
+                align="center"
+              >
+                <Text fontSize="inherit" fontWeight="600">
+                  All
+                </Text>
+              </Stack>
+            </Link>
+          </NextLink>
+        </chakra.div>
 
         <Grid
           gap={{ base: 4, md: 10 }}
           alignItems="center"
-          templateColumns={{ base: "100%", md: "repeat(4, 1fr)" }}
+          templateColumns={{
+            base: "100%",
+            md: "repeat(4, 1fr)",
+            lg: "repeat(4, 1fr)",
+            xl: "repeat(6, 1fr)",
+          }}
         >
           {queryResp.data?.pages.map((page, idx) => (
             <React.Fragment key={idx}>
