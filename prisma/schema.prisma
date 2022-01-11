@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["filterJson"]
 }
 
 datasource db {
@@ -23,13 +24,15 @@ model Store {
   location    String?
   socialLinks Json?
 
-  products Product[]
   imageId  Int?
+  products Product[]
 }
 
 model User {
   address   String   @unique
   publicKey String[]
+
+  cart Json?
 }
 
 model Product {
@@ -51,6 +54,7 @@ model Product {
   storeId Int
 }
 
+// metas
 model Image {
   id   Int    @id @default(autoincrement())
   hash String @unique

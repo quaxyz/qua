@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton, Stack, Text } from "@chakra-ui/react";
+import { IconButton, Input, Stack } from "@chakra-ui/react";
 import { FiMinus, FiPlus } from "react-icons/fi";
 
 type QuantityProps = {
@@ -28,7 +28,15 @@ export function Quantity(props: QuantityProps) {
         }
       />
 
-      <Text px={2}>{props.quantity}</Text>
+      <Input
+        w="60px" // using this until someone adds 10000000 quantity of a product
+        p={0}
+        textAlign="center"
+        border="none"
+        type="number"
+        value={props.quantity}
+        onChange={(e) => props.setQuantity(parseInt(e.target.value, 10))}
+      />
 
       <IconButton
         aria-label="increase"

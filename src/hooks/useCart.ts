@@ -1,83 +1,129 @@
+import _cloneDeep from "lodash.clonedeep";
+import Api from "libs/api";
 import { CartContext, CartItem } from "libs/cart";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { useWeb3React } from "@web3-react/core";
 import { useToast } from "@chakra-ui/react";
-
-let initCart: CartItem[] = [
-  {
-    productId: "1",
-    quantity: 3,
-  },
-  {
-    productId: "2",
-    quantity: 4,
-  },
-  {
-    productId: "3",
-    quantity: 4,
-  },
-];
+import { useWeb3React } from "@web3-react/core";
+import { useRouter } from "next/router";
 
 const useCart = () => {
-  const [items, setItems] = useState<CartItem[]>(initCart);
+  const [items, setItems] = useState<CartItem[]>([]);
   const [loadingCart, setLoadingCart] = useState(false);
   const { account } = useWeb3React();
   const toast = useToast();
+  const router = useRouter();
 
   const fetchCartItems = useCallback(async () => {
     setLoadingCart(true);
     try {
-      const locallyStoredCart = localStorage.getItem("cartItems");
-      locallyStoredCart && setItems(JSON.parse(locallyStoredCart));
+      if (account) {
+        const { payload } = await Api().get(
+          `/api/${router.query.store}/cart?address=${account}`
+        );
+        setItems(payload);
+      } else {
+        const locallyStoredCart = localStorage.getItem("cartItems");
+        locallyStoredCart && setItems(JSON.parse(locallyStoredCart));
+      }
     } catch (error) {
-      toast({
-        title: "Error retrieving cart",
-        description: "No item(s) found",
-        position: "bottom-right",
-        status: "error",
-      });
+      console.warn("Error retrieving cart. No items(s) found");
     } finally {
       setLoadingCart(false);
     }
-  }, []);
+  }, [account, router.query.store]);
+
+  const syncLocalCartItem = useCallback(async () => {
+    try {
+      const locallyStoredCart = localStorage.getItem("cartItems");
+      if (!locallyStoredCart) return;
+
+      await Api().post(`/api/${router.query.store}/cart?address=${account}`, {
+        cart: JSON.parse(locallyStoredCart),
+      });
+
+      console.log("Cart synced");
+      localStorage.removeItem("cartItems");
+    } catch (err) {
+      console.log("Error syncing cart", err);
+    }
+  }, [account, router.query.store]);
 
   const addCartItem = useCallback(
-    (item: CartItem) => {
-      setItems((prev) => [...prev, item]);
-      localStorage.setItem("cartItems", JSON.stringify(items));
+    async (item: CartItem) => {
+      let editableItems = _cloneDeep(items);
+
+      // first check if item is already added
+      const index = editableItems.findIndex(
+        (cartItem) => cartItem.productId === item.productId
+      );
+
+      if (index >= 0) {
+        editableItems[index].quantity =
+          editableItems[index].quantity + item.quantity;
+      } else {
+        editableItems = [...items, item];
+      }
+
+      setItems(editableItems);
+
+      if (account) {
+        await Api().post(`/api/${router.query.store}/cart?address=${account}`, {
+          cart: editableItems,
+        });
+      } else {
+        localStorage.setItem("cartItems", JSON.stringify(editableItems));
+      }
     },
-    [items]
+    [router.query.store, account, items]
   );
 
   const removeCartItem = useCallback(
-    (itemId: string) => {
-      setItems((oldItems) =>
-        oldItems.filter((item) => item.productId !== itemId)
-      );
-      localStorage.setItem("cartItems", JSON.stringify(items));
+    async (itemId: string) => {
+      const newItems = items.filter((item) => item.productId !== itemId);
+      setItems(newItems);
+
+      if (account) {
+        await Api().post(`/api/${router.query.store}/cart?address=${account}`, {
+          cart: newItems,
+        });
+      } else {
+        localStorage.setItem("cartItems", JSON.stringify(newItems));
+      }
     },
-    [items]
+    [router.query.store, account, items]
   );
 
   const updateCartItem = useCallback(
-    (itemid: string, quantity: number) => {
+    async (itemid: string, quantity: number) => {
       const index = items.findIndex(
         (cartItem) => cartItem.productId === itemid
       );
-      const editableItem = items;
-      editableItem[index].quantity = quantity;
-      setItems(editableItem);
+
+      let editableItems = _cloneDeep(items);
+      editableItems[index].quantity = quantity;
+
+      setItems(editableItems);
+
+      if (account) {
+        await Api().post(`/api/${router.query.store}/cart?address=${account}`, {
+          cart: editableItems,
+        });
+      } else {
+        localStorage.setItem("cartItems", JSON.stringify(editableItems));
+      }
     },
-    [items]
+    [router.query.store, account, items]
   );
 
   useEffect(() => {
+    if (account) syncLocalCartItem();
     fetchCartItems();
-  }, [fetchCartItems]);
+  }, [account, fetchCartItems, syncLocalCartItem]);
 
   return useMemo(
     () => ({
       items,
+      totalInCart: items.reduce((acc, item) => acc + item.quantity, 0),
       loadingCart,
       addCartItem,
       removeCartItem,
