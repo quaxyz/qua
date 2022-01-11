@@ -2,12 +2,10 @@ import Api from "libs/api";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import { useWeb3React } from "@web3-react/core";
-import { useRouter } from "next/router";
 import { destroyKeyPair, extractPublicKey, getKeyPair } from "libs/keys";
 import { AuthContext } from "libs/auth";
 
 export function useInitializeStoreAuth() {
-  const router = useRouter();
   const [publicKey, setPublicKey] = useState<string | null>();
   const { account } = useWeb3React();
 
@@ -17,7 +15,7 @@ export function useInitializeStoreAuth() {
     staleTime: Infinity,
     queryFn: async () => {
       const { payload } = await Api().get(
-        `/api/${router.query?.store}/app/verify-owner?address=${account}`
+        `/app/verify-owner?address=${account}`
       );
 
       return payload;

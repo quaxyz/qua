@@ -1,3 +1,6 @@
+import React from "react";
+import Head from "next/head";
+import Link from "components/link";
 import {
   Box,
   Button,
@@ -9,15 +12,11 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  Link,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
-import Head from "next/head";
-import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
 import { Plus, Search } from "react-iconly";
 
 const OrderList = () => {
@@ -56,12 +55,14 @@ const OrderList = () => {
               <Text display={{ base: "inline-block", md: "none" }}>
                 Order ID
               </Text>
-              {/* <NextLink href={`/${router.query?.store}/app/orders/${index}`}> */}
-              <NextLink href={`/${router.query?.store}/app/orders/orderId`}>
-                <Link fontSize="16px" fontWeight={{ base: "400", md: "600" }}>
-                  #1201
-                </Link>
-              </NextLink>
+
+              <Link
+                href={`/app/orders/orderId`}
+                fontSize="16px"
+                fontWeight={{ base: "400", md: "600" }}
+              >
+                #1201
+              </Link>
             </Flex>
             <Flex w="100%" justify="space-between">
               <Text display={{ base: "inline-block", md: "none" }}>
@@ -185,19 +186,19 @@ const Orders = () => {
                 <Text fontSize="lg" pb="14px">
                   Add a product to your store to recieve orders
                 </Text>
-                <NextLink
+
+                <Link
+                  as={Button}
                   href={`/${router?.query.store}/app/products/new`}
-                  passHref
+                  variant="primary"
                 >
-                  <Button variant="primary">
-                    <Plus
-                      set="bold"
-                      primaryColor="#ffffff"
-                      style={{ marginRight: "14px" }}
-                    />
-                    New Product
-                  </Button>
-                </NextLink>
+                  <Plus
+                    set="bold"
+                    primaryColor="#ffffff"
+                    style={{ marginRight: "14px" }}
+                  />
+                  New Product
+                </Link>
               </Stack>
             </Stack>
           </Container>

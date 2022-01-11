@@ -1,6 +1,6 @@
 import React from "react";
 import Head from "next/head";
-import NextLink from "next/link";
+import Link from "components/link";
 import {
   Button,
   chakra,
@@ -9,7 +9,6 @@ import {
   Grid,
   Heading,
   Icon,
-  Link,
   Stack,
   Text,
 } from "@chakra-ui/react";
@@ -171,40 +170,42 @@ const DashboardLayout = ({ title, children }: any) => {
           display={{ base: "none", md: "block" }}
         >
           <Stack spacing={8} minH="100%">
-            <Heading fontWeight="800" fontSize="2xl" color="#fff" px={3}>
-              Frowth
+            <Heading
+              fontWeight="800"
+              fontSize="2xl"
+              color="#fff"
+              px={3}
+              textTransform="uppercase"
+            >
+              {router.query?.store}
             </Heading>
 
             <Stack spacing={6}>
               {navLinks.map((navLink, idx) => (
-                <NextLink
+                <Link
                   key={idx}
-                  href={`/${router.query?.store}/app${navLink.url}`}
-                  passHref
+                  href={`/app${navLink.url}`}
+                  px={3}
+                  py={3}
+                  rounded="4px"
+                  borderBottom="none"
+                  _hover={{ transform: "scale(1.05)" }}
+                  {...(router.asPath.includes(navLink.url)
+                    ? { color: "#000", bg: "#FFF" }
+                    : { color: "#FFF" })}
                 >
-                  <Link
-                    px={3}
-                    py={3}
-                    rounded="4px"
-                    borderBottom="none"
-                    _hover={{ transform: "scale(1.05)" }}
-                    {...(router.asPath.includes(navLink.url)
-                      ? { color: "#000", bg: "#FFF" }
-                      : { color: "#FFF" })}
-                  >
-                    <Stack direction="row" spacing={4} align="center">
-                      <Icon boxSize={5} as={navLink.icon} />
-                      <Text
-                        fontWeight="normal"
-                        color="inherit"
-                        fontSize="inherit"
-                        as="span"
-                      >
-                        {navLink.name}
-                      </Text>
-                    </Stack>
-                  </Link>
-                </NextLink>
+                  <Stack direction="row" spacing={4} align="center">
+                    <Icon boxSize={5} as={navLink.icon} />
+                    <Text
+                      fontWeight="normal"
+                      color="inherit"
+                      fontSize="inherit"
+                      as="span"
+                    >
+                      {navLink.name}
+                    </Text>
+                  </Stack>
+                </Link>
               ))}
             </Stack>
 
@@ -251,8 +252,13 @@ const DashboardLayout = ({ title, children }: any) => {
             h="100%"
             w="100%"
           >
-            <Heading fontWeight="800" fontSize="xl" color="#fff">
-              Frowth
+            <Heading
+              fontWeight="800"
+              fontSize="xl"
+              color="#fff"
+              textTransform="uppercase"
+            >
+              {router.query?.store}
             </Heading>
 
             <Wallet
@@ -316,41 +322,37 @@ const DashboardLayout = ({ title, children }: any) => {
             w="100%"
           >
             {navLinks.map((NavLink, idx) => (
-              <NextLink
+              <Link
                 key={idx}
-                href={`/${router.query?.store}/app${NavLink.url}`}
-                passHref
+                href={`/app${NavLink.url}`}
+                borderBottom="none"
+                color="#FFF"
+                {...(router.asPath.includes(NavLink.url)
+                  ? { textDecoration: "underline" }
+                  : {})}
               >
-                <Link
-                  borderBottom="none"
-                  color="#FFF"
-                  {...(router.asPath.includes(NavLink.url)
-                    ? { textDecoration: "underline" }
-                    : {})}
-                >
-                  <Stack spacing={2} align="center">
-                    <Icon
-                      boxSize={5}
-                      as={(props) => (
-                        <NavLink.icon
-                          {...(router.asPath.includes(NavLink.url)
-                            ? { set: "bold" }
-                            : {})}
-                          {...props}
-                        />
-                      )}
-                    />
-                    <Text
-                      fontWeight="normal"
-                      color="inherit"
-                      fontSize="xs"
-                      as="span"
-                    >
-                      {NavLink.name}
-                    </Text>
-                  </Stack>
-                </Link>
-              </NextLink>
+                <Stack spacing={2} align="center">
+                  <Icon
+                    boxSize={5}
+                    as={(props) => (
+                      <NavLink.icon
+                        {...(router.asPath.includes(NavLink.url)
+                          ? { set: "bold" }
+                          : {})}
+                        {...props}
+                      />
+                    )}
+                  />
+                  <Text
+                    fontWeight="normal"
+                    color="inherit"
+                    fontSize="xs"
+                    as="span"
+                  >
+                    {NavLink.name}
+                  </Text>
+                </Stack>
+              </Link>
             ))}
           </Stack>
         </chakra.aside>

@@ -2,24 +2,18 @@ import _cloneDeep from "lodash.clonedeep";
 import Api from "libs/api";
 import { CartContext, CartItem } from "libs/cart";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { useToast } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
-import { useRouter } from "next/router";
 
 const useCart = () => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loadingCart, setLoadingCart] = useState(false);
   const { account } = useWeb3React();
-  const toast = useToast();
-  const router = useRouter();
 
   const fetchCartItems = useCallback(async () => {
     setLoadingCart(true);
     try {
       if (account) {
-        const { payload } = await Api().get(
-          `/api/${router.query.store}/cart?address=${account}`
-        );
+        const { payload } = await Api().get(`/cart?address=${account}`);
         setItems(payload);
       } else {
         const locallyStoredCart = localStorage.getItem("cartItems");
@@ -30,14 +24,14 @@ const useCart = () => {
     } finally {
       setLoadingCart(false);
     }
-  }, [account, router.query.store]);
+  }, [account]);
 
   const syncLocalCartItem = useCallback(async () => {
     try {
       const locallyStoredCart = localStorage.getItem("cartItems");
       if (!locallyStoredCart) return;
 
-      await Api().post(`/api/${router.query.store}/cart?address=${account}`, {
+      await Api().post(`/cart?address=${account}`, {
         cart: JSON.parse(locallyStoredCart),
       });
 
@@ -46,7 +40,7 @@ const useCart = () => {
     } catch (err) {
       console.log("Error syncing cart", err);
     }
-  }, [account, router.query.store]);
+  }, [account]);
 
   const addCartItem = useCallback(
     async (item: CartItem) => {
@@ -67,14 +61,14 @@ const useCart = () => {
       setItems(editableItems);
 
       if (account) {
-        await Api().post(`/api/${router.query.store}/cart?address=${account}`, {
+        await Api().post(`/cart?address=${account}`, {
           cart: editableItems,
         });
       } else {
         localStorage.setItem("cartItems", JSON.stringify(editableItems));
       }
     },
-    [router.query.store, account, items]
+    [account, items]
   );
 
   const removeCartItem = useCallback(
@@ -83,14 +77,14 @@ const useCart = () => {
       setItems(newItems);
 
       if (account) {
-        await Api().post(`/api/${router.query.store}/cart?address=${account}`, {
+        await Api().post(`/cart?address=${account}`, {
           cart: newItems,
         });
       } else {
         localStorage.setItem("cartItems", JSON.stringify(newItems));
       }
     },
-    [router.query.store, account, items]
+    [account, items]
   );
 
   const updateCartItem = useCallback(
@@ -105,14 +99,14 @@ const useCart = () => {
       setItems(editableItems);
 
       if (account) {
-        await Api().post(`/api/${router.query.store}/cart?address=${account}`, {
+        await Api().post(`/cart?address=${account}`, {
           cart: editableItems,
         });
       } else {
         localStorage.setItem("cartItems", JSON.stringify(editableItems));
       }
     },
-    [router.query.store, account, items]
+    [account, items]
   );
 
   useEffect(() => {

@@ -14,14 +14,13 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import { CostSummary } from "components/cost-summary";
 import { useCartStore } from "hooks/useCart";
-import { useRouter } from "next/router";
 import { Delete } from "react-iconly";
 import { useWeb3React } from "@web3-react/core";
 import { useQuery } from "react-query";
 import { Quantity } from "components/quantity";
 import { useDebounce } from "react-use";
+import Link from "components/link";
 
 const CartItem = ({ item }: any) => {
   const cartStore = useCartStore();
@@ -95,7 +94,6 @@ const CartItem = ({ item }: any) => {
 
 const CartLayout = () => {
   const { account } = useWeb3React();
-  const router = useRouter();
   const cartStore = useCartStore();
 
   const items = cartStore?.items.map((c) => c.productId);
@@ -103,12 +101,9 @@ const CartLayout = () => {
     queryKey: ["cartItemsDetails", items],
     onError: () => console.warn("Error fetching cart details from API"),
     queryFn: async () => {
-      const { payload } = await Api().post(
-        `/api/${router.query.store}/cart/details?address=${account}`,
-        {
-          cart: items,
-        }
-      );
+      const { payload } = await Api().post(`/cart/details?address=${account}`, {
+        cart: items,
+      });
 
       return payload;
     },
@@ -209,11 +204,15 @@ const CartLayout = () => {
 
         <Text fontSize="sm">Shipping will be calculated at next step</Text>
 
-        <NextLink href={`/${router?.query.store}/shipping`} passHref>
-          <Button size="lg" variant="solid" width="100%">
-            Proceed to Checkout
-          </Button>
-        </NextLink>
+        <Link
+          href="/shipping"
+          size="lg"
+          variant="solid"
+          width="100%"
+          as={Button}
+        >
+          Proceed to Checkout
+        </Link>
       </Stack>
     </Container>
   );

@@ -34,13 +34,11 @@ function useQueryProducts({ initialData }: any) {
   });
 
   const queryResp = useInfiniteQuery({
-    queryKey: ["store-products", router.query.store],
+    queryKey: ["store-products"],
     initialData: { pages: [initialData], pageParams: [] },
     staleTime: Infinity,
     queryFn: async ({ pageParam }) => {
-      const { payload }: any = await Api().get(
-        `/api/${router.query.store}/products?cursor=${pageParam}`
-      );
+      const { payload }: any = await Api().get(`/products?cursor=${pageParam}`);
 
       return payload;
     },
