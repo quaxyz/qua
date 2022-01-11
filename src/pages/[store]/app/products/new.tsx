@@ -150,10 +150,7 @@ const Page: NextPage = () => {
 
   const addProductMutation = useMutation(
     async (payload: any) => {
-      return Api().post(
-        `/api/${router.query?.store}/app/products/new`,
-        payload
-      );
+      return Api().post(`/app/products/new`, payload);
     },
     {
       onSuccess: () => {

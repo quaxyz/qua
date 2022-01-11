@@ -1,3 +1,7 @@
+import React, { FunctionComponent, useState } from "react";
+import type { NextPage } from "next";
+import Head from "next/head";
+import Link from "components/link";
 import {
   Box,
   Button,
@@ -5,7 +9,6 @@ import {
   Flex,
   Heading,
   Icon,
-  Link,
   Popover,
   PopoverArrow,
   PopoverContent,
@@ -13,14 +16,8 @@ import {
   Spacer,
   Stack,
   Text,
-  Image,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
-import type { NextPage } from "next";
-import Head from "next/head";
-import NextLink from "next/link";
-import { useRouter } from "next/router";
-import React, { FunctionComponent, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
@@ -124,7 +121,6 @@ const InfoCard = (props: IInfoCard) => {
 };
 
 const OrderGrid = () => {
-  const router = useRouter();
   return (
     <Box pb="3rem">
       <Stack
@@ -159,11 +155,14 @@ const OrderGrid = () => {
               <Text display={{ base: "inline-block", md: "none" }}>
                 Order ID:
               </Text>
-              <NextLink href={`/${router.query?.store}/app/orders/${index}`}>
-                <Link fontSize="16px" fontWeight={{ base: "400", md: "600" }}>
-                  #1201
-                </Link>
-              </NextLink>
+
+              <Link
+                href={`/app/orders/${index}`}
+                fontSize="16px"
+                fontWeight={{ base: "400", md: "600" }}
+              >
+                #1201
+              </Link>
             </Flex>
             <Flex w="100%" justify="space-between">
               <Text display={{ base: "inline-block", md: "none" }}>
@@ -256,7 +255,6 @@ const Dashboard: NextPage = () => {
   ];
 
   const isOrderList = false;
-  const router = useRouter();
   const [startDate, setStartDate] = useState(new Date());
   const handleChange = (e: any) => {
     setStartDate(e);
@@ -344,9 +342,8 @@ const Dashboard: NextPage = () => {
           >
             Activity
           </Heading>
-          <NextLink href={`/${router.query?.store}/app/orders`}>
-            <Link>View all orders</Link>
-          </NextLink>
+
+          <Link href={`/app/orders`}>View all orders</Link>
         </Flex>
 
         {isOrderList ? (
@@ -366,19 +363,15 @@ const Dashboard: NextPage = () => {
                 <Text fontSize="lg" pb="14px">
                   Add a product to your store to recieve orders
                 </Text>
-                <NextLink
-                  href={`/${router?.query.store}/app/products/new`}
-                  passHref
-                >
-                  <Button variant="primary">
-                    <Plus
-                      set="bold"
-                      primaryColor="#ffffff"
-                      style={{ marginRight: "14px" }}
-                    />
-                    New Product
-                  </Button>
-                </NextLink>
+
+                <Link as={Button} href={`/app/products/new`} variant="primary">
+                  <Plus
+                    set="bold"
+                    primaryColor="#ffffff"
+                    style={{ marginRight: "14px" }}
+                  />
+                  New Product
+                </Link>
               </Stack>
             </Stack>
           </Container>

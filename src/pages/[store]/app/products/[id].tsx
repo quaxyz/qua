@@ -162,10 +162,7 @@ const Page: NextPage = ({ product }: any) => {
 
   const updateProductMutation = useMutation(
     async (payload: any) => {
-      return Api().post(
-        `/api/${router.query?.store}/app/products/${product.id}`,
-        payload
-      );
+      return Api().post(`/app/products/${product.id}`, payload);
     },
     {
       onSuccess: () => {

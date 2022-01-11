@@ -1,7 +1,12 @@
+import Router from "next/router";
+
 export default function Api() {
+  const store = Router.query.store;
+  const href = `/api/${store}`;
+
   const request = async (path: string, options: any = {}) => {
     const pathWithSlash = `${path.charAt(0) !== "/" ? "/" : ""}${path}`;
-    const response = await fetch(pathWithSlash, options);
+    const response = await fetch(`${href}${pathWithSlash}`, options);
 
     let payload;
     const contentType = response.headers.get("content-type");

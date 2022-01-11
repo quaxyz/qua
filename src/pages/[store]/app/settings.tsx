@@ -46,7 +46,7 @@ function useSaveSettings() {
 
   const updateStoreMutation = useMutation(
     async (payload: any) => {
-      return Api().post(`/api/${router.query?.store}/app/settings`, payload);
+      return Api().post(`/app/settings`, payload);
     },
     {
       onSuccess: ({ payload: result }) => {

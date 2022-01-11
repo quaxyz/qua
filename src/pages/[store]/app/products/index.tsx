@@ -86,7 +86,7 @@ const Page = ({ initialData, storeDetails }: any) => {
     },
     queryFn: async ({ pageParam = 0 }) => {
       const { payload }: any = await Api().get(
-        `/api/${router.query.store}/app/products?cursor=${pageParam}`
+        `/app/products?cursor=${pageParam}`
       );
 
       return payload;
