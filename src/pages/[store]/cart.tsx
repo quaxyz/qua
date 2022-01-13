@@ -1,7 +1,6 @@
 import React from "react";
-import NextLink from "next/link";
 import Api from "libs/api";
-import type { NextPage } from "next";
+import type { GetServerSideProps } from "next";
 import {
   Button,
   chakra,
@@ -12,15 +11,16 @@ import {
   Image,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
 import { useCartStore } from "hooks/useCart";
 import { Delete } from "react-iconly";
 import { useWeb3React } from "@web3-react/core";
-import { useQuery } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import { Quantity } from "components/quantity";
 import { useDebounce } from "react-use";
-import Link from "components/link";
+import { Wallet } from "components/wallet";
 
 const CartItem = ({ item }: any) => {
   const cartStore = useCartStore();
@@ -92,16 +92,18 @@ const CartItem = ({ item }: any) => {
   );
 };
 
-const CartLayout = () => {
+const Page = () => {
   const { account } = useWeb3React();
   const cartStore = useCartStore();
+  const toast = useToast();
 
   const items = cartStore?.items.map((c) => c.productId);
-  const queryResp = useQuery({
+  const cartDetailsQueryResp = useQuery({
     queryKey: ["cartItemsDetails", items],
     onError: () => console.warn("Error fetching cart details from API"),
+    enabled: (items?.length || 0) > 0,
     queryFn: async () => {
-      const { payload } = await Api().post(`/cart/details?address=${account}`, {
+      const { payload } = await Api().post(`/cart/details`, {
         cart: items,
       });
 
@@ -124,7 +126,25 @@ const CartLayout = () => {
       }),
   });
 
-  const total = queryResp.data?.reduce(
+  const checkoutMutation = useMutation(
+    () => {
+      if (!account) throw new Error("No connected account");
+      return Api().get(`/checkout?address=${account}`);
+    },
+    {
+      onError: (e: any) => {
+        console.error("Error proceeding to checkout", e);
+
+        toast({
+          title: "Error proceeding to checkout",
+          position: "bottom-right",
+          status: "error",
+        });
+      },
+    }
+  );
+
+  const total = (cartDetailsQueryResp.data || []).reduce(
     (acc: any, item: any) => acc + item.quantity * item.price,
     0
   );
@@ -159,19 +179,19 @@ const CartLayout = () => {
           </Stack>
         </Stack>
 
-        {queryResp.isLoading && (
+        {cartDetailsQueryResp.isLoading && (
           <Stack align="center" justify="center" h="200px">
             <CircularProgress isIndeterminate color="black" />
           </Stack>
         )}
 
-        {!queryResp.isLoading && !queryResp.data?.length && (
+        {!cartDetailsQueryResp.isLoading && !cartDetailsQueryResp.data?.length && (
           <Stack align="center" justify="center">
             <Text>Your cart is empty</Text>
           </Stack>
         )}
 
-        {queryResp.data?.map((item: any) => (
+        {cartDetailsQueryResp.data?.map((item: any) => (
           <CartItem item={item} key={item.productId} />
         ))}
       </Stack>
@@ -204,25 +224,33 @@ const CartLayout = () => {
 
         <Text fontSize="sm">Shipping will be calculated at next step</Text>
 
-        <Link
-          href="/shipping"
-          size="lg"
-          variant="solid"
-          width="100%"
-          as={Button}
-        >
-          Proceed to Checkout
-        </Link>
+        {!account ? (
+          <Wallet ButtonProps={{ variant: "solid", size: "lg", w: "100%" }} />
+        ) : (
+          <Button
+            size="lg"
+            variant="solid"
+            width="100%"
+            onClick={() => checkoutMutation.mutate()}
+            isLoading={checkoutMutation.isLoading}
+          >
+            Proceed to checkout
+          </Button>
+        )}
       </Stack>
     </Container>
   );
 };
 
-const Cart: NextPage = () => {
-  return (
-    <CustomerLayout title="Cart">
-      <CartLayout />
-    </CustomerLayout>
-  );
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  return {
+    props: {
+      layoutProps: {
+        title: "Cart",
+      },
+    },
+  };
 };
-export default Cart;
+
+Page.Layout = CustomerLayout;
+export default Page;

@@ -7,6 +7,7 @@ import { useWeb3React } from "@web3-react/core";
 const useCart = () => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loadingCart, setLoadingCart] = useState(false);
+  const [syncingCart, setSyncingCart] = useState(false);
   const { account } = useWeb3React();
 
   const fetchCartItems = useCallback(async () => {
@@ -27,6 +28,7 @@ const useCart = () => {
   }, [account]);
 
   const syncLocalCartItem = useCallback(async () => {
+    setSyncingCart(true);
     try {
       const locallyStoredCart = localStorage.getItem("cartItems");
       if (!locallyStoredCart) return;
@@ -39,6 +41,8 @@ const useCart = () => {
       localStorage.removeItem("cartItems");
     } catch (err) {
       console.log("Error syncing cart", err);
+    } finally {
+      setSyncingCart(false);
     }
   }, [account]);
 
@@ -119,11 +123,19 @@ const useCart = () => {
       items,
       totalInCart: items.reduce((acc, item) => acc + item.quantity, 0),
       loadingCart,
+      syncingCart,
       addCartItem,
       removeCartItem,
       updateCartItem,
     }),
-    [addCartItem, items, loadingCart, removeCartItem, updateCartItem]
+    [
+      items,
+      loadingCart,
+      syncingCart,
+      addCartItem,
+      removeCartItem,
+      updateCartItem,
+    ]
   );
 };
 

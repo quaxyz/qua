@@ -26,13 +26,15 @@ model Store {
 
   imageId  Int?
   products Product[]
+  carts    Cart[]
 }
 
 model User {
   address   String   @unique
   publicKey String[]
 
-  cart Json?
+  cart            Cart?
+  shippingDetails ShippingDetails?
 }
 
 model Product {
@@ -52,6 +54,33 @@ model Product {
 
   Store   Store @relation(fields: [storeId], references: [id])
   storeId Int
+}
+
+model Cart {
+  id    Int  @id @default(autoincrement())
+  items Json
+
+  owner        User   @relation(fields: [ownerAddress], references: [address])
+  ownerAddress String @unique
+
+  store   Store @relation(fields: [storeId], references: [id])
+  storeId Int
+}
+
+enum DeliveryMethod {
+  DOOR_DELIVERY
+  PICKUP
+}
+
+model ShippingDetails {
+  owner        User   @relation(fields: [ownerAddress], references: [address])
+  ownerAddress String @unique
+
+  fullName       String
+  email          String
+  phoneNumber    String
+  address        String
+  deliveryMethod DeliveryMethod
 }
 
 // metas

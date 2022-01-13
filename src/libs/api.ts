@@ -4,7 +4,7 @@ export default function Api() {
   const store = Router.query.store;
   const href = `/api/${store}`;
 
-  const request = async (path: string, options: any = {}) => {
+  const request: any = async (path: string, options: any = {}) => {
     const pathWithSlash = `${path.charAt(0) !== "/" ? "/" : ""}${path}`;
     const response = await fetch(`${href}${pathWithSlash}`, options);
 
@@ -23,6 +23,20 @@ export default function Api() {
       throw new Error(
         payload.error ||
           `${options.method} ${pathWithSlash} - ${response.statusText}`
+      );
+    }
+
+    // When its a redirect
+    if (payload.redirect) {
+      const { url } = payload;
+
+      // handle store url
+      const urlWithSlash = `${url.charAt(0) !== "/" ? "/" : ""}${url}`;
+      return new Promise(() =>
+        Router.push({
+          pathname: `/[store]${urlWithSlash}`,
+          query: { store },
+        })
       );
     }
 

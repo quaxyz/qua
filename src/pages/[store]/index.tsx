@@ -180,6 +180,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     select: { currency: true },
   });
 
+  if (!storeDetails) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       initialData: data,
