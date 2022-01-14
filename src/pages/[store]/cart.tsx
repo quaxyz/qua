@@ -21,6 +21,7 @@ import { useQuery, useMutation } from "react-query";
 import { Quantity } from "components/quantity";
 import { useDebounce } from "react-use";
 import { Wallet } from "components/wallet";
+import { CostSummary } from "components/cost-summary";
 
 const CartItem = ({ item }: any) => {
   const cartStore = useCartStore();
@@ -146,6 +147,11 @@ const Page = () => {
     }
   );
 
+  const costSummary = {
+    subtotal: cartStore?.subTotal || 0,
+    "Network fee": 1,
+  };
+
   return (
     <Container maxW="100%" px={{ base: "2", md: "24" }}>
       <Stack w="100%" align="center" p={{ base: "4", md: "8" }}>
@@ -201,24 +207,7 @@ const Page = () => {
         position="relative"
         border="0.5px solid rgba(0, 0, 0, 12%)"
       >
-        <Stack direction="row" justify="space-between" py={2}>
-          <Stack direction="column" spacing={4}>
-            <Text>Subtotal</Text>
-            <Text>Network Fee</Text>
-            <Text>Total</Text>
-          </Stack>
-          <Stack direction="column" spacing={4}>
-            <Text>:</Text>
-            <Text>:</Text>
-            <Text>:</Text>
-          </Stack>
-          <Stack direction="column" fontWeight="bold" spacing={4}>
-            <Text>${cartStore?.subTotal}</Text>
-            <Text>$1</Text>
-            <Text>${(cartStore?.subTotal || 0) + 1}</Text>
-          </Stack>
-        </Stack>
-
+        <CostSummary data={costSummary} />
         <Text fontSize="sm">Shipping will be calculated at next step</Text>
 
         {!account ? (

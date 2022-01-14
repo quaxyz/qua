@@ -17,10 +17,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(400).send({ error: "invalid params" });
         }
 
-        const storeName = query.store as string;
         const address = query.address as string;
-
-        const shippingDetails = body.shippingDetails.map((d: any) => ({
+        const shippingDetails = body.map((d: any) => ({
           name: d.name,
           email: d.email,
           phone: d.phone,
@@ -28,9 +26,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           deliveryMethod: d.deliveryMethod,
         }));
 
-        if (body.saveDetails) {
-          // save details in user schema
-        }
+        await prisma.user.upsert({
+          where: { address },
+          create: { address, shippingDetails },
+          update: { shippingDetails },
+        });
+
+        return res.status(200).send({ message: "saved" });
       }
       default:
         console.log(LOG_TAG, "[error]", "unauthorized method", method);

@@ -14,18 +14,23 @@ import {
   FormLabel,
   Heading,
   Input,
+  Link,
   Radio,
   RadioGroup,
   Stack,
   Text,
   useToast,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { useWeb3React } from "@web3-react/core";
 import { useMutation } from "react-query";
 import { useCartStore } from "hooks/useCart";
+import { mapSocialLink } from "libs/utils";
+import { CostSummary } from "components/cost-summary";
 
-const Page = ({ shippingDetails }: any) => {
+const Page = ({ shippingDetails, storeDetails }: any) => {
   const toast = useToast();
+  const router = useRouter();
   const cartStore = useCartStore();
   const { account } = useWeb3React();
 
@@ -68,10 +73,17 @@ const Page = ({ shippingDetails }: any) => {
 
       setSaving(true);
 
-      // send data to server
-      await updateShippingMutation.mutateAsync({
-        shippingDetails: formValue,
-        saveDetails,
+      if (saveDetails) {
+        // send data to server
+        await updateShippingMutation.mutateAsync(formValue);
+      } else {
+        // store data in localstorage
+        localStorage.setItem("shippingDetails", JSON.stringify(formValue));
+      }
+
+      return router.push({
+        pathname: "/[store]/payment",
+        query: { store: router.query.store },
       });
     } catch (error: any) {
       toast({
@@ -83,6 +95,15 @@ const Page = ({ shippingDetails }: any) => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const costSummary = {
+    subtotal: cartStore?.subTotal || 0,
+    "Delivery fee":
+      formValue.deliveryMethod === "PICKUP"
+        ? 0
+        : storeDetails?.deliveryFee || 0,
+    "Network fee": 1,
   };
 
   return (
@@ -180,10 +201,9 @@ const Page = ({ shippingDetails }: any) => {
                 Save details for next time
               </Checkbox>
 
-              <Stack pb="">
+              <Stack spacing={6}>
                 <Heading
                   as="h2"
-                  py={{ base: "4", md: "4" }}
                   fontSize={{ base: "lg", md: "1xl" }}
                   color="#000"
                 >
@@ -196,35 +216,43 @@ const Page = ({ shippingDetails }: any) => {
                   }
                   value={formValue.deliveryMethod}
                 >
-                  <Stack spacing={{ base: "4", md: "6" }}>
-                    <Radio size="lg" value="DOOR_DELIVERY">
+                  <Stack>
+                    <Radio size="md" value="DOOR_DELIVERY">
                       Door Delivery
                     </Radio>
-                    <Radio size="lg" value="PICKUP">
+                    <Radio size="md" value="PICKUP">
                       Contact seller for pickup
                     </Radio>
                   </Stack>
                 </RadioGroup>
+
+                {formValue.deliveryMethod === "PICKUP" && (
+                  <Stack
+                    direction="row"
+                    spacing={3}
+                    py={3}
+                    px={2}
+                    border="1px solid rgb(0 0 0 / 12%)"
+                    borderLeft="none"
+                    borderRight="none"
+                  >
+                    {Object.entries(storeDetails.socialLinks || {})
+                      .filter(([_, value]: any) => value.length)
+                      .map(([social, link]: any) => (
+                        <Link
+                          key={social}
+                          href={mapSocialLink(social, link)}
+                          textTransform="capitalize"
+                          isExternal
+                        >
+                          {social}
+                        </Link>
+                      ))}
+                  </Stack>
+                )}
               </Stack>
 
-              <Stack direction="row" justify="space-between" py={2}>
-                <Stack direction="column" spacing={4}>
-                  <Text>Subtotal</Text>
-                  <Text>Network Fee</Text>
-                  <Text>Total</Text>
-                </Stack>
-                <Stack direction="column" spacing={4}>
-                  <Text>:</Text>
-                  <Text>:</Text>
-                  <Text>:</Text>
-                </Stack>
-                <Stack direction="column" fontWeight="bold" spacing={4}>
-                  <Text>${cartStore?.subTotal || 0}</Text>
-                  <Text>$1</Text>
-                  <Text>${(cartStore?.subTotal || 0) + 1}</Text>
-                </Stack>
-              </Stack>
-
+              <CostSummary data={costSummary} />
               <Button type="submit" size="lg" variant="solid" width="100%">
                 Proceed to Payment
               </Button>
@@ -237,7 +265,9 @@ const Page = ({ shippingDetails }: any) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const store = ctx.params?.store as string;
   const address = getAddressFromCookie(true, ctx);
+
   const props: any = {
     layoutProps: {
       title: "Shipping",
@@ -254,9 +284,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   });
   props.shippingDetails = user?.shippingDetails;
 
-  //
-
-  // todo:: fetch store delivery fee
+  const storeDetails = await prisma.store.findUnique({
+    where: { name: store },
+    select: { deliveryFee: true, socialLinks: true },
+  });
+  props.storeDetails = storeDetails;
 
   return { props };
 };
