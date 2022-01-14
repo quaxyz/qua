@@ -29,12 +29,30 @@ const Page = ({ product, storeDetails }: any) => {
   const useCart = useCartStore();
 
   const handleAddToCart = () => {
-    useCart?.addCartItem({
-      productId: product.id,
-      quantity,
-    });
+    useCart?.addCartItem(
+      {
+        productId: product.id,
+        quantity,
+      },
+      product.price
+    );
 
     setQuantity(1);
+  };
+
+  const handleBuyNow = async () => {
+    await useCart?.addCartItem(
+      {
+        productId: product.id,
+        quantity,
+      },
+      product.price
+    );
+
+    router.push({
+      pathname: `/[store]/cart`,
+      query: { store: router.query.store },
+    });
   };
 
   return (
@@ -133,6 +151,7 @@ const Page = ({ product, storeDetails }: any) => {
                 size="lg"
                 variant="solid"
                 width={{ base: "100%", md: "16rem" }}
+                onClick={handleBuyNow}
               >
                 Buy Now
               </Button>

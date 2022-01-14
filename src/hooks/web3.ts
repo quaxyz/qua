@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 import { injected } from "libs/wallet";
 import { providers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 import { Web3ReactContextInterface } from "@web3-react/core/dist/types";
+import { COOKIE_STORAGE_NAME, toBase64 } from "libs/cookie";
 
 export function useActiveWeb3React(): Web3ReactContextInterface<providers.Web3Provider> {
   const context = useWeb3React<providers.Web3Provider>();
@@ -22,7 +24,11 @@ export function useEagerConnect() {
       .then((isAuthorized: boolean) => {
         if (isAuthorized) {
           activate(injected, undefined, true).catch((error) => {
-            console.error("[useEagerConnect]", "Failed to eagerly activate", error);
+            console.error(
+              "[useEagerConnect]",
+              "Failed to eagerly activate",
+              error
+            );
             setTried(true);
           });
         } else {
@@ -46,7 +52,7 @@ export function useEagerConnect() {
 }
 
 export function useInactiveListener(suppress: boolean = false) {
-  const { active, error, activate } = useWeb3React();
+  const { account, active, error, activate } = useWeb3React();
 
   useEffect((): any => {
     const { ethereum } = global as any;
@@ -76,6 +82,17 @@ export function useInactiveListener(suppress: boolean = false) {
       };
     }
   }, [active, error, suppress, activate]);
+
+  // add listener to update address in cookie
+  useEffect(() => {
+    if (!!account) {
+      const data = toBase64({ address: account });
+      Cookies.set(COOKIE_STORAGE_NAME, data, {
+        expires: 365 * 10,
+        secure: true,
+      });
+    }
+  }, [account]);
 }
 
 export function useConnectorSetup() {

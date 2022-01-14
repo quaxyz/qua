@@ -6,6 +6,8 @@ import { useWeb3React } from "@web3-react/core";
 
 const useCart = () => {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [subTotal, setSubtotal] = useState(0);
+
   const [loadingCart, setLoadingCart] = useState(false);
   const [syncingCart, setSyncingCart] = useState(false);
   const { account } = useWeb3React();
@@ -15,10 +17,15 @@ const useCart = () => {
     try {
       if (account) {
         const { payload } = await Api().get(`/cart?address=${account}`);
-        setItems(payload);
+
+        setItems(payload.items);
+        setSubtotal(payload.total);
       } else {
         const locallyStoredCart = localStorage.getItem("cartItems");
-        locallyStoredCart && setItems(JSON.parse(locallyStoredCart));
+        if (locallyStoredCart) {
+          setItems(JSON.parse(locallyStoredCart).items);
+          setSubtotal(JSON.parse(locallyStoredCart).subtotal);
+        }
       }
     } catch (error) {
       console.warn("Error retrieving cart. No items(s) found");
@@ -47,7 +54,7 @@ const useCart = () => {
   }, [account]);
 
   const addCartItem = useCallback(
-    async (item: CartItem) => {
+    async (item: CartItem, price: number) => {
       let editableItems = _cloneDeep(items);
 
       // first check if item is already added
@@ -62,37 +69,59 @@ const useCart = () => {
         editableItems = [...items, item];
       }
 
+      const subtotal = subTotal + item.quantity * price;
+
       setItems(editableItems);
+      setSubtotal(subtotal);
 
       if (account) {
         await Api().post(`/cart?address=${account}`, {
           cart: editableItems,
         });
       } else {
-        localStorage.setItem("cartItems", JSON.stringify(editableItems));
+        localStorage.setItem(
+          "cartItems",
+          JSON.stringify({
+            items: editableItems,
+            subtotal,
+          })
+        );
       }
     },
-    [account, items]
+    [account, items, subTotal]
   );
 
   const removeCartItem = useCallback(
-    async (itemId: string) => {
+    async (itemId: string, price: number) => {
+      const index = items.findIndex(
+        (cartItem) => cartItem.productId === itemId
+      );
+
       const newItems = items.filter((item) => item.productId !== itemId);
+      const newSubtotal = subTotal - items[index].quantity * price;
+
       setItems(newItems);
+      setSubtotal(newSubtotal);
 
       if (account) {
         await Api().post(`/cart?address=${account}`, {
           cart: newItems,
         });
       } else {
-        localStorage.setItem("cartItems", JSON.stringify(newItems));
+        localStorage.setItem(
+          "cartItems",
+          JSON.stringify({
+            items: newItems,
+            subtotal: newSubtotal,
+          })
+        );
       }
     },
-    [account, items]
+    [account, items, subTotal]
   );
 
   const updateCartItem = useCallback(
-    async (itemid: string, quantity: number) => {
+    async (itemid: string, quantity: number, price: number) => {
       const index = items.findIndex(
         (cartItem) => cartItem.productId === itemid
       );
@@ -100,17 +129,29 @@ const useCart = () => {
       let editableItems = _cloneDeep(items);
       editableItems[index].quantity = quantity;
 
+      const subtotal =
+        subTotal -
+        items[index].quantity * price +
+        editableItems[index].quantity * price;
+
       setItems(editableItems);
+      setSubtotal(subtotal);
 
       if (account) {
         await Api().post(`/cart?address=${account}`, {
           cart: editableItems,
         });
       } else {
-        localStorage.setItem("cartItems", JSON.stringify(editableItems));
+        localStorage.setItem(
+          "cartItems",
+          JSON.stringify({
+            items: editableItems,
+            subtotal,
+          })
+        );
       }
     },
-    [account, items]
+    [account, items, subTotal]
   );
 
   useEffect(() => {
@@ -121,6 +162,7 @@ const useCart = () => {
   return useMemo(
     () => ({
       items,
+      subTotal,
       totalInCart: items.reduce((acc, item) => acc + item.quantity, 0),
       loadingCart,
       syncingCart,
@@ -130,6 +172,7 @@ const useCart = () => {
     }),
     [
       items,
+      subTotal,
       loadingCart,
       syncingCart,
       addCartItem,

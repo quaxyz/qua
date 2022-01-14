@@ -22,7 +22,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         // check if there is a physical product in the cart
         const cart = await prisma.cart.findUnique({
-          where: { ownerAddress: address },
+          where: {
+            ownerAddress_storeName: { ownerAddress: address, storeName },
+          },
           select: { items: true },
         });
         if (!cart) {

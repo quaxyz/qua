@@ -242,14 +242,14 @@ const Page = ({ initialData, storeDetails }: any) => {
                       <Stack direction="row" spacing={2}>
                         <Text fontSize="sm">In stock:</Text>
                         <Text fontSize="sm" fontWeight="600">
-                          {data.totalStocks ?? 0}
+                          {data.totalStocks || 0}
                         </Text>
                       </Stack>
 
                       <Stack direction="row" spacing={2}>
                         <Text fontSize="sm">Sold:</Text>
                         <Text fontSize="sm" fontWeight="600">
-                          {data?.sold ?? 0}
+                          {data?.sold || 0}
                         </Text>
                       </Stack>
                     </Stack>
@@ -309,7 +309,7 @@ const Page = ({ initialData, storeDetails }: any) => {
                       fontWeight="600"
                       textAlign="center"
                     >
-                      {data.totalStocks ?? 0}
+                      {data.totalStocks || 0}
                     </GridItem>
 
                     <GridItem
@@ -319,7 +319,7 @@ const Page = ({ initialData, storeDetails }: any) => {
                       fontWeight="600"
                       textAlign="center"
                     >
-                      {data?.sold ?? 0}
+                      {data?.sold || 0}
                     </GridItem>
 
                     <GridItem w="100%" textAlign="center">

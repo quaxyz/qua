@@ -116,20 +116,22 @@ const CustomerLayout = ({ title, children }: any) => {
               <Stack direction="row" spacing={3} align="center">
                 <Box pos="relative">
                   <Bag2 set="light" />
-                  <Center
-                    boxSize="20px"
-                    pos="absolute"
-                    top="-5px"
-                    left="12px"
-                    bgColor="#000"
-                    color="#fff"
-                    rounded="50%"
-                    p={2}
-                  >
-                    <Text fontSize="xs" lineHeight="1" color="inherit">
-                      {cartStore?.totalInCart}
-                    </Text>
-                  </Center>
+                  {!cartStore.loadingCart && (
+                    <Center
+                      boxSize="20px"
+                      pos="absolute"
+                      top="-5px"
+                      left="12px"
+                      bgColor="#000"
+                      color="#fff"
+                      rounded="50%"
+                      p={2}
+                    >
+                      <Text fontSize="xs" lineHeight="1" color="inherit">
+                        {cartStore?.totalInCart}
+                      </Text>
+                    </Center>
+                  )}
                 </Box>
 
                 <Text

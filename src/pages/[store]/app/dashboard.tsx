@@ -48,7 +48,7 @@ const InfoCard = (props: IInfoCard) => {
       justifyContent="space-between"
       p={{ base: "2.2rem", md: "4rem" }}
       borderRadius="12px"
-      bgColor={props.bgColor ?? "#ffffff"}
+      bgColor={props.bgColor || "#ffffff"}
     >
       <div>
         <Box display="flex" alignItems="center">
@@ -58,7 +58,7 @@ const InfoCard = (props: IInfoCard) => {
             fontWeight="400"
             lineHeight="43.57px"
           >
-            {props.amount ?? 0}
+            {props.amount || 0}
           </Heading>
           <Box display="flex" alignItems="center" ml="11px">
             {props.rate && (

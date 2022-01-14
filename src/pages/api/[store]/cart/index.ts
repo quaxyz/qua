@@ -23,22 +23,57 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const user = await prisma.user.findFirst({
           where: {
             address,
-            cart: {
-              store: {
-                name: store,
+            carts: {
+              some: {
+                storeName: store,
               },
             },
           },
           select: {
-            cart: true,
+            carts: true,
           },
         });
 
-        if (!user) {
+        if (!user || !user.carts[0]) {
           return res.status(200).send([]);
         }
 
-        return res.status(200).send(user.cart?.items || []);
+        const cartItems = user.carts[0].items as any[];
+        const cartIds = cartItems.map((c) => c.productId);
+        const products = await prisma.product.findMany({
+          where: {
+            Store: {
+              name: store,
+            },
+            id: {
+              in: cartIds,
+            },
+          },
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            totalStocks: true,
+            images: {
+              take: 1,
+              select: {
+                url: true,
+              },
+            },
+          },
+        });
+
+        const total = products.reduce((acc, product) => {
+          const cart = cartItems.find((item) => item.productId === product.id);
+          return acc + cart.quantity * product.price;
+        }, 0);
+
+        // console.log(LOG_TAG, "cart total", { total });
+
+        return res.status(200).send({
+          items: cartItems,
+          total,
+        });
       }
       case "POST": {
         console.log(LOG_TAG, "update cart items", { query, body });
@@ -58,7 +93,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }));
 
         const result = await prisma.cart.upsert({
-          where: { ownerAddress: address },
+          where: {
+            ownerAddress_storeName: {
+              ownerAddress: address,
+              storeName,
+            },
+          },
           create: {
             items: cartItems,
             owner: {

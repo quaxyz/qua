@@ -33,8 +33,8 @@ model User {
   address   String   @unique
   publicKey String[]
 
-  cart            Cart?
-  shippingDetails ShippingDetails?
+  carts           Cart[]
+  shippingDetails Json?
 }
 
 model Product {
@@ -61,26 +61,12 @@ model Cart {
   items Json
 
   owner        User   @relation(fields: [ownerAddress], references: [address])
-  ownerAddress String @unique
+  ownerAddress String
 
-  store   Store @relation(fields: [storeId], references: [id])
-  storeId Int
-}
+  store     Store  @relation(fields: [storeName], references: [name])
+  storeName String
 
-enum DeliveryMethod {
-  DOOR_DELIVERY
-  PICKUP
-}
-
-model ShippingDetails {
-  owner        User   @relation(fields: [ownerAddress], references: [address])
-  ownerAddress String @unique
-
-  fullName       String
-  email          String
-  phoneNumber    String
-  address        String
-  deliveryMethod DeliveryMethod
+  @@unique([ownerAddress, storeName])
 }
 
 // metas

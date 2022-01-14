@@ -154,7 +154,7 @@ const Page = ({ storeDetails }: any) => {
         flexDirection="column"
         // we could fetch unsplash image here based on store category
         bgImage={`linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24)),url('${
-          data?.image?.url ?? "/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg"
+          data?.image?.url || "/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg"
         }')`}
         bgPosition="center center"
         bgRepeat="no-repeat"
@@ -178,7 +178,7 @@ const Page = ({ storeDetails }: any) => {
         </Text>
         <Heading as="h2" fontSize={{ base: "2rem", md: "4rem" }}>
           <Editable
-            defaultValue={data?.title ?? "Store Title"}
+            defaultValue={data?.title || "Store Title"}
             onSubmit={(title) => {
               if (data?.title !== title) saveSettings.saveStore({ title });
             }}

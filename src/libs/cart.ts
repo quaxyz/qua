@@ -7,11 +7,12 @@ export type CartItem = {
 
 type CartContextType = {
   items: CartItem[];
+  subTotal: number;
   totalInCart: number;
   loadingCart: boolean;
-  addCartItem: (item: CartItem) => void;
-  removeCartItem: (itemId: string) => void;
-  updateCartItem: (itemId: string, quantity: number) => void;
+  addCartItem: (item: CartItem, price: number) => void;
+  removeCartItem: (itemId: string, price: number) => void;
+  updateCartItem: (itemId: string, quantity: number, price: number) => void;
 };
 
 export const CartContext = createContext<null | CartContextType>(null);

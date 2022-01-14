@@ -1,9 +1,11 @@
 import Api from "libs/api";
+import Cookies from "js-cookie";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import { useWeb3React } from "@web3-react/core";
 import { destroyKeyPair, extractPublicKey, getKeyPair } from "libs/keys";
 import { AuthContext } from "libs/auth";
+import { COOKIE_STORAGE_NAME } from "libs/cookie";
 
 export function useInitializeStoreAuth() {
   const [publicKey, setPublicKey] = useState<string | null>();
@@ -74,6 +76,7 @@ export function useLogout() {
 
   return async () => {
     deactivate();
+    Cookies.remove(COOKIE_STORAGE_NAME);
 
     if (storeAuth) {
       storeAuth?.setPublicKey(null);

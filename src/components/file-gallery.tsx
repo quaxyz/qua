@@ -14,7 +14,7 @@ export function FileGallery(props: FileGalleryProps) {
       <chakra.section h={{ base: "sm", md: "xl" }} w="full" pos="relative">
         <Image
           src={activeImage}
-          alt={props.alt ?? "product image"}
+          alt={props.alt || "product image"}
           objectFit="cover"
           w="full"
           height="full"
@@ -38,7 +38,7 @@ export function FileGallery(props: FileGalleryProps) {
           >
             <Image
               src={image.url}
-              alt={props.alt ?? "product image"}
+              alt={props.alt || "product image"}
               objectFit="cover"
               objectPosition="center 70%"
               boxSize="100%"

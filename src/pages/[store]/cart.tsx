@@ -29,7 +29,7 @@ const CartItem = ({ item }: any) => {
   const [, cancel] = useDebounce(
     () => {
       if (quantity !== item.quantity) {
-        cartStore?.updateCartItem(item.productId, quantity);
+        cartStore?.updateCartItem(item.productId, quantity, item.price);
       }
     },
     1000,
@@ -50,7 +50,9 @@ const CartItem = ({ item }: any) => {
       <Stack direction="row" w="100%" spacing={4}>
         <Stack direction="row" align="center">
           <IconButton
-            onClick={() => cartStore?.removeCartItem(item.productId)}
+            onClick={() =>
+              cartStore?.removeCartItem(item.productId, item.price)
+            }
             variant="flushed"
             aria-label="Delete"
             icon={<Delete set="light" />}
@@ -70,7 +72,7 @@ const CartItem = ({ item }: any) => {
 
       <Stack w="100%" align="center">
         <Text fontSize="14px">
-          <chakra.strong>{`$${item.price ?? 0}.00`}</chakra.strong>
+          <chakra.strong>{`$${item.price || 0}.00`}</chakra.strong>
         </Text>
       </Stack>
 
@@ -85,7 +87,7 @@ const CartItem = ({ item }: any) => {
 
       <Stack w="100%" align="center">
         <Text fontSize="14px">
-          <chakra.strong>{`$${item.price * quantity ?? 0}.00`}</chakra.strong>
+          <chakra.strong>{`$${item.price * quantity || 0}.00`}</chakra.strong>
         </Text>
       </Stack>
     </Stack>
@@ -144,16 +146,11 @@ const Page = () => {
     }
   );
 
-  const total = (cartDetailsQueryResp.data || []).reduce(
-    (acc: any, item: any) => acc + item.quantity * item.price,
-    0
-  );
-
   return (
     <Container maxW="100%" px={{ base: "2", md: "24" }}>
       <Stack w="100%" align="center" p={{ base: "4", md: "8" }}>
         <Heading fontSize={{ base: "xl", md: "3xl" }} fontWeight="300">
-          Your Cart ({cartStore?.items.length ?? 0} item)
+          Your Cart ({cartStore?.items.length || 0} item)
         </Heading>
       </Stack>
 
@@ -216,9 +213,9 @@ const Page = () => {
             <Text>:</Text>
           </Stack>
           <Stack direction="column" fontWeight="bold" spacing={4}>
-            <Text>${total}</Text>
+            <Text>${cartStore?.subTotal}</Text>
             <Text>$1</Text>
-            <Text>${total + 1}</Text>
+            <Text>${(cartStore?.subTotal || 0) + 1}</Text>
           </Stack>
         </Stack>
 

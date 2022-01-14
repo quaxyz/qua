@@ -80,7 +80,10 @@ function useCreateStore() {
       });
       console.log("Result", result);
 
-      router.push(`${message.store}/app/settings`);
+      router.push({
+        pathname: `/[store]/app/settings`,
+        query: { store: message.store },
+      });
     } catch (err: any) {
       toast({
         title: "Error saving details",
