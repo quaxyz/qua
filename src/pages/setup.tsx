@@ -21,7 +21,6 @@ import { domain, schemas } from "libs/constants";
 import { providers } from "ethers";
 import { useRouter } from "next/router";
 import { FormGroup } from "components/form-group";
-import { allCurrencies } from "libs/currency";
 
 function useCreateStore() {
   const { library, account } = useActiveWeb3React();
@@ -102,7 +101,6 @@ const Page: NextPage = () => {
     name: "",
     email: "",
     category: null as any,
-    currency: null as any,
   });
 
   const [sending, setSending] = React.useState(false);
@@ -209,27 +207,6 @@ const Page: NextPage = () => {
                       { value: "cosmetics", label: "Cosmetics" },
                       { value: "food", label: "Food" },
                     ]}
-                  />
-                </FormGroup>
-
-                <FormGroup
-                  id="currency"
-                  label="Local Currency"
-                  labelProps={{ variant: "flushed" }}
-                >
-                  <SelectMenu
-                    title="Select Currency"
-                    placeholder="Select"
-                    variant="flushed"
-                    size="lg"
-                    value={formValue.currency}
-                    onChange={(item) =>
-                      setFormValue({ ...formValue, currency: item })
-                    }
-                    options={allCurrencies.map((curr) => ({
-                      value: curr.cc,
-                      label: `${curr.cc} - ${curr.name}`,
-                    }))}
                   />
                 </FormGroup>
 

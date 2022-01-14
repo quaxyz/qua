@@ -38,7 +38,9 @@ const CustomerLayout = ({ title, children }: any) => {
   return (
     <CartContext.Provider value={cartStore}>
       <Head>
-        <title>{title} - Frowth</title>
+        <title>
+          {title} - {router.query.store}
+        </title>
       </Head>
 
       <Grid

@@ -74,7 +74,7 @@ const ActionMenu = ({ id }: any) => {
   );
 };
 
-const Page = ({ initialData, storeDetails }: any) => {
+const Page = ({ initialData }: any) => {
   const router = useRouter();
   const queryResp = useInfiniteQuery({
     queryKey: "store-dashboard-products",
@@ -235,7 +235,7 @@ const Page = ({ initialData, storeDetails }: any) => {
                       <Stack direction="row" spacing={2}>
                         <Text fontSize="sm">Price:</Text>
                         <Text fontSize="sm" fontWeight="600">
-                          {formatCurrency(data.price, storeDetails?.currency)}
+                          {formatCurrency(data.price)}
                         </Text>
                       </Stack>
 
@@ -299,7 +299,7 @@ const Page = ({ initialData, storeDetails }: any) => {
                       fontWeight="600"
                       textAlign="center"
                     >
-                      {formatCurrency(data.price, storeDetails?.currency)}
+                      {formatCurrency(data.price)}
                     </GridItem>
 
                     <GridItem
@@ -375,15 +375,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
   });
 
-  const storeDetails = await prisma.store.findUnique({
-    where: { name: store },
-    select: { currency: true },
-  });
-
   return {
     props: {
       initialData: data,
-      storeDetails,
     },
   };
 };

@@ -62,7 +62,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             email: data.email,
             owner: body.address,
             category: data.category,
-            currency: data.currency,
           },
         });
 

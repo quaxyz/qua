@@ -60,92 +60,90 @@ function useQueryProducts({ initialData }: any) {
   };
 }
 
-const Page: NextPage = ({ initialData, storeDetails }: any) => {
+const Page = ({ initialData }: any) => {
   const router = useRouter();
   const { ref, queryResp } = useQueryProducts({ initialData });
 
   return (
-    <CustomerLayout title="Products">
-      <Container
-        maxW="100%"
-        px={{ base: "4", md: "16" }}
-        mb={{ base: "8", md: "24" }}
-      >
-        <chakra.div>
-          <NextLink href={`/${router?.query.store}`} passHref>
-            <Link
-              borderBottom="none"
-              _hover={{ transform: "scale(1.05)" }}
-              textDecoration="underline"
+    <Container
+      maxW="100%"
+      px={{ base: "4", md: "16" }}
+      mb={{ base: "8", md: "24" }}
+    >
+      <chakra.div>
+        <NextLink href={`/${router?.query.store}`} passHref>
+          <Link
+            borderBottom="none"
+            _hover={{ transform: "scale(1.05)" }}
+            textDecoration="underline"
+          >
+            <Stack
+              direction="row"
+              spacing={4}
+              px={4}
+              py={{ base: "4", md: "8" }}
+              align="center"
             >
-              <Stack
-                direction="row"
-                spacing={4}
-                px={4}
-                py={{ base: "4", md: "8" }}
-                align="center"
-              >
-                <Text fontSize="inherit" fontWeight="600">
-                  All
-                </Text>
-              </Stack>
-            </Link>
-          </NextLink>
-        </chakra.div>
+              <Text fontSize="inherit" fontWeight="600">
+                All
+              </Text>
+            </Stack>
+          </Link>
+        </NextLink>
+      </chakra.div>
 
-        <Grid
-          gap={{ base: 4, md: 10 }}
-          alignItems="center"
-          templateColumns={{
-            base: "100%",
-            md: "repeat(4, 1fr)",
-            lg: "repeat(4, 1fr)",
-            xl: "repeat(6, 1fr)",
-          }}
-        >
-          {queryResp.data?.pages.map((page, idx) => (
-            <React.Fragment key={idx}>
-              {page.map((data: any) => (
-                <GridItem key={data.id} mb={5}>
-                  <LinkBox>
-                    <chakra.section>
-                      <Image
-                        boxSize={{ base: "350px", md: "300px" }}
-                        objectFit="cover"
-                        src={data.images[0].url}
-                        alt={data.name}
-                      />
+      <Grid
+        gap={{ base: 4, md: 10 }}
+        alignItems="center"
+        templateColumns={{
+          base: "100%",
+          md: "repeat(4, 1fr)",
+          lg: "repeat(4, 1fr)",
+          xl: "repeat(6, 1fr)",
+        }}
+      >
+        {queryResp.data?.pages.map((page, idx) => (
+          <React.Fragment key={idx}>
+            {page.map((data: any) => (
+              <GridItem key={data.id} mb={5}>
+                <LinkBox>
+                  <chakra.section>
+                    <Image
+                      boxSize={{ base: "350px", md: "300px" }}
+                      objectFit="cover"
+                      src={data.images[0].url}
+                      alt={data.name}
+                    />
 
-                      <NextLink
-                        href={`/${router?.query.store}/products/${data.id}`}
-                        passHref
-                      >
-                        <LinkOverlay>
-                          <Heading
-                            as="h1"
-                            fontSize="md"
-                            fontWeight="normal"
-                            mt={4}
-                          >
-                            {data.name}
-                          </Heading>
-                        </LinkOverlay>
-                      </NextLink>
+                    <NextLink
+                      href={`/${router?.query.store}/products/${data.id}`}
+                      passHref
+                    >
+                      <LinkOverlay>
+                        <Heading
+                          as="h1"
+                          fontSize="md"
+                          fontWeight="normal"
+                          mt={4}
+                        >
+                          {data.name}
+                        </Heading>
+                      </LinkOverlay>
+                    </NextLink>
 
-                      <Text fontSize="sm" fontWeight="700" mt={3}>
-                        {formatCurrency(data.price, storeDetails?.currency)}
-                      </Text>
-                    </chakra.section>
-                  </LinkBox>
-                </GridItem>
-              ))}
-            </React.Fragment>
-          ))}
-        </Grid>
+                    <Text fontSize="sm" fontWeight="700" mt={3}>
+                      {formatCurrency(data.price)}
+                    </Text>
+                  </chakra.section>
+                </LinkBox>
+              </GridItem>
+            ))}
+          </React.Fragment>
+        ))}
+      </Grid>
 
-        <div ref={ref} />
-      </Container>
-    </CustomerLayout>
+      <div ref={ref} />
+    </Container>
   );
 };
 
@@ -177,7 +175,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   const storeDetails = await prisma.store.findUnique({
     where: { name: store },
-    select: { currency: true },
+    select: { name: true },
   });
 
   if (!storeDetails) {
@@ -189,9 +187,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   return {
     props: {
       initialData: data,
-      storeDetails,
+      layoutProps: {
+        title: `Products`,
+      },
     },
   };
 };
 
+Page.Layout = CustomerLayout;
 export default Page;

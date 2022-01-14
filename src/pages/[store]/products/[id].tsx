@@ -23,7 +23,7 @@ import { Quantity } from "components/quantity";
 import { formatCurrency } from "libs/currency";
 import { useCartStore } from "hooks/useCart";
 
-const Page = ({ product, storeDetails }: any) => {
+const Page = ({ product }: any) => {
   const router = useRouter();
   const [quantity, setQuantity] = React.useState(1);
   const useCart = useCartStore();
@@ -107,10 +107,7 @@ const Page = ({ product, storeDetails }: any) => {
                 >
                   Price:
                 </Text>
-                {/* TODO: currency display */}
-                <Text fontWeight="700">
-                  {formatCurrency(product.price, storeDetails?.currency)}
-                </Text>
+                <Text fontWeight="700">{formatCurrency(product.price)}</Text>
               </Stack>
               <Stack align="flex-start">
                 <Text
@@ -203,11 +200,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
   });
 
-  const storeDetails = await prisma.store.findUnique({
-    where: { name: store },
-    select: { currency: true },
-  });
-
   if (!product) {
     return {
       notFound: true,
@@ -217,8 +209,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   return {
     props: {
       product,
-      storeDetails,
-
       layoutProps: {
         title: product.name,
       },

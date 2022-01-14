@@ -30,7 +30,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const dbPayload: any = {
           title: bodyPayload.title,
           about: bodyPayload.about,
-          currency: bodyPayload.currency,
+          deliveryFee: bodyPayload.deliveryFee
+            ? parseFloat(bodyPayload.deliveryFee)
+            : 0,
           location: bodyPayload.location,
           socialLinks: bodyPayload.socialLinks,
         };

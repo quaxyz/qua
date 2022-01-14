@@ -15,7 +15,7 @@ model Store {
   id          Int     @id @default(autoincrement())
   name        String  @unique
   owner       String
-  currency    String  @default("USD")
+  deliveryFee Float?
   email       String?
   category    String?
   title       String?

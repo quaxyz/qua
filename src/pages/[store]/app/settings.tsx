@@ -33,15 +33,12 @@ import { getKeyPair } from "libs/keys";
 import { signData } from "libs/signing";
 import { useFileUpload } from "components/file-picker";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { FormGroup } from "components/form-group";
-import SelectMenu from "components/select";
-import { allCurrencies } from "libs/currency";
 
 function useSaveSettings() {
   const [loading, setLoading] = React.useState(false);
+
   const { account } = useWeb3React();
   const toast = useToast();
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const updateStoreMutation = useMutation(
@@ -111,7 +108,7 @@ const Page = ({ storeDetails }: any) => {
     location: storeDetails.location,
     whatsapp: storeDetails.socialLinks?.whatsapp,
     instagram: storeDetails.socialLinks?.instagram,
-    currency: storeDetails.currency,
+    deliveryFee: storeDetails.deliveryFee,
   });
 
   const { data } = useQuery({
@@ -133,7 +130,7 @@ const Page = ({ storeDetails }: any) => {
     const details = {
       about: formValue.about,
       location: formValue.location,
-      currency: formValue.currency,
+      deliveryFee: formValue.deliveryFee,
       socialLinks: {
         whatsapp: formValue.whatsapp,
         instagram: formValue.instagram,
@@ -253,7 +250,7 @@ const Page = ({ storeDetails }: any) => {
                   <Input
                     id="location"
                     variant="outline"
-                    type="address"
+                    type="text"
                     value={formValue.location}
                     onChange={(e) =>
                       setFormValue({ ...formValue, location: e.target.value })
@@ -317,22 +314,24 @@ const Page = ({ storeDetails }: any) => {
               </GridItem>
 
               <GridItem>
-                <FormGroup id="currency" label="Currency">
-                  <SelectMenu
-                    title="Select Currency"
-                    placeholder="Select"
+                <FormControl id="deliveryFee">
+                  <FormLabel textTransform="uppercase">
+                    Base delivery fee
+                  </FormLabel>
+                  <Input
+                    id="deliveryFee"
                     variant="outline"
-                    size="md"
-                    value={formValue.currency}
-                    onChange={(item) =>
-                      setFormValue({ ...formValue, currency: item })
+                    type="number"
+                    value={formValue.deliveryFee}
+                    onChange={(e) =>
+                      setFormValue({
+                        ...formValue,
+                        deliveryFee: e.target.value,
+                      })
                     }
-                    options={allCurrencies.map((curr) => ({
-                      value: curr.cc,
-                      label: `${curr.cc} - ${curr.name}`,
-                    }))}
+                    placeholder="Enter base delivery fee"
                   />
-                </FormGroup>
+                </FormControl>
               </GridItem>
 
               <GridItem>

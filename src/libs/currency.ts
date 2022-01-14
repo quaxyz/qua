@@ -161,8 +161,9 @@ export const allCurrencies = [
   { cc: "ZWR", symbol: "Z$", name: "Zimbabwean dollar" },
 ];
 
-export const formatCurrency = (amount: number, currency: string) => {
-  return new Intl.NumberFormat("de-DE", { style: "currency", currency }).format(
-    amount
-  );
+export const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("en", {
+    style: "currency",
+    currency: "USD",
+  }).format(amount);
 };
