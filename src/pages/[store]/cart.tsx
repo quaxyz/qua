@@ -149,7 +149,6 @@ const Page = () => {
 
   const costSummary = {
     subtotal: cartStore?.subTotal || 0,
-    "Network fee": 1,
   };
 
   return (

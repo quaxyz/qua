@@ -2,7 +2,7 @@ import Router from "next/router";
 
 export default function Api() {
   const store = Router.query.store;
-  const href = `/api/${store}`;
+  const href = `/api/${store || ""}`;
 
   const request: any = async (path: string, options: any = {}) => {
     const pathWithSlash = `${path.charAt(0) !== "/" ? "/" : ""}${path}`;

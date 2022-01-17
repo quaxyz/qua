@@ -154,6 +154,25 @@ const useCart = () => {
     [account, items, subTotal]
   );
 
+  const clearCart = useCallback(async () => {
+    setItems([]);
+    setSubtotal(0);
+
+    if (account) {
+      await Api().post(`/cart?address=${account}`, {
+        cart: [],
+      });
+    } else {
+      localStorage.setItem(
+        "cartItems",
+        JSON.stringify({
+          items: [],
+          subtotal: 0,
+        })
+      );
+    }
+  }, [account]);
+
   useEffect(() => {
     if (account) syncLocalCartItem();
     fetchCartItems();
@@ -169,6 +188,7 @@ const useCart = () => {
       addCartItem,
       removeCartItem,
       updateCartItem,
+      clearCart,
     }),
     [
       items,
@@ -178,6 +198,7 @@ const useCart = () => {
       addCartItem,
       removeCartItem,
       updateCartItem,
+      clearCart,
     ]
   );
 };

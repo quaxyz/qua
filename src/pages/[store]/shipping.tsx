@@ -103,7 +103,6 @@ const Page = ({ shippingDetails, storeDetails }: any) => {
       formValue.deliveryMethod === "PICKUP"
         ? 0
         : storeDetails?.deliveryFee || 0,
-    "Network fee": 1,
   };
 
   return (
@@ -211,6 +210,7 @@ const Page = ({ shippingDetails, storeDetails }: any) => {
                 </Heading>
 
                 <RadioGroup
+                  name="Delivery Method"
                   onChange={(value) =>
                     setFormValue({ ...formValue, deliveryMethod: value })
                   }
@@ -253,7 +253,13 @@ const Page = ({ shippingDetails, storeDetails }: any) => {
               </Stack>
 
               <CostSummary data={costSummary} />
-              <Button type="submit" size="lg" variant="solid" width="100%">
+              <Button
+                type="submit"
+                size="lg"
+                variant="solid"
+                width="100%"
+                isLoading={saving}
+              >
                 Proceed to Payment
               </Button>
             </Stack>

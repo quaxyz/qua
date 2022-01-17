@@ -16,4 +16,12 @@ export const schemas = {
     { name: "timestamp", type: "uint64" },
     { name: "publicKey", type: "string" },
   ],
+  Order: [
+    { name: "from", type: "address" },
+    { name: "store", type: "string" },
+    { name: "timestamp", type: "uint64" },
+    { name: "cart", type: "string" },
+    { name: "shipping", type: "string" },
+    { name: "paymentMethod", type: "string" },
+  ],
 };

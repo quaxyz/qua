@@ -12,14 +12,15 @@ datasource db {
 }
 
 model Store {
-  id          Int     @id @default(autoincrement())
-  name        String  @unique
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  createdAt   DateTime @default(now())
   owner       String
   deliveryFee Float?
   email       String?
   category    String?
   title       String?
-  image       Image?  @relation(fields: [imageId], references: [id])
+  image       Image?   @relation(fields: [imageId], references: [id])
   about       String?
   location    String?
   socialLinks Json?
@@ -27,11 +28,13 @@ model Store {
   imageId  Int?
   products Product[]
   carts    Cart[]
+  orders   Order[]
 }
 
 model User {
   address   String   @unique
   publicKey String[]
+  createdAt DateTime @default(now())
 
   carts           Cart[]
   shippingDetails Json?
@@ -49,8 +52,8 @@ model Product {
   variants      Json[]
   category      String?
   tags          String[]
-  createdAt     DateTime
-  updatedAt     DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   Store   Store @relation(fields: [storeId], references: [id])
   storeId Int
@@ -67,6 +70,42 @@ model Cart {
   storeName String
 
   @@unique([ownerAddress, storeName])
+}
+
+enum OrderStatus {
+  FULFILLED
+  UNFULFILLED
+  CANCELLED
+}
+
+enum OrderPaymentStatus {
+  PAID
+  UNPAID
+  CONTACT_SELLER
+}
+
+model Order {
+  id   Int    @id @default(autoincrement())
+  hash String @unique
+
+  items            Json
+  customerAddress  String
+  customerDetails  Json
+  subtotal         Float
+  totalAmount      Float
+  totalPaid        Float?
+  pricingBreakdown Json
+  paymentMethod    String
+  paymentReference String?
+  payoutHash       String?
+  status           OrderStatus
+  paymentStatus    OrderPaymentStatus
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Store   Store @relation(fields: [storeId], references: [id])
+  storeId Int
 }
 
 // metas

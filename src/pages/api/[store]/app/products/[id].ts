@@ -141,7 +141,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
               name: payload.name,
               price: parseFloat(payload.price),
               physical: payload.physical,
-              updatedAt: new Date(),
 
               description: payload.description,
               discountPrice: payload.discountPrice

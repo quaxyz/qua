@@ -7,54 +7,8 @@ export const DEFAULT_CHAIN_ID = 1;
 export const RPC_URLS: { [chainId: number]: string } = {
   1: "https://mainnet.infura.io/v3/4f88abdfd94a43c684fa93091d00515e", // mainnet
   4: "https://rinkeby.infura.io/v3/4f88abdfd94a43c684fa93091d00515e", // rinkeby
-  137: "https://polygon-mainnet.infura.io/v3/4f88abdfd94a43c684fa93091d00515e", // polygon
-  80001: "https://polygon-mumbai.infura.io/v3/4f88abdfd94a43c684fa93091d00515e", // mumbai
-};
-export const RPC_INFO: { [chainId: number]: any } = {
-  137: {
-    chainName: "Matic Network",
-    nativeCurrency: {
-      name: "MATIC",
-      symbol: "MATIC",
-      decimals: 18,
-    },
-    rpcUrls: [
-      "https://rpc-mainnet.matic.network",
-      "https://rpc-mainnet.maticvigil.com",
-      "https://rpc-mainnet.matic.quiknode.pro",
-      "https://matic-mainnet.chainstacklabs.com",
-      "https://matic-mainnet-full-rpc.bwarelabs.com",
-      "https://matic-mainnet-archive-rpc.bwarelabs.com",
-    ],
-    blockExplorerUrls: [
-      "https://polygonscan.com/",
-      "https://polygon-explorer-mainnet.chainstacklabs.com/",
-      "https://explorer-mainnet.maticvigil.com/",
-      "https://explorer.matic.network/",
-      "https://backup-explorer.matic.network/",
-    ],
-  },
-
-  80001: {
-    chainName: "Mumbai",
-    nativeCurrency: {
-      name: "MATIC",
-      symbol: "MATIC",
-      decimals: 18,
-    },
-    rpcUrls: [
-      "https://rpc-mumbai.maticvigil.com/",
-      "https://matic-mumbai.chainstacklabs.com",
-      "https://matic-testnet-archive-rpc.bwarelabs.com",
-    ],
-    blockExplorerUrls: [
-      "https://mumbai.polygonscan.com/",
-      "https://polygon-explorer-mumbai.chainstacklabs.com/",
-      "https://explorer-mumbai.maticvigil.com/",
-      "https://mumbai-explorer.matic.today/",
-      "https://backup-mumbai-explorer.matic.today/",
-    ],
-  },
+  56: "https://bsc-dataseed.binance.org/", // bsc
+  97: "https://data-seed-prebsc-1-s1.binance.org:8545/", // bsc testnet
 };
 
 // CONNECTORS
@@ -64,7 +18,7 @@ export const network = new NetworkConnector({
 });
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [DEFAULT_CHAIN_ID],
+  supportedChainIds: [1, 4, 56, 97], // todo:: add more selected chain IDs
 });
 
 // wallet info
@@ -110,20 +64,17 @@ export async function switchNetwork() {
   } catch (error) {
     // This error code indicates that the chain has not been added to MetaMask.
     if ((error as any).code === 4902) {
-      await ethereum.request({
-        method: "wallet_addEthereumChain",
-        params: [
-          {
-            chainId: `0x${Number(DEFAULT_CHAIN_ID).toString(16)}`,
-            ...RPC_INFO[DEFAULT_CHAIN_ID],
-          },
-        ],
-      });
+      //
     }
   }
 }
 
-export async function addTokenToWallet(address: string, symbol: string, decimals?: string, image?: string) {
+export async function addTokenToWallet(
+  address: string,
+  symbol: string,
+  decimals?: string,
+  image?: string
+) {
   const { ethereum } = global as any;
   if (!ethereum) {
     console.log("MetaMask extension not available");
