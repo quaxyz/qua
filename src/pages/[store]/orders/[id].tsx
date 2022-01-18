@@ -70,6 +70,13 @@ function useCancelOrder() {
       onSuccess: ({ payload: result }) => {
         console.log("Result", result);
         queryClient.setQueryData("order-details", result);
+
+        toast({
+          title: "Order cancel",
+          description: "Your order has been canceled",
+          position: "top-right",
+          status: "success",
+        });
       },
       onError: (err: any) => {
         console.warn("Error cancelling order", err);

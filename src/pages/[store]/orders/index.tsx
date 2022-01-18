@@ -1,39 +1,38 @@
+import React from "react";
+import Link from "components/link";
+import prisma from "libs/prisma";
+import { GetServerSideProps } from "next";
 import {
   chakra,
   Container,
   Heading,
   Image,
-  Link,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import type { NextPage } from "next";
-import NextLink from "next/link";
-import { useRouter } from "next/router";
-import React from "react";
+import { getAddressFromCookie } from "libs/cookie";
 
-const Orders: NextPage = () => {
-  const router = useRouter();
-
+const Page = ({ orders }: any) => {
   return (
-    <CustomerLayout title="Orders">
-      <Container
-        maxW={{ base: "100%", md: "container.xl" }}
-        px={{ base: "4", md: "16" }}
+    <Container
+      maxW={{ base: "100%", md: "container.xl" }}
+      px={{ base: "4", md: "16" }}
+    >
+      <Heading
+        as="h3"
+        color="#000"
+        py={{ base: "4", md: "8" }}
+        mt={{ base: "0", md: "8" }}
+        fontSize={{ base: "lg", md: "2xl" }}
       >
-        <Heading
-          as="h3"
-          color="#000"
-          py={{ base: "4", md: "8" }}
-          mt={{ base: "0", md: "8" }}
-          fontSize={{ base: "lg", md: "2xl" }}
-        >
-          Orders
-        </Heading>
+        Orders
+      </Heading>
 
-        <Stack direction="column" w="100%" pb={2}>
+      <Stack direction="column" w="100%" pb={2}>
+        {orders.map((order: any) => (
           <Stack
+            key={order.id}
             direction="row"
             w="100%"
             p={{ base: "2", md: "0.75rem" }}
@@ -45,8 +44,8 @@ const Orders: NextPage = () => {
               width={{ base: "12rem", md: "100" }}
               height={{ base: "6.25rem", md: "150" }}
               objectFit="cover"
-              src="/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg"
-              alt="Product Image"
+              src={order.product.image}
+              alt={order.product.name}
             />
 
             <Stack
@@ -59,9 +58,9 @@ const Orders: NextPage = () => {
                 fontSize={{ base: "md", md: "xl" }}
                 fontWeight="300"
               >
-                VESONAL Spring Nike shoes Footwear Big Size 38-46{" "}
+                {order.product.name}
               </Heading>
-              <Text fontSize="0.938rem">Order: 393666623</Text>
+              <Text fontSize="0.938rem">Order: {order.id}</Text>
 
               <chakra.span
                 display="inline-block"
@@ -75,23 +74,98 @@ const Orders: NextPage = () => {
               >
                 Order in progress
               </chakra.span>
-              <NextLink href={`/${router?.query.store}/orders/orderId`}>
-                <Link float={{ base: "none", md: "right" }} position="relative">
-                  <chakra.span
-                    mt="1rem"
-                    textTransform="uppercase"
-                    display="inline-block"
-                  >
-                    See details
-                  </chakra.span>
-                </Link>
-              </NextLink>
+
+              <Link
+                href={`/orders/${order.id}`}
+                float={{ base: "none", md: "right" }}
+                position="relative"
+              >
+                <chakra.span
+                  mt="1rem"
+                  textTransform="uppercase"
+                  display="inline-block"
+                >
+                  See details
+                </chakra.span>
+              </Link>
             </Stack>
           </Stack>
-        </Stack>
-      </Container>
-    </CustomerLayout>
+        ))}
+      </Stack>
+    </Container>
   );
 };
 
-export default Orders;
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const storeName = ctx.params?.store as string;
+  const address = getAddressFromCookie(true, ctx);
+
+  const store = await prisma.store.findUnique({
+    where: { name: storeName },
+    select: { id: true },
+  });
+
+  if (!store) {
+    return { notFound: true };
+  }
+
+  const orders = await prisma.order.findMany({
+    where: { customerAddress: address || "", storeId: store?.id },
+    select: { id: true, status: true, paymentStatus: true, items: true },
+  });
+
+  const itemsIds: any[] = orders.map((o: any) => o.items[0].productId);
+  const products = await prisma.product.findMany({
+    where: {
+      Store: {
+        id: store.id,
+      },
+      id: {
+        in: itemsIds,
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      totalStocks: true,
+      images: {
+        take: 1,
+        select: {
+          url: true,
+        },
+      },
+    },
+  });
+
+  let mappedOrders = orders.reduce((acc: any[], order) => {
+    const product = products.find(
+      (p) => p.id === ((order.items || [{}]) as any)[0].productId
+    );
+
+    acc.push({
+      id: order.id,
+      status: order.status,
+      paymentStatus: order.paymentStatus,
+      product: {
+        id: product?.id,
+        name: product?.name,
+        image: product?.images[0]?.url,
+      },
+    });
+
+    return acc;
+  }, []);
+
+  return {
+    props: {
+      orders: mappedOrders,
+      layoutProps: {
+        title: "Orders",
+      },
+    },
+  };
+};
+
+Page.Layout = CustomerLayout;
+export default Page;

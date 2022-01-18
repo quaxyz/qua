@@ -18,7 +18,6 @@ import {
   Radio,
   RadioGroup,
   Stack,
-  Text,
   useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
@@ -27,12 +26,60 @@ import { useMutation } from "react-query";
 import { useCartStore } from "hooks/useCart";
 import { mapSocialLink } from "libs/utils";
 import { CostSummary } from "components/cost-summary";
+import { domain, schemas } from "libs/constants";
+import { providers } from "ethers";
+
+const useSaveDetails = () => {
+  const router = useRouter();
+  const { library, account } = useWeb3React();
+
+  const updateDetailsMutation = useMutation(async (payload: any) => {
+    if (!library || !account) {
+      throw new Error("Please connect your wallet");
+    }
+
+    let provider: providers.Web3Provider = library;
+    const signer = provider.getSigner(account);
+
+    // format message into schema
+    const message = {
+      from: account,
+      timestamp: parseInt((Date.now() / 1000).toFixed()),
+      store: router.query.store,
+      name: payload.name,
+      email: payload.email,
+      phone: payload.phone,
+      address: payload.address,
+    };
+
+    const data = {
+      domain,
+      types: { AccountDetails: schemas.AccountDetails },
+      message,
+    };
+
+    const sig = await signer._signTypedData(
+      data.domain,
+      data.types,
+      data.message
+    );
+    console.log("Sign", { address: account, sig, data });
+
+    return Api().post(`/account`, {
+      address: account,
+      sig,
+      data,
+    });
+  });
+
+  return updateDetailsMutation;
+};
 
 const Page = ({ shippingDetails, storeDetails }: any) => {
   const toast = useToast();
   const router = useRouter();
   const cartStore = useCartStore();
-  const { account } = useWeb3React();
+  const updateDetailsMutation = useSaveDetails();
 
   const [saveDetails, setSaveDetails] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
@@ -43,10 +90,6 @@ const Page = ({ shippingDetails, storeDetails }: any) => {
     phone: shippingDetails?.phone || "",
     address: shippingDetails?.address || "",
     deliveryMethod: shippingDetails?.deliveryMethod || "DOOR_DELIVERY",
-  });
-
-  const updateShippingMutation = useMutation(async (payload: any) => {
-    return Api().post(`/shipping?address=${account}`, payload);
   });
 
   const checkForErrors = (state: any) => ({
@@ -75,7 +118,7 @@ const Page = ({ shippingDetails, storeDetails }: any) => {
 
       if (saveDetails) {
         // send data to server
-        await updateShippingMutation.mutateAsync(formValue);
+        await updateDetailsMutation.mutateAsync(formValue);
       } else {
         // store data in localstorage
         localStorage.setItem("shippingDetails", JSON.stringify(formValue));
@@ -161,7 +204,7 @@ const Page = ({ shippingDetails, storeDetails }: any) => {
                 <FormErrorMessage>Email is required</FormErrorMessage>
               </FormControl>
 
-              <FormControl id="phone" isInvalid={errors.email} isRequired>
+              <FormControl id="phone" isInvalid={errors.phone} isRequired>
                 <FormLabel htmlFor="phone">Phone number</FormLabel>
                 <Input
                   type="tel"
@@ -176,7 +219,7 @@ const Page = ({ shippingDetails, storeDetails }: any) => {
                 <FormErrorMessage>Phone is required</FormErrorMessage>
               </FormControl>
 
-              <FormControl id="address" isInvalid={errors.email} isRequired>
+              <FormControl id="address" isInvalid={errors.address} isRequired>
                 <FormLabel htmlFor="address">Address</FormLabel>
                 <Input
                   type="text"

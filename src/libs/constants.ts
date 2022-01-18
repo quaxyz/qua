@@ -30,4 +30,13 @@ export const schemas = {
     { name: "timestamp", type: "uint64" },
     { name: "orderId", type: "uint64" },
   ],
+  AccountDetails: [
+    { name: "from", type: "address" },
+    { name: "store", type: "string" },
+    { name: "timestamp", type: "uint64" },
+    { name: "name", type: "string" },
+    { name: "email", type: "string" },
+    { name: "phone", type: "string" },
+    { name: "address", type: "string" },
+  ],
 };
