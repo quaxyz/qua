@@ -269,7 +269,10 @@ const Page: NextPage = () => {
                 bucket={router.query.store as string}
                 disabled={saving}
                 maxFiles={8}
-                setFiles={(images) => setFormValue({ ...formValue, images })}
+                setFiles={(images) => {
+                  console.log({ images });
+                  setFormValue({ ...formValue, images });
+                }}
               />
               <FormErrorMessage>
                 Each product needs at least 1 image and no more than 8 images
