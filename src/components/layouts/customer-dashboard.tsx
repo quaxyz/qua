@@ -30,6 +30,13 @@ const navLinks = [
   },
 ];
 
+const walletMenuLinks = [
+  {
+    label: "Account",
+    href: `/account`,
+  },
+];
+
 const CustomerLayout = ({ title, children }: any) => {
   const router = useRouter();
   const { account } = useWeb3React();
@@ -101,6 +108,10 @@ const CustomerLayout = ({ title, children }: any) => {
 
           <Stack direction="row" spacing={12} align="center">
             <Wallet
+              menuOptions={walletMenuLinks.map((m) => ({
+                ...m,
+                href: `/${router.query?.store}${m.href}`,
+              }))}
               ButtonProps={{
                 variant: "primary",
                 leftIcon: account ? <Icon as={CgMore} mr={2} /> : undefined,
@@ -179,6 +190,10 @@ const CustomerLayout = ({ title, children }: any) => {
             </Link>
 
             <Wallet
+              menuOptions={walletMenuLinks.map((m) => ({
+                ...m,
+                href: `/${router.query?.store}${m.href}`,
+              }))}
               ButtonProps={{
                 variant: "outline",
                 bg: " rgba(0, 0, 0, 0.04)",

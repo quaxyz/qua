@@ -178,7 +178,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   return {
     props: {
-      storeDetails,
+      storeDetails: JSON.parse(JSON.stringify(storeDetails)),
     },
   };
 };
