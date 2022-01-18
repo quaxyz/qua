@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
 import LazerPay from "lazerpay-node-sdk";
 
-const LOG_TAG = "[store-confirm-payment]";
+const LOG_TAG = "[store-payment-confirm]";
 const lazerPay = new LazerPay(
   process.env.NEXT_PUBLIC_LAZER_PAY_KEY || "",
   process.env.LAZER_PAY_SECRET_KEY || ""
@@ -49,6 +49,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(400).send({ error: "invalid params" });
         }
 
+        const storeName = query.store as string;
+
         const { orderHash, paymentPayload } = body;
         const { coin, reference, recipientAddress } = paymentPayload;
 
@@ -71,10 +73,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         // get order
-        const order = await prisma.order.findUnique({
-          where: { hash: orderHash },
+        const order = await prisma.order.findFirst({
+          where: { hash: orderHash, Store: { name: storeName } },
           select: { subtotal: true, pricingBreakdown: true, storeId: true },
         });
+
+        if (!order) {
+          console.log(LOG_TAG, "[error]", "order not found in this store", {
+            query,
+            body,
+          });
+          return res.status(404).send({ error: "Error processing payment" });
+        }
 
         // get seller info
         const store = await prisma.store.findUnique({
@@ -88,7 +98,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             query,
             body,
           });
-          return res.status(400).send({ error: "Error confirming payment" });
+          return res.status(404).send({ error: "Error processing payment" });
         }
 
         let payoutHash = "";

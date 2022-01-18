@@ -102,14 +102,11 @@ const Page = () => {
 
   const items = cartStore?.items.map((c) => c.productId);
   const cartDetailsQueryResp = useQuery({
-    queryKey: ["cartItemsDetails", items],
+    queryKey: ["productItemDetails", items],
     onError: () => console.warn("Error fetching cart details from API"),
     enabled: (items?.length || 0) > 0,
     queryFn: async () => {
-      const { payload } = await Api().post(`/cart/details`, {
-        cart: items,
-      });
-
+      const { payload } = await Api().post(`/products/details`, { items });
       return payload;
     },
     select: (data) =>
@@ -117,6 +114,7 @@ const Page = () => {
         const cartItem = cartStore?.items.find(
           (item) => product.id === item.productId
         );
+
         return {
           productId: product.id,
           quantity: cartItem?.quantity,

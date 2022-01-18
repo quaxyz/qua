@@ -57,13 +57,11 @@ function usePlaceOrder() {
 
   const items = cartStore?.items.map((c) => c.productId);
   const cartDetailsQueryResp = useQuery({
-    queryKey: ["cartItemsDetails", items],
+    queryKey: ["productItemDetails", items],
     onError: () => console.warn("Error fetching cart details from API"),
     enabled: (items?.length || 0) > 0,
     queryFn: async () => {
-      const { payload } = await Api().post(`/cart/details`, {
-        cart: items,
-      });
+      const { payload } = await Api().post(`/products/details`, { items });
 
       return payload;
     },
@@ -82,7 +80,7 @@ function usePlaceOrder() {
   });
 
   const createOrderMutation = useMutation(async (payload: any) => {
-    return Api().post("/order", payload);
+    return Api().post("/orders/create", payload);
   });
 
   return async ({ shipping, paymentMethod }: any) => {
@@ -156,7 +154,7 @@ function useHandlePayment() {
   const toast = useToast();
 
   const confirmPaymentMutation = useMutation(async (payload: any) => {
-    return Api().post("/confirm-payment", payload);
+    return Api().post("/payment/confirm", payload);
   });
 
   return async ({ orderHash, shippingDetails, amount }: any) => {
@@ -240,8 +238,8 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
 
       // redirect to order page
       router.push({
-        pathname: "/[store]/orders/[orderId]",
-        query: { store: router.query.store, orderId: orderResult?.hash },
+        pathname: "/[store]/orders/[id]",
+        query: { store: router.query.store, id: orderResult?.id },
       });
     } catch (e) {
     } finally {

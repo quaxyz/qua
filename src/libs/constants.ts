@@ -24,4 +24,10 @@ export const schemas = {
     { name: "shipping", type: "string" },
     { name: "paymentMethod", type: "string" },
   ],
+  OrderCancel: [
+    { name: "from", type: "address" },
+    { name: "store", type: "string" },
+    { name: "timestamp", type: "uint64" },
+    { name: "orderId", type: "uint64" },
+  ],
 };

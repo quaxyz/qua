@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
 
-const LOG_TAG = "[store-cart-details]";
+const LOG_TAG = "[store-products-details]";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -10,7 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     switch (method) {
       case "POST": {
-        console.log(LOG_TAG, "fetch cart items details", { query });
+        console.log(LOG_TAG, "fetch product items details", { query });
 
         if (!query.store) {
           console.log(LOG_TAG, "[warning]", "invalid query", { query });
@@ -19,14 +19,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         const store = query.store as string;
 
-        const cartItem: any[] = body.cart;
+        const items: any[] = body.items;
         const products = await prisma.product.findMany({
           where: {
             Store: {
               name: store,
             },
             id: {
-              in: cartItem,
+              in: items,
             },
           },
           select: {
@@ -43,8 +43,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           },
         });
 
-        console.log(LOG_TAG, "returning cart items", {
-          cartProducts: products,
+        console.log(LOG_TAG, "returning product details", {
+          products,
         });
         return res.status(200).send(products);
       }
