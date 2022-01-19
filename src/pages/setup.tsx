@@ -28,7 +28,7 @@ function useCreateStore() {
   const router = useRouter();
 
   const createStoreMutation = useMutation(async (payload: any) => {
-    return Api().post("/api/setup", payload);
+    return Api().post("/setup", payload);
   });
 
   return async (details: any) => {
