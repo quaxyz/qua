@@ -430,7 +430,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const store = ctx.params?.store as string;
   const address = getAddressFromCookie(true, ctx);
 
+  const storeDetails = await prisma.store.findUnique({
+    where: { name: store },
+    select: { deliveryFee: true, socialLinks: true },
+  });
+
+  if (!storeDetails) {
+    return { notFound: true };
+  }
+
   const props: any = {
+    storeDetails: JSON.parse(JSON.stringify(storeDetails)),
     layoutProps: {
       title: "Payment",
     },
@@ -444,13 +454,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     where: { address },
     select: { shippingDetails: true },
   });
-  props.shippingDetails = user?.shippingDetails;
-
-  const storeDetails = await prisma.store.findUnique({
-    where: { name: store },
-    select: { deliveryFee: true, socialLinks: true },
-  });
-  props.storeDetails = storeDetails;
+  props.shippingDetails = JSON.parse(JSON.stringify(user?.shippingDetails));
 
   return { props };
 };

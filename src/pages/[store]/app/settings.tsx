@@ -104,11 +104,11 @@ function useSaveSettings() {
 const Page = ({ storeDetails }: any) => {
   const router = useRouter();
   const [formValue, setFormValue] = React.useState({
-    about: storeDetails.about,
-    location: storeDetails.location,
-    whatsapp: storeDetails.socialLinks?.whatsapp,
-    instagram: storeDetails.socialLinks?.instagram,
-    deliveryFee: storeDetails.deliveryFee,
+    about: storeDetails.about || "",
+    location: storeDetails.location || "",
+    whatsapp: storeDetails.socialLinks?.whatsapp || "",
+    instagram: storeDetails.socialLinks?.instagram || "",
+    deliveryFee: storeDetails.deliveryFee || 0,
   });
 
   const { data } = useQuery({
@@ -226,7 +226,7 @@ const Page = ({ storeDetails }: any) => {
             <Textarea
               id="about"
               placeholder="What should customers know about your business?"
-              value={formValue?.about || ""}
+              value={formValue?.about}
               onChange={(e) =>
                 setFormValue({ ...formValue, about: e.target.value })
               }
