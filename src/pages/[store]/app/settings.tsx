@@ -226,7 +226,7 @@ const Page = ({ storeDetails }: any) => {
             <Textarea
               id="about"
               placeholder="What should customers know about your business?"
-              value={formValue?.about}
+              value={formValue?.about || ""}
               onChange={(e) =>
                 setFormValue({ ...formValue, about: e.target.value })
               }

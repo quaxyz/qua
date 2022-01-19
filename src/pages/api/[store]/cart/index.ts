@@ -35,7 +35,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         });
 
         if (!user || !user.carts[0]) {
-          return res.status(200).send([]);
+          return res.status(200).send({
+            items: [],
+            total: 0,
+          });
         }
 
         const cartItems = user.carts[0].items as any[];
