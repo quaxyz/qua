@@ -5,6 +5,7 @@ import { providers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 import { Web3ReactContextInterface } from "@web3-react/core/dist/types";
 import { COOKIE_STORAGE_NAME, toBase64 } from "libs/cookie";
+import { useLogout } from "./auth";
 
 export function useActiveWeb3React(): Web3ReactContextInterface<providers.Web3Provider> {
   const context = useWeb3React<providers.Web3Provider>();
@@ -53,10 +54,12 @@ export function useEagerConnect() {
 
 export function useInactiveListener(suppress: boolean = false) {
   const { account, active, error, activate } = useWeb3React();
+  const logout = useLogout();
 
   useEffect((): any => {
     const { ethereum } = global as any;
-    if (ethereum && ethereum.on && !active && !error && !suppress) {
+
+    if (ethereum && ethereum.on && active && !error && !suppress) {
       const handleChainChanged = () => {
         activate(injected, undefined, true).catch((error) => {
           console.error("Failed to activate after chain changed", error);
@@ -65,9 +68,11 @@ export function useInactiveListener(suppress: boolean = false) {
 
       const handleAccountsChanged = (accounts: string[]) => {
         if (accounts.length > 0) {
-          activate(injected, undefined, true).catch((error) => {
-            console.error("Failed to activate after accounts changed", error);
-          });
+          logout()
+            .then(() => activate(injected, undefined, true))
+            .catch((error) => {
+              console.error("Failed to activate after accounts changed", error);
+            });
         }
       };
 
@@ -81,7 +86,7 @@ export function useInactiveListener(suppress: boolean = false) {
         }
       };
     }
-  }, [active, error, suppress, activate]);
+  }, [active, error, suppress, activate, logout]);
 
   // add listener to update address in cookie
   useEffect(() => {

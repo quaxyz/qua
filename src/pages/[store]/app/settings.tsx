@@ -141,7 +141,7 @@ const Page = ({ storeDetails }: any) => {
   };
 
   return (
-    <StoreDashboardLayout title="Settings">
+    <>
       <Box
         maxWidth="100%"
         height="50vh"
@@ -379,7 +379,7 @@ const Page = ({ storeDetails }: any) => {
           </Button>
         </Stack>
       </Container>
-    </StoreDashboardLayout>
+    </>
   );
 };
 
@@ -406,8 +406,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   return {
     props: {
       storeDetails: JSON.parse(JSON.stringify(storeDetails)),
+      layoutProps: {
+        title: "Settings",
+      },
     },
   };
 };
 
+Page.Layout = StoreDashboardLayout;
 export default Page;

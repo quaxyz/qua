@@ -1,7 +1,7 @@
 import React from "react";
 import prisma from "libs/prisma";
 import Api from "libs/api";
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
@@ -129,7 +129,7 @@ const Variants = (props: {
   );
 };
 
-const Page: NextPage = ({ product }: any) => {
+const Page = ({ product }: any) => {
   const toast = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -235,7 +235,7 @@ const Page: NextPage = ({ product }: any) => {
   };
 
   return (
-    <StoreDashboardLayout title="Edit product">
+    <>
       <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
         <Stack direction="row" justify="space-between" aling="center" mb={10}>
           <NextLink href={`/${router?.query.store}/app/products/`} passHref>
@@ -517,7 +517,7 @@ const Page: NextPage = ({ product }: any) => {
           </Stack>
         </Stack>
       </Container>
-    </StoreDashboardLayout>
+    </>
   );
 };
 
@@ -546,8 +546,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   return {
     props: {
       product: JSON.parse(JSON.stringify(product)),
+      layoutProps: {
+        title: "Edit Product",
+      },
     },
   };
 };
 
+Page.Layout = StoreDashboardLayout;
 export default Page;

@@ -12,7 +12,7 @@ export function useInitializeStoreAuth() {
   const { account } = useWeb3React();
 
   const { isLoading, data } = useQuery({
-    queryKey: "verify-store-owner",
+    queryKey: ["verify-store-owner", account],
     enabled: !!account,
     staleTime: Infinity,
     queryFn: async () => {
@@ -75,12 +75,13 @@ export function useLogout() {
   const { deactivate } = useWeb3React();
 
   return async () => {
-    deactivate();
     Cookies.remove(COOKIE_STORAGE_NAME);
 
     if (storeAuth) {
-      storeAuth?.setPublicKey(null);
       await destroyKeyPair();
+      storeAuth?.setPublicKey(null);
     }
+
+    deactivate();
   };
 }

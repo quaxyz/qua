@@ -104,7 +104,9 @@ export const FilePicker = ({
         try {
           // upload file
           const { payload: uploadedFile } = await Api().request(
-            `/upload?filename=${file.name}&bucket=${bucket}`,
+            `/upload?filename=${encodeURIComponent(
+              file.name
+            )}&bucket=${bucket}`,
             {
               method: "POST",
               headers: { "Content-Type": file.type },

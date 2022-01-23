@@ -96,7 +96,7 @@ const Page = ({ initialData }: any) => {
   const isEmpty = !queryResp?.data?.pages.filter((p) => p.length).length;
 
   return (
-    <StoreDashboardLayout title="Products">
+    <>
       <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
         <Stack direction="row" justify="space-between" align="center" mb={10}>
           <Heading as="h2" fontSize="xl" fontWeight="600">
@@ -344,7 +344,7 @@ const Page = ({ initialData }: any) => {
           </Stack>
         )}
       </Container>
-    </StoreDashboardLayout>
+    </>
   );
 };
 
@@ -378,8 +378,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   return {
     props: {
       initialData: data,
+      layoutProps: {
+        title: "Products",
+      },
     },
   };
 };
 
+Page.Layout = StoreDashboardLayout;
 export default Page;

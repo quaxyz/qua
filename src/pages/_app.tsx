@@ -35,11 +35,11 @@ function QuaApp({ Component, pageProps }: AppProps) {
       <QueryClientProvider client={queryClient}>
         <Web3ReactProvider getLibrary={getLibrary}>
           <Web3ReactProviderDefault getLibrary={getLibrary}>
-            <Web3ReactManager>
-              <Layout {...layoutProps}>
+            <Layout {...layoutProps}>
+              <Web3ReactManager>
                 <Component {...pageProps} />
-              </Layout>
-            </Web3ReactManager>
+              </Web3ReactManager>
+            </Layout>
           </Web3ReactProviderDefault>
         </Web3ReactProvider>
 

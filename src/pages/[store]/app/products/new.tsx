@@ -1,6 +1,6 @@
 import React from "react";
 import Api from "libs/api";
-import type { NextPage } from "next";
+import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
@@ -124,7 +124,7 @@ const Variants = (props: { onChange: (variants: any[]) => void }) => {
   );
 };
 
-const Page: NextPage = () => {
+const Page = () => {
   const toast = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -223,7 +223,7 @@ const Page: NextPage = () => {
   };
 
   return (
-    <StoreDashboardLayout title="Add product">
+    <>
       <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
         <Stack direction="row" justify="space-between" align="center" mb={10}>
           <NextLink href={`/${router?.query.store}/app/products/`} passHref>
@@ -507,8 +507,19 @@ const Page: NextPage = () => {
           </Stack>
         </Stack>
       </Container>
-    </StoreDashboardLayout>
+    </>
   );
 };
 
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {
+      layoutProps: {
+        title: "Add Product",
+      },
+    },
+  };
+};
+
+Page.Layout = StoreDashboardLayout;
 export default Page;
