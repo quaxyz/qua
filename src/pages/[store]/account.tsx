@@ -45,10 +45,12 @@ const useSaveDetails = () => {
         from: account,
         timestamp: parseInt((Date.now() / 1000).toFixed()),
         store: router.query.store,
-        name: payload.name,
-        email: payload.email,
-        phone: payload.phone,
-        address: payload.address,
+        details: JSON.stringify({
+          name: payload.name,
+          email: payload.email,
+          phone: payload.phone,
+          address: payload.address,
+        }),
       };
 
       const data = {

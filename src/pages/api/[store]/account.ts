@@ -54,20 +54,24 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(400).send({ error: "wrong signature" });
         }
 
+        const payload = JSON.parse(data.message.details);
+        const user = await prisma.user.findUnique({ where: { address } });
         const details = {
-          name: data.message.name,
-          email: data.message.email,
-          phone: data.message.phone,
-          address: data.message.address,
-          deliveryMethod: data.message.deliveryMethod,
+          ...(user ? (user.shippingDetails as any) : {}),
+          name: payload.name,
+          email: payload.email,
+          phone: payload.phone,
+          address: payload.address,
+          deliveryMethod: payload.deliveryMethod,
         };
 
-        await prisma.user.upsert({
+        const result = await prisma.user.upsert({
           where: { address },
           create: { address, shippingDetails: details },
           update: { shippingDetails: details },
         });
 
+        console.log(LOG_TAG, "account updated", { result, data });
         return res.status(200).send({ message: "saved" });
       }
       default:

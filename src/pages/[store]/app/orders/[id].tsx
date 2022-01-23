@@ -26,36 +26,6 @@ import { getKeyPair } from "libs/keys";
 import { signData } from "libs/signing";
 import { OrderPaymentStatus, OrderStatus } from "components/order-pill";
 
-const statusColor: any = {
-  cancelled: {
-    bgColor: "red.200",
-    color: "red.800",
-  },
-  unfulfilled: {
-    bgColor: "rgba(254, 238, 205, 1)",
-    color: "rgba(120, 81, 2, 1)",
-  },
-  fulfilled: {
-    bgColor: "rgba(205, 254, 240, 1)",
-    color: "rgba(2, 120, 87, 1)",
-  },
-};
-
-const paymentStatusColor: any = {
-  paid: {
-    bgColor: "rgba(205, 254, 240, 1)",
-    color: "rgba(2, 120, 87, 1)",
-  },
-  contact_seller: {
-    bgColor: "rgba(254, 238, 205, 1)",
-    color: "rgba(120, 81, 2, 1)",
-  },
-  unpaid: {
-    bgColor: "rgba(254, 238, 205, 1)",
-    color: "rgba(120, 81, 2, 1)",
-  },
-};
-
 function useCancelOrder() {
   const { account } = useWeb3React();
   const toast = useToast();
@@ -86,9 +56,14 @@ function useCancelOrder() {
       });
     },
     {
-      onSuccess: ({ payload: result }) => {
-        const order = queryClient.getQueryData<any>("store-order-details");
-        queryClient.setQueryData("store-order-details", {
+      onSuccess: async ({ payload: result }) => {
+        await queryClient.invalidateQueries("store-dashboard-orders");
+
+        const order = queryClient.getQueryData<any>([
+          "store-order-details",
+          result.id,
+        ]);
+        queryClient.setQueryData(["store-order-details", result.id], {
           ...order,
           status: result.status,
         });
@@ -114,10 +89,75 @@ function useCancelOrder() {
   );
 }
 
+function useFulfillOrder() {
+  const { account } = useWeb3React();
+  const toast = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    async ({ orderId }: any) => {
+      // sign data
+      const timestamp = parseInt((Date.now() / 1000).toFixed());
+
+      const keyPair = await getKeyPair();
+      const data = {
+        orderId,
+        timestamp,
+      };
+      console.log("Data", data);
+
+      const signedContent = await signData(keyPair, data);
+      console.log("Sig", signedContent);
+
+      return Api().post(`/app/orders/fulfill`, {
+        address: account,
+        digest: signedContent.digest,
+        key: JSON.stringify(signedContent.publicKey),
+        payload: JSON.stringify(data),
+        signature: signedContent.signature,
+        timestamp,
+      });
+    },
+    {
+      onSuccess: async ({ payload: result }) => {
+        await queryClient.invalidateQueries("store-dashboard-orders");
+
+        const order = queryClient.getQueryData<any>([
+          "store-order-details",
+          result.id,
+        ]);
+        queryClient.setQueryData(["store-order-details", result.id], {
+          ...order,
+          status: result.status,
+        });
+
+        toast({
+          title: "Order has been fulfilled",
+          status: "success",
+          position: "top-right",
+          isClosable: true,
+        });
+      },
+
+      onError: (err: any) => {
+        toast({
+          title: "Error fulfilling order",
+          description: err?.message,
+          status: "error",
+          position: "bottom-right",
+          isClosable: true,
+        });
+      },
+    }
+  );
+}
+
 const Page = (props: any) => {
   const cancelOrder = useCancelOrder();
+  const fulfillOrder = useFulfillOrder();
+
   const { data: order } = useQuery({
-    queryKey: "store-order-details",
+    queryKey: ["store-order-details", props.order.id],
     queryFn: async () => {},
     initialData: props.order,
     staleTime: Infinity,
@@ -262,7 +302,12 @@ const Page = (props: any) => {
 
             {order.status === "UNFULFILLED" && (
               <Stack mt={4} direction="row" w="100%">
-                <Button variant="solid" width="100%">
+                <Button
+                  onClick={() => fulfillOrder.mutate({ orderId: order.id })}
+                  isLoading={fulfillOrder.isLoading}
+                  variant="solid"
+                  width="100%"
+                >
                   Fufill Order
                 </Button>
 

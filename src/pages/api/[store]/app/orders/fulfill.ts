@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
 import { verifyApiBody } from "../utils";
 
-const LOG_TAG = "[store-dashboard-cancel-order]";
+const LOG_TAG = "[store-dashboard-fulfill-order]";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -44,26 +44,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(400).send({ error: "Order not found" });
         }
 
-        if (
-          order?.status !== "UNFULFILLED" &&
-          order?.paymentStatus === "PAID"
-        ) {
+        if (order?.status !== "UNFULFILLED") {
           console.log(
             LOG_TAG,
             "[warning]",
-            "Order is already fulfullied, cancelled or paid for",
+            "Order is already fulfullied or cancelled",
             { query, order }
           );
 
           return res.status(400).send({
-            error: "order is already fulfullied, cancelled or paid for",
+            error: "order is already fulfullied or cancelled",
           });
         }
 
         // set order to cancelled
         const result = await prisma.order.update({
           where: { id: order.id },
-          data: { status: "CANCELLED" },
+          data: { status: "FULFILLED", paymentStatus: "PAID" },
           select: { id: true, status: true },
         });
 
