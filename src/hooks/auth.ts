@@ -6,10 +6,14 @@ import { useWeb3React } from "@web3-react/core";
 import { destroyKeyPair, extractPublicKey, getKeyPair } from "libs/keys";
 import { AuthContext } from "libs/auth";
 import { COOKIE_STORAGE_NAME } from "libs/cookie";
+import { useEagerConnect } from "hooks/web3";
 
 export function useInitializeStoreAuth() {
   const [publicKey, setPublicKey] = useState<string | null>();
-  const { account } = useWeb3React();
+  const { active, account } = useWeb3React();
+
+  // try to eagerly connect to an injected provider, if it exists and has granted access already
+  const triedEager = useEagerConnect();
 
   const { isLoading, data } = useQuery({
     queryKey: ["verify-store-owner", account],
@@ -56,12 +60,12 @@ export function useInitializeStoreAuth() {
 
   return useMemo(
     () => ({
-      loading: isLoading || publicKey === undefined,
+      loading: (!active && !triedEager) || isLoading || publicKey === undefined,
       status,
       publicKey,
       setPublicKey,
     }),
-    [status, isLoading, publicKey, setPublicKey]
+    [active, triedEager, status, isLoading, publicKey, setPublicKey]
   );
 }
 

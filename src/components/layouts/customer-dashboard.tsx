@@ -18,6 +18,7 @@ import { CartContext } from "libs/cart";
 import { useRouter } from "next/router";
 import { Bag2 } from "react-iconly";
 import { CgMore } from "react-icons/cg";
+import { useEagerConnect } from "hooks/web3";
 
 const navLinks = [
   {
@@ -41,6 +42,9 @@ const CustomerLayout = ({ title, children }: any) => {
   const router = useRouter();
   const { account } = useWeb3React();
   const cartStore = useCart();
+
+  // try to eagerly connect to an injected provider, if it exists and has granted access already
+  useEagerConnect();
 
   return (
     <CartContext.Provider value={cartStore}>

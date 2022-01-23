@@ -1,6 +1,5 @@
 import React from "react";
 import type { AppProps } from "next/app";
-import dynamic from "next/dynamic";
 import theme from "theme";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Web3ReactProvider } from "@web3-react/core";
@@ -8,13 +7,6 @@ import { Web3ReactManager } from "components/wallet/web3-manager";
 import { getLibrary } from "libs/wallet";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-
-const Web3ReactProviderDefault = dynamic(
-  () => import("components/wallet/network-connector"),
-  {
-    ssr: false,
-  }
-);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,13 +26,11 @@ function QuaApp({ Component, pageProps }: AppProps) {
     <ChakraProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
         <Web3ReactProvider getLibrary={getLibrary}>
-          <Web3ReactProviderDefault getLibrary={getLibrary}>
-            <Layout {...layoutProps}>
-              <Web3ReactManager>
-                <Component {...pageProps} />
-              </Web3ReactManager>
-            </Layout>
-          </Web3ReactProviderDefault>
+          <Layout {...layoutProps}>
+            <Web3ReactManager>
+              <Component {...pageProps} />
+            </Web3ReactManager>
+          </Layout>
         </Web3ReactProvider>
 
         <ReactQueryDevtools initialIsOpen />
