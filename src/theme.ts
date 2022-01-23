@@ -27,7 +27,7 @@ export default extendTheme({
         borderBottom: "1px solid",
         _hover: {
           textDecoration: "none",
-          transform: "scale(1.05)",
+          transform: "scale(1.02)",
         },
       },
     },
@@ -46,7 +46,7 @@ export default extendTheme({
           color: "#fff",
           _hover: {
             backgroundColor: "rgb(0 0 0 / 90%)",
-            transform: "scale(1.05)",
+            transform: "scale(1.02)",
             _disabled: {
               backgroundColor: "rgb(0 0 0 / 90%)",
             },
@@ -66,7 +66,7 @@ export default extendTheme({
           px: 12,
           _hover: {
             backgroundColor: "rgb(0 0 0 / 95%)",
-            transform: "scale(1.05)",
+            transform: "scale(1.02)",
             _disabled: {
               backgroundColor: "rgb(0 0 0 / 95%)",
             },

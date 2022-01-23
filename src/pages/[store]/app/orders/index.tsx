@@ -22,6 +22,7 @@ import { useRouter } from "next/router";
 import { useInfiniteQuery } from "react-query";
 import { Plus, Search } from "react-iconly";
 import { truncateAddress } from "libs/utils";
+import { OrderPaymentStatus, OrderStatus } from "components/order-pill";
 
 const statusColor: any = {
   cancelled: {
@@ -60,15 +61,14 @@ const Page = ({ initialData }: any) => {
     queryKey: "store-dashboard-orders",
     initialData: { pages: [initialData], pageParams: [] },
     getNextPageParam: (lastPage: any) => {
-      if (lastPage?.length >= 10) {
-        return lastPage[lastPage?.length - 1].id;
+      if (lastPage?.length >= 0) {
+        return lastPage[lastPage?.length - 1]?.id;
       }
     },
     queryFn: async ({ pageParam = 0 }) => {
       const { payload }: any = await Api().get(
         `/app/orders?cursor=${pageParam}`
       );
-
       return payload;
     },
   });
@@ -143,7 +143,7 @@ const Page = ({ initialData }: any) => {
                       </Text>
 
                       <Link
-                        href={`/app/orders/orderId`}
+                        href={`/app/orders/${data.id}`}
                         fontSize="16px"
                         fontWeight={{ base: "400", md: "600" }}
                       >
@@ -168,7 +168,7 @@ const Page = ({ initialData }: any) => {
                       <Text display={{ base: "inline-block", md: "none" }}>
                         Status
                       </Text>
-                      <Text
+                      <OrderStatus
                         fontSize="14px"
                         fontWeight="500"
                         lineHeight="1.5"
@@ -176,17 +176,14 @@ const Page = ({ initialData }: any) => {
                         px="12px"
                         py="4px"
                         textAlign="center"
-                        textTransform="capitalize"
-                        {...statusColor[data.status.toLowerCase()]}
-                      >
-                        {data.status.toLowerCase()}
-                      </Text>
+                        status={data.status}
+                      />
                     </Flex>
                     <Flex w="100%" justify="space-between">
                       <Text display={{ base: "inline-block", md: "none" }}>
                         Payment
                       </Text>
-                      <Text
+                      <OrderPaymentStatus
                         fontSize="14px"
                         fontWeight="500"
                         lineHeight="1.5"
@@ -194,17 +191,24 @@ const Page = ({ initialData }: any) => {
                         px="12px"
                         py="4px"
                         textAlign="center"
-                        textTransform="capitalize"
-                        {...paymentStatusColor[
-                          data.paymentStatus.toLowerCase()
-                        ]}
-                      >
-                        {data.paymentStatus.toLowerCase()}
-                      </Text>
+                        status={data.paymentStatus}
+                      />
                     </Flex>
                   </Stack>
                 </React.Fragment>
               ))
+            )}
+
+            {queryResp.hasNextPage && (
+              <Stack align="center">
+                <Button
+                  onClick={() => queryResp.fetchNextPage()}
+                  isLoading={queryResp.isFetchingNextPage}
+                  variant="solid-outline"
+                >
+                  Load more
+                </Button>
+              </Stack>
             )}
           </Box>
         </>
@@ -214,7 +218,7 @@ const Page = ({ initialData }: any) => {
             direction="column"
             alignItems="center"
             justifyContent="center"
-            mt={{ base: "8rem", md: "14rem" }}
+            mt={{ base: "4rem", md: "6rem" }}
           >
             <Image
               src="/svg/Bag.svg"

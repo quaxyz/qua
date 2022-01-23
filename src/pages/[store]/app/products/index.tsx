@@ -81,7 +81,7 @@ const Page = ({ initialData }: any) => {
     initialData: { pages: [initialData], pageParams: [] },
     getNextPageParam: (lastPage: any) => {
       if (lastPage?.length >= 10) {
-        return lastPage[lastPage?.length - 1].id;
+        return lastPage[lastPage?.length - 1]?.id;
       }
     },
     queryFn: async ({ pageParam = 0 }) => {

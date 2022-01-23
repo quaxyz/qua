@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
 import { getAddressFromCookie } from "libs/cookie";
+import { OrderStatus } from "components/order-pill";
 
 const Page = ({ orders }: any) => {
   return (
@@ -60,20 +61,18 @@ const Page = ({ orders }: any) => {
               >
                 {order.product.name}
               </Heading>
-              <Text fontSize="0.938rem">Order: {order.id}</Text>
+              <Text fontSize="0.938rem">OrderID: #{order.id}</Text>
 
-              <chakra.span
+              <OrderStatus
+                as="span"
                 display="inline-block"
-                bg="#5538EE"
-                color="#fff"
                 px="0.4rem"
                 py="0.2rem"
                 borderRadius={4}
                 fontSize="xs"
                 textTransform="uppercase"
-              >
-                Order in progress
-              </chakra.span>
+                status={order.status}
+              />
 
               <Link
                 href={`/orders/${order.id}`}
@@ -111,6 +110,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   const orders = await prisma.order.findMany({
     where: { customerAddress: address || "", storeId: store?.id },
+    orderBy: { updatedAt: "desc" },
     select: { id: true, status: true, paymentStatus: true, items: true },
   });
 
