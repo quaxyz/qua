@@ -42,8 +42,8 @@ const Page = ({ orders }: any) => {
             border="0.5px solid rgba(0, 0, 0, 16%)"
           >
             <Image
-              width={{ base: "12rem", md: "100" }}
-              height={{ base: "6.25rem", md: "150" }}
+              width={{ base: "12rem", md: "150px" }}
+              height={{ base: "6.25rem", md: "150px" }}
               objectFit="cover"
               src={order.product.image}
               alt={order.product.name}

@@ -130,6 +130,8 @@ const Page = () => {
   const checkoutMutation = useMutation(
     () => {
       if (!account) throw new Error("No connected account");
+      if (cartStore?.items.length === 0) throw new Error("No items in cart");
+
       return Api().get(`/checkout?address=${account}`);
     },
     {
@@ -138,6 +140,7 @@ const Page = () => {
 
         toast({
           title: "Error proceeding to checkout",
+          description: e.message,
           position: "bottom-right",
           status: "error",
         });

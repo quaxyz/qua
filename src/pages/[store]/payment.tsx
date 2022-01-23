@@ -434,8 +434,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     where: { name: store },
     select: { deliveryFee: true, socialLinks: true },
   });
-
   if (!storeDetails) {
+    return { notFound: true };
+  }
+
+  const cart = await prisma.cart.findFirst({
+    where: {
+      store: { name: store },
+      owner: { address: address || "" },
+    },
+  });
+  if (!cart || !(cart.items as any[]).length) {
     return { notFound: true };
   }
 
