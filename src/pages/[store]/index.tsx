@@ -1,11 +1,4 @@
-import React from "react";
-import type { GetServerSideProps, NextPage } from "next";
-import NextLink from "next/link";
-import prisma from "libs/prisma";
-import Api from "libs/api";
-import { useRouter } from "next/router";
 import {
-  Button,
   chakra,
   Container,
   Grid,
@@ -19,9 +12,15 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
+import Api from "libs/api";
+import { formatCurrency } from "libs/currency";
+import prisma from "libs/prisma";
+import type { GetServerSideProps } from "next";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
 import { useInfiniteQuery } from "react-query";
 import { useIntersection } from "react-use";
-import { formatCurrency } from "libs/currency";
 
 function useQueryProducts({ initialData }: any) {
   const router = useRouter();
@@ -109,7 +108,7 @@ const Page = ({ initialData }: any) => {
                 <LinkBox>
                   <chakra.section>
                     <Image
-                      boxSize={{ base: "350px", md: "300px" }}
+                      boxSize={{ base: "100%", md: "100%" }}
                       objectFit="cover"
                       src={data.images[0].url}
                       alt={data.name}
