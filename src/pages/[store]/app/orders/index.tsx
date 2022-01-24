@@ -1,28 +1,24 @@
-import React from "react";
-import { GetServerSideProps } from "next";
-import Link from "components/link";
-import Api from "libs/api";
-import prisma from "libs/prisma";
 import {
   Box,
   Button,
   Container,
   Flex,
   Heading,
-  Icon,
   Image,
-  Input,
-  InputGroup,
-  InputLeftElement,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
-import { useRouter } from "next/router";
-import { useInfiniteQuery } from "react-query";
-import { Plus, Search } from "react-iconly";
-import { truncateAddress } from "libs/utils";
+import Link from "components/link";
 import { OrderPaymentStatus, OrderStatus } from "components/order-pill";
+import Api from "libs/api";
+import prisma from "libs/prisma";
+import { truncateAddress } from "libs/utils";
+import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+import React from "react";
+import { Plus } from "react-iconly";
+import { useInfiniteQuery } from "react-query";
 
 const Page = ({ initialData }: any) => {
   const router = useRouter();
@@ -188,21 +184,25 @@ const Page = ({ initialData }: any) => {
             direction="column"
             alignItems="center"
             justifyContent="center"
-            mt={{ base: "4rem", md: "6rem" }}
+            mt={{ base: "4rem", md: "12rem" }}
           >
             <Image
               src="/svg/Bag.svg"
               alt="Add Icon"
               layout="fixed"
-              w={{ base: "20", md: "100" }}
-              h={{ base: "20", md: "100" }}
+              w={{ base: "16", md: "100" }}
+              h={{ base: "16", md: "100" }}
               mb="1"
             />
             <Stack alignItems="center" textAlign="center" justify="center">
-              <Text fontSize="xl" fontWeight="bold" color="#000">
+              <Text
+                fontSize={{ base: "lg", md: "xl" }}
+                fontWeight="bold"
+                color="#000"
+              >
                 No recent orders
               </Text>
-              <Text fontSize="lg" pb="14px">
+              <Text fontSize={{ base: "md", md: "lg" }} pb="14px">
                 Add a product to your store to recieve orders
               </Text>
 

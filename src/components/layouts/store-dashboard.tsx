@@ -1,6 +1,3 @@
-import React from "react";
-import Head from "next/head";
-import Link from "components/link";
 import {
   Button,
   chakra,
@@ -12,11 +9,14 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import Link from "components/link";
 import { Wallet } from "components/wallet";
 import { useInitializeStoreAuth } from "hooks/auth";
 import { useCreateSigningKey } from "hooks/signing";
 import { AuthContext } from "libs/auth";
+import Head from "next/head";
 import { useRouter } from "next/router";
+import React from "react";
 import { Bag, Category, Graph } from "react-iconly";
 import { CgMore } from "react-icons/cg";
 
@@ -146,7 +146,9 @@ const DashboardLayout = ({ title, children }: any) => {
   return (
     <AuthContext.Provider value={storeAuthData}>
       <Head>
-        <title>{title} - Frowth</title>
+        <title>
+          {title} - {router.query.store}
+        </title>
       </Head>
 
       <Grid
@@ -170,13 +172,7 @@ const DashboardLayout = ({ title, children }: any) => {
           display={{ base: "none", md: "block" }}
         >
           <Stack spacing={8} minH="100%">
-            <Heading
-              fontWeight="800"
-              fontSize="2xl"
-              color="#fff"
-              px={3}
-              textTransform="uppercase"
-            >
+            <Heading fontWeight="800" fontSize="2xl" color="#fff" px={3}>
               {router.query?.store}
             </Heading>
 

@@ -1,6 +1,3 @@
-import React from "react";
-import Api from "libs/api";
-import type { GetServerSideProps } from "next";
 import {
   Button,
   chakra,
@@ -13,15 +10,18 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import CustomerLayout from "components/layouts/customer-dashboard";
-import { useCartStore } from "hooks/useCart";
-import { Delete } from "react-iconly";
 import { useWeb3React } from "@web3-react/core";
-import { useQuery, useMutation } from "react-query";
-import { Quantity } from "components/quantity";
-import { useDebounce } from "react-use";
-import { Wallet } from "components/wallet";
 import { CostSummary } from "components/cost-summary";
+import CustomerLayout from "components/layouts/customer-dashboard";
+import { Quantity } from "components/quantity";
+import { Wallet } from "components/wallet";
+import { useCartStore } from "hooks/useCart";
+import Api from "libs/api";
+import type { GetServerSideProps } from "next";
+import React from "react";
+import { Delete } from "react-iconly";
+import { useMutation, useQuery } from "react-query";
+import { useDebounce } from "react-use";
 
 const CartItem = ({ item }: any) => {
   const cartStore = useCartStore();
@@ -39,25 +39,76 @@ const CartItem = ({ item }: any) => {
 
   // TODO:: disable item when available stocks is 0
   return (
-    <Stack
-      direction="row"
-      display={{ base: "none", md: "flex" }}
-      borderBottom="0.5px solid rgba(0, 0, 0, 6%)"
-      p="4"
-      alignItems="center"
-      justify="space-between"
-      maxWidth="100%"
-    >
-      <Stack direction="row" w="100%" spacing={4}>
-        <Stack direction="row" align="center">
-          <IconButton
-            onClick={() =>
-              cartStore?.removeCartItem(item.productId, item.price)
-            }
-            variant="flushed"
-            aria-label="Delete"
-            icon={<Delete set="light" />}
+    <>
+      <Stack
+        direction="row"
+        display={{ base: "none", md: "flex" }}
+        borderBottom="0.5px solid rgba(0, 0, 0, 6%)"
+        p="4"
+        alignItems="center"
+        justify="space-between"
+        maxWidth="100%"
+      >
+        <Stack direction="row" w="100%" spacing={4}>
+          <Stack direction="row" align="center">
+            <IconButton
+              onClick={() =>
+                cartStore?.removeCartItem(item.productId, item.price)
+              }
+              variant="flushed"
+              aria-label="Delete"
+              icon={<Delete set="light" />}
+            />
+            <Image
+              width="100px"
+              height="100px"
+              objectFit="cover"
+              src={item.image}
+              alt="Product Image"
+            />
+          </Stack>
+          <Heading as="h1" size="sm" pt={4} fontWeight="300">
+            {item.name}
+          </Heading>
+        </Stack>
+
+        <Stack w="100%" align="center">
+          <Text fontSize="14px">
+            <chakra.strong>{`$${item.price || 0}.00`}</chakra.strong>
+          </Text>
+        </Stack>
+
+        <Stack w="100%" align="center">
+          <Quantity
+            quantity={quantity}
+            setQuantity={(v) => setQuantity(v)}
+            max={item.availableStocks || Infinity}
+            min={1}
           />
+        </Stack>
+
+        <Stack w="100%" align="center">
+          <Text fontSize="14px">
+            <chakra.strong>{`$${item.price * quantity || 0}.00`}</chakra.strong>
+          </Text>
+        </Stack>
+      </Stack>
+
+      {/* Mobile display */}
+
+      <Stack
+        display={{ base: "flex", md: "none" }}
+        direction="column"
+        w="100%"
+        pb={2}
+      >
+        <Stack
+          direction="row"
+          w="100%"
+          p={2}
+          spacing={4}
+          border="0.5px solid rgba(0, 0, 0, 16%)"
+        >
           <Image
             width="100px"
             height="100px"
@@ -65,33 +116,57 @@ const CartItem = ({ item }: any) => {
             src={item.image}
             alt="Product Image"
           />
+
+          <Stack w="100%">
+            <Stack
+              direction="row"
+              align="center"
+              justify="space-between"
+              w="100%"
+              spacing={4}
+            >
+              <Heading as="h1" size="md" fontWeight="300">
+                {item.name}
+              </Heading>
+              <IconButton
+                onClick={() =>
+                  cartStore?.removeCartItem(item.productId, item.price)
+                }
+                variant="flushed"
+                aria-label="Delete"
+                icon={<Delete set="light" />}
+              />
+            </Stack>
+            <Text fontSize="0.938rem">
+              <chakra.strong>{`$${item.price || 0}.00`}</chakra.strong>
+            </Text>
+
+            <Stack>
+              <Stack direction="row" align="center" w="100%" spacing={2}>
+                <Text fontSize="0.938rem">Subtotal:</Text>
+                <Text fontSize="0.938rem">
+                  <chakra.strong>{`$${
+                    item.price * quantity || 0
+                  }.00`}</chakra.strong>
+                </Text>
+              </Stack>
+
+              <Stack direction="row" align="center" w="100%" spacing={2}>
+                <Text>Qty:</Text>
+                <Stack w="100%" align="center">
+                  <Quantity
+                    quantity={quantity}
+                    setQuantity={(v) => setQuantity(v)}
+                    max={item.availableStocks || Infinity}
+                    min={1}
+                  />
+                </Stack>
+              </Stack>
+            </Stack>
+          </Stack>
         </Stack>
-        <Heading as="h1" size="sm" pt={4} fontWeight="300">
-          {item.name}
-        </Heading>
       </Stack>
-
-      <Stack w="100%" align="center">
-        <Text fontSize="14px">
-          <chakra.strong>{`$${item.price || 0}.00`}</chakra.strong>
-        </Text>
-      </Stack>
-
-      <Stack w="100%" align="center">
-        <Quantity
-          quantity={quantity}
-          setQuantity={(v) => setQuantity(v)}
-          max={item.availableStocks || Infinity}
-          min={1}
-        />
-      </Stack>
-
-      <Stack w="100%" align="center">
-        <Text fontSize="14px">
-          <chakra.strong>{`$${item.price * quantity || 0}.00`}</chakra.strong>
-        </Text>
-      </Stack>
-    </Stack>
+    </>
   );
 };
 

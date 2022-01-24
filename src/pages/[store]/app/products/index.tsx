@@ -186,22 +186,26 @@ const Page = ({ initialData }: any) => {
             direction="column"
             alignItems="center"
             justifyContent="center"
-            mt={{ base: 40, md: 40 }}
+            mt={{ base: "8rem", md: "16rem" }}
           >
             <Image
               src="/svg/add.svg"
               alt="Add Icon"
               layout="fixed"
-              w={{ base: "20", md: "100" }}
-              h={{ base: "20", md: "100" }}
+              w={{ base: "16", md: "100" }}
+              h={{ base: "16", md: "100" }}
               mb="4"
             />
 
             <Stack alignItems="center" textAlign="center" justify="center">
-              <Text fontSize="xl" fontWeight="bold" color="#000">
+              <Text
+                fontSize={{ base: "lg", md: "xl" }}
+                fontWeight="bold"
+                color="#000"
+              >
                 Add and manage your products
               </Text>
-              <Text fontSize="lg">
+              <Text fontSize={{ base: "md", md: "lg" }}>
                 You can add products and manage your pricing here.
               </Text>
             </Stack>
@@ -283,6 +287,7 @@ const Page = ({ initialData }: any) => {
                         src={data.images[0].url}
                         alt={data.name}
                         boxSize="100px"
+                        objectFit="cover"
                       />
                     </Box>
 
@@ -336,7 +341,8 @@ const Page = ({ initialData }: any) => {
                         <Image
                           src={data.images[0].url}
                           alt={data.name}
-                          boxSize="50px"
+                          boxSize="60px"
+                          objectFit="cover"
                         />
 
                         <Text

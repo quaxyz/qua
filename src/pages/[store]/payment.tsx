@@ -1,15 +1,3 @@
-import React from "react";
-import { GetServerSideProps } from "next";
-import Script from "next/script";
-import Link from "components/link";
-import CustomerLayout from "components/layouts/customer-dashboard";
-import prisma from "libs/prisma";
-import Api from "libs/api";
-import { providers } from "ethers";
-import { useRouter } from "next/router";
-import { useCartStore } from "hooks/useCart";
-import { useWeb3React } from "@web3-react/core";
-import { useMutation, useQuery } from "react-query";
 import {
   Button,
   chakra,
@@ -21,10 +9,23 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
+import { useWeb3React } from "@web3-react/core";
 import { CostSummary } from "components/cost-summary";
-import { getAddressFromCookie } from "libs/cookie";
-import { mapSocialLink } from "libs/utils";
+import CustomerLayout from "components/layouts/customer-dashboard";
+import Link from "components/link";
+import { providers } from "ethers";
+import { useCartStore } from "hooks/useCart";
+import Api from "libs/api";
 import { domain, schemas } from "libs/constants";
+import { getAddressFromCookie } from "libs/cookie";
+import prisma from "libs/prisma";
+import { mapSocialLink } from "libs/utils";
+import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+import Script from "next/script";
+import React from "react";
+import { FcCheckmark } from "react-icons/fc";
+import { useMutation, useQuery } from "react-query";
 
 function pay({ name, email, amount }: any) {
   return new Promise((resolve, reject) => {
@@ -270,13 +271,16 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
           <Stack spacing="4">
             <chakra.header pt={{ base: "8", md: "16" }}>
               <Stack direction="row" justify="space-between">
-                <Heading
-                  as="h2"
-                  fontSize={{ base: "lg", md: "1xl" }}
-                  color="#000"
-                >
-                  Shipping Details
-                </Heading>
+                <Stack direction="row" align="center">
+                  <FcCheckmark fontSize="24px" />
+                  <Heading
+                    as="h2"
+                    fontSize={{ base: "lg", md: "1xl" }}
+                    color="#000"
+                  >
+                    Shipping Details
+                  </Heading>
+                </Stack>
 
                 <Link href="/shipping">Change</Link>
               </Stack>
@@ -303,13 +307,16 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
           <Stack spacing="4">
             <chakra.header pt={{ base: "8", md: "8" }}>
               <Stack direction="row" justify="space-between">
-                <Heading
-                  as="h2"
-                  fontSize={{ base: "lg", md: "1xl" }}
-                  color="#000"
-                >
-                  Delivery Method
-                </Heading>
+                <Stack direction="row" align="center">
+                  <FcCheckmark fontSize="24px" />
+                  <Heading
+                    as="h2"
+                    fontSize={{ base: "lg", md: "1xl" }}
+                    color="#000"
+                  >
+                    Delivery Method
+                  </Heading>
+                </Stack>
 
                 <Link href="/shipping">Change</Link>
               </Stack>
