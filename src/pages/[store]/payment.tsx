@@ -36,8 +36,9 @@ function pay({ name, email, amount }: any) {
       key: process.env.NEXT_PUBLIC_LAZER_PAY_KEY,
       currency: "USD",
       onClose: (data: any) => {
-        console.log("onclose", data);
-        reject(new Error("Payment cancelled"));
+        // HACK: since the checkbox doesn't close automatically we have to react to it being closed before we
+        // do anything
+        resolve({ error: true });
       },
       onSuccess: (data: any) => {
         resolve(data);
@@ -160,11 +161,12 @@ function useHandlePayment() {
 
   return async ({ orderHash, shippingDetails, amount }: any) => {
     try {
-      const payload = await pay({
+      const payload: any = await pay({
         name: shippingDetails?.name,
         email: shippingDetails?.email,
         amount: `${amount}`,
       });
+      if (payload.error) return;
 
       await confirmPaymentMutation.mutateAsync({
         orderHash,

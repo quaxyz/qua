@@ -128,6 +128,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             encoder.encode(
               JSON.stringify({
                 ...orderData,
+                timestamp: data.message.timestamp,
                 store: data.message.store,
               })
             )
