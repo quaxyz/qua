@@ -3,16 +3,8 @@ import Cookies from "js-cookie";
 import { injected } from "libs/wallet";
 import { providers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
-import { Web3ReactContextInterface } from "@web3-react/core/dist/types";
 import { COOKIE_STORAGE_NAME, toBase64 } from "libs/cookie";
 import { useLogout } from "./auth";
-
-export function useActiveWeb3React(): Web3ReactContextInterface<providers.Web3Provider> {
-  const context = useWeb3React<providers.Web3Provider>();
-  const contextNetwork = useWeb3React<providers.Web3Provider>("web3-network");
-
-  return context.active ? context : contextNetwork;
-}
 
 export function useEagerConnect() {
   const { activate, active } = useWeb3React();

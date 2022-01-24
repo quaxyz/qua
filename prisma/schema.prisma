@@ -49,11 +49,13 @@ model Product {
   description   String?
   discountPrice Float?
   totalStocks   Int?
+  totalSold     Int      @default(0)
   variants      Json[]
   category      String?
   tags          String[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  deleted       Boolean  @default(false)
 
   Store   Store @relation(fields: [storeId], references: [id])
   storeId Int
@@ -70,18 +72,6 @@ model Cart {
   storeName String
 
   @@unique([ownerAddress, storeName])
-}
-
-enum OrderStatus {
-  FULFILLED
-  UNFULFILLED
-  CANCELLED
-}
-
-enum OrderPaymentStatus {
-  PAID
-  UNPAID
-  CONTACT_SELLER
 }
 
 model Order {
@@ -106,6 +96,19 @@ model Order {
 
   Store   Store @relation(fields: [storeId], references: [id])
   storeId Int
+}
+
+// enums
+enum OrderStatus {
+  FULFILLED
+  UNFULFILLED
+  CANCELLED
+}
+
+enum OrderPaymentStatus {
+  PAID
+  UNPAID
+  CONTACT_SELLER
 }
 
 // metas

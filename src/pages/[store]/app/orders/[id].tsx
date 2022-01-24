@@ -128,6 +128,7 @@ function useFulfillOrder() {
         ]);
         queryClient.setQueryData(["store-order-details", result.id], {
           ...order,
+          paymentStatus: result.paymentStatus,
           status: result.status,
         });
 

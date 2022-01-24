@@ -16,14 +16,14 @@ import {
 import { Wallet } from "components/wallet";
 import SelectMenu from "components/select";
 import { useMutation } from "react-query";
-import { useActiveWeb3React } from "hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { domain, schemas } from "libs/constants";
 import { providers } from "ethers";
 import { useRouter } from "next/router";
 import { FormGroup } from "components/form-group";
 
 function useCreateStore() {
-  const { library, account } = useActiveWeb3React();
+  const { library, account } = useWeb3React();
   const toast = useToast();
   const router = useRouter();
 

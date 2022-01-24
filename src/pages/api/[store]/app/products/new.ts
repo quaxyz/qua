@@ -137,7 +137,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             name: payload.name,
             price: parseFloat(payload.price),
             physical: payload.physical,
-
             description: payload.description,
             discountPrice: payload.discountPrice
               ? parseFloat(payload.discountPrice)
@@ -148,7 +147,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             variants: payload.variants,
 
             images: {
-              create: payload.images,
+              connectOrCreate: payload.images.map((image: any) => ({
+                where: { hash: image.hash },
+                create: image,
+              })),
             },
 
             Store: {

@@ -58,11 +58,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         // set order to cancelled
-        const result = await prisma.order.update({
-          where: { id: order.id },
-          data: { status: "FULFILLED", paymentStatus: "PAID" },
-          select: { id: true, status: true },
-        });
+        const [result] = await prisma.$transaction([
+          prisma.order.update({
+            where: { id: order.id },
+            data: { status: "FULFILLED", paymentStatus: "PAID" },
+            select: { id: true, status: true, paymentStatus: true },
+          }),
+          ...(order.items as any[]).map((item) =>
+            prisma.product.update({
+              where: { id: item.productId },
+              data: {
+                totalStocks: {
+                  decrement: item.quantity,
+                },
+                totalSold: {
+                  increment: item.quantity,
+                },
+              },
+            })
+          ),
+        ]);
 
         return res.status(200).send(result);
       }

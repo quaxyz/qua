@@ -1,10 +1,9 @@
 import React from "react";
-import NextLink from "next/link";
+import Link from "components/link";
 import Api from "libs/api";
 import prisma from "libs/prisma";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
-import { useInfiniteQuery } from "react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from "react-query";
 import {
   Box,
   Button,
@@ -18,21 +17,78 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  Link,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 import { Plus, Search } from "react-iconly";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { formatCurrency } from "libs/currency";
+import { useWeb3React } from "@web3-react/core";
+import { getKeyPair } from "libs/keys";
+import { signData } from "libs/signing";
+
+function useDeleteProduct() {
+  const { account } = useWeb3React();
+  const toast = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    async (id: any) => {
+      // sign data
+      const timestamp = parseInt((Date.now() / 1000).toFixed());
+
+      const keyPair = await getKeyPair();
+      const data = {
+        id,
+        timestamp,
+      };
+      console.log("Data", data);
+
+      const signedContent = await signData(keyPair, data);
+      console.log("Sig", signedContent);
+
+      return Api().post(`/app/products/delete`, {
+        address: account,
+        digest: signedContent.digest,
+        key: JSON.stringify(signedContent.publicKey),
+        payload: JSON.stringify(data),
+        signature: signedContent.signature,
+        timestamp,
+      });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries("store-dashboard-products");
+
+        toast({
+          title: "Product has been deleted",
+          status: "success",
+          position: "top-right",
+          isClosable: true,
+        });
+      },
+
+      onError: (err: any) => {
+        toast({
+          title: "Error deleting product",
+          description: err?.message,
+          status: "error",
+          position: "bottom-right",
+          isClosable: true,
+        });
+      },
+    }
+  );
+}
 
 const ActionMenu = ({ id }: any) => {
-  const router = useRouter();
+  const deleteProduct = useDeleteProduct();
 
   return (
     <Menu>
@@ -46,27 +102,29 @@ const ActionMenu = ({ id }: any) => {
       />
 
       <MenuList>
-        <NextLink href={`/${router?.query.store}/products/${id}`} passHref>
-          <MenuItem
-            as={Link}
-            border="none"
-            _hover={{ transform: "none", boxShadow: "none" }}
-          >
-            View
-          </MenuItem>
-        </NextLink>
+        <Link
+          as={MenuItem}
+          border="none"
+          href={`/products/${id}`}
+          _hover={{ transform: "none", boxShadow: "none" }}
+        >
+          View
+        </Link>
 
-        <NextLink href={`/${router?.query.store}/app/products/${id}`} passHref>
-          <MenuItem
-            as={Link}
-            border="none"
-            _hover={{ transform: "none", boxShadow: "none" }}
-          >
-            Edit
-          </MenuItem>
-        </NextLink>
+        <Link
+          as={MenuItem}
+          border="none"
+          href={`/app/products/${id}`}
+          _hover={{ transform: "none", boxShadow: "none" }}
+        >
+          Edit
+        </Link>
 
-        <MenuItem fontWeight="600" color="red.500">
+        <MenuItem
+          onClick={() => deleteProduct.mutate(id)}
+          fontWeight="600"
+          color="red.500"
+        >
           Delete
         </MenuItem>
       </MenuList>
@@ -75,7 +133,6 @@ const ActionMenu = ({ id }: any) => {
 };
 
 const Page = ({ initialData }: any) => {
-  const router = useRouter();
   const queryResp = useInfiniteQuery({
     queryKey: "store-dashboard-products",
     initialData: { pages: [initialData], pageParams: [] },
@@ -103,14 +160,14 @@ const Page = ({ initialData }: any) => {
             Products
           </Heading>
 
-          <NextLink href={`/${router?.query.store}/app/products/new`} passHref>
-            <Button
-              variant="primary"
-              leftIcon={<Plus set="bold" primaryColor="#ffffff" />}
-            >
-              New Product
-            </Button>
-          </NextLink>
+          <Link
+            href="/app/products/new"
+            as={Button}
+            variant="primary"
+            leftIcon={<Plus set="bold" primaryColor="#ffffff" />}
+          >
+            New Product
+          </Link>
         </Stack>
 
         {!isEmpty && (
@@ -309,7 +366,7 @@ const Page = ({ initialData }: any) => {
                       fontWeight="600"
                       textAlign="center"
                     >
-                      {data.totalStocks || 0}
+                      {data.totalStocks ?? "unlimited"}
                     </GridItem>
 
                     <GridItem
@@ -319,7 +376,7 @@ const Page = ({ initialData }: any) => {
                       fontWeight="600"
                       textAlign="center"
                     >
-                      {data?.sold || 0}
+                      {data?.totalSold || 0}
                     </GridItem>
 
                     <GridItem w="100%" textAlign="center">
@@ -359,13 +416,14 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       },
     },
     orderBy: {
-      updatedAt: "desc",
+      createdAt: "desc",
     },
     select: {
       id: true,
       name: true,
       price: true,
       totalStocks: true,
+      totalSold: true,
       images: {
         take: 1,
         select: {

@@ -36,6 +36,10 @@ const walletMenuLinks = [
     label: "Account",
     href: `/account`,
   },
+  {
+    label: "Orders",
+    href: `/orders`,
+  },
 ];
 
 const CustomerLayout = ({ title, children }: any) => {

@@ -235,116 +235,111 @@ const Page = ({ product }: any) => {
   };
 
   return (
-    <>
-      <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
-        <Stack direction="row" justify="space-between" aling="center" mb={10}>
-          <NextLink href={`/${router?.query.store}/app/products/`} passHref>
-            <Stack as={Link} border="none" direction="row" alignItems="center">
-              <ArrowLeft set="light" />
+    <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
+      <Stack direction="row" justify="space-between" aling="center" mb={10}>
+        <NextLink href={`/${router?.query.store}/app/products/`} passHref>
+          <Stack as={Link} border="none" direction="row" alignItems="center">
+            <ArrowLeft set="light" />
 
-              <Heading as="h2" fontSize="lg" fontWeight="600">
-                All Products
-              </Heading>
-            </Stack>
-          </NextLink>
+            <Heading as="h2" fontSize="lg" fontWeight="600">
+              All Products
+            </Heading>
+          </Stack>
+        </NextLink>
 
-          <Button variant="primary" onClick={onPublish} isLoading={saving}>
-            Update
-          </Button>
-        </Stack>
+        <Button variant="primary" onClick={onPublish} isLoading={saving}>
+          Update
+        </Button>
+      </Stack>
 
-        <Stack
-          direction={{ base: "column", md: "row" }}
-          spacing={{ base: "8", md: "14" }}
-        >
-          <Stack w="full" flex={2} spacing={10}>
-            <FormControl id="name" isInvalid={errors.name}>
-              <FormLabel htmlFor="name">Product Name</FormLabel>
-              <Input
-                isRequired
-                type="text"
-                placeholder="Hair growth oil"
-                variant="outline"
-                disabled={saving}
-                value={formValue.name}
-                onChange={(e) =>
-                  setFormValue({ ...formValue, name: e.target.value })
-                }
-              />
-              <FormErrorMessage>Name is required</FormErrorMessage>
-            </FormControl>
+      <Stack
+        direction={{ base: "column", md: "row" }}
+        spacing={{ base: "8", md: "14" }}
+      >
+        <Stack w="full" flex={2} spacing={10}>
+          <FormControl id="name" isInvalid={errors.name}>
+            <FormLabel htmlFor="name">Product Name</FormLabel>
+            <Input
+              isRequired
+              type="text"
+              placeholder="Hair growth oil"
+              variant="outline"
+              disabled={saving}
+              value={formValue.name}
+              onChange={(e) =>
+                setFormValue({ ...formValue, name: e.target.value })
+              }
+            />
+            <FormErrorMessage>Name is required</FormErrorMessage>
+          </FormControl>
 
-            <FormControl id="images" isInvalid={errors.images}>
-              <FormLabel htmlFor="images">Media</FormLabel>
-              <FilePicker
-                files={formValue.images}
-                bucket={router.query.store as string}
-                disabled={saving}
-                maxFiles={8}
-                setFiles={(images) => setFormValue({ ...formValue, images })}
-              />
-              <FormErrorMessage>
-                Each product needs at least 1 image and no more than 8 images
-              </FormErrorMessage>
-            </FormControl>
+          <FormControl id="images" isInvalid={errors.images}>
+            <FormLabel htmlFor="images">Media</FormLabel>
+            <FilePicker
+              files={formValue.images}
+              bucket={router.query.store as string}
+              disabled={saving}
+              maxFiles={8}
+              setFiles={(images) => setFormValue({ ...formValue, images })}
+            />
+            <FormErrorMessage>
+              Each product needs at least 1 image and no more than 8 images
+            </FormErrorMessage>
+          </FormControl>
 
-            <Tabs>
-              <TabList>
-                <Tab>Description</Tab>
-                <Tab>Details</Tab>
-              </TabList>
+          <Tabs>
+            <TabList>
+              <Tab>Description</Tab>
+              <Tab>Details</Tab>
+            </TabList>
 
-              <TabPanels>
-                <TabPanel>
-                  <FormGroup id="description">
-                    <Textarea
-                      rows={8}
-                      fontSize={{ base: "0.9375rem", md: "1rem" }}
-                      placeholder="Tell customers more about the product..."
-                      disabled={saving}
-                      value={formValue.description}
-                      onChange={(e) =>
-                        setFormValue({
-                          ...formValue,
-                          description: e.target.value,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                </TabPanel>
+            <TabPanels>
+              <TabPanel>
+                <FormGroup id="description">
+                  <Textarea
+                    rows={8}
+                    fontSize={{ base: "0.9375rem", md: "1rem" }}
+                    placeholder="Tell customers more about the product..."
+                    disabled={saving}
+                    value={formValue.description}
+                    onChange={(e) =>
+                      setFormValue({
+                        ...formValue,
+                        description: e.target.value,
+                      })
+                    }
+                  />
+                </FormGroup>
+              </TabPanel>
 
-                <TabPanel>
-                  <Stack spacing={4}>
-                    <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
-                      <Heading fontSize="md" fontWeight="600" mb={6}>
-                        Pricing
-                      </Heading>
+              <TabPanel>
+                <Stack spacing={4}>
+                  <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
+                    <Heading fontSize="md" fontWeight="600" mb={6}>
+                      Pricing
+                    </Heading>
 
-                      <Stack
-                        direction="row"
-                        justify="space-between"
-                        spacing={6}
-                      >
-                        <FormControl id="price" isInvalid={errors.price}>
-                          <FormLabel htmlFor="price">Price</FormLabel>
-                          <Input
-                            isRequired
-                            type="number"
-                            placeholder="0.00"
-                            variant="flushed"
-                            disabled={saving}
-                            value={formValue.price}
-                            onChange={(e) =>
-                              setFormValue({
-                                ...formValue,
-                                price: e.target.value,
-                              })
-                            }
-                          />
-                          <FormErrorMessage>Price is required</FormErrorMessage>
-                        </FormControl>
+                    <Stack direction="row" justify="space-between" spacing={6}>
+                      <FormControl id="price" isInvalid={errors.price}>
+                        <FormLabel htmlFor="price">Price</FormLabel>
+                        <Input
+                          isRequired
+                          type="number"
+                          placeholder="0.00"
+                          variant="flushed"
+                          disabled={saving}
+                          value={formValue.price}
+                          onChange={(e) =>
+                            setFormValue({
+                              ...formValue,
+                              price: e.target.value,
+                            })
+                          }
+                        />
+                        <FormErrorMessage>Price is required</FormErrorMessage>
+                      </FormControl>
 
-                        <FormGroup id="discountPrice" label="Discount Price">
+                      {/* <FormGroup id="discountPrice" label="Discount Price">
                           <Input
                             isRequired
                             type="number"
@@ -359,165 +354,160 @@ const Page = ({ product }: any) => {
                               })
                             }
                           />
-                        </FormGroup>
-                      </Stack>
-                    </chakra.article>
+                        </FormGroup> */}
+                    </Stack>
+                  </chakra.article>
 
-                    <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
-                      <Heading fontSize="md" fontWeight="600" mb={6}>
-                        Stock
-                      </Heading>
+                  <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
+                    <Heading fontSize="md" fontWeight="600" mb={6}>
+                      Stock
+                    </Heading>
 
-                      <Checkbox
-                        mb={6}
-                        disabled={saving}
-                        isChecked={isLimited}
-                        onChange={(e) => setIsLimited(e.target.checked)}
+                    <Checkbox
+                      mb={6}
+                      disabled={saving}
+                      isChecked={isLimited}
+                      onChange={(e) => setIsLimited(e.target.checked)}
+                    >
+                      This is a limited product
+                    </Checkbox>
+
+                    {isLimited && (
+                      <Stack
+                        direction="row"
+                        justify="space-between"
+                        spacing={6}
                       >
-                        This is a limited product
-                      </Checkbox>
-
-                      {isLimited && (
-                        <Stack
-                          direction="row"
-                          justify="space-between"
-                          spacing={6}
+                        <FormControl
+                          w="50%"
+                          id="stock"
+                          isInvalid={errors.stock}
                         >
-                          <FormControl
-                            w="50%"
-                            id="stock"
-                            isInvalid={errors.stock}
-                          >
-                            <FormLabel htmlFor="stock">Total stocks</FormLabel>
-                            <Input
-                              type="number"
-                              placeholder="0"
-                              variant="flushed"
-                              disabled={saving}
-                              value={formValue.stock}
-                              onChange={(e) =>
-                                setFormValue({
-                                  ...formValue,
-                                  stock: e.target.value,
-                                })
-                              }
-                            />
-                          </FormControl>
-                        </Stack>
-                      )}
-                    </chakra.article>
+                          <FormLabel htmlFor="stock">Total stocks</FormLabel>
+                          <Input
+                            type="number"
+                            placeholder="0"
+                            variant="flushed"
+                            disabled={saving}
+                            value={formValue.stock}
+                            onChange={(e) =>
+                              setFormValue({
+                                ...formValue,
+                                stock: e.target.value,
+                              })
+                            }
+                          />
+                        </FormControl>
+                      </Stack>
+                    )}
+                  </chakra.article>
 
-                    <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
-                      <Heading fontSize="md" fontWeight="600" mb={6}>
-                        Shipping
-                      </Heading>
+                  <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
+                    <Heading fontSize="md" fontWeight="600" mb={6}>
+                      Shipping
+                    </Heading>
 
-                      <Checkbox
-                        mb={6}
-                        disabled={saving}
-                        isChecked={formValue.physical}
-                        onChange={(e) =>
-                          setFormValue({
-                            ...formValue,
-                            physical: e.target.checked,
-                          })
+                    <Checkbox
+                      mb={6}
+                      disabled={saving}
+                      isChecked={formValue.physical}
+                      onChange={(e) =>
+                        setFormValue({
+                          ...formValue,
+                          physical: e.target.checked,
+                        })
+                      }
+                    >
+                      This is a physical product
+                    </Checkbox>
+
+                    {!formValue.physical && (
+                      <Text fontSize="sm" color="rgb(0 0 0 / 62%)">
+                        * Customers won&apos;t enter their shipping address or
+                        choose a shipping method when buying this product.
+                      </Text>
+                    )}
+                  </chakra.article>
+
+                  {/* <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
+                    <Heading fontSize="md" fontWeight="600" mb={6}>
+                      Variants
+                    </Heading>
+
+                    <Checkbox
+                      mb={8}
+                      disabled={saving}
+                      isChecked={hasVariant}
+                      onChange={(e) => setHasVariant(e.target.checked)}
+                    >
+                      This product has multiple options, like different sizes or
+                      colors
+                    </Checkbox>
+
+                    {hasVariant && (
+                      <Variants
+                        variants={formValue.variants}
+                        onChange={(variants) =>
+                          setFormValue({ ...formValue, variants })
                         }
-                      >
-                        This is a physical product
-                      </Checkbox>
+                      />
+                    )}
+                  </chakra.article> */}
+                </Stack>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </Stack>
 
-                      {!formValue.physical && (
-                        <Text fontSize="sm" color="rgb(0 0 0 / 62%)">
-                          * Customers won&apos;t enter their shipping address or
-                          choose a shipping method when buying this product.
-                        </Text>
-                      )}
-                    </chakra.article>
+        <Stack w="full" flex={1} spacing={5}>
+          <Stack
+            divider={<StackDivider borderColor="rgb(0 0 0 / 8%)" />}
+            border="1px solid rgb(0 0 0 / 16%)"
+          >
+            <chakra.article p={4}>
+              <Heading fontSize="lg" mb={2}>
+                Category
+              </Heading>
+              <Text fontSize="sm" mb={4}>
+                Add this product to a category or create a new category.
+              </Text>
 
-                    <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
-                      <Heading fontSize="md" fontWeight="600" mb={6}>
-                        Variants
-                      </Heading>
+              <FormGroup id="category">
+                <CreateableSelectMenu
+                  title="Select Category"
+                  placeholder="Select"
+                  variant="outline"
+                  size="md"
+                  disabled={saving}
+                  value={formValue.category}
+                  onChange={(value) =>
+                    setFormValue({ ...formValue, category: value })
+                  }
+                  defaultOptions={[
+                    { value: "clothing", label: "Clothing" },
+                    { value: "cosmetics", label: "Cosmetics" },
+                    { value: "food", label: "Food" },
+                  ]}
+                />
+              </FormGroup>
+            </chakra.article>
 
-                      <Checkbox
-                        mb={8}
-                        disabled={saving}
-                        isChecked={hasVariant}
-                        onChange={(e) => setHasVariant(e.target.checked)}
-                      >
-                        This product has multiple options, like different sizes
-                        or colors
-                      </Checkbox>
-
-                      {hasVariant && (
-                        <Variants
-                          variants={formValue.variants}
-                          onChange={(variants) =>
-                            setFormValue({ ...formValue, variants })
-                          }
-                        />
-                      )}
-                    </chakra.article>
-                  </Stack>
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
-          </Stack>
-
-          <Stack w="full" flex={1} spacing={5}>
-            <Stack
-              divider={<StackDivider borderColor="rgb(0 0 0 / 8%)" />}
-              border="1px solid rgb(0 0 0 / 16%)"
-            >
-              <chakra.article p={4}>
-                <Heading fontSize="lg" mb={2}>
-                  Category
-                </Heading>
-                <Text fontSize="sm" mb={4}>
-                  Add this product to a category or create a new category.
-                </Text>
-
-                <FormGroup id="category">
-                  <CreateableSelectMenu
-                    title="Select Category"
-                    placeholder="Select"
-                    variant="outline"
-                    size="md"
-                    disabled={saving}
-                    value={formValue.category}
-                    onChange={(value) =>
-                      setFormValue({ ...formValue, category: value })
-                    }
-                    defaultOptions={[
-                      { value: "clothing", label: "Clothing" },
-                      { value: "cosmetics", label: "Cosmetics" },
-                      { value: "food", label: "Food" },
-                    ]}
-                  />
-                </FormGroup>
-              </chakra.article>
-
-              <chakra.article p={4}>
-                <FormGroup
-                  id="tag"
-                  label="Tags"
-                  labelProps={{ fontSize: "sm" }}
-                >
-                  <Input
-                    placeholder="Vintage, cotton, summer"
-                    disabled={saving}
-                    value={formValue.tags}
-                    onChange={(e) =>
-                      setFormValue({ ...formValue, tags: e.target.value })
-                    }
-                  />
-                </FormGroup>
-              </chakra.article>
-            </Stack>
+            <chakra.article p={4}>
+              <FormGroup id="tag" label="Tags" labelProps={{ fontSize: "sm" }}>
+                <Input
+                  placeholder="Vintage, cotton, summer"
+                  disabled={saving}
+                  value={formValue.tags}
+                  onChange={(e) =>
+                    setFormValue({ ...formValue, tags: e.target.value })
+                  }
+                />
+              </FormGroup>
+            </chakra.article>
           </Stack>
         </Stack>
-      </Container>
-    </>
+      </Stack>
+    </Container>
   );
 };
 

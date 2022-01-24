@@ -1,11 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
-import crypto from "crypto";
-import jose from "node-jose";
-import * as ethers from "ethers";
-import base64url from "base64url";
-import { concatSigToAsn1Sig } from "libs/sig-verify";
+import { verifyApiBody } from "../utils";
 
 const LOG_TAG = "[store-update-product]";
 
@@ -17,90 +13,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       case "POST": {
         console.log(LOG_TAG, "update product", { body, query });
 
-        // verify address
-        if (!ethers.utils.isAddress(body.address)) {
-          console.log(LOG_TAG, "[warning]", "invalid address", {
-            address: body.address,
+        // verify payload
+        const verifyResp = await verifyApiBody(body, query.store);
+        if (verifyResp !== true) {
+          console.log(LOG_TAG, "[warning]", verifyResp.body.error, {
+            ...body,
+            ...query,
           });
 
-          return res.status(400).send({ error: "invalid address" });
-        }
-
-        // verify ownership
-        const store = await prisma.store.findFirst({
-          where: {
-            name: query.store as string,
-          },
-        });
-        if (!store || store?.owner !== body.address) {
-          console.log(LOG_TAG, "[warning]", "invalid owner address", {
-            address: body.address,
-          });
-          return res.status(400).send({ error: "invalid owner address" });
-        }
-
-        // verify user public key
-        const user = await prisma.user.findFirst({
-          where: {
-            address: body.address,
-            publicKey: {
-              has: body.key,
-            },
-          },
-        });
-        if (!user) {
-          console.log(LOG_TAG, "[warning]", "invalid public key", {
-            store: query.store,
-            address: body.address,
-            key: body.key,
-          });
-          return res.status(400).send({ error: "invalid public key" });
-        }
-
-        // verify digest
-        const encoder = new TextEncoder();
-        const recoveredDigest = crypto
-          .createHash("sha256")
-          .update(encoder.encode(body.payload))
-          .digest("base64")
-          .replace(/\+/g, "-")
-          .replace(/\//g, "_")
-          .replace(/=/g, "");
-
-        if (body.digest !== recoveredDigest) {
-          console.log(LOG_TAG, "[warning]", "digest mismatch", {
-            store: query.store,
-            address: body.address,
-            digest: body.digest,
-            recoveredDigest,
-          });
-          return res.status(400).send({ error: "digest mismatch" });
-        }
-
-        // verify signature
-        const digestBuffer = crypto
-          .createHash("sha256")
-          .update(encoder.encode(body.payload))
-          .digest();
-
-        const publicKey = (await jose.JWK.asKey(body.key, "json")).toPEM();
-        const isValidSignature = crypto.verify(
-          "sha256",
-          digestBuffer,
-          publicKey,
-          Buffer.from(
-            concatSigToAsn1Sig(base64url.toBuffer(body.signature)),
-            "hex"
-          )
-        );
-
-        if (!isValidSignature) {
-          console.log(LOG_TAG, "[warning]", "invalid signature", {
-            store: query.store,
-            address: body.address,
-            signature: body.signature,
-          });
-          return res.status(400).send({ error: "invalid signature" });
+          return res.status(verifyResp.status).send(verifyResp.body);
         }
 
         // TODO:: validate input
@@ -163,8 +84,30 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           ),
         ]);
 
-        console.log(LOG_TAG, "produt updated", { result });
+        console.log(LOG_TAG, "product updated", { result });
         return res.status(200).send({ message: "product updated" });
+      }
+
+      case "DELETE": {
+        console.log(LOG_TAG, "deleting product", { body, query });
+
+        // verify payload
+        const verifyResp = await verifyApiBody(body, query.store);
+        if (verifyResp !== true) {
+          console.log(LOG_TAG, "[warning]", verifyResp.body.error, {
+            ...body,
+            ...query,
+          });
+
+          return res.status(verifyResp.status).send(verifyResp.body);
+        }
+
+        const result = await prisma.product.delete({
+          where: { id: parseInt(query.id as string, 10) },
+        });
+
+        console.log(LOG_TAG, "product deleted", { result });
+        return res.status(200).send({ message: "Product deleted" });
       }
       default:
         console.log(LOG_TAG, "[error]", "unauthorized method", method);

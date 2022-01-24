@@ -47,6 +47,6 @@ export const OrderPaymentStatus = ({ status, ...props }: any) => (
     {...props}
     {...paymentStatusColor[status.toLowerCase()]}
   >
-    {status.toLowerCase()}
+    {status.replace("_", " ").toLowerCase()}
   </Text>
 );

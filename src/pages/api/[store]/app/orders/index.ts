@@ -18,13 +18,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         const store = query.store as string;
+        const cursor = parseInt(query.cursor as string, 10);
         const orders = await prisma.order.findMany({
           // pagination
           take: 10,
-          skip: 1,
-          cursor: {
-            id: parseInt(query.cursor as string, 10),
-          },
+          ...(!!cursor
+            ? {
+                skip: 1,
+                cursor: {
+                  id: parseInt(query.cursor as string, 10),
+                },
+              }
+            : {}),
 
           // query
           where: {
