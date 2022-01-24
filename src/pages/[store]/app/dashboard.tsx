@@ -22,7 +22,6 @@ import prisma from "libs/prisma";
 import { truncateAddress } from "libs/utils";
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { FunctionComponent, useState } from "react";
 import DatePicker from "react-datepicker";
@@ -424,9 +423,9 @@ const Dashboard: NextPage = () => {
 
   return (
     <StoreDashboardLayout>
-      <Head>
+      {/* <Head>
         <title>Dashboard - Frowth</title>
-      </Head>
+      </Head> */}
 
       <Box px={{ base: "1rem", md: "4rem" }}>
         <Stack pos="relative">
