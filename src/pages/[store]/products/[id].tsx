@@ -1,8 +1,3 @@
-import React from "react";
-import type { GetServerSideProps } from "next";
-import NextLink from "next/link";
-import prisma from "libs/prisma";
-import { useRouter } from "next/router";
 import {
   Button,
   chakra,
@@ -17,11 +12,16 @@ import {
   Tabs,
   Text,
 } from "@chakra-ui/react";
-import CustomerLayout from "components/layouts/customer-dashboard";
 import { FileGallery } from "components/file-gallery";
+import CustomerLayout from "components/layouts/customer-dashboard";
 import { Quantity } from "components/quantity";
-import { formatCurrency } from "libs/currency";
 import { useCartStore } from "hooks/useCart";
+import { formatCurrency } from "libs/currency";
+import prisma from "libs/prisma";
+import type { GetServerSideProps } from "next";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
 
 const Page = ({ product }: any) => {
   const router = useRouter();
@@ -60,16 +60,21 @@ const Page = ({ product }: any) => {
       <chakra.div>
         <NextLink href={`/${router?.query.store}`} passHref>
           <Link
-            display="block"
             borderBottom="none"
-            textDecoration="underline"
-            px={4}
-            py={{ base: 4, md: 8 }}
-            fontSize="inherit"
-            fontWeight="600"
             _hover={{ transform: "scale(1.05)" }}
+            textDecoration="underline"
           >
-            Back
+            <Stack
+              direction="row"
+              spacing={4}
+              px={4}
+              py={{ base: "4", md: "8" }}
+              align="center"
+            >
+              <Text fontSize="inherit" fontWeight="600">
+                Back
+              </Text>
+            </Stack>
           </Link>
         </NextLink>
       </chakra.div>
@@ -165,7 +170,9 @@ const Page = ({ product }: any) => {
 
           <TabPanels>
             <TabPanel>
-              <Text>{product.description}</Text>
+              <Text w={{ base: "100%", md: "67.5rem" }}>
+                {product.description}
+              </Text>
             </TabPanel>
           </TabPanels>
         </Tabs>
