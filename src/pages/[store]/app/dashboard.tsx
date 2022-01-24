@@ -450,7 +450,7 @@ const Dashboard: NextPage = () => {
               </Text>
             </Stack>
           </Stack>
-          <Stack opacity="0.3" pointerEvents="none" userSelect="none">
+          <Stack opacity="0.2" pointerEvents="none" userSelect="none">
             <Flex justifyContent="space-between" py="2rem" alignItems="center">
               <Heading
                 as="h2"
