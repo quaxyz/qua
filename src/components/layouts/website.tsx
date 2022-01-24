@@ -1,3 +1,5 @@
+import React from "react";
+import Image from "next/image";
 import {
   Box,
   chakra,
@@ -11,9 +13,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { Wallet } from "components/wallet";
-import Image from "next/image";
-import { default as Link, default as NextLink } from "next/link";
-import React from "react";
+import Link from "components/link";
 
 const WebsiteLayout: React.FC = ({ children }) => {
   return (
@@ -124,33 +124,9 @@ const WebsiteLayout: React.FC = ({ children }) => {
         >
           <List>
             <ListItem>
-              <Link href="/about">
-                <a>About qua</a>
-              </Link>
+              <Link href="/about">About qua</Link>
             </ListItem>
           </List>
-
-          {/* <List mx="8">
-            <ListItem>
-              <Link href="/terms">
-                <a>Terms of use</a>
-              </Link>
-            </ListItem>
-          </List> */}
-          {/* <List>
-            <ListItem>
-              <Link href="/privacy">
-                <a>Privacy Policy</a>
-              </Link>
-            </ListItem>
-          </List> */}
-          {/* <List ml="8">
-            <ListItem>
-              <Link href="/faq">
-                <a>FAQ</a>
-              </Link>
-            </ListItem>
-          </List> */}
         </Box>
       </chakra.footer>
 
@@ -171,20 +147,17 @@ const WebsiteLayout: React.FC = ({ children }) => {
           h="100%"
           w="100%"
         >
-          <NextLink href="/" passHref>
-            <Link>
-              <Text fontWeight="normal" color="inherit" fontSize="lg" as="span">
-                Home
-              </Text>
-            </Link>
-          </NextLink>
-          <NextLink href="/stores" passHref>
-            <Link>
-              <Text fontWeight="normal" color="inherit" fontSize="lg" as="span">
-                P2P Stores
-              </Text>
-            </Link>
-          </NextLink>
+          <Link href="/">
+            <Text fontWeight="normal" color="inherit" fontSize="lg" as="span">
+              Home
+            </Text>
+          </Link>
+
+          <Link href="/stores">
+            <Text fontWeight="normal" color="inherit" fontSize="lg" as="span">
+              P2P Stores
+            </Text>
+          </Link>
         </Stack>
       </chakra.nav>
     </div>
