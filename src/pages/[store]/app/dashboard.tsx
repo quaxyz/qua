@@ -35,6 +35,7 @@ import {
   ChevronDown,
   Plus,
 } from "react-iconly";
+import { HiOutlineClock } from "react-icons/hi";
 import { useInfiniteQuery } from "react-query";
 
 interface IInfoCard {
@@ -385,7 +386,7 @@ const Dashboard: NextPage = () => {
   const cards = [
     {
       bgColor: "#FEEECD",
-      amount: 34,
+      amount: 0,
       rateIsNegative: true,
       title: "Unfulfilled orders",
       icon: (props: any) => (
@@ -395,22 +396,22 @@ const Dashboard: NextPage = () => {
     {
       bgColor: "",
       rate: 12,
-      amount: 20,
+      amount: 0,
       rateIsNegative: true,
       title: "Total orders",
     },
     {
       bgColor: "",
       rate: 16,
-      amount: 520,
-      rateIsNegative: false,
+      amount: 0,
+      rateIsNegative: true,
       title: "Product views",
     },
     {
       bgColor: "",
       rate: 16,
-      amount: "$1,898.44",
-      rateIsNegative: false,
+      amount: "$0",
+      rateIsNegative: true,
       title: "Total revenue",
     },
   ];
@@ -428,15 +429,28 @@ const Dashboard: NextPage = () => {
       </Head>
 
       <Box px={{ base: "1rem", md: "4rem" }}>
-        <Stack
-          opacity="0.4"
-          pointerEvents="none"
-          userSelect="none"
-          align="center"
-          justify="center"
-        >
-          <Text>Analytics is coming soon</Text>
-          <Stack>
+        <Stack pos="relative">
+          <Stack
+            pos="absolute"
+            w="100%"
+            h="100%"
+            zIndex="2"
+            align="center"
+            justify="center"
+          >
+            <Stack direction="row" align="center" pt={{ base: "4", md: "24" }}>
+              <HiOutlineClock fontSize="24px" />
+              <Text
+                textAlign="center"
+                margin="auto"
+                opacity="0.8"
+                fontWeight="600"
+              >
+                Analytics is coming soon...
+              </Text>
+            </Stack>
+          </Stack>
+          <Stack opacity="0.3" pointerEvents="none" userSelect="none">
             <Flex justifyContent="space-between" py="2rem" alignItems="center">
               <Heading
                 as="h2"
