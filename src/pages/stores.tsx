@@ -3,7 +3,7 @@ import { FormGroup } from "components/form-group";
 import type { NextPage } from "next";
 import Head from "next/head";
 import React from "react";
-import WebsiteLayout from "../components/layouts/website";
+import WebsiteLayout from "components/layouts/website";
 
 const Stores: NextPage = () => {
   const [formValue, setFormValue] = React.useState({

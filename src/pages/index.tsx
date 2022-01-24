@@ -8,13 +8,14 @@ import {
   Image,
   Stack,
   Text,
+  Link,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import WebsiteLayout from "../components/layouts/website";
+import WebsiteLayout from "components/layouts/website";
 
 const Home: NextPage = () => {
   return (
@@ -59,12 +60,14 @@ const Home: NextPage = () => {
               p="4"
             >
               <NextLink href="/stores" passHref>
-                <Button variant="solid-outline" size="lg">
+                <Button as={Link} variant="solid-outline" size="lg">
                   Go Shopping
                 </Button>
               </NextLink>
               <NextLink href="/setup" passHref>
-                <Button size="lg">Setup my store</Button>
+                <Button as={Link} size="lg">
+                  Setup my store
+                </Button>
               </NextLink>
             </Stack>
 
@@ -76,12 +79,14 @@ const Home: NextPage = () => {
               align="center"
             >
               <NextLink href="/stores" passHref>
-                <Button variant="solid-outline" size="lg">
+                <Button as={Link} variant="solid-outline" size="lg">
                   Go Shopping
                 </Button>
               </NextLink>
               <NextLink href="/setup" passHref>
-                <Button size="lg">Setup my store</Button>
+                <Button as={Link} size="lg">
+                  Setup my store
+                </Button>
               </NextLink>
             </Stack>
           </Container>
@@ -155,7 +160,7 @@ const Home: NextPage = () => {
       <Container maxW="100%" centerContent>
         <Flex p="4">
           <NextLink href="/setup" passHref>
-            <Button variant="solid-outline" size="lg" width="348px">
+            <Button as={Link} variant="solid-outline" size="lg" width="348px">
               Setup my store
             </Button>
           </NextLink>
@@ -177,9 +182,6 @@ const Home: NextPage = () => {
         >
           Customers shop in a breath with ease.
         </Heading>
-        {/* <Text fontSize="xl" textAlign="center">
-          Direct shopping from your favorite dealer is breez·y
-        </Text> */}
       </Container>
 
       <Container maxW="100%">
@@ -308,6 +310,7 @@ const Home: NextPage = () => {
               <Stack direction={{ base: "column", md: "row" }}>
                 <NextLink href="/setup" passHref>
                   <Button
+                    as={Link}
                     w={{ base: "100%", md: "15.5rem" }}
                     variant="solid"
                     bgColor="#fff"
@@ -320,6 +323,7 @@ const Home: NextPage = () => {
                 </NextLink>
                 <NextLink href="/stores" passHref>
                   <Button
+                    as={Link}
                     w={{ base: "100%", md: "15.5rem" }}
                     variant="solid-outline"
                     size="lg"

@@ -1,10 +1,12 @@
 import React from "react";
 import Image from "next/image";
+import NextLink from "next/link";
 import {
   Box,
   chakra,
   Flex,
   List,
+  Link,
   ListItem,
   Stack,
   Tab,
@@ -13,15 +15,14 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { Wallet } from "components/wallet";
-import Link from "components/link";
 
 const WebsiteLayout: React.FC = ({ children }) => {
   return (
     <div>
       <chakra.nav display={{ base: "none", md: "block" }}>
         <Flex align="center" justify="space-between" px="4rem" maxW="100%">
-          <Link href="/">
-            <a>
+          <NextLink href="/" passHref>
+            <Link>
               <Image
                 src="/logo.svg"
                 alt="Qua logo"
@@ -29,20 +30,20 @@ const WebsiteLayout: React.FC = ({ children }) => {
                 width={100}
                 height={100}
               />
-            </a>
-          </Link>
+            </Link>
+          </NextLink>
           <Tabs colorScheme="#000000">
             <TabList border="none">
               <Tab p="0" mr="8">
-                <Link href="/">
-                  <a>Home</a>
-                </Link>
+                <NextLink href="/" passHref>
+                  <Link>Home</Link>
+                </NextLink>
               </Tab>
 
               <Tab p="0">
-                <Link href="/stores">
-                  <a>P2P Stores</a>
-                </Link>
+                <NextLink href="/stores" passHref>
+                  <Link>P2P Stores</Link>
+                </NextLink>
               </Tab>
             </TabList>
           </Tabs>
@@ -70,8 +71,8 @@ const WebsiteLayout: React.FC = ({ children }) => {
           w="100%"
           px={4}
         >
-          <Link href="/">
-            <a>
+          <NextLink href="/" passHref>
+            <Link>
               <Image
                 src="/logo.svg"
                 alt="Qua logo"
@@ -79,8 +80,8 @@ const WebsiteLayout: React.FC = ({ children }) => {
                 width={80}
                 height={80}
               />
-            </a>
-          </Link>
+            </Link>
+          </NextLink>
 
           <Wallet
             ButtonProps={{
@@ -124,7 +125,9 @@ const WebsiteLayout: React.FC = ({ children }) => {
         >
           <List>
             <ListItem>
-              <Link href="/about">About qua</Link>
+              <NextLink href="/about" passHref>
+                <Link>About qua</Link>
+              </NextLink>
             </ListItem>
           </List>
         </Box>
@@ -147,17 +150,17 @@ const WebsiteLayout: React.FC = ({ children }) => {
           h="100%"
           w="100%"
         >
-          <Link href="/">
-            <Text fontWeight="normal" color="inherit" fontSize="lg" as="span">
+          <NextLink href="/" passHref>
+            <Link fontWeight="normal" color="inherit" fontSize="lg" as="span">
               Home
-            </Text>
-          </Link>
+            </Link>
+          </NextLink>
 
-          <Link href="/stores">
-            <Text fontWeight="normal" color="inherit" fontSize="lg" as="span">
+          <NextLink href="/stores" passHref>
+            <Link fontWeight="normal" color="inherit" fontSize="lg" as="span">
               P2P Stores
-            </Text>
-          </Link>
+            </Link>
+          </NextLink>
         </Stack>
       </chakra.nav>
     </div>
