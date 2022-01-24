@@ -2,6 +2,7 @@ import React from "react";
 import Head from "next/head";
 import Link from "components/link";
 import useCart from "hooks/useCart";
+import _capitalize from "lodash.capitalize";
 import {
   Box,
   Center,
@@ -54,7 +55,7 @@ const CustomerLayout = ({ title, children }: any) => {
     <CartContext.Provider value={cartStore}>
       <Head>
         <title>
-          {title} - {router.query.store}
+          {title} - {_capitalize((router.query.store as string) || "")}
         </title>
       </Head>
 
