@@ -40,7 +40,7 @@ export function useFileUpload({
         try {
           // upload file
           const { payload: uploadedFile } = await Api().request(
-            `/api/upload?filename=${file.name}&bucket=${bucket}`,
+            `/upload?filename=${file.name}&bucket=${bucket}`,
             {
               method: "POST",
               headers: { "Content-Type": file.type },
@@ -138,7 +138,7 @@ export const FilePicker = ({
 
     // send api request to delete image
     try {
-      await Api().delete(`/api/upload?filename=${file.key}&bucket=${bucket}`);
+      await Api().delete(`/upload?filename=${file.key}&bucket=${bucket}`);
       const newFiles = files.filter((f: any) => f.key !== file.key);
 
       setActiveImage(newFiles[newFiles.length - 1]?.url || null);
