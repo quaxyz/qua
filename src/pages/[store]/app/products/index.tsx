@@ -1,10 +1,3 @@
-import React from "react";
-import NextLink from "next/link";
-import Api from "libs/api";
-import prisma from "libs/prisma";
-import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
-import { useInfiniteQuery } from "react-query";
 import {
   Box,
   Button,
@@ -27,9 +20,16 @@ import {
   Text,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
+import Api from "libs/api";
+import { formatCurrency } from "libs/currency";
+import prisma from "libs/prisma";
+import { GetServerSideProps } from "next";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
 import { Plus, Search } from "react-iconly";
 import { FiMoreHorizontal } from "react-icons/fi";
-import { formatCurrency } from "libs/currency";
+import { useInfiniteQuery } from "react-query";
 
 const ActionMenu = ({ id }: any) => {
   const router = useRouter();
@@ -129,22 +129,26 @@ const Page = ({ initialData }: any) => {
             direction="column"
             alignItems="center"
             justifyContent="center"
-            mt={{ base: 40, md: 40 }}
+            mt={{ base: "8rem", md: "16rem" }}
           >
             <Image
               src="/svg/add.svg"
               alt="Add Icon"
               layout="fixed"
-              w={{ base: "20", md: "100" }}
-              h={{ base: "20", md: "100" }}
+              w={{ base: "16", md: "100" }}
+              h={{ base: "16", md: "100" }}
               mb="4"
             />
 
             <Stack alignItems="center" textAlign="center" justify="center">
-              <Text fontSize="xl" fontWeight="bold" color="#000">
+              <Text
+                fontSize={{ base: "lg", md: "xl" }}
+                fontWeight="bold"
+                color="#000"
+              >
                 Add and manage your products
               </Text>
-              <Text fontSize="lg">
+              <Text fontSize={{ base: "md", md: "lg" }}>
                 You can add products and manage your pricing here.
               </Text>
             </Stack>
@@ -226,6 +230,7 @@ const Page = ({ initialData }: any) => {
                         src={data.images[0].url}
                         alt={data.name}
                         boxSize="100px"
+                        objectFit="cover"
                       />
                     </Box>
 
@@ -279,7 +284,8 @@ const Page = ({ initialData }: any) => {
                         <Image
                           src={data.images[0].url}
                           alt={data.name}
-                          boxSize="50px"
+                          boxSize="60px"
+                          objectFit="cover"
                         />
 
                         <Text
