@@ -139,12 +139,18 @@ const Page: NextPage = () => {
           <Stack
             direction={useBreakpointValue({ base: "column", md: "row" })}
             justify="space-between"
+            align="center"
+            pt={{ base: "0", md: "12" }}
           >
             <chakra.form flex="3" onSubmit={onSubmit}>
               <Text>
                 Welcome 🎉, <br />{" "}
-                <Text as="span" fontWeight="bold">
-                  Let’s set you up!
+                <Text
+                  as="span"
+                  fontWeight="bold"
+                  fontSize={{ base: "16px", md: "18px" }}
+                >
+                  Let&apos;s set you up!
                 </Text>
               </Text>
 
