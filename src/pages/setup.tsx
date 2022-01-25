@@ -81,7 +81,7 @@ function useCreateStore() {
 
       router.push({
         pathname: `/[store]/app/settings`,
-        query: { store: message.store },
+        query: { store: message.store.toLowerCase() },
       });
     } catch (err: any) {
       toast({
