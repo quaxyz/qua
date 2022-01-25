@@ -316,6 +316,7 @@ const DashboardLayout = ({ title, children }: any) => {
           h="4.938rem"
           w="100%"
           display={{ base: "block", md: "none" }}
+          zIndex="2"
         >
           <Stack
             direction="row"

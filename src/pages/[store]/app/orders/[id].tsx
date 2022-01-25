@@ -255,8 +255,7 @@ const Page = (props: any) => {
                 >
                   <Box>
                     <Image
-                      width="12rem"
-                      height="6.25rem"
+                      boxSize="100"
                       display={{ base: "block", md: "none" }}
                       objectFit="cover"
                       src={item.image}

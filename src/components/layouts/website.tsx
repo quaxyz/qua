@@ -13,16 +13,29 @@ import {
   TabList,
   Tabs,
   Text,
+  UnorderedList,
 } from "@chakra-ui/react";
 import { Wallet } from "components/wallet";
+import { useRouter } from "next/router";
 
 const WebsiteLayout: React.FC = ({ children }) => {
+  const router = useRouter();
+
   return (
     <div>
-      <chakra.nav display={{ base: "none", md: "block" }}>
-        <Flex align="center" justify="space-between" px="4rem" maxW="100%">
+      <chakra.nav
+        display={{ base: "none", md: "block" }}
+        borderBottom="1px solid rgba(0, 0, 0, 0.08)"
+      >
+        <Stack
+          align="center"
+          direction="row"
+          justify="space-between"
+          px="4rem"
+          maxW="100%"
+        >
           <NextLink href="/" passHref>
-            <Link>
+            <a>
               <Image
                 src="/logo.svg"
                 alt="Qua logo"
@@ -30,23 +43,35 @@ const WebsiteLayout: React.FC = ({ children }) => {
                 width={100}
                 height={100}
               />
-            </Link>
+            </a>
           </NextLink>
-          <Tabs colorScheme="#000000">
-            <TabList border="none">
-              <Tab p="0" mr="8">
-                <NextLink href="/" passHref>
-                  <Link>Home</Link>
-                </NextLink>
-              </Tab>
 
-              <Tab p="0">
-                <NextLink href="/stores" passHref>
-                  <Link>P2P Stores</Link>
-                </NextLink>
-              </Tab>
-            </TabList>
-          </Tabs>
+          <Stack direction="row" align="center" spacing="8">
+            <NextLink href="/" passHref>
+              <Link
+                borderBottom="none"
+                _hover={{ transform: "scale(1.05)" }}
+                {...(router.asPath.includes("/")
+                  ? { textDecoration: "underline" }
+                  : { color: "#000" })}
+              >
+                Home
+              </Link>
+            </NextLink>
+
+            <NextLink href="/stores" passHref>
+              <Link
+                borderBottom="none"
+                _hover={{ transform: "scale(1.05)" }}
+                {...(router.asPath.includes("/stores")
+                  ? { textDecoration: "underline" }
+                  : { color: "#000" })}
+              >
+                P2P Stores
+              </Link>
+            </NextLink>
+          </Stack>
+
           <Wallet
             ButtonProps={{
               variant: "primary",
@@ -55,8 +80,7 @@ const WebsiteLayout: React.FC = ({ children }) => {
               size: "md",
             }}
           />
-        </Flex>
-        <hr />
+        </Stack>
       </chakra.nav>
 
       <chakra.nav

@@ -241,7 +241,10 @@ const Page = ({ storeDetails }: any) => {
               Settings
             </Heading>
 
-            <Grid templateColumns="repeat(2, 1fr)" gridGap={5}>
+            <Grid
+              templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(2, 1fr)" }}
+              gridGap={5}
+            >
               <GridItem>
                 <FormControl id="location">
                   <FormLabel textTransform="uppercase">
