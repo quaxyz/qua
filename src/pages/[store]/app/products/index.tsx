@@ -87,7 +87,7 @@ function useDeleteProduct() {
   );
 }
 
-const ActionMenu = ({ id }: any) => {
+const ActionMenu = ({ id, ButtonProps }: any) => {
   const deleteProduct = useDeleteProduct();
 
   return (
@@ -99,6 +99,7 @@ const ActionMenu = ({ id }: any) => {
         aria-label="product actions"
         as={IconButton}
         icon={<FiMoreHorizontal />}
+        {...ButtonProps}
       />
 
       <MenuList>
@@ -317,13 +318,7 @@ const Page = ({ initialData }: any) => {
                     </Stack>
 
                     <Box>
-                      <IconButton
-                        aria-label="more"
-                        variant="outlined"
-                        size="sm"
-                        fontSize="2xl"
-                        icon={<FiMoreHorizontal />}
-                      />
+                      <ActionMenu />
                     </Box>
                   </Stack>
 
