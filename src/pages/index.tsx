@@ -21,7 +21,7 @@ const Home: NextPage = () => {
   return (
     <WebsiteLayout>
       <Head>
-        <title>Home - Qua</title>
+        <title>Decentralize ecommerce - Qua</title>
       </Head>
       <chakra.header maxW="100%">
         <Box
@@ -29,7 +29,7 @@ const Home: NextPage = () => {
           bgPosition="center center"
           bgRepeat="no-repeat"
           bgSize={{ base: "cover", md: "80% 120%" }}
-          mt="12"
+          mt="24"
         >
           <Container maxW="100%" py="20" centerContent>
             <Box maxW={{ base: "100%", md: "48rem" }} mb="8">
@@ -113,7 +113,7 @@ const Home: NextPage = () => {
           size="md"
           fontSize={{ base: "1.5rem", md: "36" }}
         >
-          Sell to your customers in 3 easy steps...
+          Sell to your customers in 3 steps...
         </Heading>
       </Container>
 
@@ -169,7 +169,7 @@ const Home: NextPage = () => {
 
       <Container
         maxW="100%"
-        pt="20"
+        pt={{ base: "20", md: "12rem" }}
         mb={{ base: "2rem", md: "4rem" }}
         centerContent
       >
@@ -230,9 +230,7 @@ const Home: NextPage = () => {
           py={{ base: "0", md: "24" }}
           // align="center"
           pos="relative"
-          boxShadow="0px 10px 180px 10px rgba(253, 118, 203, 0.72)"
-
-          // justify="center"
+          boxShadow="0px 10px 180px 10px rgba(253, 118, 203, 0.32)"
         >
           <Image
             boxSize="4rem"
