@@ -20,28 +20,25 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const store = query.store as string;
         const address = query.address as string;
 
-        const user = await prisma.user.findFirst({
+        const cart = await prisma.cart.findFirst({
           where: {
-            address,
-            carts: {
-              some: {
-                storeName: store,
-              },
+            owner: {
+              address,
             },
-          },
-          select: {
-            carts: true,
+            store: {
+              name: store,
+            },
           },
         });
 
-        if (!user || !user.carts[0]) {
+        if (!cart || !(cart?.items as any)?.length) {
           return res.status(200).send({
             items: [],
             total: 0,
           });
         }
 
-        const cartItems = user.carts[0].items as any[];
+        const cartItems = cart.items as any[];
         const cartIds = cartItems.map((c) => c.productId);
         const products = await prisma.product.findMany({
           where: {
@@ -70,8 +67,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           const cart = cartItems.find((item) => item.productId === product.id);
           return acc + cart.quantity * product.price;
         }, 0);
-
-        // console.log(LOG_TAG, "cart total", { total });
 
         return res.status(200).send({
           items: cartItems,

@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
 import LazerPay from "lazerpay-node-sdk";
+import PayoutQueue from "pages/api/queue/payment/payout";
 
 const LOG_TAG = "[store-payment-confirm]";
 const lazerPay = new LazerPay(
@@ -60,7 +61,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             address: recipientAddress,
           });
 
-          if (confirmationPayload.status !== "confirmed") {
+          console.log(LOG_TAG, "[info]", "payment confirmation payload", {
+            confirmationPayload,
+            body,
+            query,
+          });
+
+          if (confirmationPayload?.data.status !== "confirmed") {
             throw new Error("Payment is not yet confirmed");
           }
         } catch (error) {
@@ -101,32 +108,65 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(404).send({ error: "Error processing payment" });
         }
 
-        let payoutHash = "";
+        /**
+         * So we try to do the payout here, and if it fails we then add it to the job queue so it can be retried later
+         */
+        let payoutHash: string | undefined = undefined;
         try {
-          const transferResponse = await lazerPay.Payment.transferFunds({
-            amount: 0,
+          const { subtotal, shipping } = order.pricingBreakdown as any;
+          const payoutPayload = {
+            amount: (subtotal || 0) + (shipping || 0),
             coin: coin,
             recipient: store.owner,
             blockchain: "Binance Smart Chain",
+          };
+          const payoutResponse = await lazerPay.Payment.transferFunds(
+            payoutPayload
+          );
+
+          console.log(LOG_TAG, "[info]", "order payout payload", {
+            payoutResponse,
+            payoutPayload,
+            body,
+            query,
           });
 
-          if (transferResponse.status !== "success") {
-            throw new Error(transferResponse.message);
+          if (payoutResponse.status !== "success") {
+            throw new Error(payoutResponse.message);
           }
 
-          payoutHash = transferResponse.data.transactionHash;
+          payoutHash = payoutResponse.data.transactionHash;
         } catch (error) {
           console.log(
             LOG_TAG,
             "[error]",
-            "error transferring funds to seller",
+            "error transferring funds to seller, scheduling job",
             {
               query,
               body,
               error,
             }
           );
-          return res.status(500).send({ error: "Error processing payment" });
+
+          await PayoutQueue.enqueue(
+            {
+              orderHash,
+              storeName,
+              coin,
+            },
+            {
+              retry: [
+                "30s",
+                "2min",
+                "5min",
+                "10min",
+                "30min",
+                "1h",
+                "2h",
+                "4h",
+              ],
+            }
+          );
         }
 
         // store payment reference in order
@@ -141,7 +181,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           },
         });
 
-        console.log(LOG_TAG, "payment processed created", { result });
+        console.log(LOG_TAG, "payment processed", { result });
         return res.status(200).send({ message: "Payment processed" });
       }
       default:

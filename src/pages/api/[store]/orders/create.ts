@@ -97,6 +97,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const paymentMethod = data.message.paymentMethod;
 
         // verify data
+        if (!cart.length) {
+          console.log(LOG_TAG, "[error]", "can't create empty order", method);
+          return res.status(400).send({ error: "can't create empty order" });
+        }
         // - any other form of validation?
 
         // calculate pricing

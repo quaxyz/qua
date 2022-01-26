@@ -1,3 +1,9 @@
+import React from "react";
+import Script from "next/script";
+import Api from "libs/api";
+import prisma from "libs/prisma";
+import CustomerLayout from "components/layouts/customer-dashboard";
+import Link from "components/link";
 import {
   Button,
   chakra,
@@ -11,24 +17,20 @@ import {
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import { CostSummary } from "components/cost-summary";
-import CustomerLayout from "components/layouts/customer-dashboard";
-import Link from "components/link";
 import { providers } from "ethers";
 import { useCartStore } from "hooks/useCart";
-import Api from "libs/api";
 import { domain, schemas } from "libs/constants";
 import { getAddressFromCookie } from "libs/cookie";
-import prisma from "libs/prisma";
 import { mapSocialLink } from "libs/utils";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import Script from "next/script";
-import React from "react";
 import { FcCheckmark } from "react-icons/fc";
 import { useMutation, useQuery } from "react-query";
 
 function pay({ name, email, amount }: any) {
   return new Promise((resolve, reject) => {
+    let paymentPayload: any;
+
     (global as any).LazerCheckout({
       name,
       email,
@@ -38,10 +40,10 @@ function pay({ name, email, amount }: any) {
       onClose: (data: any) => {
         // HACK: since the checkbox doesn't close automatically we have to react to it being closed before we
         // do anything
-        resolve({ error: true });
+        resolve(paymentPayload);
       },
       onSuccess: (data: any) => {
-        resolve(data);
+        paymentPayload = data;
       },
       onError: (data: any) => {
         console.log("Error", data);
@@ -166,7 +168,7 @@ function useHandlePayment() {
         email: shippingDetails?.email,
         amount: `${amount}`,
       });
-      if (payload.error) return;
+      if (!payload) throw Error("payment modal closed before confirmation");
 
       await confirmPaymentMutation.mutateAsync({
         orderHash,
@@ -453,6 +455,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       owner: { address: address || "" },
     },
   });
+  console.log(cart?.items);
   if (!cart || !(cart.items as any[]).length) {
     return { notFound: true };
   }

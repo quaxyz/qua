@@ -69,7 +69,7 @@ function useCancelOrder() {
     {
       onSuccess: ({ payload: result }) => {
         console.log("Result", result);
-        queryClient.setQueryData("order-details", result);
+        queryClient.setQueryData(["order-details", result.id], result);
 
         toast({
           title: "Order cancel",
@@ -97,7 +97,7 @@ function useCancelOrder() {
 const Page = (props: any) => {
   const cancelOrder = useCancelOrder();
   const { data: order } = useQuery({
-    queryKey: "order-details",
+    queryKey: ["order-details", props.order.id],
     queryFn: async () => {},
     initialData: props.order,
     staleTime: Infinity,
@@ -170,6 +170,9 @@ const Page = (props: any) => {
             </Text>
             <Text>Total: ${order.totalAmount}</Text>
             <Text>Status: {order.status}</Text>
+            {order.status === "CANCELLED" && order.paymentStatus === "PAID" && (
+              <Button variant="link">Please contact seller for refund</Button>
+            )}
           </Stack>
 
           {order.status === "UNFULFILLED" && (
