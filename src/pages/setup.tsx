@@ -157,7 +157,7 @@ const Page: NextPage = () => {
               <Stack py={12} spacing={12}>
                 <FormGroup
                   id="name"
-                  label="Business name"
+                  label="Store name"
                   labelProps={{ variant: "flushed" }}
                   rightAddonText=".qua.xyz"
                 >
