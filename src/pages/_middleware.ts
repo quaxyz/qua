@@ -22,7 +22,10 @@ export default function middleware(req: NextRequest) {
     pathname,
   });
 
-  if (!storeFromDomain && !pathname.startsWith("/_store")) {
+  if (
+    (!storeFromDomain || storeFromDomain === "www") &&
+    !pathname.startsWith("/_store")
+  ) {
     console.log("[middleware] it's a public route, redirecting", {
       storeFromDomain,
       pathname,
