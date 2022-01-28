@@ -172,7 +172,7 @@ const Page = (props: any) => {
             <Text>Total: ${order.totalAmount}</Text>
             <Text>Status: {order.status}</Text>
 
-            <Link fontSize="sm" href="/about">
+            <Link color="green.500" fontSize="sm" href="/about">
               Contact for refunds or complaints
             </Link>
           </Stack>
