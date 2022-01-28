@@ -17,7 +17,7 @@ import { Wallet } from "components/wallet";
 import SelectMenu from "components/select";
 import { useMutation } from "react-query";
 import { useWeb3React } from "@web3-react/core";
-import { domain, schemas } from "libs/constants";
+import { defaultCategories, domain, schemas } from "libs/constants";
 import { providers } from "ethers";
 import { useRouter } from "next/router";
 import { FormGroup } from "components/form-group";
@@ -206,11 +206,7 @@ const Page: NextPage = () => {
                     onChange={(item) =>
                       setFormValue({ ...formValue, category: item })
                     }
-                    options={[
-                      { value: "clothing", label: "Clothing" },
-                      { value: "cosmetics", label: "Cosmetics" },
-                      { value: "food", label: "Food" },
-                    ]}
+                    options={defaultCategories}
                   />
                 </FormGroup>
 

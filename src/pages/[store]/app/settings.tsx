@@ -33,6 +33,7 @@ import { getKeyPair } from "libs/keys";
 import { signData } from "libs/signing";
 import { useFileUpload } from "components/file-picker";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { defaultCategories } from "libs/constants";
 
 function useSaveSettings() {
   const [loading, setLoading] = React.useState(false);
@@ -354,7 +355,11 @@ const Page = ({ storeDetails }: any) => {
                   <Input
                     variant="outline"
                     type="text"
-                    defaultValue={storeDetails.category}
+                    defaultValue={
+                      defaultCategories.find(
+                        (c) => c.value === storeDetails.category
+                      )?.label
+                    }
                   />
                 </FormControl>
               </GridItem>
