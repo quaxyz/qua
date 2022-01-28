@@ -17,7 +17,7 @@ export function useCreateSigningKey() {
   const storeAuth = useStoreAuth();
 
   const addSigningKeyMutation = useMutation(async (payload: any) => {
-    return Api().post(`/app/add-signing-key`, payload);
+    return Api().post(`/dashboard/add-signing-key`, payload);
   });
 
   const createSigningKey = async () => {

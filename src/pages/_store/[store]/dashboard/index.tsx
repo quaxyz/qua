@@ -272,7 +272,7 @@ const Page = ({ orders }: any) => {
               Activity
             </Heading>
 
-            <Link href={`/app/orders`}>View all orders</Link>
+            <Link href={`/dashboard/orders`}>View all orders</Link>
           </Stack>
 
           {!ordersIsEmpty ? (
@@ -313,7 +313,7 @@ const Page = ({ orders }: any) => {
                       </Text>
 
                       <Link
-                        href={`/app/orders/${order.id}`}
+                        href={`/dashboard/orders/${order.id}`}
                         fontSize="16px"
                         fontWeight={{ base: "400", md: "600" }}
                       >
@@ -391,7 +391,11 @@ const Page = ({ orders }: any) => {
                   Add a product to your store to recieve orders
                 </Text>
 
-                <Link as={Button} href={`/app/products/new`} variant="primary">
+                <Link
+                  as={Button}
+                  href={`/dashboard/products/new`}
+                  variant="primary"
+                >
                   <Plus
                     set="bold"
                     primaryColor="#ffffff"

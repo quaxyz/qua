@@ -4,13 +4,15 @@ import { useRouter } from "next/router";
 import { Link as ChakraLink } from "@chakra-ui/react";
 
 const Link = ({ isExternal, href, ...props }: any) => {
-  const { query } = useRouter();
+  const router = useRouter();
   const Comp = props.as || ChakraLink;
 
-  const path = `${href.charAt(0) !== "/" ? "/" : ""}${href}`;
+  const pathPrefix =
+    process.env.NODE_ENV !== "production" ? `_store/${router.query.store}` : ``;
+  const path = `${pathPrefix}${href.charAt(0) !== "/" ? "/" : ""}${href}`;
 
   return (
-    <NextLink href={isExternal ? href : `/${query?.store}${path}`} passHref>
+    <NextLink href={isExternal ? href : `/${path}`} passHref>
       <Comp {...props} />
     </NextLink>
   );

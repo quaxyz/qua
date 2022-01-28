@@ -1,10 +1,9 @@
 import React from "react";
-import prisma from "libs/prisma";
 import Api from "libs/api";
+import prisma from "libs/prisma";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import StoreDashboardLayout from "components/layouts/store-dashboard";
 import {
   Box,
   Button,
@@ -28,6 +27,7 @@ import {
   Textarea,
   useToast,
 } from "@chakra-ui/react";
+import StoreDashboardLayout from "components/layouts/store-dashboard";
 import { FilePicker } from "components/file-picker";
 import { FormGroup } from "components/form-group";
 import { CreateableSelectMenu } from "components/select";
@@ -37,22 +37,18 @@ import { getKeyPair } from "libs/keys";
 import { signData } from "libs/signing";
 import { useMutation, useQueryClient } from "react-query";
 
-const Variants = (props: {
-  variants: any[];
-  onChange: (variants: any[]) => void;
-}) => {
-  const [variants, setVariants] = React.useState(
-    props.variants || [{ type: "", options: "" }]
-  );
+const Variants = (props: { onChange: (variants: any[]) => void }) => {
+  const [variants, setVariants] = React.useState([{ type: "", options: "" }]);
 
   const onVariantChange = (data: any, variantIdx: number) => {
-    const newVariants = variants.map((variant, idx) => {
-      if (idx === variantIdx) return data;
-      return variant;
-    });
+    setVariants(
+      variants.map((variant, idx) => {
+        if (idx === variantIdx) return data;
+        return variant;
+      })
+    );
 
-    setVariants(newVariants);
-    props.onChange(newVariants);
+    props.onChange(variants);
   };
 
   const addVariant = () => {
@@ -129,40 +125,33 @@ const Variants = (props: {
   );
 };
 
-const Page = ({ product, categories }: any) => {
+const Page = ({ categories }: any) => {
   const toast = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
   const { account } = useWeb3React();
 
   const [saving, setSaving] = React.useState(false);
-  const [hasVariant, setHasVariant] = React.useState(
-    product.variants && product.variants.length
-  );
-  const [isLimited, setIsLimited] = React.useState(
-    (product.totalStocks || 0) > 0 || false
-  );
+  const [hasVariant, setHasVariant] = React.useState(false);
+  const [isLimited, setIsLimited] = React.useState(false);
 
   const [errors, setErrors] = React.useState<any>({});
   const [formValue, setFormValue] = React.useState({
-    name: product.name || "",
-    description: product.description || "",
-    images: product.images || [],
-    price: product.price || "",
-    discountPrice: product.discountPrice || "",
-    stock: product.totalStocks || "",
-    physical: product.physical || false,
-    category: product.category || "",
-    tags: product.tags.join(",") || "",
-    variants: (product.variants || []).map((variant: any) => ({
-      ...variant,
-      options: variant.options.join(","),
-    })),
+    name: "",
+    description: "",
+    images: [] as File[],
+    price: "",
+    discountPrice: "",
+    stock: "",
+    physical: false,
+    category: "",
+    tags: "",
+    variants: [] as any[],
   });
 
-  const updateProductMutation = useMutation(
+  const addProductMutation = useMutation(
     async (payload: any) => {
-      return Api().post(`/app/products/${product.id}`, payload);
+      return Api().post(`/dashboard/products/new`, payload);
     },
     {
       onSuccess: () => {
@@ -207,7 +196,7 @@ const Page = ({ product, categories }: any) => {
       console.log("Sig", signedContent);
 
       // send data to server
-      const { payload: result } = await updateProductMutation.mutateAsync({
+      const { payload: result } = await addProductMutation.mutateAsync({
         address: account,
         digest: signedContent.digest,
         key: JSON.stringify(signedContent.publicKey),
@@ -218,7 +207,7 @@ const Page = ({ product, categories }: any) => {
       console.log("Result", result);
 
       toast({
-        title: "Product updated",
+        title: "Product saved",
         position: "top-right",
         status: "success",
       });
@@ -236,8 +225,8 @@ const Page = ({ product, categories }: any) => {
 
   return (
     <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
-      <Stack direction="row" justify="space-between" aling="center" mb={10}>
-        <NextLink href={`/${router?.query.store}/app/products/`} passHref>
+      <Stack direction="row" justify="space-between" align="center" mb={10}>
+        <NextLink href={`/dashboard/products/`} passHref>
           <Stack as={Link} border="none" direction="row" alignItems="center">
             <ArrowLeft set="light" />
 
@@ -248,7 +237,7 @@ const Page = ({ product, categories }: any) => {
         </NextLink>
 
         <Button variant="primary" onClick={onPublish} isLoading={saving}>
-          Update
+          Publish
         </Button>
       </Stack>
 
@@ -280,7 +269,10 @@ const Page = ({ product, categories }: any) => {
               bucket={router.query.store as string}
               disabled={saving}
               maxFiles={8}
-              setFiles={(images) => setFormValue({ ...formValue, images })}
+              setFiles={(images) => {
+                console.log({ images });
+                setFormValue({ ...formValue, images });
+              }}
             />
             <FormErrorMessage>
               Each product needs at least 1 image and no more than 8 images
@@ -340,21 +332,21 @@ const Page = ({ product, categories }: any) => {
                       </FormControl>
 
                       {/* <FormGroup id="discountPrice" label="Discount Price">
-                          <Input
-                            isRequired
-                            type="number"
-                            placeholder="0.00"
-                            variant="flushed"
-                            disabled={saving}
-                            value={formValue.discountPrice}
-                            onChange={(e) =>
-                              setFormValue({
-                                ...formValue,
-                                discountPrice: e.target.value,
-                              })
-                            }
-                          />
-                        </FormGroup> */}
+                        <Input
+                          isRequired
+                          type="number"
+                          placeholder="0.00"
+                          variant="flushed"
+                          disabled={saving}
+                          value={formValue.discountPrice}
+                          onChange={(e) =>
+                            setFormValue({
+                              ...formValue,
+                              discountPrice: e.target.value,
+                            })
+                          }
+                        />
+                      </FormGroup> */}
                     </Stack>
                   </chakra.article>
 
@@ -366,7 +358,7 @@ const Page = ({ product, categories }: any) => {
                     <Checkbox
                       mb={6}
                       disabled={saving}
-                      isChecked={isLimited}
+                      checked={isLimited}
                       onChange={(e) => setIsLimited(e.target.checked)}
                     >
                       This is a limited product
@@ -410,7 +402,7 @@ const Page = ({ product, categories }: any) => {
                     <Checkbox
                       mb={6}
                       disabled={saving}
-                      isChecked={formValue.physical}
+                      checked={formValue.physical}
                       onChange={(e) =>
                         setFormValue({
                           ...formValue,
@@ -437,7 +429,7 @@ const Page = ({ product, categories }: any) => {
                     <Checkbox
                       mb={8}
                       disabled={saving}
-                      isChecked={hasVariant}
+                      checked={hasVariant}
                       onChange={(e) => setHasVariant(e.target.checked)}
                     >
                       This product has multiple options, like different sizes or
@@ -446,7 +438,6 @@ const Page = ({ product, categories }: any) => {
 
                     {hasVariant && (
                       <Variants
-                        variants={formValue.variants}
                         onChange={(variants) =>
                           setFormValue({ ...formValue, variants })
                         }
@@ -512,30 +503,6 @@ const Page = ({ product, categories }: any) => {
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const store = params?.store as string;
-  const id = params?.id as string;
-
-  const product = await prisma.product.findFirst({
-    include: {
-      images: {
-        select: {
-          key: true,
-          url: true,
-          hash: true,
-        },
-      },
-    },
-    where: {
-      id: parseInt(id, 10),
-      Store: {
-        name: store,
-      },
-    },
-  });
-
-  if (!product) {
-    return { notFound: true };
-  }
-
   const allProducts = await prisma.product.findMany({
     where: {
       Store: { name: store },
@@ -549,9 +516,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   return {
     props: {
       categories,
-      product: JSON.parse(JSON.stringify(product)),
       layoutProps: {
-        title: "Edit Product",
+        title: "Add Product",
       },
     },
   };

@@ -20,12 +20,13 @@ import { useCreateSigningKey } from "hooks/signing";
 import { AuthContext } from "libs/auth";
 import { Bag, Category, Graph } from "react-iconly";
 import { CgMore } from "react-icons/cg";
+import { useGetLink } from "hooks/utils";
 
 const navLinks = [
   {
     name: "Dashboard",
     icon: (props: any) => <Category set="light" {...props} />,
-    url: "/dashboard",
+    url: "/",
   },
   {
     name: "Products",
@@ -42,7 +43,7 @@ const navLinks = [
 const walletMenuLinks = [
   {
     label: "Settings",
-    href: `/app/settings`,
+    href: `/dashboard/settings`,
   },
 ];
 
@@ -139,6 +140,7 @@ const AuthNoSigningKey = () => {
 };
 
 const DashboardLayout = ({ title, children }: any) => {
+  const getLink = useGetLink();
   const router = useRouter();
 
   // handle auth session here
@@ -187,13 +189,13 @@ const DashboardLayout = ({ title, children }: any) => {
               {navLinks.map((navLink, idx) => (
                 <Link
                   key={idx}
-                  href={`/app${navLink.url}`}
+                  href={`/dashboard${navLink.url}`}
                   px={3}
                   py={3}
                   rounded="4px"
                   borderBottom="none"
                   _hover={{ transform: "scale(1.05)" }}
-                  {...(router.asPath.includes(navLink.url)
+                  {...(router.asPath.endsWith(navLink.url)
                     ? { color: "#000", bg: "#FFF" }
                     : { color: "#FFF" })}
                 >
@@ -215,7 +217,7 @@ const DashboardLayout = ({ title, children }: any) => {
             <Wallet
               menuOptions={walletMenuLinks.map((m) => ({
                 ...m,
-                href: `/${router.query?.store}${m.href}`,
+                href: getLink(m.href),
               }))}
               ButtonProps={{
                 variant: "outline",
@@ -224,7 +226,7 @@ const DashboardLayout = ({ title, children }: any) => {
                 rounded: "8px",
                 borderColor: "rgb(255 255 255 / 16%)",
                 leftIcon: <Icon as={CgMore} mr={3} />,
-                ...(walletMenuLinks.some((m) => router.asPath.includes(m.href))
+                ...(walletMenuLinks.some((m) => router.asPath.endsWith(m.href))
                   ? {
                       color: "#000",
                       bg: "#FFF",
@@ -267,7 +269,7 @@ const DashboardLayout = ({ title, children }: any) => {
             <Wallet
               menuOptions={walletMenuLinks.map((m) => ({
                 ...m,
-                href: `/${router.query?.store}${m.href}`,
+                href: getLink(m.href),
               }))}
               ButtonProps={{
                 variant: "outline",
@@ -275,7 +277,7 @@ const DashboardLayout = ({ title, children }: any) => {
                 size: "sm",
                 borderColor: "rgb(255 255 255 / 16%)",
                 rightIcon: <Icon as={CgMore} />,
-                ...(walletMenuLinks.some((m) => router.asPath.includes(m.href))
+                ...(walletMenuLinks.some((m) => router.asPath.endsWith(m.href))
                   ? {
                       color: "#000",
                       bg: "#FFF",
@@ -328,10 +330,10 @@ const DashboardLayout = ({ title, children }: any) => {
             {navLinks.map((NavLink, idx) => (
               <Link
                 key={idx}
-                href={`/app${NavLink.url}`}
+                href={`/dashboard${NavLink.url}`}
                 borderBottom="none"
                 color="#FFF"
-                {...(router.asPath.includes(NavLink.url)
+                {...(router.asPath.endsWith(NavLink.url)
                   ? { textDecoration: "underline" }
                   : {})}
               >
@@ -340,7 +342,7 @@ const DashboardLayout = ({ title, children }: any) => {
                     boxSize={5}
                     as={(props) => (
                       <NavLink.icon
-                        {...(router.asPath.includes(NavLink.url)
+                        {...(router.asPath.endsWith(NavLink.url)
                           ? { set: "bold" }
                           : {})}
                         {...props}

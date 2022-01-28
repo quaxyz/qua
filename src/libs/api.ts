@@ -2,10 +2,10 @@ import Router from "next/router";
 
 export default function Api() {
   const store = Router.query.store;
-  const href = `/api/${store || ""}`;
+  const href = `/api/` + (store ? `_store/${store}` + "/" : "");
 
   const request: any = async (path: string, options: any = {}) => {
-    const pathWithSlash = `${path.charAt(0) !== "/" ? "/" : ""}${path}`;
+    const pathWithSlash = path.replace(/^\/?/, "");
     const response = await fetch(`${href}${pathWithSlash}`, options);
 
     let payload;
@@ -34,7 +34,7 @@ export default function Api() {
       const urlWithSlash = `${url.charAt(0) !== "/" ? "/" : ""}${url}`;
       return new Promise(() =>
         Router.push({
-          pathname: `/[store]${urlWithSlash}`,
+          pathname: `/_store/[store]${urlWithSlash}`,
           query: { store },
         })
       );

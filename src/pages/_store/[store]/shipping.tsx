@@ -128,7 +128,7 @@ const Page = ({ shippingDetails, storeDetails }: any) => {
       }
 
       return router.push({
-        pathname: "/[store]/payment",
+        pathname: "/_store/[store]/payment",
         query: { store: router.query.store },
       });
     } catch (error: any) {

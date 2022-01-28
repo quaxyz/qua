@@ -80,7 +80,7 @@ function useCreateStore() {
       console.log("Result", result);
 
       router.push({
-        pathname: `/[store]/app/settings`,
+        pathname: `/_store/[store]/dashboard/settings`,
         query: { store: message.store.toLowerCase() },
       });
     } catch (err: any) {

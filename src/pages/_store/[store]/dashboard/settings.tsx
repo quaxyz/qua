@@ -44,7 +44,7 @@ function useSaveSettings() {
 
   const updateStoreMutation = useMutation(
     async (payload: any) => {
-      return Api().post(`/app/settings`, payload);
+      return Api().post(`/dashboard/settings`, payload);
     },
     {
       onSuccess: ({ payload: result }) => {

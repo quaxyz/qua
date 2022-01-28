@@ -50,7 +50,7 @@ const Page = ({ product }: any) => {
     );
 
     router.push({
-      pathname: `/[store]/cart`,
+      pathname: `/_store/[store]/cart`,
       query: { store: router.query.store },
     });
   };

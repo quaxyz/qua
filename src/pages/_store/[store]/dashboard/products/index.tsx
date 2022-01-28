@@ -53,7 +53,7 @@ function useDeleteProduct() {
       const signedContent = await signData(keyPair, data);
       console.log("Sig", signedContent);
 
-      return Api().post(`/app/products/delete`, {
+      return Api().post(`/dashboard/products/delete`, {
         address: account,
         digest: signedContent.digest,
         key: JSON.stringify(signedContent.publicKey),
@@ -115,7 +115,7 @@ const ActionMenu = ({ id, ButtonProps }: any) => {
         <Link
           as={MenuItem}
           border="none"
-          href={`/app/products/${id}`}
+          href={`/dashboard/products/${id}`}
           _hover={{ transform: "none", boxShadow: "none" }}
         >
           Edit
@@ -144,7 +144,7 @@ const Page = ({ initialData }: any) => {
     },
     queryFn: async ({ pageParam = 0 }) => {
       const { payload }: any = await Api().get(
-        `/app/products?cursor=${pageParam}`
+        `/dashboard/products?cursor=${pageParam}`
       );
 
       return payload;
@@ -162,7 +162,7 @@ const Page = ({ initialData }: any) => {
           </Heading>
 
           <Link
-            href="/app/products/new"
+            href="/dashboard/products/new"
             as={Button}
             variant="primary"
             leftIcon={<Plus set="bold" primaryColor="#ffffff" />}

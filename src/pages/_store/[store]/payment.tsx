@@ -202,7 +202,7 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
 
       if (!localShippingDetails) {
         router.push({
-          pathname: "/[store]/shipping",
+          pathname: "/_store/[store]/shipping",
           query: { store: router.query.store },
         });
 
@@ -243,7 +243,7 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
 
       // redirect to order page
       router.push({
-        pathname: "/[store]/orders/[id]",
+        pathname: "/_store/[store]/orders/[id]",
         query: { store: router.query.store, id: orderResult?.id },
       });
     } catch (e) {

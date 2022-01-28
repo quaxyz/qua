@@ -46,7 +46,7 @@ function useCancelOrder() {
       const signedContent = await signData(keyPair, data);
       console.log("Sig", signedContent);
 
-      return Api().post(`/app/orders/cancel`, {
+      return Api().post(`/dashboard/orders/cancel`, {
         address: account,
         digest: signedContent.digest,
         key: JSON.stringify(signedContent.publicKey),
@@ -109,7 +109,7 @@ function useFulfillOrder() {
       const signedContent = await signData(keyPair, data);
       console.log("Sig", signedContent);
 
-      return Api().post(`/app/orders/fulfill`, {
+      return Api().post(`/dashboard/orders/fulfill`, {
         address: account,
         digest: signedContent.digest,
         key: JSON.stringify(signedContent.publicKey),
@@ -172,7 +172,7 @@ const Page = (props: any) => {
 
   return (
     <Container maxW="100%" px={{ base: "4", md: "16" }} mb={8}>
-      <Link href="/app/orders" borderBottom="none">
+      <Link href="/dashboard/orders" borderBottom="none">
         <Stack
           direction="row"
           align="center"

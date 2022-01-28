@@ -21,7 +21,7 @@ export function useInitializeStoreAuth() {
     staleTime: Infinity,
     queryFn: async () => {
       const { payload } = await Api().get(
-        `/app/verify-owner?address=${account}`
+        `/dashboard/verify-owner?address=${account}`
       );
 
       return payload;

@@ -20,11 +20,12 @@ import { useRouter } from "next/router";
 import { Bag2 } from "react-iconly";
 import { CgMore } from "react-icons/cg";
 import { useEagerConnect } from "hooks/web3";
+import { useGetLink } from "hooks/utils";
 
 const navLinks = [
   {
     name: "Products",
-    url: "",
+    url: "/",
   },
   {
     name: "About",
@@ -44,6 +45,7 @@ const walletMenuLinks = [
 ];
 
 const CustomerLayout = ({ title, children }: any) => {
+  const getLink = useGetLink();
   const router = useRouter();
   const { account } = useWeb3React();
   const cartStore = useCart();
@@ -101,7 +103,7 @@ const CustomerLayout = ({ title, children }: any) => {
                   href={`${navLink.url}`}
                   borderBottom="none"
                   _hover={{ transform: "scale(1.05)" }}
-                  {...(router.asPath === `/${router.query?.store}${navLink.url}`
+                  {...(router.asPath.endsWith(navLink.url)
                     ? { textDecoration: "underline" }
                     : { color: "#000" })}
                 >
@@ -119,7 +121,7 @@ const CustomerLayout = ({ title, children }: any) => {
             <Wallet
               menuOptions={walletMenuLinks.map((m) => ({
                 ...m,
-                href: `/${router.query?.store}${m.href}`,
+                href: getLink(m.href),
               }))}
               ButtonProps={{
                 variant: "primary",
@@ -201,7 +203,7 @@ const CustomerLayout = ({ title, children }: any) => {
             <Wallet
               menuOptions={walletMenuLinks.map((m) => ({
                 ...m,
-                href: `/${router.query?.store}${m.href}`,
+                href: getLink(m.href),
               }))}
               ButtonProps={{
                 variant: "outline",

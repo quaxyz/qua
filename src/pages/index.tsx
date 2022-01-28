@@ -118,7 +118,7 @@ const Home: NextPage = () => {
       </Container>
 
       <Container maxW="100%">
-        <Carousel centerMode interval={8000} infiniteLoop>
+        <Carousel centerMode interval={8000} infiniteLoop showThumbs={false}>
           <Box
             bgImage={{
               base: "url('/images/m_setup-store.png')",
@@ -127,7 +127,7 @@ const Home: NextPage = () => {
             bgPosition="center center"
             bgRepeat="no-repeat"
             bgSize="contain"
-            MaxW="100%"
+            maxW="100%"
             height="80vh"
             m="1"
           />
@@ -139,7 +139,7 @@ const Home: NextPage = () => {
             bgPosition="center center"
             bgRepeat="no-repeat"
             bgSize="contain"
-            MaxW="100%"
+            maxW="100%"
             height="80vh"
             m="1"
           />
@@ -151,7 +151,7 @@ const Home: NextPage = () => {
             bgPosition="center center"
             bgRepeat="no-repeat"
             bgSize="contain"
-            MaxW="100%"
+            maxW="100%"
             height="80vh"
             m="1"
           />
@@ -185,7 +185,7 @@ const Home: NextPage = () => {
       </Container>
 
       <Container maxW="100%">
-        <Carousel centerMode interval={8000} infiniteLoop>
+        <Carousel centerMode interval={8000} infiniteLoop showThumbs={false}>
           <Box
             bgImage={{
               base: "url('/images/m_product-view.png')",
@@ -194,7 +194,7 @@ const Home: NextPage = () => {
             bgPosition="center center"
             bgRepeat="no-repeat"
             bgSize="contain"
-            MaxW="100%"
+            maxW="100%"
             height="80vh"
             marginInline="12px"
           />
@@ -207,7 +207,7 @@ const Home: NextPage = () => {
             bgRepeat="no-repeat"
             bgSize="contain"
             marginInline="12px"
-            MaxW="100%"
+            maxW="100%"
             height="80vh"
           />
         </Carousel>
@@ -225,7 +225,7 @@ const Home: NextPage = () => {
           bgRepeat="no-repeat"
           bgSize="cover"
           // marginInline="12px"
-          MaxW="100%"
+          maxW="100%"
           px={{ base: "0", md: "64" }}
           py={{ base: "0", md: "24" }}
           // align="center"

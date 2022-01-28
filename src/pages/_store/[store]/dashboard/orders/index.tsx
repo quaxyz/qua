@@ -33,7 +33,7 @@ const Page = ({ initialData }: any) => {
     },
     queryFn: async ({ pageParam = 0 }) => {
       const { payload }: any = await Api().get(
-        `/app/orders?cursor=${pageParam}`
+        `/dashboard/orders?cursor=${pageParam}`
       );
       return payload;
     },
@@ -109,7 +109,7 @@ const Page = ({ initialData }: any) => {
                       </Text>
 
                       <Link
-                        href={`/app/orders/${data.id}`}
+                        href={`/dashboard/orders/${data.id}`}
                         fontSize="16px"
                         fontWeight={{ base: "400", md: "600" }}
                       >
@@ -206,7 +206,11 @@ const Page = ({ initialData }: any) => {
                 Add a product to your store to recieve orders
               </Text>
 
-              <Link as={Button} href={`/app/products/new`} variant="primary">
+              <Link
+                as={Button}
+                href={`/dashboard/products/new`}
+                variant="primary"
+              >
                 <Plus
                   set="bold"
                   primaryColor="#ffffff"
