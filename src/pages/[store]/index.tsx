@@ -1,3 +1,8 @@
+import React from "react";
+import prisma from "libs/prisma";
+import Api from "libs/api";
+import NextLink from "next/link";
+import type { GetServerSideProps } from "next";
 import {
   chakra,
   Container,
@@ -8,19 +13,15 @@ import {
   Link,
   LinkBox,
   LinkOverlay,
+  SimpleGrid,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import Api from "libs/api";
-import { formatCurrency } from "libs/currency";
-import prisma from "libs/prisma";
-import type { GetServerSideProps } from "next";
-import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
 import { useInfiniteQuery } from "react-query";
 import { useIntersection } from "react-use";
+import { formatCurrency } from "libs/currency";
 
 function useQueryProducts({ initialData }: any) {
   const intersectionRef = React.useRef(null);
@@ -95,9 +96,8 @@ const Page = ({ initialData }: any) => {
         alignItems="center"
         templateColumns={{
           base: "100%",
-          md: "repeat(4, 20rem)",
-          lg: "repeat(4, 20rem)",
-          xl: "repeat(6, 20rem)",
+          md: "repeat(auto-fit, 12rem)",
+          lg: "repeat(auto-fit, 18rem)",
         }}
       >
         {queryResp.data?.pages.map((page, idx) => (
@@ -107,7 +107,7 @@ const Page = ({ initialData }: any) => {
                 <LinkBox>
                   <chakra.section>
                     <Image
-                      boxSize={{ base: "100%", md: "20rem" }}
+                      boxSize={{ base: "100%", md: "12rem", lg: "18rem" }}
                       objectFit="cover"
                       src={data.images[0].url}
                       alt={data.name}
