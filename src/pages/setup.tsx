@@ -114,6 +114,7 @@ const Page: NextPage = () => {
 
     // sign and save data
     await createStore(formValue);
+    setSending(false);
   };
 
   return (
