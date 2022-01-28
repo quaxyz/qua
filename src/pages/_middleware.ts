@@ -63,7 +63,7 @@ export default function middleware(req: NextRequest) {
       }
     );
 
-    return NextResponse.rewrite(newPath);
+    return NextResponse.redirect(`https://${newPath}`);
   }
 
   // exclude public files and api routes
