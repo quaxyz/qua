@@ -129,7 +129,7 @@ const Variants = (props: {
   );
 };
 
-const Page = ({ product }: any) => {
+const Page = ({ product, categories }: any) => {
   const toast = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -483,11 +483,10 @@ const Page = ({ product }: any) => {
                   onChange={(value) =>
                     setFormValue({ ...formValue, category: value })
                   }
-                  defaultOptions={[
-                    { value: "clothing", label: "Clothing" },
-                    { value: "cosmetics", label: "Cosmetics" },
-                    { value: "food", label: "Food" },
-                  ]}
+                  defaultOptions={categories.map((category: string) => ({
+                    label: category,
+                    value: category,
+                  }))}
                 />
               </FormGroup>
             </chakra.article>
@@ -533,8 +532,23 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
   });
 
+  if (!product) {
+    return { notFound: true };
+  }
+
+  const allProducts = await prisma.product.findMany({
+    where: {
+      Store: { name: store },
+    },
+    select: {
+      category: true,
+    },
+  });
+  const categories = (allProducts || []).map((p) => p.category).filter(Boolean);
+
   return {
     props: {
+      categories,
       product: JSON.parse(JSON.stringify(product)),
       layoutProps: {
         title: "Edit Product",

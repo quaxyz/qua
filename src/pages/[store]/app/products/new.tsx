@@ -1,9 +1,9 @@
 import React from "react";
 import Api from "libs/api";
+import prisma from "libs/prisma";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import StoreDashboardLayout from "components/layouts/store-dashboard";
 import {
   Box,
   Button,
@@ -27,6 +27,7 @@ import {
   Textarea,
   useToast,
 } from "@chakra-ui/react";
+import StoreDashboardLayout from "components/layouts/store-dashboard";
 import { FilePicker } from "components/file-picker";
 import { FormGroup } from "components/form-group";
 import { CreateableSelectMenu } from "components/select";
@@ -124,7 +125,7 @@ const Variants = (props: { onChange: (variants: any[]) => void }) => {
   );
 };
 
-const Page = () => {
+const Page = ({ categories }: any) => {
   const toast = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -473,11 +474,10 @@ const Page = () => {
                   onChange={(value) =>
                     setFormValue({ ...formValue, category: value })
                   }
-                  defaultOptions={[
-                    { value: "clothing", label: "Clothing" },
-                    { value: "cosmetics", label: "Cosmetics" },
-                    { value: "food", label: "Food" },
-                  ]}
+                  defaultOptions={categories.map((category: string) => ({
+                    label: category,
+                    value: category,
+                  }))}
                 />
               </FormGroup>
             </chakra.article>
@@ -501,9 +501,21 @@ const Page = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const store = params?.store as string;
+  const allProducts = await prisma.product.findMany({
+    where: {
+      Store: { name: store },
+    },
+    select: {
+      category: true,
+    },
+  });
+  const categories = (allProducts || []).map((p) => p.category).filter(Boolean);
+
   return {
     props: {
+      categories,
       layoutProps: {
         title: "Add Product",
       },

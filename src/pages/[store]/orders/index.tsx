@@ -163,7 +163,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   const itemsIds: any[] = orders
     .map((o: any) => (o.items[0] || {}).productId)
-    .filter((i) => Boolean(i));
+    .filter(Boolean);
   const products = await prisma.product.findMany({
     where: {
       Store: {

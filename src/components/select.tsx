@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import _snakeCase from "lodash.snakecase";
+import _capitalize from "lodash.capitalize";
 import {
   Box,
   Button,
@@ -141,7 +142,16 @@ export const CreateableSelectMenu = ({
 }: CreateableSelectMenuProps) => {
   const styles = useStyleConfig("SelectMenu", { variant, size });
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [options, setOptions] = useState(props.defaultOptions);
+
+  const isValueInOptions = props.defaultOptions.find(
+    (option) => option.value === props.value
+  );
+  const [options, setOptions] = useState([
+    ...props.defaultOptions,
+    ...(isValueInOptions || !props.value?.length
+      ? []
+      : [{ value: props.value!, label: props.value! }]),
+  ]);
 
   const onInputChange = (e: any) => {
     e.preventDefault();
@@ -168,7 +178,9 @@ export const CreateableSelectMenu = ({
       <Box __css={styles} onClick={props.disabled ? undefined : onOpen}>
         <Stack w="100%" direction="row" align="center" justify="space-between">
           {props.value ? (
-            <Text>{options.find((o) => o.value === props.value)?.label}</Text>
+            <Text textTransform="capitalize">
+              {options.find((o) => o.value === props.value)?.label}
+            </Text>
           ) : (
             <Text color="rgb(0 0 0 / 12%)">
               {props.placeholder || "Select option"}
@@ -224,6 +236,7 @@ export const CreateableSelectMenu = ({
                     onClick={() => onItemSelect(option.value)}
                     size="lg"
                     variant="solid-outline"
+                    textTransform="capitalize"
                     isFullWidth
                   >
                     {option.label}
