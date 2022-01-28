@@ -89,7 +89,7 @@ const SelectMenu = ({
           />
           <ModalHeader
             borderBottom="1px solid rgb(0 0 0 / 24%)"
-            align="center"
+            align="flex-start"
             color="black"
             py={8}
           >
@@ -106,6 +106,7 @@ const SelectMenu = ({
                   variant="solid-outline"
                   isFullWidth
                   whiteSpace="initial"
+                  justifyContent="flex-start"
                 >
                   {option.label}
                 </Button>
