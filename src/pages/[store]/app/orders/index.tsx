@@ -206,11 +206,7 @@ const Page = ({ initialData }: any) => {
                 Add a product to your store to recieve orders
               </Text>
 
-              <Link
-                as={Button}
-                href={`/${router?.query.store}/app/products/new`}
-                variant="primary"
-              >
+              <Link as={Button} href={`/app/products/new`} variant="primary">
                 <Plus
                   set="bold"
                   primaryColor="#ffffff"

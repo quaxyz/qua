@@ -23,7 +23,6 @@ import { useInfiniteQuery } from "react-query";
 import { useIntersection } from "react-use";
 
 function useQueryProducts({ initialData }: any) {
-  const router = useRouter();
   const intersectionRef = React.useRef(null);
 
   const intersection = useIntersection(intersectionRef, {

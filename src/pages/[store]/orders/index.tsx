@@ -114,7 +114,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     select: { id: true, status: true, paymentStatus: true, items: true },
   });
 
-  const itemsIds: any[] = orders.map((o: any) => o.items[0].productId);
+  const itemsIds: any[] = orders.map((o: any) => (o.items[0] || {}).productId);
   const products = await prisma.product.findMany({
     where: {
       Store: {
@@ -138,15 +138,15 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     },
   });
 
-  let mappedOrders = orders.reduce((acc: any[], order) => {
-    const product = products.find(
-      (p) => p.id === ((order.items || [{}]) as any)[0].productId
+  let mappedOrders = products.reduce((acc: any[], product) => {
+    const order = orders.find(
+      (order) => product.id === ((order.items || [{}]) as any)[0].productId
     );
 
     acc.push({
-      id: order.id,
-      status: order.status,
-      paymentStatus: order.paymentStatus,
+      id: order?.id,
+      status: order?.status,
+      paymentStatus: order?.paymentStatus,
       product: {
         id: product?.id,
         name: product?.name,
