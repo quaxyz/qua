@@ -48,7 +48,7 @@ export default function middleware(req: NextRequest) {
     return NextResponse.rewrite(newPath);
   }
   if (storeFromDomain === "www" && pathname.startsWith("/_store")) {
-    const store = pathname.split("/")[1];
+    const store = pathname.split("/")[2];
     const newPath = `${hostname?.replace("www.", store)}${pathname.replace(
       "/_store",
       ""
