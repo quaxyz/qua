@@ -95,9 +95,9 @@ const Page = ({ initialData }: any) => {
         alignItems="center"
         templateColumns={{
           base: "100%",
-          md: "repeat(4, 1fr)",
-          lg: "repeat(4, 1fr)",
-          xl: "repeat(6, 1fr)",
+          md: "repeat(4, 20rem)",
+          lg: "repeat(4, 20rem)",
+          xl: "repeat(6, 20rem)",
         }}
       >
         {queryResp.data?.pages.map((page, idx) => (
@@ -107,7 +107,7 @@ const Page = ({ initialData }: any) => {
                 <LinkBox>
                   <chakra.section>
                     <Image
-                      boxSize={{ base: "100%", md: "100%" }}
+                      boxSize={{ base: "100%", md: "20rem" }}
                       objectFit="cover"
                       src={data.images[0].url}
                       alt={data.name}
