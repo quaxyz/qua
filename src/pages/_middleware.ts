@@ -17,28 +17,29 @@ export default function middleware(req: NextRequest) {
       : undefined;
 
   // Handle public routes
-  console.log("[middleware] handling public routes", {
-    storeFromDomain,
-    pathname,
-  });
-
   if (
     (!storeFromDomain || storeFromDomain === "www") &&
     !pathname.startsWith("/_store")
   ) {
-    console.log("[middleware] it's a public route, redirecting", {
-      storeFromDomain,
-      pathname,
-    });
     return NextResponse.next();
   }
 
   // Prevent security issues – users should not be able to canonically access
   // the pages/sites folder and its respective contents. This can also be done
   // via rewrites to a custom 404 page
-  if (storeFromDomain && pathname.startsWith("/_store")) {
+  if (
+    storeFromDomain &&
+    storeFromDomain !== "www" &&
+    pathname.startsWith("/_store")
+  ) {
     return NextResponse.rewrite(
       `${hostname}${pathname.replace("/_store", "")}`
+    );
+  }
+  if (storeFromDomain === "www" && pathname.startsWith("/_store")) {
+    const store = pathname.split("/")[1];
+    return NextResponse.rewrite(
+      `${hostname?.replace("www.", store)}${pathname.replace("/_store", "")}`
     );
   }
 
