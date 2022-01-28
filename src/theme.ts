@@ -29,6 +29,7 @@ export default extendTheme({
           textDecoration: "none",
           transform: "scale(1.02)",
         },
+        _focus: { boxShadow: "none" },
       },
     },
 
