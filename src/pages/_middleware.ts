@@ -49,10 +49,10 @@ export default function middleware(req: NextRequest) {
   }
   if (storeFromDomain === "www" && pathname.startsWith("/_store")) {
     const store = pathname.split("/")[2];
-    const newPath = `${hostname?.replace("www.", store)}${pathname.replace(
-      "/_store",
-      ""
-    )}`;
+    const newPath = `${hostname?.replace(
+      "www.",
+      `${store}.`
+    )}${pathname.replace("/_store", "")}`;
 
     console.log(
       "[middleware] its a store without subdomain, redirect to correct path",
