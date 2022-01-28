@@ -17,7 +17,16 @@ export default function middleware(req: NextRequest) {
       : undefined;
 
   // Handle public routes
+  console.log("[middleware] handling public routes", {
+    storeFromDomain,
+    pathname,
+  });
+
   if (!storeFromDomain && !pathname.startsWith("/_store")) {
+    console.log("[middleware] it's a public route, redirecting", {
+      storeFromDomain,
+      pathname,
+    });
     return NextResponse.next();
   }
 
