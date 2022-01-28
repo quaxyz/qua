@@ -171,9 +171,10 @@ const Page = (props: any) => {
             </Text>
             <Text>Total: ${order.totalAmount}</Text>
             <Text>Status: {order.status}</Text>
-            {order.status === "CANCELLED" && order.paymentStatus === "PAID" && (
-              <Button variant="link">Please contact seller for refund</Button>
-            )}
+
+            <Link color="green.500" fontSize="sm" href="/about">
+              Contact for refunds or complaints
+            </Link>
           </Stack>
 
           {order.status === "UNFULFILLED" && (
