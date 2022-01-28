@@ -8,7 +8,7 @@ export interface ICookie {
   address: string | null;
 }
 
-function fromBase64(s: string | undefined) {
+export function fromBase64(s: string | undefined) {
   const stringifiedCookie = Buffer.from(s || "", "base64").toString();
   const asObject = JSON.parse(stringifiedCookie || "{}");
 

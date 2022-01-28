@@ -70,6 +70,7 @@ function useCancelOrder() {
       onSuccess: ({ payload: result }) => {
         console.log("Result", result);
         queryClient.setQueryData(["order-details", result.id], result);
+        queryClient.invalidateQueries(["store-orders"]);
 
         toast({
           title: "Order cancel",

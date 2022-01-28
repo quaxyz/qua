@@ -13,7 +13,6 @@ import {
   Link,
   LinkBox,
   LinkOverlay,
-  SimpleGrid,
   Stack,
   Text,
 } from "@chakra-ui/react";
