@@ -71,7 +71,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const formatedOrders = [];
         for (let order of orders) {
           const product = products.find(
-            (p) => p.id === ((order.items || [{}]) as any)[0].productId
+            (p) => p.id === ((order.items as any)[0] || {}).productId
           );
           if (!product) continue;
 

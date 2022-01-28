@@ -164,6 +164,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const itemsIds: any[] = orders
     .map((o: any) => (o.items[0] || {}).productId)
     .filter(Boolean);
+
   const products = await prisma.product.findMany({
     where: {
       Store: {
@@ -190,7 +191,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const formatedOrders = [];
   for (let order of orders) {
     const product = products.find(
-      (p) => p.id === ((order.items || [{}]) as any)[0].productId
+      (p) => p.id === ((order.items as any)[0] || {}).productId
     );
     if (!product) continue;
 
