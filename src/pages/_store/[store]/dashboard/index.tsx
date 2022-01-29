@@ -387,9 +387,6 @@ const Page = ({ orders }: any) => {
                 <Text fontSize="xl" fontWeight="bold" color="#000">
                   No recent orders
                 </Text>
-                <Text fontSize="lg" pb="14px">
-                  Add a product to your store to recieve orders
-                </Text>
 
                 <Link
                   as={Button}
@@ -401,7 +398,7 @@ const Page = ({ orders }: any) => {
                     primaryColor="#ffffff"
                     style={{ marginRight: "14px" }}
                   />
-                  New Product
+                  Add Product
                 </Link>
               </Stack>
             </Stack>
