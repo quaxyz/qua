@@ -176,10 +176,13 @@ const DashboardLayout = ({ title, children }: any) => {
         >
           <Stack spacing={8} minH="100%">
             <Heading
+              as={Link}
+              href="/"
               textTransform="capitalize"
               fontWeight="800"
               fontSize="2xl"
               color="#fff"
+              border="none"
               px={3}
             >
               {router.query?.store}
@@ -258,10 +261,13 @@ const DashboardLayout = ({ title, children }: any) => {
             w="100%"
           >
             <Heading
+              as={Link}
+              href="/"
               fontWeight="800"
               fontSize="xl"
               color="#fff"
               textTransform="uppercase"
+              border="none"
             >
               {router.query?.store}
             </Heading>
