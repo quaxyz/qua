@@ -345,6 +345,22 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
 
               {shippingDetails?.deliveryMethod === "PICKUP" && (
                 <Stack direction="row" spacing={3} py={3} px={2}>
+                  <Link
+                    href={`mailto:${storeDetails.email}`}
+                    textTransform="capitalize"
+                    isExternal
+                  >
+                    email
+                  </Link>
+
+                  <Link
+                    href={`https://chat.blockscan.com/index?a=${storeDetails.owner}`}
+                    textTransform="capitalize"
+                    isExternal
+                  >
+                    blockscan
+                  </Link>
+
                   {Object.entries(storeDetails.socialLinks || {})
                     .filter(([_, value]: any) => value.length)
                     .map(([social, link]: any) => (
@@ -400,6 +416,22 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
                   borderLeft="none"
                   borderRight="none"
                 >
+                  <Link
+                    href={`mailto:${storeDetails.email}`}
+                    textTransform="capitalize"
+                    isExternal
+                  >
+                    email
+                  </Link>
+
+                  <Link
+                    href={`https://chat.blockscan.com/index?a=${storeDetails.owner}`}
+                    textTransform="capitalize"
+                    isExternal
+                  >
+                    blockscan
+                  </Link>
+
                   {Object.entries(storeDetails.socialLinks || {})
                     .filter(([_, value]: any) => value.length)
                     .map(([social, link]: any) => (
@@ -448,7 +480,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   const storeDetails = await prisma.store.findUnique({
     where: { name: store },
-    select: { deliveryFee: true, socialLinks: true },
+    select: { deliveryFee: true, socialLinks: true, email: true, owner: true },
   });
 
   const props: any = {

@@ -73,7 +73,27 @@ const Page = ({ storeDetails }: any) => {
               </Heading>
             </Box>
 
-            <Stack direction="row" spacing={2}>
+            <Stack direction="row" spacing={3}>
+              <Link
+                href={`mailto:${storeDetails.email}`}
+                color="#fff"
+                textTransform="uppercase"
+                fontSize="sm"
+                isExternal
+              >
+                email
+              </Link>
+
+              <Link
+                href={`https://chat.blockscan.com/index?a=${storeDetails.owner}`}
+                color="#fff"
+                textTransform="uppercase"
+                fontSize="sm"
+                isExternal
+              >
+                blockscan
+              </Link>
+
               {Object.entries(storeDetails.socialLinks || {})
                 .filter(([_, value]: any) => value.length)
                 .map(([social, link]: any) => (
