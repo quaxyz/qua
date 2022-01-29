@@ -291,7 +291,25 @@ const CustomerLayout = ({ title, isOwner, cart, children }: any) => {
                   : { color: "#000" })}
               >
                 <Stack direction="row" spacing={2} align="center">
-                  <Bag2 set="light" />
+                  <Box pos="relative">
+                    <Bag2 set="light" />
+                    {!cartStore.loadingCart && (
+                      <Center
+                        boxSize="20px"
+                        pos="absolute"
+                        top="-5px"
+                        left="12px"
+                        bgColor="#000"
+                        color="#fff"
+                        rounded="50%"
+                        p={2}
+                      >
+                        <Text fontSize="xs" lineHeight="1" color="inherit">
+                          {cartStore?.totalInCart}
+                        </Text>
+                      </Center>
+                    )}
+                  </Box>
                   <Text color="inherit" fontSize="inherit" fontWeight="600">
                     Cart
                   </Text>
