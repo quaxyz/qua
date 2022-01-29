@@ -22,9 +22,9 @@ import { useRouter } from "next/router";
 import { useWeb3React } from "@web3-react/core";
 import { useMutation } from "react-query";
 import { truncateAddress } from "libs/utils";
-import { getAddressFromCookie } from "libs/cookie";
 import { providers } from "ethers";
 import { domain, schemas } from "libs/constants";
+import { getLayoutProps } from "components/layouts/props";
 
 const useSaveDetails = () => {
   const router = useRouter();
@@ -268,30 +268,22 @@ const Page = ({ accountDetails }: any) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const store = ctx.params?.store as string;
-  const address = getAddressFromCookie(true, ctx);
+  let layoutProps = await getLayoutProps(ctx);
+  if (!layoutProps) return { notFound: true };
 
-  const storeDetails = await prisma.store.findUnique({
-    where: { name: store },
-    select: { id: true },
-  });
-
-  if (!storeDetails) {
-    return { notFound: true };
-  }
-
-  const props: any = {
+  let props: any = {
     layoutProps: {
+      ...layoutProps,
       title: "Account",
     },
   };
 
-  if (!address) {
+  if (!layoutProps.account) {
     return { props };
   }
 
   const user = await prisma.user.findUnique({
-    where: { address },
+    where: { address: props.layoutProps.account },
     select: { shippingDetails: true },
   });
   props.accountDetails = user?.shippingDetails;

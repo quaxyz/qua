@@ -12,7 +12,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import { getAddressFromCookie } from "libs/cookie";
+import { getLayoutProps } from "components/layouts/props";
 import { OrderStatus } from "components/order-pill";
 import { useIntersection } from "react-use";
 import { useInfiniteQuery } from "react-query";
@@ -142,21 +142,16 @@ const Page = ({ orders }: any) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const storeName = ctx.params?.store as string;
-  const address = getAddressFromCookie(true, ctx);
-
-  const store = await prisma.store.findUnique({
-    where: { name: storeName },
-    select: { id: true },
-  });
-
-  if (!store) {
-    return { notFound: true };
-  }
+  const store = ctx?.params?.store as string;
+  let layoutProps = await getLayoutProps(ctx);
+  if (!layoutProps) return { notFound: true };
 
   const orders = await prisma.order.findMany({
     take: 10,
-    where: { customerAddress: address || "", storeId: store?.id },
+    where: {
+      customerAddress: layoutProps?.account || "",
+      Store: { name: store },
+    },
     orderBy: { updatedAt: "desc" },
     select: { id: true, status: true, paymentStatus: true, items: true },
   });
@@ -168,7 +163,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const products = await prisma.product.findMany({
     where: {
       Store: {
-        id: store.id,
+        name: store,
       },
       id: {
         in: itemsIds,
@@ -211,6 +206,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     props: {
       orders: formatedOrders,
       layoutProps: {
+        ...layoutProps,
         title: "Orders",
       },
     },

@@ -44,11 +44,11 @@ const walletMenuLinks = [
   },
 ];
 
-const CustomerLayout = ({ title, children }: any) => {
+const CustomerLayout = ({ title, isOwner, cart, children }: any) => {
   const getLink = useGetLink();
   const router = useRouter();
   const { account } = useWeb3React();
-  const cartStore = useCart();
+  const cartStore = useCart(cart);
 
   // try to eagerly connect to an injected provider, if it exists and has granted access already
   useEagerConnect();
@@ -119,10 +119,20 @@ const CustomerLayout = ({ title, children }: any) => {
 
           <Stack direction="row" spacing={12} align="center">
             <Wallet
-              menuOptions={walletMenuLinks.map((m) => ({
-                ...m,
-                href: getLink(m.href),
-              }))}
+              menuOptions={[
+                ...(isOwner
+                  ? [
+                      {
+                        label: "Store Dashboard",
+                        href: getLink("/dashboard"),
+                      },
+                    ]
+                  : []),
+                ...walletMenuLinks.map((m) => ({
+                  ...m,
+                  href: getLink(m.href),
+                })),
+              ]}
               ButtonProps={{
                 variant: "primary",
                 leftIcon: account ? <Icon as={CgMore} mr={2} /> : undefined,
@@ -201,10 +211,20 @@ const CustomerLayout = ({ title, children }: any) => {
             </Link>
 
             <Wallet
-              menuOptions={walletMenuLinks.map((m) => ({
-                ...m,
-                href: getLink(m.href),
-              }))}
+              menuOptions={[
+                ...(isOwner
+                  ? [
+                      {
+                        label: "Store Dashboard",
+                        href: getLink("/dashboard"),
+                      },
+                    ]
+                  : []),
+                ...walletMenuLinks.map((m) => ({
+                  ...m,
+                  href: getLink(m.href),
+                })),
+              ]}
               ButtonProps={{
                 variant: "outline",
                 bg: " rgba(0, 0, 0, 0.04)",

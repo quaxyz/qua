@@ -1,29 +1,25 @@
 import React from "react";
 import prisma from "libs/prisma";
-import type { GetServerSideProps, NextPage } from "next";
-import { useRouter } from "next/router";
+import type { GetServerSideProps } from "next";
 import {
   Box,
   Button,
   chakra,
   Container,
-  Flex,
   Heading,
   Link,
-  Spacer,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
+import { getLayoutProps } from "components/layouts/props";
 import { mapSocialLink, truncateAddress } from "libs/utils";
 import { FiExternalLink } from "react-icons/fi";
 import { defaultCategories } from "libs/constants";
 
-const Page: NextPage = ({ storeDetails }: any) => {
-  const router = useRouter();
-
+const Page = ({ storeDetails }: any) => {
   return (
-    <CustomerLayout title={`About ${router.query.store}`}>
+    <>
       <chakra.header>
         <Box
           bgImage={`linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24)),url('${
@@ -157,12 +153,15 @@ const Page: NextPage = ({ storeDetails }: any) => {
           </Stack>
         )}
       </Container>
-    </CustomerLayout>
+    </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const store = (params?.store || "") as string;
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const store = ctx.params?.store as string;
+  const layoutProps = await getLayoutProps(ctx);
+
+  if (!layoutProps) return { notFound: true };
 
   const storeDetails = await prisma.store.findUnique({
     where: { name: store },
@@ -175,17 +174,16 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
   });
 
-  if (!storeDetails) {
-    return {
-      notFound: true,
-    };
-  }
-
   return {
     props: {
       storeDetails: JSON.parse(JSON.stringify(storeDetails)),
+      layoutProps: {
+        ...layoutProps,
+        title: `About ${store}`,
+      },
     },
   };
 };
 
+Page.Layout = CustomerLayout;
 export default Page;

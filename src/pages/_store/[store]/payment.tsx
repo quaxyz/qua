@@ -20,12 +20,12 @@ import { CostSummary } from "components/cost-summary";
 import { providers } from "ethers";
 import { useCartStore } from "hooks/useCart";
 import { domain, schemas } from "libs/constants";
-import { getAddressFromCookie } from "libs/cookie";
 import { mapSocialLink } from "libs/utils";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FcCheckmark } from "react-icons/fc";
 import { useMutation, useQuery } from "react-query";
+import { getLayoutProps } from "components/layouts/props";
 
 function pay({ name, email, amount }: any) {
   return new Promise((resolve, reject) => {
@@ -438,41 +438,33 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const store = ctx.params?.store as string;
-  const address = getAddressFromCookie(true, ctx);
+  const store = ctx?.params?.store as string;
+  let layoutProps = await getLayoutProps(ctx);
+  if (!layoutProps) return { notFound: true };
+
+  if (!layoutProps?.cart || layoutProps.cart.items.length === 0) {
+    return { notFound: true };
+  }
 
   const storeDetails = await prisma.store.findUnique({
     where: { name: store },
     select: { deliveryFee: true, socialLinks: true },
   });
-  if (!storeDetails) {
-    return { notFound: true };
-  }
-
-  const cart = await prisma.cart.findFirst({
-    where: {
-      store: { name: store },
-      owner: { address: address || "" },
-    },
-  });
-  console.log(cart?.items);
-  if (!cart || !(cart.items as any[]).length) {
-    return { notFound: true };
-  }
 
   const props: any = {
     storeDetails: JSON.parse(JSON.stringify(storeDetails)),
     layoutProps: {
+      ...layoutProps,
       title: "Payment",
     },
   };
 
-  if (!address) {
+  if (!layoutProps.account) {
     return { props };
   }
 
   const user = await prisma.user.findUnique({
-    where: { address },
+    where: { address: layoutProps.account },
     select: { shippingDetails: true },
   });
   props.shippingDetails = JSON.parse(JSON.stringify(user?.shippingDetails));

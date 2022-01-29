@@ -4,9 +4,9 @@ import { CartContext, CartItem } from "libs/cart";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
 
-const useCart = () => {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [subTotal, setSubtotal] = useState(0);
+const useCart = (props: any) => {
+  const [items, setItems] = useState<CartItem[]>(props?.items || []);
+  const [subTotal, setSubtotal] = useState(props?.total || 0);
 
   const [loadingCart, setLoadingCart] = useState(false);
   const [syncingCart, setSyncingCart] = useState(false);
@@ -15,24 +15,18 @@ const useCart = () => {
   const fetchCartItems = useCallback(async () => {
     setLoadingCart(true);
     try {
-      if (account) {
-        const { payload } = await Api().get(`/cart?address=${account}`);
-
-        setItems(payload.items);
-        setSubtotal(payload.total);
-      } else {
-        const locallyStoredCart = localStorage.getItem("cartItems");
-        if (locallyStoredCart) {
-          setItems(JSON.parse(locallyStoredCart).items);
-          setSubtotal(JSON.parse(locallyStoredCart).subtotal);
-        }
+      const locallyStoredCart = localStorage.getItem("cartItems");
+      if (locallyStoredCart) {
+        // TODO:: merge with current cart
+        setItems(JSON.parse(locallyStoredCart).items);
+        setSubtotal(JSON.parse(locallyStoredCart).subtotal);
       }
     } catch (error) {
       console.warn("Error retrieving cart. No items(s) found");
     } finally {
       setLoadingCart(false);
     }
-  }, [account]);
+  }, []);
 
   const syncLocalCartItem = useCallback(async () => {
     setSyncingCart(true);

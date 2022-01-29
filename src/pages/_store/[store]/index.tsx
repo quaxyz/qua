@@ -17,6 +17,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
+import { getLayoutProps } from "components/layouts/props";
 import { useRouter } from "next/router";
 import { useInfiniteQuery } from "react-query";
 import { useIntersection } from "react-use";
@@ -60,7 +61,6 @@ function useQueryProducts({ initialData }: any) {
 }
 
 const Page = ({ initialData }: any) => {
-  const router = useRouter();
   const getLink = useGetLink();
   const { ref, queryResp } = useQueryProducts({ initialData });
 
@@ -142,8 +142,10 @@ const Page = ({ initialData }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const store = params?.store as string;
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const store = ctx?.params?.store as string;
+  let layoutProps = await getLayoutProps(ctx);
+  if (!layoutProps) return { notFound: true };
 
   const data = await prisma.product.findMany({
     take: 12,
@@ -168,21 +170,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
   });
 
-  const storeDetails = await prisma.store.findUnique({
-    where: { name: store },
-    select: { name: true },
-  });
-
-  if (!storeDetails) {
-    return {
-      notFound: true,
-    };
-  }
-
   return {
     props: {
       initialData: JSON.parse(JSON.stringify(data)),
       layoutProps: {
+        ...layoutProps,
         title: `Products`,
       },
     },

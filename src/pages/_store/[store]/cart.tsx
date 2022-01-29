@@ -1,3 +1,7 @@
+import React from "react";
+import type { GetServerSideProps } from "next";
+import Api from "libs/api";
+import CustomerLayout from "components/layouts/customer-dashboard";
 import {
   Button,
   chakra,
@@ -12,16 +16,13 @@ import {
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import { CostSummary } from "components/cost-summary";
-import CustomerLayout from "components/layouts/customer-dashboard";
 import { Quantity } from "components/quantity";
 import { Wallet } from "components/wallet";
 import { useCartStore } from "hooks/useCart";
-import Api from "libs/api";
-import type { GetServerSideProps } from "next";
-import React from "react";
 import { Delete } from "react-iconly";
 import { useMutation, useQuery } from "react-query";
 import { useDebounce } from "react-use";
+import { getLayoutProps } from "components/layouts/props";
 
 const CartItem = ({ item }: any) => {
   const cartStore = useCartStore();
@@ -303,10 +304,14 @@ const Page = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  let layoutProps = await getLayoutProps(ctx);
+  if (!layoutProps) return { notFound: true };
+
   return {
     props: {
       layoutProps: {
+        ...layoutProps,
         title: "Cart",
       },
     },

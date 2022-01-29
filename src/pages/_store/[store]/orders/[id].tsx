@@ -16,6 +16,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
+import { getLayoutProps } from "components/layouts/props";
 import { ArrowLeft } from "react-iconly";
 import { parseJSON, format } from "date-fns";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -259,10 +260,12 @@ const Page = (props: any) => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const orderID = ctx.params?.id as string;
-  const storeName = ctx.params?.store as string;
+  const store = ctx?.params?.store as string;
+  let layoutProps = await getLayoutProps(ctx);
+  if (!layoutProps) return { notFound: true };
 
   const order = await prisma.order.findFirst({
-    where: { id: parseInt(orderID, 10), Store: { name: storeName } },
+    where: { id: parseInt(orderID, 10), Store: { name: store } },
     select: {
       id: true,
       hash: true,
@@ -273,7 +276,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       status: true,
     },
   });
-
   if (!order) {
     return { notFound: true };
   }
@@ -282,6 +284,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     props: {
       order: JSON.parse(JSON.stringify(order)),
       layoutProps: {
+        ...layoutProps,
         title: "Order Details",
       },
     },

@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { FileGallery } from "components/file-gallery";
 import CustomerLayout from "components/layouts/customer-dashboard";
+import { getLayoutProps } from "components/layouts/props";
 import { Quantity } from "components/quantity";
 import { useCartStore } from "hooks/useCart";
 import { formatCurrency } from "libs/currency";
@@ -179,9 +180,11 @@ const Page = ({ product }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const store = params?.store as string;
-  const id = params?.id as string;
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const id = ctx?.params?.id as string;
+  const store = ctx?.params?.store as string;
+  let layoutProps = await getLayoutProps(ctx);
+  if (!layoutProps) return { notFound: true };
 
   const product = await prisma.product.findFirst({
     where: {
@@ -215,6 +218,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     props: {
       product,
       layoutProps: {
+        ...layoutProps,
         title: product.name,
       },
     },
