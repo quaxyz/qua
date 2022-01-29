@@ -1,9 +1,13 @@
+import React from "react";
+import type { GetServerSideProps } from "next";
+import Link from "components/link";
+import prisma from "libs/prisma";
+import { useRouter } from "next/router";
 import {
   Button,
   chakra,
   Container,
   Heading,
-  Link,
   Stack,
   Tab,
   TabList,
@@ -17,11 +21,6 @@ import CustomerLayout from "components/layouts/customer-dashboard";
 import { Quantity } from "components/quantity";
 import { useCartStore } from "hooks/useCart";
 import { formatCurrency } from "libs/currency";
-import prisma from "libs/prisma";
-import type { GetServerSideProps } from "next";
-import NextLink from "next/link";
-import { useRouter } from "next/router";
-import React from "react";
 
 const Page = ({ product }: any) => {
   const router = useRouter();
@@ -58,25 +57,24 @@ const Page = ({ product }: any) => {
   return (
     <Container maxW="100%" px={{ base: "4", md: "16" }}>
       <chakra.div>
-        <NextLink href={`/${router?.query.store}`} passHref>
-          <Link
-            borderBottom="none"
-            _hover={{ transform: "scale(1.05)" }}
-            textDecoration="underline"
+        <Link
+          href="/"
+          borderBottom="none"
+          _hover={{ transform: "scale(1.05)" }}
+          textDecoration="underline"
+        >
+          <Stack
+            direction="row"
+            spacing={4}
+            px={4}
+            py={{ base: "4", md: "8" }}
+            align="center"
           >
-            <Stack
-              direction="row"
-              spacing={4}
-              px={4}
-              py={{ base: "4", md: "8" }}
-              align="center"
-            >
-              <Text fontSize="inherit" fontWeight="600">
-                Back
-              </Text>
-            </Stack>
-          </Link>
-        </NextLink>
+            <Text fontSize="inherit" fontWeight="600">
+              Back
+            </Text>
+          </Stack>
+        </Link>
       </chakra.div>
 
       <Stack

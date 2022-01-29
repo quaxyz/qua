@@ -172,7 +172,7 @@ const Page = ({ storeDetails }: any) => {
           borderRadius="50"
           userSelect="none"
         >
-          {data?.category}
+          {defaultCategories.find((c) => c.value === data?.category)?.label}
         </Text>
         <Heading as="h2" fontSize={{ base: "2rem", md: "4rem" }}>
           <Editable

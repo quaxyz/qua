@@ -3,7 +3,7 @@ import prisma from "libs/prisma";
 import Api from "libs/api";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import NextLink from "next/link";
+import Link from "components/link";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 import {
   Box,
@@ -16,7 +16,6 @@ import {
   FormLabel,
   Heading,
   Input,
-  Link,
   Stack,
   StackDivider,
   Tab,
@@ -237,15 +236,19 @@ const Page = ({ product, categories }: any) => {
   return (
     <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
       <Stack direction="row" justify="space-between" aling="center" mb={10}>
-        <NextLink href={`/dashboard/products/`} passHref>
-          <Stack as={Link} border="none" direction="row" alignItems="center">
-            <ArrowLeft set="light" />
+        <Stack
+          as={Link}
+          href="/dashboard/products"
+          border="none"
+          direction="row"
+          alignItems="center"
+        >
+          <ArrowLeft set="light" />
 
-            <Heading as="h2" fontSize="lg" fontWeight="600">
-              All Products
-            </Heading>
-          </Stack>
-        </NextLink>
+          <Heading as="h2" fontSize="lg" fontWeight="600">
+            All Products
+          </Heading>
+        </Stack>
 
         <Button variant="primary" onClick={onPublish} isLoading={saving}>
           Update

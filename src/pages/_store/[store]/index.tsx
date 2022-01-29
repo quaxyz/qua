@@ -181,7 +181,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   return {
     props: {
-      initialData: data,
+      initialData: JSON.parse(JSON.stringify(data)),
       layoutProps: {
         title: `Products`,
       },

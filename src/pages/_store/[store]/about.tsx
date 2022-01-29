@@ -17,6 +17,7 @@ import {
 import CustomerLayout from "components/layouts/customer-dashboard";
 import { mapSocialLink, truncateAddress } from "libs/utils";
 import { FiExternalLink } from "react-icons/fi";
+import { defaultCategories } from "libs/constants";
 
 const Page: NextPage = ({ storeDetails }: any) => {
   const router = useRouter();
@@ -61,7 +62,11 @@ const Page: NextPage = ({ storeDetails }: any) => {
                 mb="2"
                 borderRadius="50"
               >
-                {storeDetails.category}
+                {
+                  defaultCategories.find(
+                    (c) => c.value === storeDetails.category
+                  )?.label
+                }
               </Text>
               <Heading
                 as="h1"
