@@ -2,6 +2,7 @@ import React from "react";
 import prisma from "libs/prisma";
 import Api from "libs/api";
 import NextLink from "next/link";
+import Link from "components/link";
 import type { GetServerSideProps } from "next";
 import {
   chakra,
@@ -10,7 +11,6 @@ import {
   GridItem,
   Heading,
   Image,
-  Link,
   LinkBox,
   LinkOverlay,
   Stack,
@@ -71,25 +71,24 @@ const Page = ({ initialData }: any) => {
       mb={{ base: "8", md: "24" }}
     >
       <chakra.div>
-        <NextLink href={`/${router?.query.store}`} passHref>
-          <Link
-            borderBottom="none"
-            _hover={{ transform: "scale(1.05)" }}
-            textDecoration="underline"
+        <Link
+          href="/"
+          borderBottom="none"
+          _hover={{ transform: "scale(1.05)" }}
+          textDecoration="underline"
+        >
+          <Stack
+            direction="row"
+            spacing={4}
+            px={4}
+            py={{ base: "4", md: "8" }}
+            align="center"
           >
-            <Stack
-              direction="row"
-              spacing={4}
-              px={4}
-              py={{ base: "4", md: "8" }}
-              align="center"
-            >
-              <Text fontSize="inherit" fontWeight="600">
-                All
-              </Text>
-            </Stack>
-          </Link>
-        </NextLink>
+            <Text fontSize="inherit" fontWeight="600">
+              All
+            </Text>
+          </Stack>
+        </Link>
       </chakra.div>
 
       <Grid
