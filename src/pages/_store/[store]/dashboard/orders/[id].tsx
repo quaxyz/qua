@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 import { truncateAddress } from "libs/utils";
-import { ArrowLeft } from "react-iconly";
+import { ArrowLeft, InfoCircle } from "react-iconly";
 import { parseJSON, format } from "date-fns";
 import { formatCurrency } from "libs/currency";
 import { CostSummary } from "components/cost-summary";
@@ -301,24 +301,30 @@ const Page = (props: any) => {
             <CostSummary data={costSummary} />
 
             {order.status === "UNFULFILLED" && (
-              <Stack mt={4} direction="row" w="100%">
-                <Button
-                  onClick={() => fulfillOrder.mutate({ orderId: order.id })}
-                  isLoading={fulfillOrder.isLoading}
-                  variant="solid"
-                  width="100%"
-                >
-                  Fufill Order
-                </Button>
+              <Stack>
+                <Stack mt={4} direction="row" w="100%">
+                  <Button
+                    onClick={() => fulfillOrder.mutate({ orderId: order.id })}
+                    isLoading={fulfillOrder.isLoading}
+                    variant="solid"
+                    width="100%"
+                  >
+                    Fufill Order
+                  </Button>
 
-                <Button
-                  onClick={() => cancelOrder.mutate({ orderId: order.id })}
-                  isLoading={cancelOrder.isLoading}
-                  w="24rem"
-                  variant="solid-outline"
-                >
-                  Cancel Order
-                </Button>
+                  <Button
+                    onClick={() => cancelOrder.mutate({ orderId: order.id })}
+                    isLoading={cancelOrder.isLoading}
+                    w="24rem"
+                    variant="solid-outline"
+                  >
+                    Cancel Order
+                  </Button>
+                </Stack>
+                <Stack direction="row" align="center" py="4" userSelect="none">
+                  <InfoCircle set="bold" primaryColor="orange" />
+                  <Text>Careful - Fulfill only paid orders.</Text>
+                </Stack>
               </Stack>
             )}
           </Box>
