@@ -18,6 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         const store = query.store as string;
+        const category = query.category as string;
         const products = await prisma.product.findMany({
           // pagination
           take: 12,
@@ -28,6 +29,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           // query
           where: {
+            category,
             Store: {
               name: store as string,
             },

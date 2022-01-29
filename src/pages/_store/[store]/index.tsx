@@ -25,6 +25,7 @@ import { formatCurrency } from "libs/currency";
 import { useGetLink } from "hooks/utils";
 
 function useQueryProducts({ initialData }: any) {
+  const router = useRouter();
   const intersectionRef = React.useRef(null);
 
   const intersection = useIntersection(intersectionRef, {
@@ -34,12 +35,13 @@ function useQueryProducts({ initialData }: any) {
   });
 
   const queryResp = useInfiniteQuery({
-    queryKey: ["store-products"],
+    queryKey: ["store-products", router.query?.category],
     initialData: { pages: [initialData], pageParams: [] },
     staleTime: Infinity,
     queryFn: async ({ pageParam }) => {
-      const { payload }: any = await Api().get(`/products?cursor=${pageParam}`);
-
+      const { payload }: any = await Api().get(
+        `/products?cursor=${pageParam}&category=${router.query?.category}`
+      );
       return payload;
     },
     getNextPageParam: (lastPage: any) => {
@@ -60,7 +62,7 @@ function useQueryProducts({ initialData }: any) {
   };
 }
 
-const Page = ({ initialData }: any) => {
+const Page = ({ initialData, categories }: any) => {
   const getLink = useGetLink();
   const { ref, queryResp } = useQueryProducts({ initialData });
 
@@ -70,7 +72,7 @@ const Page = ({ initialData }: any) => {
       px={{ base: "4", md: "16" }}
       mb={{ base: "8", md: "24" }}
     >
-      <chakra.div>
+      <Stack direction="row" spacing={2}>
         <Link
           href="/"
           borderBottom="none"
@@ -89,7 +91,33 @@ const Page = ({ initialData }: any) => {
             </Text>
           </Stack>
         </Link>
-      </chakra.div>
+
+        {categories.map((category: string) => (
+          <Link
+            key={category}
+            href={`/?category=${category}`}
+            borderBottom="none"
+            _hover={{ transform: "scale(1.05)" }}
+            textDecoration="underline"
+          >
+            <Stack
+              direction="row"
+              spacing={4}
+              px={4}
+              py={{ base: "4", md: "8" }}
+              align="center"
+            >
+              <Text
+                textTransform="capitalize"
+                fontSize="inherit"
+                fontWeight="600"
+              >
+                {category}
+              </Text>
+            </Stack>
+          </Link>
+        ))}
+      </Stack>
 
       <Grid
         gap={{ base: 4, md: 10 }}
@@ -144,12 +172,15 @@ const Page = ({ initialData }: any) => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const store = ctx?.params?.store as string;
+  const category = ctx?.query?.category as string;
+
   let layoutProps = await getLayoutProps(ctx);
   if (!layoutProps) return { notFound: true };
 
   const data = await prisma.product.findMany({
     take: 12,
     where: {
+      category,
       Store: {
         name: store as string,
       },
@@ -170,9 +201,23 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     },
   });
 
+  const distinctCategories = await prisma.product.findMany({
+    distinct: ["category"],
+    where: {
+      Store: { name: store },
+    },
+    select: {
+      category: true,
+    },
+  });
+  const categories = (distinctCategories || [])
+    .map((p) => p.category)
+    .filter(Boolean);
+
   return {
     props: {
       initialData: JSON.parse(JSON.stringify(data)),
+      categories,
       layoutProps: {
         ...layoutProps,
         title: `Products`,

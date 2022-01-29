@@ -540,6 +540,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   }
 
   const allProducts = await prisma.product.findMany({
+    distinct: ["category"],
     where: {
       Store: { name: store },
     },

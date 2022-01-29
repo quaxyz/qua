@@ -507,6 +507,7 @@ const Page = ({ categories }: any) => {
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const store = params?.store as string;
   const allProducts = await prisma.product.findMany({
+    distinct: ["category"],
     where: {
       Store: { name: store },
     },
