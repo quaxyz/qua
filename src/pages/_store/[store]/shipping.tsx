@@ -282,22 +282,6 @@ const Page = ({ shippingDetails, storeDetails }: any) => {
                     borderLeft="none"
                     borderRight="none"
                   >
-                    <Link
-                      href={`mailto:${storeDetails.email}`}
-                      textTransform="capitalize"
-                      isExternal
-                    >
-                      email
-                    </Link>
-
-                    <Link
-                      href={`https://chat.blockscan.com/index?a=${storeDetails.owner}`}
-                      textTransform="capitalize"
-                      isExternal
-                    >
-                      blockscan
-                    </Link>
-
                     {Object.entries(storeDetails.socialLinks || {})
                       .filter(([_, value]: any) => value.length)
                       .map(([social, link]: any) => (
@@ -310,6 +294,14 @@ const Page = ({ shippingDetails, storeDetails }: any) => {
                           {social}
                         </Link>
                       ))}
+
+                    <Link
+                      href={`mailto:${storeDetails.email}`}
+                      textTransform="capitalize"
+                      isExternal
+                    >
+                      email
+                    </Link>
                   </Stack>
                 )}
               </Stack>
