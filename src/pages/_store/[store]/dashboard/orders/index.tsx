@@ -202,9 +202,6 @@ const Page = ({ initialData }: any) => {
               >
                 No recent orders
               </Text>
-              <Text fontSize={{ base: "md", md: "lg" }} pb="14px">
-                Add a product to your store to recieve orders
-              </Text>
 
               <Link
                 as={Button}
@@ -216,7 +213,7 @@ const Page = ({ initialData }: any) => {
                   primaryColor="#ffffff"
                   style={{ marginRight: "14px" }}
                 />
-                New Product
+                Add Product
               </Link>
             </Stack>
           </Stack>
