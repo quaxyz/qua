@@ -48,7 +48,8 @@ export default function middleware(req: NextRequest) {
         newPath,
       }
     );
-    return NextResponse.rewrite(newPath);
+
+    return NextResponse.redirect(`https://${newPath}`);
   }
   if (storeFromDomain === "www" && pathname.startsWith("/_store")) {
     const store = pathname.split("/")[2];
