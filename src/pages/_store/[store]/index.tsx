@@ -21,6 +21,7 @@ import { useRouter } from "next/router";
 import { useInfiniteQuery } from "react-query";
 import { useIntersection } from "react-use";
 import { formatCurrency } from "libs/currency";
+import { useGetLink } from "hooks/utils";
 
 function useQueryProducts({ initialData }: any) {
   const intersectionRef = React.useRef(null);
@@ -60,6 +61,7 @@ function useQueryProducts({ initialData }: any) {
 
 const Page = ({ initialData }: any) => {
   const router = useRouter();
+  const getLink = useGetLink();
   const { ref, queryResp } = useQueryProducts({ initialData });
 
   return (
@@ -112,10 +114,7 @@ const Page = ({ initialData }: any) => {
                       alt={data.name}
                     />
 
-                    <NextLink
-                      href={`/${router?.query.store}/products/${data.id}`}
-                      passHref
-                    >
+                    <NextLink href={getLink(`/products/${data.id}`)} passHref>
                       <LinkOverlay>
                         <Heading
                           as="h1"
