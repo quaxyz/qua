@@ -224,6 +224,15 @@ const Home: NextPage = () => {
         >
           Customers shop in a breath with ease.
         </Heading>
+        <Text
+          color="#000000"
+          opacity="0.72"
+          fontSize={{ base: "sm", md: "xl" }}
+          textAlign="center"
+          mb="2"
+        >
+          No bells and whistles - only good stuff
+        </Text>
       </Container>
 
       <Container maxW="100%" display={{ base: "none", md: "block" }}>
