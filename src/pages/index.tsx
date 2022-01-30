@@ -29,7 +29,7 @@ const Home: NextPage = () => {
           bgPosition="center center"
           bgRepeat="no-repeat"
           bgSize={{ base: "cover", md: "80% 120%" }}
-          mt="24"
+          mt={{ base: "12", md: "24" }}
         >
           <Container maxW="100%" py="20" centerContent>
             <Box maxW={{ base: "100%", md: "48rem" }} mb="8">
@@ -100,67 +100,109 @@ const Home: NextPage = () => {
         centerContent
       >
         <Text
-          fontSize={{ base: "sm", md: "xl" }}
+          fontSize={{ base: "md", md: "xl" }}
           // px={{ base: "2rem", md: "0" }}
-          textAlign="center"
+          textAlign={{ base: "center", md: "center" }}
           mb="2"
         >
-          <strong>Qua</strong> is decentralizing every store online
+          <strong>Qua</strong> is powering every store online
         </Text>
         <Heading
-          textAlign="center"
+          textAlign={{ base: "center", md: "center" }}
           color="#000000"
           size="md"
-          fontSize={{ base: "1.5rem", md: "36" }}
+          fontSize={{ base: "2xl", md: "36" }}
         >
-          Sell to your customers in 3 steps...
+          Reach your customers in 3 easy steps.
         </Heading>
       </Container>
 
-      <Container maxW="100%">
-        <Carousel centerMode interval={8000} infiniteLoop showThumbs={false}>
-          <Box
-            bgImage={{
-              base: "url('/images/m_setup-store.png')",
-              md: "url('/images/setup.png')",
-            }}
-            bgPosition="center center"
-            bgRepeat="no-repeat"
-            bgSize="contain"
-            maxW="100%"
-            height="80vh"
-            m="1"
-          />
-          <Box
-            bgImage={{
-              base: "url('/images/m_add-product.png')",
-              md: "url('/images/inventory.png')",
-            }}
-            bgPosition="center center"
-            bgRepeat="no-repeat"
-            bgSize="contain"
-            maxW="100%"
-            height="80vh"
-            m="1"
-          />
-          <Box
-            bgImage={{
-              base: "url('/images/m_fufill-orders.png')",
-              md: "url('/images/orders.png')",
-            }}
-            bgPosition="center center"
-            bgRepeat="no-repeat"
-            bgSize="contain"
-            maxW="100%"
-            height="80vh"
-            m="1"
-          />
+      <Stack maxW="100%" display={{ base: "none", md: "block" }}>
+        <Carousel
+          centerMode
+          interval={4000}
+          infiniteLoop
+          showThumbs={false}
+          showArrows={true}
+        >
+          <Stack w="100%" height="90vh" align="center" m="1">
+            <Image
+              paddingInline="12px"
+              w="100%"
+              h="auto"
+              src="/images/setup.png"
+              alt="Setup store"
+            />
+          </Stack>
+
+          <Stack w="100%" height="90vh" align="center" m="1">
+            <Image
+              paddingInline="12px"
+              w="100%"
+              h="auto"
+              src="/images/inventory.png"
+              alt="Add products"
+            />
+          </Stack>
+
+          <Stack w="100%" height="90vh" align="center" m="1">
+            <Image
+              paddingInline="12px"
+              w="100%"
+              h="auto"
+              src="/images/orders.png"
+              alt="Fufill orders"
+            />
+          </Stack>
         </Carousel>
-      </Container>
+      </Stack>
+
+      {/* Mobile display */}
+      <Stack maxW="100%" display={{ base: "block", md: "none" }}>
+        <Carousel
+          centerMode
+          interval={4000}
+          showThumbs={false}
+          showArrows={true}
+        >
+          <Stack w="100%" height="80vh" align="center" m="1">
+            <Image
+              paddingInline="12px"
+              boxSize="100%"
+              src="/images/m_setup-store.png"
+              alt="Setup store"
+            />
+          </Stack>
+
+          <Stack w="100%" height="80vh" align="center" m="1">
+            <Image
+              paddingInline="12px"
+              boxSize="100%"
+              src="/images/m_add-product.png"
+              alt="Add products"
+            />
+          </Stack>
+
+          <Stack w="100%" height="80vh" align="center" m="1">
+            <Image
+              paddingInline="12px"
+              boxSize="100%"
+              src="/images/m_fufill-orders.png"
+              alt="Fufill orders"
+            />
+          </Stack>
+        </Carousel>
+      </Stack>
+
       <Container maxW="100%" centerContent>
         <Flex p="4">
           <NextLink href="/setup" passHref>
-            <Button as={Link} variant="solid-outline" size="lg" width="348px">
+            <Button
+              as={Link}
+              variant="solid-outline"
+              size="lg"
+              width={{ base: "324px", md: "348px" }}
+            >
               Setup my store
             </Button>
           </NextLink>
@@ -174,17 +216,17 @@ const Home: NextPage = () => {
         centerContent
       >
         <Heading
-          textAlign="center"
+          textAlign={{ base: "center", md: "center" }}
           color="#000000"
           size="md"
           fontSize={{ base: "1.8rem", md: "36" }}
-          mb="4"
+          mb="2"
         >
           Customers shop in a breath with ease.
         </Heading>
       </Container>
 
-      <Container maxW="100%">
+      <Container maxW="100%" display={{ base: "none", md: "block" }}>
         <Carousel centerMode interval={8000} infiniteLoop showThumbs={false}>
           <Box
             bgImage={{
@@ -213,128 +255,62 @@ const Home: NextPage = () => {
         </Carousel>
       </Container>
 
+      {/* Mobile display */}
+      <Stack maxW="100%" display={{ base: "block", md: "none" }}>
+        <Carousel
+          centerMode
+          interval={4000}
+          showThumbs={false}
+          showArrows={true}
+        >
+          <Stack w="100%" height="80vh" align="center" m="1">
+            <Image
+              paddingInline="12px"
+              boxSize="100%"
+              src="/images/m_product-view.png"
+              alt="Setup store"
+            />
+          </Stack>
+
+          <Stack w="100%" height="80vh" align="center" m="1">
+            <Image
+              paddingInline="12px"
+              boxSize="100%"
+              src="/images/m_track.png"
+              alt="Add products"
+            />
+          </Stack>
+        </Carousel>
+      </Stack>
+
       <Container
-        maxW={{ base: "100%", md: "container.xl" }}
-        px={{ base: "0", md: "24" }}
-        py={{ base: "8", md: "48" }}
+        maxW="100%"
+        px={{ base: "0", md: "1rem" }}
+        pt={{ base: "16", md: "48" }}
         centerContent
       >
         <Stack
-          bgImage="radial-gradient(120.68% 530.23% at 80.3% -12.06%, rgba(253, 118, 203, 0.8) 25.18%, rgba(255, 172, 48, 0.8) 100%),url('/images/cta_bg.png')"
-          bgPosition="center center"
-          bgRepeat="no-repeat"
-          bgSize="cover"
-          // marginInline="12px"
-          maxW="100%"
-          px={{ base: "0", md: "64" }}
-          py={{ base: "0", md: "24" }}
-          // align="center"
-          pos="relative"
-          boxShadow="0px 10px 180px 10px rgba(253, 118, 203, 0.32)"
+          direction="column"
+          align="flex-end"
+          mb={{ base: "auto", md: "12rem" }}
+          pb={{ base: "12", md: "0" }}
         >
-          <Image
-            boxSize="4rem"
-            display={{ base: "block", md: "none" }}
-            objectFit="cover"
-            src="/svg/qua_mark_white.svg"
-            alt="Qua Mark"
-            pos="absolute"
-            right="2"
-            top="16"
-          />
-          <Image
-            boxSize="100"
-            display={{ base: "none", md: "block" }}
-            objectFit="cover"
-            src="/qua-mark-white.svg"
-            alt="Qua Mark"
-            pos="absolute"
-            right="12"
-            top="12"
-          />
-
-          <Stack pr={{ base: "0", md: "24" }} p={{ base: "8", md: "0" }}>
-            <Stack
-              direction="row"
-              color="#fff"
-              spacing={{ base: "4", md: "8" }}
+          <Stack>
+            <Heading
+              ml={{ base: "-4rem", md: "-4rem" }}
+              fontSize={{ base: "62px", md: "148px" }}
+              color="#000"
             >
-              <Text color="#fff" fontSize="lg">
-                Fast
-              </Text>
-              <Text color="#fff" fontSize="lg">
-                Global
-              </Text>
-              <Text color="#fff" fontSize="lg">
-                Secure
-              </Text>
-              <Text color="#fff" fontSize="lg">
-                interoperable
-              </Text>
-            </Stack>
-
-            <Stack py={5} spacing={{ base: "0", md: "0" }}>
-              <Text color="#000" fontSize="2xl" fontWeight="400">
-                The future of{" "}
-              </Text>
-              <Stack spacing={{ base: "4", md: "8" }}>
-                <Heading
-                  fontFamily="Darker Grotesque"
-                  fontSize={{ base: "4xl", md: "5xl" }}
-                  color="#000"
-                >
-                  payments it crypto!
-                </Heading>
-                <Heading
-                  fontFamily="Darker Grotesque"
-                  fontSize={{ base: "4xl", md: "5xl" }}
-                  color="#000"
-                >
-                  eCommerce It P2P!
-                </Heading>
-              </Stack>
-            </Stack>
-
-            <Stack py={5} spacing={{ base: "4", md: "4" }}>
-              <Text
-                color="#fff"
-                fontSize="lg"
-                fontWeight="600"
-                letterSpacing="0.5px"
-                textTransform="uppercase"
-              >
-                Join the revolution
-              </Text>
-              <Stack direction={{ base: "column", md: "row" }}>
-                <NextLink href="/setup" passHref>
-                  <Button
-                    as={Link}
-                    w={{ base: "100%", md: "15.5rem" }}
-                    variant="solid"
-                    bgColor="#fff"
-                    color="#000"
-                    size="lg"
-                    _hover={{ bgColor: "#fff" }}
-                  >
-                    Start selling
-                  </Button>
-                </NextLink>
-                <NextLink href="/stores" passHref>
-                  <Button
-                    as={Link}
-                    w={{ base: "100%", md: "15.5rem" }}
-                    variant="solid-outline"
-                    size="lg"
-                    textDecoration="2px underline"
-                    border="1px solid #000000"
-                    color="#000"
-                  >
-                    Go shopping
-                  </Button>
-                </NextLink>
-              </Stack>
-            </Stack>
+              Crypto.
+            </Heading>
+            <Heading fontSize={{ base: "62px", md: "148px" }} color="#000">
+              Fiat.
+            </Heading>
           </Stack>
+
+          <Text color="#000" fontSize={{ base: "16px", md: "24px" }}>
+            All the payment options you like
+          </Text>
         </Stack>
       </Container>
     </WebsiteLayout>
