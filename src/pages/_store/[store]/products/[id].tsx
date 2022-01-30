@@ -80,11 +80,16 @@ const Page = ({ product }: any) => {
 
       <Stack
         direction={{ base: "column", md: "row" }}
-        spacing={{ base: 8, md: 14 }}
+        spacing={{ base: 8, md: 12 }}
       >
         <FileGallery images={product.images} alt={product.name} />
 
-        <Stack w="full" flex={1}>
+        <Stack
+          w="full"
+          flex={1}
+          pl={{ base: "0", md: "16" }}
+          pt={{ base: "0", md: "8" }}
+        >
           <chakra.article p={2}>
             <Stack direction="column" py={{ base: "2", md: "4" }} spacing={4}>
               <Heading as="h1" size="lg" mb={4} fontWeight="300">
