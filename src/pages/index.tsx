@@ -113,7 +113,7 @@ const Home: NextPage = () => {
           size="md"
           fontSize={{ base: "2xl", md: "36" }}
         >
-          Reach your customers in 3 easy steps.
+          Reach your customers in 3 steps.
         </Heading>
       </Container>
 
