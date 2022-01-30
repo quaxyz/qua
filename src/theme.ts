@@ -12,6 +12,11 @@ export default extendTheme({
         color: "rgb(0 0 0 / 72%)",
         fontWeight: 500,
       },
+      button: {
+        _focus: {
+          boxShadow: "0 0 0 1px rgba(0, 0, 0, 0.2) !important",
+        },
+      },
     },
   },
 
@@ -52,6 +57,7 @@ export default extendTheme({
               backgroundColor: "rgb(0 0 0 / 90%)",
             },
           },
+          _focus: { boxShadow: "0 0 0 1.8px rgba(0, 0, 0, 0.4)" },
         },
 
         "primary-outline": {
@@ -72,12 +78,14 @@ export default extendTheme({
               backgroundColor: "rgb(0 0 0 / 95%)",
             },
           },
+          _focus: { boxShadow: "0 0 0 1.8px rgba(0, 0, 0, 0.4)" },
         },
 
         "solid-outline": {
           border: "1px solid rgb(0 0 0 / 26%)",
           backgroundColor: "transparent",
           rounded: "0px",
+          _focus: { boxShadow: "0 0 0 1.8px rgba(0, 0, 0, 0.4)" },
         },
 
         "solid-disabled": {
@@ -187,6 +195,7 @@ export default extendTheme({
           _hover: {
             borderColor: "rgb(0 0 0 / 60%)",
           },
+          _focus: { boxShadow: "0 0 0 1.8px rgba(0, 0, 0, 0.4)" },
         },
 
         flushed: {
@@ -197,6 +206,7 @@ export default extendTheme({
           _hover: {
             borderColor: "rgb(0 0 0 / 60%)",
           },
+          _focus: { boxShadow: "0 0 0 1.8px rgba(0, 0, 0, 0.4)" },
         },
       },
     },
@@ -282,6 +292,7 @@ export default extendTheme({
               bg: "#212121",
               borderColor: "#212121",
             },
+            _focus: { boxShadow: "0 0 0 1.8px rgba(0, 0, 0, 0.4)" },
           },
         },
         label: {
@@ -310,6 +321,7 @@ export default extendTheme({
               bg: "#000000",
               borderColor: "#000000",
             },
+            _focus: { boxShadow: "0 0 0 1.8px rgba(0, 0, 0, 0.4)" },
           },
         },
         label: {
