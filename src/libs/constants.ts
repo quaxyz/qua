@@ -51,5 +51,6 @@ export const defaultCategories = [
   { value: "home_kitchen", label: "Home & Kitchen" },
   { value: "industrial_scientific", label: "Industrial & Scientific" },
   { value: "pet_supplies", label: "Pet supplies" },
+  { value: "technology", label: "Technology" },
   { value: "toys_games", label: "Toys & Games" },
 ];
