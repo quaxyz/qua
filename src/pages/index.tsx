@@ -168,8 +168,7 @@ const Home: NextPage = () => {
           <Stack w="100%" height="80vh" align="center" m="1">
             <Image
               paddingInline="1rem"
-              w="100%"
-              h="auto"
+              boxSize="100%"
               src="/images/m_setup-store.png"
               alt="Setup store"
             />
@@ -178,8 +177,7 @@ const Home: NextPage = () => {
           <Stack w="100%" height="80vh" align="center" m="1">
             <Image
               paddingInline="1rem"
-              w="100%"
-              h="auto"
+              boxSize="100%"
               src="/images/m_add-product.png"
               alt="Add products"
             />
@@ -188,8 +186,7 @@ const Home: NextPage = () => {
           <Stack w="100%" height="80vh" align="center" m="1">
             <Image
               paddingInline="1rem"
-              w="100%"
-              h="auto"
+              boxSize="100%"
               src="/images/m_fufill-orders.png"
               alt="Fufill orders"
             />
@@ -281,8 +278,7 @@ const Home: NextPage = () => {
           <Stack w="100%" height="80vh" align="center" m="1">
             <Image
               paddingInline="1rem"
-              w="100%"
-              h="auto"
+              boxSize="100%"
               src="/images/m_product-view.png"
               alt="Product view"
             />
@@ -291,8 +287,7 @@ const Home: NextPage = () => {
           <Stack w="100%" height="80vh" align="center" m="1">
             <Image
               paddingInline="1rem"
-              w="100%"
-              h="auto"
+              boxSize="100%"
               src="/images/m_checkout.png"
               alt="One-Click Checkout"
             />
@@ -300,8 +295,7 @@ const Home: NextPage = () => {
           <Stack w="100%" height="80vh" align="center" m="1">
             <Image
               paddingInline="1rem"
-              w="100%"
-              h="auto"
+              boxSize="100%"
               src="/images/m_track.png"
               alt="Track package"
             />
