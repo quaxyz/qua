@@ -24,7 +24,7 @@ const Page = ({ storeDetails }: any) => {
         <Box
           bgImage={`linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24)),url('${
             storeDetails.image?.url ||
-            "/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg"
+            "/images/fakurian-design-GJKx5lhwU3M-unsplash.jpg"
           }')`}
           bgPosition="center center"
           bgRepeat="no-repeat"

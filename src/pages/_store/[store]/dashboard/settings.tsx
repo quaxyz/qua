@@ -152,7 +152,7 @@ const Page = ({ storeDetails }: any) => {
         flexDirection="column"
         // we could fetch unsplash image here based on store category
         bgImage={`linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24)),url('${
-          data?.image?.url || "/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg"
+          data?.image?.url || "/images/fakurian-design-GJKx5lhwU3M-unsplash.jpg"
         }')`}
         bgPosition="center center"
         bgRepeat="no-repeat"
