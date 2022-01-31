@@ -127,7 +127,7 @@ const Home: NextPage = () => {
         >
           <Stack w="100%" height="90vh" align="center" m="1">
             <Image
-              paddingInline="12px"
+              paddingInline="4rem"
               w="100%"
               h="auto"
               src="/images/setup.png"
@@ -137,7 +137,7 @@ const Home: NextPage = () => {
 
           <Stack w="100%" height="90vh" align="center" m="1">
             <Image
-              paddingInline="12px"
+              paddingInline="4rem"
               w="100%"
               h="auto"
               src="/images/inventory.png"
@@ -147,7 +147,7 @@ const Home: NextPage = () => {
 
           <Stack w="100%" height="90vh" align="center" m="1">
             <Image
-              paddingInline="12px"
+              paddingInline="4rem"
               w="100%"
               h="auto"
               src="/images/orders.png"
@@ -167,8 +167,9 @@ const Home: NextPage = () => {
         >
           <Stack w="100%" height="80vh" align="center" m="1">
             <Image
-              paddingInline="12px"
-              boxSize="100%"
+              paddingInline="1rem"
+              w="100%"
+              h="auto"
               src="/images/m_setup-store.png"
               alt="Setup store"
             />
@@ -176,8 +177,9 @@ const Home: NextPage = () => {
 
           <Stack w="100%" height="80vh" align="center" m="1">
             <Image
-              paddingInline="12px"
-              boxSize="100%"
+              paddingInline="1rem"
+              w="100%"
+              h="auto"
               src="/images/m_add-product.png"
               alt="Add products"
             />
@@ -185,8 +187,9 @@ const Home: NextPage = () => {
 
           <Stack w="100%" height="80vh" align="center" m="1">
             <Image
-              paddingInline="12px"
-              boxSize="100%"
+              paddingInline="1rem"
+              w="100%"
+              h="auto"
               src="/images/m_fufill-orders.png"
               alt="Fufill orders"
             />
@@ -238,10 +241,7 @@ const Home: NextPage = () => {
       <Container maxW="100%" display={{ base: "none", md: "block" }}>
         <Carousel centerMode interval={8000} infiniteLoop showThumbs={false}>
           <Box
-            bgImage={{
-              base: "url('/images/m_product-view.png')",
-              md: "url('/images/product-view.png')",
-            }}
+            bgImage="url('/images/product-view.png')"
             bgPosition="center center"
             bgRepeat="no-repeat"
             bgSize="contain"
@@ -250,10 +250,16 @@ const Home: NextPage = () => {
             marginInline="12px"
           />
           <Box
-            bgImage={{
-              base: "url('/images/m_track.png')",
-              md: "url('/images/track.png')",
-            }}
+            bgImage="url('/images/checkout.png')"
+            bgPosition="center center"
+            bgRepeat="no-repeat"
+            bgSize="contain"
+            marginInline="12px"
+            maxW="100%"
+            height="80vh"
+          />
+          <Box
+            bgImage="url('/images/track.png')"
             bgPosition="center center"
             bgRepeat="no-repeat"
             bgSize="contain"
@@ -274,19 +280,30 @@ const Home: NextPage = () => {
         >
           <Stack w="100%" height="80vh" align="center" m="1">
             <Image
-              paddingInline="12px"
-              boxSize="100%"
+              paddingInline="1rem"
+              w="100%"
+              h="auto"
               src="/images/m_product-view.png"
-              alt="Setup store"
+              alt="Product view"
             />
           </Stack>
 
           <Stack w="100%" height="80vh" align="center" m="1">
             <Image
-              paddingInline="12px"
-              boxSize="100%"
+              paddingInline="1rem"
+              w="100%"
+              h="auto"
+              src="/images/m_checkout.png"
+              alt="One-Click Checkout"
+            />
+          </Stack>
+          <Stack w="100%" height="80vh" align="center" m="1">
+            <Image
+              paddingInline="1rem"
+              w="100%"
+              h="auto"
               src="/images/m_track.png"
-              alt="Add products"
+              alt="Track package"
             />
           </Stack>
         </Carousel>
