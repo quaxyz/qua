@@ -389,7 +389,7 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
                   <Radio size="md" value="CRYPTO">
                     Pay now with Crypto (Recomended){"\n"}
                     <Text fontSize="xs">
-                      Paying with crypto makes you eligible for future rewards
+                      Pay with crypto makes you eligible for platform rewards.
                     </Text>
                   </Radio>
                   <Radio size="md" value="CONTACT_SELLER">
