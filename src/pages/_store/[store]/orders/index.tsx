@@ -4,6 +4,7 @@ import Api from "libs/api";
 import prisma from "libs/prisma";
 import { GetServerSideProps } from "next";
 import {
+  Box,
   chakra,
   Container,
   Heading,
@@ -60,6 +61,7 @@ const Page = ({ orders }: any) => {
     <Container
       maxW={{ base: "100%", md: "container.xl" }}
       px={{ base: "4", md: "16" }}
+      pb={{ base: "8", md: "16" }}
     >
       <Heading
         as="h3"
@@ -84,12 +86,14 @@ const Page = ({ orders }: any) => {
                 spacing={{ base: "2", md: "4" }}
                 border="0.5px solid rgba(0, 0, 0, 16%)"
               >
-                <Image
-                  boxSize={{ base: "6.25rem", md: "150px" }}
-                  objectFit="cover"
-                  src={order.product.image}
-                  alt={order.product.name}
-                />
+                <Box>
+                  <Image
+                    boxSize="100"
+                    objectFit="cover"
+                    src={order.product.image}
+                    alt={order.product.name}
+                  />
+                </Box>
 
                 <Stack
                   display="block"
@@ -120,6 +124,7 @@ const Page = ({ orders }: any) => {
                     href={`/orders/${order.id}`}
                     float={{ base: "none", md: "right" }}
                     position="relative"
+                    left="4"
                   >
                     <chakra.span
                       mt="1rem"

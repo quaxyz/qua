@@ -105,7 +105,7 @@ const Home: NextPage = () => {
           textAlign={{ base: "center", md: "center" }}
           mb="2"
         >
-          <strong>Qua</strong> is powering every store online
+          <strong>Qua</strong> is decentralizing every store online
         </Text>
         <Heading
           textAlign={{ base: "center", md: "center" }}

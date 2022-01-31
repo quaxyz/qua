@@ -195,9 +195,9 @@ const About: NextPage = () => {
             <br />
             We make iterative changes as we learn more about how people use the
             product and what the ecosystem wants from it.
-            <br /> <br /> The project is closed-source and is maintained and
+            {/* <br /> <br /> The project is closed-source and is maintained and
             developed by a small team of dedicated individuals. <br />
-            You can propose to be a part of it -{" "}
+            You can propose to be a part of it -{" "} */}
             <Link href="#" isExternal>
               Send Proposal
             </Link>

@@ -24,6 +24,7 @@ import { useWeb3React } from "@web3-react/core";
 import { useRouter } from "next/router";
 import { domain, schemas } from "libs/constants";
 import { providers } from "ethers";
+import base from "@emotion/styled/types/base";
 
 function useCancelOrder() {
   const { library, account } = useWeb3React();
@@ -173,7 +174,11 @@ const Page = (props: any) => {
             <Text>Total: ${order.totalAmount}</Text>
             <Text>Status: {order.status}</Text>
 
-            <Link color="green.500" fontSize="sm" href="/about">
+            <Link
+              color="green.500"
+              fontSize={{ base: "xs", md: "sm" }}
+              href="/about"
+            >
               Contact for refunds or complaints
             </Link>
           </Stack>
@@ -217,16 +222,7 @@ const Page = (props: any) => {
           >
             <Box>
               <Image
-                width="12rem"
-                height="6.25rem"
-                display={{ base: "block", md: "none" }}
-                objectFit="cover"
-                src={itemDetail.image}
-                alt={itemDetail.name}
-              />
-              <Image
                 boxSize="100"
-                display={{ base: "none", md: "block" }}
                 objectFit="cover"
                 src={itemDetail.image}
                 alt={itemDetail.name}
