@@ -46,7 +46,7 @@ const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
           <Text>
             Sign in with one of your crypto wallet providers or create a new
             wallet.{" "}
-            <Link isExternal href="https://www.google.com/">
+            <Link fontSize="sm" isExternal href="https://metamask.io/">
               What is a wallet?
             </Link>
           </Text>
