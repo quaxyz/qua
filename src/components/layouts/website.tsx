@@ -181,7 +181,7 @@ const WebsiteLayout: React.FC = ({ children }) => {
                     size="lg"
                     _hover={{ bgColor: "#fff" }}
                   >
-                    Start selling
+                    Setup my store
                   </Button>
                 </NextLink>
                 <NextLink href="/stores" passHref>
