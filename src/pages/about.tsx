@@ -223,8 +223,8 @@ const About: NextPage = () => {
           <Text fontSize="lg" fontWeight="400">
             You can come help us shape the future of what it means to
             participate in a decentralized economy -{" "}
-            <Link href="#" isExternal>
-              Send Proposal
+            <Link href="https://discord.gg/nK8Vgae2W8" isExternal>
+              Reach out to us
             </Link>
           </Text>
           <Spacer py="4" />
