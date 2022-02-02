@@ -1,6 +1,7 @@
 import * as ethers from "ethers";
 import { InjectedConnector } from "@web3-react/injected-connector";
 import { NetworkConnector } from "@web3-react/network-connector";
+import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 
 // CONSTANTS
 export const DEFAULT_CHAIN_ID = 1;
@@ -19,6 +20,12 @@ export const network = new NetworkConnector({
 
 export const injected = new InjectedConnector({
   supportedChainIds: [1, 4, 56, 97], // todo:: add more selected chain IDs
+});
+
+export const walletconnect = new WalletConnectConnector({
+  rpc: RPC_URLS,
+  qrcode: true,
+  pollingInterval: 12000,
 });
 
 // wallet info
@@ -40,6 +47,29 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     label: "Sign in with MetaMask",
     iconUrl: "/wallets/metamask.png",
   },
+  WALLET_CONNECT: {
+    connector: walletconnect,
+    name: "WalletConnect",
+    iconUrl: "/wallets/walletconnect.svg",
+    label: "Sign in with Wallet Connect",
+  },
+  // WALLET_LINK: {
+  //   connector: walletlink,
+  //   name: "Coinbase Wallet",
+  //   iconURL: "/wallets/coinbase.svg",
+  //   description: "Use Coinbase Wallet app on mobile device",
+  //   href: null,
+  //   color: "#315CF5",
+  // },
+  // COINBASE_LINK: {
+  //   name: "Open in Coinbase Wallet",
+  //   iconURL: "/wallets/coinbase.svg",
+  //   description: "Open in Coinbase Wallet app.",
+  //   href: "https://go.cb-w.com/mtUDhEZPy1",
+  //   color: "#315CF5",
+  //   mobile: true,
+  //   mobileOnly: true,
+  // },
 };
 
 // helper methods

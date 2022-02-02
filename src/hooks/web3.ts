@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { injected } from "libs/wallet";
+import { injected, SUPPORTED_WALLETS } from "libs/wallet";
 import { providers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 import { COOKIE_STORAGE_NAME, toBase64 } from "libs/cookie";
@@ -12,26 +12,26 @@ export function useEagerConnect() {
 
   useEffect(() => {
     console.log("[useEagerConnect]", "trying to activate");
-    injected
-      .isAuthorized()
-      .then((isAuthorized: boolean) => {
-        if (isAuthorized) {
-          activate(injected, undefined, true).catch((error) => {
-            console.error(
-              "[useEagerConnect]",
-              "Failed to eagerly activate",
-              error
-            );
-            setTried(true);
-          });
-        } else {
+    const defaultConnector = localStorage.getItem("DEFAULT_CONNECTOR");
+    const connectorInfo = Object.entries(SUPPORTED_WALLETS).find(
+      ([_, connector]) => connector.name === defaultConnector
+    );
+
+    if (connectorInfo) {
+      const connector = connectorInfo[1].connector;
+      console.log("[useEagerConnect]", "connector found", connector);
+
+      if (connector) {
+        activate(connector, undefined, true).catch((error) => {
+          console.error(
+            "[useEagerConnect]",
+            "Failed to eagerly activate",
+            error
+          );
           setTried(true);
-        }
-      })
-      .catch((error) => {
-        console.error("[useEagerConnect]", "Failed to eagerly activate", error);
-        setTried(true);
-      });
+        });
+      }
+    }
   }, []); // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag

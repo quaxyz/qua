@@ -107,7 +107,7 @@ const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
                   }
                   size="lg"
                   variant="solid-outline"
-                  onClick={() => onActivate(wallet.connector)}
+                  onClick={() => onActivate(wallet.connector, wallet.name)}
                   disabled={isPending}
                   isFullWidth
                 >
@@ -220,7 +220,7 @@ export const Wallet = ({
 
   const [pending, setPending] = React.useState<boolean>();
 
-  const tryActivate = async (connector?: any) => {
+  const tryActivate = async (connector?: any, name?: string) => {
     if (!connector) return;
 
     // close modal
@@ -233,6 +233,7 @@ export const Wallet = ({
       // close modal
       connectModal.onClose();
       console.log("[ConnectModal]", "Account activated", connector);
+      if (name) localStorage.setItem("DEFAULT_CONNECTOR", name);
     } catch (error) {
       if (connector === injected && error instanceof UnsupportedChainIdError) {
         await switchNetwork();
