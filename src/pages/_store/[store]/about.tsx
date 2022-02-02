@@ -199,7 +199,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       storeDetails: JSON.parse(JSON.stringify(storeDetails)),
       layoutProps: {
         ...layoutProps,
-        title: `About ${store}`,
+        title: `About`,
       },
     },
   };

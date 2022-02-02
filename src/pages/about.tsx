@@ -67,17 +67,27 @@ const About: NextPage = () => {
                 href="https://www.instagram.com/qua_xyz/"
                 color="#fff"
                 textTransform="uppercase"
-                fontSize="sm"
+                fontSize="xs"
                 isExternal
               >
                 Instagram
               </Link>{" "}
               <Spacer mx="2" />
               <Link
+                href="https://discord.gg/nK8Vgae2W8"
+                color="#fff"
+                textTransform="uppercase"
+                fontSize="xs"
+                isExternal
+              >
+                Discord
+              </Link>{" "}
+              <Spacer mx="2" />
+              <Link
                 href="https://twitter.com/qua_xyz"
                 color="#fff"
                 textTransform="uppercase"
-                fontSize="sm"
+                fontSize="xs"
                 isExternal
               >
                 Twitter
@@ -102,7 +112,7 @@ const About: NextPage = () => {
 
       <Container
         maxW={{ base: "100%", md: "container.xl" }}
-        pr={{ base: "none", md: "8rem" }}
+        pr={{ base: "none", md: "32rem" }}
         px={{ base: "4", md: "none" }}
         mb="8rem"
       >
@@ -117,51 +127,53 @@ const About: NextPage = () => {
           </Heading>
           <Text fontSize="lg" fontWeight="400">
             We&apos;re leveling the playing field in the e-commerce ecosystem by
-            providing small-medium businesses a peer-2-peer approach for selling
-            directly to their customers (with the tools they need)
+            providing small-medium brands a peer-2-peer approach for selling
+            directly to their customers without the hassle of maintaining a
+            website.
             <br />
             <br />
             We aim to achieve this by:
           </Text>
           <UnorderedList fontSize="lg" fontWeight="400" spacing="8">
             <ListItem>
-              Providing businesses with an online store they own where their
-              customers can easily find them to shop their products anytime
+              Establishing a decentralized network that enables brands to sell
+              products directly to their customers without ever competing
+              against an oversaturated field of other sellers.
             </ListItem>
 
             <ListItem>
-              Providing inventory management and analytics to help sellers
-              better manage their online business
+              Providing insights and inventory management to help sellers manage
+              their brand online.
             </ListItem>
 
             <ListItem>
-              Giving sellers the control over how they accept payments and
-              enabling crypto payment options
+              Giving control over how sellers accept payments and enabling
+              crypto payment options.
             </ListItem>
 
             <ListItem>
-              Bringing every business online with a seamless approach
+              Bringing every business online with a seamless approach.
             </ListItem>
 
             <ListItem>
-              Helping businesses make more profits online by providing
-              frictionless experiences for them and their customers
+              Helping brands make better profits by providing frictionless
+              online experiences for them and their customers.
             </ListItem>
           </UnorderedList>
           <Text fontSize="lg" fontWeight="400">
             We have some core principles that help us do this.
           </Text>
-          <Spacer py="4" />
+          <Spacer py="2" />
           <Heading as="h3" size="lg" textDecoration="underline" color="#000">
             Core principles
           </Heading>
           <Heading as="h4" size="md">
-            Ecommerce trade on qua network is P2P based
+            Ecommerce trade on Qua is P2P based
           </Heading>
           <Text fontSize="lg" fontWeight="400">
             We believe enabling the P2P approach fosters trust between sellers
-            and customers and it provides a huge benefit to businesses by
-            helping them stay connected with their customer base.
+            and customers, and it provides brands with the benefit of
+            maintaining a loyal customer base.
           </Text>
 
           <Heading as="h4" size="md">
@@ -169,12 +181,12 @@ const About: NextPage = () => {
           </Heading>
 
           <Text fontSize="lg" fontWeight="400">
-            We strive to be the place where sellers and buyers meet to do trade
-            online, and for that to work, we&apos;ll need to maintain the
-            product to be frictionless and less intrusive at best while making
-            sure users are in control of what they do on the network.
-            <br /> <br /> By keeping it this way, customers and sellers will be
-            able to use qua with their crypto wallets like{" "}
+            We envision establishing a network where sellers and buyers meet to
+            do trade online, and for that to work, we&apos;ll need to maintain a
+            less intrusive product at best while making sure users are in
+            control of their activities on the network <br /> <br /> By keeping
+            it this way, buyers and sellers will be able to use qua with their
+            crypto wallets like{" "}
             <Link href="https://metamask.io/" isExternal>
               metamask
             </Link>
@@ -191,15 +203,28 @@ const About: NextPage = () => {
           </Heading>
 
           <Text fontSize="lg" fontWeight="400">
-            Qua and the e-commerce ecosystem are constantly evolving.
-            <br />
-            We make iterative changes as we learn more about how people use the
-            product and what the ecosystem wants from it.
-            {/* <br /> <br /> The project is closed-source and is maintained and
-            developed by a small team of dedicated individuals. <br />
-            You can propose to be a part of it -{" "} */}
-            <Link href="#" isExternal>
-              Send Proposal
+            Qua and the e-commerce ecosystem are constantly evolving. We make
+            iterative changes as we learn more about how people use the product
+            and what the ecosystem wants from it.
+          </Text>
+          <Text fontSize="lg" fontWeight="400">
+            We&apos;re taking one step at a time into achieving a fully
+            decentralized, open-source censorship-resistant e-commerce platform
+            with zero to low network fees enabling brands to improve their
+            profit margin, as well as increase their respective market share by
+            offering lower prices than the competition selling on centralized
+            channels.
+          </Text>
+          <Text fontSize="lg" fontWeight="400">
+            At Qua, we prioritize privacy and economic freedom. Data is not
+            collected or sold. The team is actively developing the tools
+            necessary to enable this vision.
+          </Text>
+          <Text fontSize="lg" fontWeight="400">
+            You can come help us shape the future of what it means to
+            participate in a decentralized economy -{" "}
+            <Link href="https://discord.gg/nK8Vgae2W8" isExternal>
+              Reach out to us
             </Link>
           </Text>
           <Spacer py="4" />

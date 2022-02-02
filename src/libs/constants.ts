@@ -41,6 +41,7 @@ export const schemas = {
 export const defaultCategories = [
   { value: "arts_crafts", label: "Arts & Crafts" },
   { value: "books", label: "Books" },
+  { value: "brand", label: "Brand" },
   { value: "beauty_cosmetics", label: "Beauty & Cosmetics" },
   { value: "computer_electronics", label: "Computer & Electronics" },
   { value: "fashion_clothing", label: "Fashion & Clothing" },
