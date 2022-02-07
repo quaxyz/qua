@@ -136,7 +136,7 @@ const Page: NextPage = () => {
       </chakra.header>
 
       <chakra.main>
-        <Container maxW="container.lg" py={14}>
+        <Container maxW="container.lg" py={{ base: "8", md: "14" }}>
           <Stack
             direction={useBreakpointValue({ base: "column", md: "row" })}
             justify="space-between"
@@ -145,20 +145,20 @@ const Page: NextPage = () => {
           >
             <chakra.form flex="3" onSubmit={onSubmit}>
               <Text>
-                Welcome 🎉, <br />{" "}
+                <Text fontSize={{ base: "1rem", md: "1rem" }}>Welcome 🎉,</Text>
                 <Text
                   as="span"
                   fontWeight="bold"
-                  fontSize={{ base: "16px", md: "18px" }}
+                  fontSize={{ base: "1.125rem", md: "20px" }}
                 >
                   Let&apos;s set you up!
                 </Text>
               </Text>
 
-              <Stack py={12} spacing={12}>
+              <Stack py={{ base: "8", md: "12" }} spacing={12}>
                 <FormGroup
                   id="name"
-                  label="Store name"
+                  label="Brand name"
                   labelProps={{ variant: "flushed" }}
                   rightAddonText=".qua.xyz"
                 >

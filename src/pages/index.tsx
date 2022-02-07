@@ -3,337 +3,220 @@ import {
   Box,
   chakra,
   Container,
-  Flex,
   Heading,
   Image,
   Stack,
   Text,
   Link,
+  VStack,
+  Spacer,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import NextLink from "next/link";
-import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import WebsiteLayout from "components/layouts/website";
+import { Wallet } from "components/wallet";
 
 const Home: NextPage = () => {
   return (
-    <WebsiteLayout>
+    <>
       <Head>
-        <title>Decentralize ecommerce - Qua</title>
+        <title>Qua</title>
       </Head>
-      <chakra.header maxW="100%">
-        <Box
-          bgImage="url('/hedr-bg-home.svg')"
-          bgPosition="center center"
-          bgRepeat="no-repeat"
-          bgSize={{ base: "cover", md: "80% 120%" }}
-          mt={{ base: "12", md: "24" }}
+
+      <chakra.nav position="relative">
+        <Stack
+          align="center"
+          direction="row"
+          justify="space-between"
+          px={{ base: "4", md: "8rem" }}
+          py={{ base: "4", md: "8" }}
+          maxW="100%"
+          pos="absolute"
+          top="0"
+          left="0"
+          right="0"
+          zIndex="2"
         >
-          <Container maxW="100%" py="20" centerContent>
-            <Box maxW={{ base: "100%", md: "48rem" }} mb="8">
-              <Heading
-                textAlign="center"
-                color="#000000"
-                size="lg"
-                fontSize={{ base: "1.6rem", md: "64" }}
-                mb="4"
-              >
-                Connecting every bussiness to a customer
-              </Heading>
-              <Text
-                fontSize={{ base: "xl", md: "2xl" }}
-                px={{ base: "2", md: "0" }}
-                textAlign="center"
-              >
-                On the world&apos;s best P2P ecommerce stores
-              </Text>
-            </Box>
-
-            <Stack
-              display={{ base: "none", md: "flex" }}
-              direction="row"
-              width="100%"
-              justify="center"
-              align="center"
-              p="4"
-            >
-              <NextLink href="/stores" passHref>
-                <Button as={Link} variant="solid-outline" size="lg">
-                  Go Shopping
-                </Button>
-              </NextLink>
-              <NextLink href="/setup" passHref>
-                <Button as={Link} size="lg">
-                  Setup my store
-                </Button>
-              </NextLink>
-            </Stack>
-
-            <Stack
-              display={{ base: "flex", md: "none" }}
-              direction="row"
-              justify="center"
-              width="100%"
-              align="center"
-            >
-              <NextLink href="/stores" passHref>
-                <Button as={Link} variant="solid-outline" size="lg">
-                  Go Shopping
-                </Button>
-              </NextLink>
-              <NextLink href="/setup" passHref>
-                <Button as={Link} size="lg">
-                  Setup my store
-                </Button>
-              </NextLink>
-            </Stack>
-          </Container>
-        </Box>
-      </chakra.header>
-
-      <Container
-        maxW="100%"
-        pt="20"
-        mb={{ base: "2rem", md: "4rem" }}
-        centerContent
-      >
-        <Text
-          fontSize={{ base: "md", md: "xl" }}
-          // px={{ base: "2rem", md: "0" }}
-          textAlign={{ base: "center", md: "center" }}
-          mb="2"
-        >
-          <strong>Qua</strong> is decentralizing every store online
-        </Text>
-        <Heading
-          textAlign={{ base: "center", md: "center" }}
-          color="#000000"
-          size="md"
-          fontSize={{ base: "2xl", md: "36" }}
-        >
-          Reach your customers in 3 steps.
-        </Heading>
-      </Container>
-
-      <Stack maxW="100%" display={{ base: "none", md: "block" }}>
-        <Carousel
-          centerMode
-          interval={4000}
-          infiniteLoop
-          showThumbs={false}
-          showArrows={true}
-        >
-          <Stack w="100%" height="90vh" align="center" m="1">
-            <Image
-              paddingInline="4rem"
-              w="100%"
-              h="auto"
-              src="/images/setup.png"
-              alt="Setup store"
-            />
-          </Stack>
-
-          <Stack w="100%" height="90vh" align="center" m="1">
-            <Image
-              paddingInline="4rem"
-              w="100%"
-              h="auto"
-              src="/images/inventory.png"
-              alt="Add products"
-            />
-          </Stack>
-
-          <Stack w="100%" height="90vh" align="center" m="1">
-            <Image
-              paddingInline="4rem"
-              w="100%"
-              h="auto"
-              src="/images/orders.png"
-              alt="Fufill orders"
-            />
-          </Stack>
-        </Carousel>
-      </Stack>
-
-      {/* Mobile display */}
-      <Stack maxW="100%" display={{ base: "block", md: "none" }}>
-        <Carousel
-          centerMode
-          interval={4000}
-          showThumbs={false}
-          showArrows={true}
-        >
-          <Stack w="100%" height="80vh" align="center" m="1">
-            <Image
-              paddingInline="1rem"
-              boxSize="100%"
-              src="/images/m_setup-store.png"
-              alt="Setup store"
-            />
-          </Stack>
-
-          <Stack w="100%" height="80vh" align="center" m="1">
-            <Image
-              paddingInline="1rem"
-              boxSize="100%"
-              src="/images/m_add-product.png"
-              alt="Add products"
-            />
-          </Stack>
-
-          <Stack w="100%" height="80vh" align="center" m="1">
-            <Image
-              paddingInline="1rem"
-              boxSize="100%"
-              src="/images/m_fufill-orders.png"
-              alt="Fufill orders"
-            />
-          </Stack>
-        </Carousel>
-      </Stack>
-
-      <Container maxW="100%" centerContent>
-        <Flex p="4">
-          <NextLink href="/setup" passHref>
-            <Button
-              as={Link}
-              variant="solid-outline"
-              size="lg"
-              width={{ base: "324px", md: "348px" }}
-            >
-              Setup my store
-            </Button>
+          <NextLink href="/" passHref>
+            <a>
+              <Box pl={{ base: "0", md: "4rem" }}>
+                <Image
+                  src="/svg/qua_mark_black.svg"
+                  alt="Qua logo"
+                  layout="fixed"
+                  width={{ base: "3.75rem", md: "4.375rem" }}
+                  height={{ base: "3.75rem", md: "4.375rem" }}
+                />
+              </Box>
+            </a>
           </NextLink>
-        </Flex>
-      </Container>
+
+          <Wallet
+            ButtonProps={{
+              variant: "primary",
+              color: "#FFF",
+              rounded: "8px",
+              size: "md",
+            }}
+          />
+        </Stack>
+      </chakra.nav>
 
       <Container
         maxW="100%"
-        pt={{ base: "20", md: "12rem" }}
-        mb={{ base: "2rem", md: "4rem" }}
-        centerContent
-      >
-        <Heading
-          textAlign={{ base: "center", md: "center" }}
-          color="#000000"
-          size="md"
-          fontSize={{ base: "1.8rem", md: "36" }}
-          mb="2"
-        >
-          Customers shop in a breath with ease.
-        </Heading>
-        <Text
-          color="#000000"
-          opacity="0.72"
-          fontSize={{ base: "sm", md: "xl" }}
-          textAlign="center"
-          mb="2"
-        >
-          No bells and whistles - only good stuff
-        </Text>
-      </Container>
-
-      <Container maxW="100%" display={{ base: "none", md: "block" }}>
-        <Carousel centerMode interval={8000} infiniteLoop showThumbs={false}>
-          <Box
-            bgImage="url('/images/product-view.png')"
-            bgPosition="center center"
-            bgRepeat="no-repeat"
-            bgSize="contain"
-            maxW="100%"
-            height="80vh"
-            marginInline="12px"
-          />
-          <Box
-            bgImage="url('/images/checkout.png')"
-            bgPosition="center center"
-            bgRepeat="no-repeat"
-            bgSize="contain"
-            marginInline="12px"
-            maxW="100%"
-            height="80vh"
-          />
-          <Box
-            bgImage="url('/images/track.png')"
-            bgPosition="center center"
-            bgRepeat="no-repeat"
-            bgSize="contain"
-            marginInline="12px"
-            maxW="100%"
-            height="80vh"
-          />
-        </Carousel>
-      </Container>
-
-      {/* Mobile display */}
-      <Stack maxW="100%" display={{ base: "block", md: "none" }}>
-        <Carousel
-          centerMode
-          interval={4000}
-          showThumbs={false}
-          showArrows={true}
-        >
-          <Stack w="100%" height="80vh" align="center" m="1">
-            <Image
-              paddingInline="1rem"
-              boxSize="100%"
-              src="/images/m_product-view.png"
-              alt="Product view"
-            />
-          </Stack>
-
-          <Stack w="100%" height="80vh" align="center" m="1">
-            <Image
-              paddingInline="1rem"
-              boxSize="100%"
-              src="/images/m_checkout.png"
-              alt="One-Click Checkout"
-            />
-          </Stack>
-          <Stack w="100%" height="80vh" align="center" m="1">
-            <Image
-              paddingInline="1rem"
-              boxSize="100%"
-              src="/images/m_track.png"
-              alt="Track package"
-            />
-          </Stack>
-        </Carousel>
-      </Stack>
-
-      <Container
-        maxW="100%"
-        px={{ base: "0", md: "1rem" }}
-        pt={{ base: "16", md: "48" }}
-        centerContent
+        h={{ base: "100%", md: "100vh" }}
+        bgRepeat="no-repeat"
+        bgSize="cover"
+        bgPosition="-4rem -5rem"
+        bgImage="url(/bg.svg)"
+        position="relative"
       >
         <Stack
-          direction="column"
-          align="flex-end"
-          mb={{ base: "auto", md: "12rem" }}
-          pb={{ base: "12", md: "0" }}
+          direction="row"
+          justify="space-between"
+          align="center"
+          pl={{ base: "2", md: "8rem" }}
+          pr={{ base: "2", md: "5rem" }}
+          pb={{ base: "4rem", md: "16rem" }}
+          pt={{ base: "7rem", md: "12rem" }}
+          w="100%"
+          spacing="0.6rem"
         >
-          <Stack>
-            <Heading
-              ml={{ base: "-4rem", md: "-4rem" }}
-              fontSize={{ base: "62px", md: "148px" }}
-              color="#000"
+          <Stack w="100%" pl={{ base: "0", md: "4rem" }}>
+            <Stack maxW={{ base: "100%", md: "48rem" }} mb="8">
+              <Heading
+                color="#131415"
+                fontWeight="800"
+                fontSize={{ base: "1.8rem", md: "64" }}
+                mb="4"
+              >
+                Decentralizing the world of eCommerce
+              </Heading>
+              <Text
+                fontSize={{ base: "16px", md: "18px" }}
+                color="#131415"
+                opacity="0.72"
+              >
+                Qua makes it easy for brands and customers to trade online.
+                {/* Qua is the easiest place for brands and customers to do trade
+                online. */}
+              </Text>
+            </Stack>
+
+            <Stack
+              direction={{ base: "column", md: "row" }}
+              w="100%"
+              align={{ base: "left", md: "center" }}
+              spacing="4"
             >
-              Crypto.
-            </Heading>
-            <Heading fontSize={{ base: "62px", md: "148px" }} color="#000">
-              Fiat.
-            </Heading>
+              <NextLink href="/setup" passHref>
+                <Button as={Link} size="lg">
+                  Setup my brand
+                </Button>
+              </NextLink>
+              <NextLink href="/stores" passHref>
+                <Button as={Link} variant="solid-outline" size="lg">
+                  Go Shopping
+                </Button>
+              </NextLink>
+            </Stack>
           </Stack>
 
-          <Text color="#000" fontSize={{ base: "16px", md: "24px" }}>
-            All the payment options you like
+          <Stack
+            align="center"
+            justify="center"
+            spacing="12"
+            position="relative"
+            left="1rem"
+          >
+            <Stack
+              h={{ base: "80px", md: "100" }}
+              w="0.8px"
+              bgColor="rgba(0, 0, 0, 0.24)"
+            />
+            <VStack spacing="8">
+              <Link
+                href="https://www.instagram.com/qua_xyz/"
+                color="#000"
+                textTransform="uppercase"
+                fontSize="xs"
+                // transformOrigin="0 0"
+                transform="rotate(90deg)"
+                borderBottom="none"
+                isExternal
+              >
+                Instagram
+              </Link>{" "}
+              <Spacer mx="2" />
+              <Link
+                href="https://discord.gg/nK8Vgae2W8"
+                color="#000"
+                textTransform="uppercase"
+                fontSize="xs"
+                transform="rotate(90deg)"
+                borderBottom="none"
+                isExternal
+              >
+                Discord
+              </Link>{" "}
+              <Spacer mx="2" />
+              <Link
+                href="https://twitter.com/qua_xyz"
+                color="#000"
+                textTransform="uppercase"
+                fontSize="xs"
+                transform="rotate(90deg)"
+                borderBottom="none"
+                isExternal
+              >
+                Twitter
+              </Link>
+            </VStack>
+            <Stack
+              h={{ base: "80px", md: "100" }}
+              w="0.8px"
+              bgColor="rgba(0, 0, 0, 0.24)"
+            />
+          </Stack>
+        </Stack>
+
+        <Stack
+          direction={{ base: "column", md: "row" }}
+          alignItems={{ base: "flex-start", md: "center" }}
+          justify="space-between"
+          spacing={{ base: "0", md: "16" }}
+          w="100%"
+          px={{ base: "4", md: "12rem" }}
+        >
+          <Stack direction="row" spacing="12">
+            <NextLink href="/about" passHref>
+              <Link fontWeight="normal" color="inherit" fontSize="sm" as="span">
+                About Qua
+              </Link>
+            </NextLink>
+
+            <NextLink href="/stores" passHref>
+              <Link fontWeight="normal" color="inherit" fontSize="sm" as="span">
+                P2P Stores
+              </Link>
+            </NextLink>
+          </Stack>
+
+          <Text
+            display={{ base: "none", md: "block" }}
+            fontFamily="Darker Grotesque"
+            fontSize="24px"
+            fontWeight="600"
+            lineHeight="24px"
+          >
+            Qua is Permissionless.
+            <br />
+            Censorship-resistant.
           </Text>
         </Stack>
       </Container>
-    </WebsiteLayout>
+    </>
   );
 };
 

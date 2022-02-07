@@ -118,49 +118,43 @@ const About: NextPage = () => {
       >
         <Stack direction="column" spacing={{ base: "4", md: "8" }}>
           <Text fontSize="lg" fontWeight="600" color="#000">
-            Qua is a technology provider building a decentralized network for
-            the e-commerce ecosystem.
+            Qua is a technology provider decentralizing the eCommerce ecosystem.
           </Text>
           <Spacer py={{ base: "2", md: "4" }} />
           <Heading as="h3" size="lg" textDecoration="underline" color="#000">
             Our vision
           </Heading>
-          <Text fontSize="lg" fontWeight="400">
-            We&apos;re leveling the playing field in the e-commerce ecosystem by
-            providing small-medium brands a peer-2-peer approach for selling
-            directly to their customers without the hassle of maintaining a
-            website.
+          <Text fontSize={{ base: "1rem", md: "1.125rem" }} fontWeight="400">
+            To level the playing field in eCommerce by providing brands and
+            customers a peer-2-peer approach for trading directly online,
+            removing the hassle of maintaining a website for businesses.
             <br />
             <br />
             We aim to achieve this by:
           </Text>
-          <UnorderedList fontSize="lg" fontWeight="400" spacing="8">
+          <UnorderedList
+            fontSize={{ base: "1rem", md: "1.125rem" }}
+            fontWeight="400"
+            spacing="8"
+          >
             <ListItem>
-              Establishing a decentralized network that enables brands to sell
-              products directly to their customers without ever competing
-              against an oversaturated field of other sellers.
+              Establishing a decentralized network where peers can interact
+              directly with one another in a permissionless fashion.
             </ListItem>
 
             <ListItem>
-              Providing insights and inventory management to help sellers manage
-              their brand online.
+              Insights and inventory tracker to help sellers manage their brand
+              online.
             </ListItem>
 
             <ListItem>
-              Giving control over how sellers accept payments and enabling
-              crypto payment options.
+              Giving control over how peers choose to transact with either
+              crypto or fiat.
             </ListItem>
 
-            <ListItem>
-              Bringing every business online with a seamless approach.
-            </ListItem>
-
-            <ListItem>
-              Helping brands make better profits by providing frictionless
-              online experiences for them and their customers.
-            </ListItem>
+            <ListItem>Bringing every business online seamlessly.</ListItem>
           </UnorderedList>
-          <Text fontSize="lg" fontWeight="400">
+          <Text fontSize={{ base: "1rem", md: "1.125rem" }} fontWeight="400">
             We have some core principles that help us do this.
           </Text>
           <Spacer py="2" />
@@ -168,25 +162,26 @@ const About: NextPage = () => {
             Core principles
           </Heading>
           <Heading as="h4" size="md">
-            Ecommerce trade on Qua is P2P based
+            Ecommerce trade is P2P based
           </Heading>
-          <Text fontSize="lg" fontWeight="400">
+          <Text fontSize={{ base: "1rem", md: "1.125rem" }} fontWeight="400">
             We believe enabling the P2P approach fosters trust between sellers
             and customers, and it provides brands with the benefit of
             maintaining a loyal customer base.
           </Text>
 
           <Heading as="h4" size="md">
-            Qua utilizes web3 verification system
+            Qua utilizes web3 verification
           </Heading>
 
-          <Text fontSize="lg" fontWeight="400">
+          <Text fontSize={{ base: "1rem", md: "1.125rem" }} fontWeight="400">
             We envision establishing a network where sellers and buyers meet to
-            do trade online, and for that to work, we&apos;ll need to maintain a
-            less intrusive product at best while making sure users are in
-            control of their activities on the network <br /> <br /> By keeping
-            it this way, buyers and sellers will be able to use qua with their
-            crypto wallets like{" "}
+            do trade online. <br />
+            For that to work, we&apos;re tasked with maintaining a product that
+            is less intrusive at best, making sure peers are in control of all
+            their activities on the network <br /> <br /> By keeping it this
+            way, buyers and sellers will be able to use qua with their crypto
+            wallets like{" "}
             <Link href="https://metamask.io/" isExternal>
               metamask
             </Link>
@@ -202,27 +197,26 @@ const About: NextPage = () => {
             Qua continues to evolve
           </Heading>
 
-          <Text fontSize="lg" fontWeight="400">
+          <Text fontSize={{ base: "1rem", md: "1.125rem" }} fontWeight="400">
             Qua and the e-commerce ecosystem are constantly evolving. We make
             iterative changes as we learn more about how people use the product
             and what the ecosystem wants from it.
           </Text>
-          <Text fontSize="lg" fontWeight="400">
-            We&apos;re taking one step at a time into achieving a fully
-            decentralized, open-source censorship-resistant e-commerce platform
-            with zero to low network fees enabling brands to improve their
-            profit margin, as well as increase their respective market share by
-            offering lower prices than the competition selling on centralized
-            channels.
+          <Text fontSize={{ base: "1rem", md: "1.125rem" }} fontWeight="400">
+            We&apos;re deliberately working towards achieving a fully
+            decentralized, censorship-resistant eCommerce platform with zero to
+            low network fees enabling brands to improve their profit margin, as
+            well as increase their respective market share by offering lower
+            prices than the competition selling on centralized channels.
           </Text>
-          <Text fontSize="lg" fontWeight="400">
+          <Text fontSize={{ base: "1rem", md: "1.125rem" }} fontWeight="400">
             At Qua, we prioritize privacy and economic freedom. Data is not
             collected or sold. The team is actively developing the tools
             necessary to enable this vision.
           </Text>
-          <Text fontSize="lg" fontWeight="400">
+          <Text fontSize={{ base: "1rem", md: "1.125rem" }} fontWeight="400">
             You can come help us shape the future of what it means to
-            participate in a decentralized economy -{" "}
+            participate in a decentralized economy. <br /> <br />
             <Link href="https://discord.gg/nK8Vgae2W8" isExternal>
               Reach out to us
             </Link>

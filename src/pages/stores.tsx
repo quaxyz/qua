@@ -27,15 +27,20 @@ const Stores: NextPage = () => {
             <Box maxW={{ base: "100%", md: "48rem" }} mb="8">
               <Heading
                 textAlign="center"
-                color="#000000"
+                color="#131415"
                 size="lg"
-                fontSize={{ base: "1.5rem", md: "3rem" }}
+                fontSize={{ base: "1.8rem", md: "2rem" }}
                 mb="4"
               >
-                Shop from the best stores of your dreams
+                Shop from the best brands online
               </Heading>
-              <Text fontSize={{ base: "xl", md: "2xl" }} textAlign="center">
-                Browse and shop directly from a collection of businesses{" "}
+              <Text
+                fontSize={{ base: "1.125rem", md: "1.5rem" }}
+                textAlign="center"
+                color="#131415"
+                opacity="0.72"
+              >
+                What are you searching for?{" "}
               </Text>
             </Box>
 
