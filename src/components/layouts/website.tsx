@@ -4,14 +4,10 @@ import NextLink from "next/link";
 import {
   Box,
   chakra,
-  Flex,
   List,
   Link,
   ListItem,
   Stack,
-  Tab,
-  TabList,
-  Tabs,
   Heading,
   Button,
   Text,
@@ -25,55 +21,38 @@ const WebsiteLayout: React.FC = ({ children }) => {
   const router = useRouter();
 
   return (
-    <div>
+    <>
       <chakra.nav
         display={{ base: "none", md: "block" }}
         borderBottom="1px solid rgba(0, 0, 0, 0.08)"
+        position="relative"
       >
         <Stack
           align="center"
           direction="row"
           justify="space-between"
-          px="4rem"
+          px="8rem"
+          py="2"
           maxW="100%"
+          // pos="absolute"
+          // top="0"
+          // left="0"
+          // right="0"
+          // zIndex="2"
         >
           <NextLink href="/" passHref>
             <a>
-              <Image
-                src="/logo.svg"
-                alt="Qua logo"
-                layout="fixed"
-                width={100}
-                height={100}
-              />
+              <Box>
+                <Image
+                  src="/svg/qua_mark_black.svg"
+                  alt="Qua logo"
+                  layout="fixed"
+                  width={60}
+                  height={60}
+                />
+              </Box>
             </a>
           </NextLink>
-
-          <Stack direction="row" align="center" spacing="8">
-            <NextLink href="/" passHref>
-              <Link
-                borderBottom="none"
-                _hover={{ transform: "scale(1.05)" }}
-                {...(router.asPath.includes("/")
-                  ? { textDecoration: "underline" }
-                  : { color: "#000" })}
-              >
-                Home
-              </Link>
-            </NextLink>
-
-            <NextLink href="/stores" passHref>
-              <Link
-                borderBottom="none"
-                _hover={{ transform: "scale(1.05)" }}
-                {...(router.asPath.includes("/stores")
-                  ? { textDecoration: "underline" }
-                  : { color: "#000" })}
-              >
-                P2P Stores
-              </Link>
-            </NextLink>
-          </Stack>
 
           <Wallet
             ButtonProps={{
@@ -101,11 +80,11 @@ const WebsiteLayout: React.FC = ({ children }) => {
           <NextLink href="/" passHref>
             <a>
               <Image
-                src="/logo.svg"
+                src="/svg/qua_mark_black.svg"
                 alt="Qua logo"
                 layout="fixed"
-                width={80}
-                height={80}
+                width={60}
+                height={60}
               />
             </a>
           </NextLink>
@@ -161,15 +140,6 @@ const WebsiteLayout: React.FC = ({ children }) => {
               py={{ base: "4", md: "12" }}
               spacing={{ base: "4", md: "4" }}
             >
-              <Text
-                color="#fff"
-                fontSize={{ base: "sm", md: "lg" }}
-                fontWeight="600"
-                letterSpacing="0.5px"
-                textTransform="uppercase"
-              >
-                Join the revolution
-              </Text>
               <Stack direction={{ base: "column", md: "row" }}>
                 <NextLink href="/setup" passHref>
                   <Button
@@ -181,7 +151,7 @@ const WebsiteLayout: React.FC = ({ children }) => {
                     size="lg"
                     _hover={{ bgColor: "#fff" }}
                   >
-                    Setup my store
+                    Setup my brand
                   </Button>
                 </NextLink>
                 <NextLink href="/stores" passHref>
@@ -203,7 +173,6 @@ const WebsiteLayout: React.FC = ({ children }) => {
 
           <Stack justify="space-between" spacing={{ base: "8", md: "16" }}>
             <Image
-              // src="/qua-mark-white.svg"
               src="/svg/qua_mark_white.svg"
               alt="Qua Mark"
               layout="fixed"
@@ -254,7 +223,7 @@ const WebsiteLayout: React.FC = ({ children }) => {
           </NextLink>
         </Stack>
       </chakra.nav>
-    </div>
+    </>
   );
 };
 
