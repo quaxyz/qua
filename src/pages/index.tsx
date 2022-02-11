@@ -21,7 +21,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Qua</title>
+        <title>Qua | Decentralized eCommerce</title>
       </Head>
 
       <chakra.nav position="relative">
