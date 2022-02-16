@@ -98,7 +98,8 @@ const Home: NextPage = () => {
                 color="#131415"
                 opacity="0.72"
               >
-                Qua makes it easy for brands and customers to trade online.
+                {/* Qua makes it easy for brands and customers to trade online. */}
+                Qua enables peer-to-peer trade between buyers and sellers.
                 {/* Qua is the easiest place for brands and customers to do trade
                 online. */}
               </Text>
@@ -112,7 +113,7 @@ const Home: NextPage = () => {
             >
               <NextLink href="/setup" passHref>
                 <Button as={Link} size="lg">
-                  Setup my brand
+                  Setup my store
                 </Button>
               </NextLink>
               <NextLink href="/stores" passHref>
