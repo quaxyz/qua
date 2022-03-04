@@ -54,14 +54,14 @@ const WebsiteLayout: React.FC = ({ children }) => {
             </a>
           </NextLink>
 
-          <Wallet
-            ButtonProps={{
-              variant: "primary",
-              color: "#FFF",
-              rounded: "8px",
-              size: "md",
-            }}
-          />
+          <Stack>
+            <NextLink href="/" passHref>
+              <Link>Log in</Link>
+            </NextLink>
+            <NextLink href="/" passHref>
+              <Link>Register</Link>
+            </NextLink>
+          </Stack>
         </Stack>
       </chakra.nav>
 
@@ -151,7 +151,7 @@ const WebsiteLayout: React.FC = ({ children }) => {
                     size="lg"
                     _hover={{ bgColor: "#fff" }}
                   >
-                    Setup my brand
+                    Get Started
                   </Button>
                 </NextLink>
                 <NextLink href="/stores" passHref>

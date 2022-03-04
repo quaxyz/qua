@@ -82,7 +82,7 @@ export default extendTheme({
         },
 
         "solid-outline": {
-          border: "1px solid rgb(0 0 0 / 26%)",
+          border: "1px solid rgba(19, 20, 21, 80%)",
           backgroundColor: "transparent",
           rounded: "0px",
           _focus: { boxShadow: "0 0 0 1.8px rgba(0, 0, 0, 0.4)" },

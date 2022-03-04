@@ -52,14 +52,14 @@ const Home: NextPage = () => {
             </a>
           </NextLink>
 
-          <Wallet
-            ButtonProps={{
-              variant: "primary",
-              color: "#FFF",
-              rounded: "8px",
-              size: "md",
-            }}
-          />
+          <Stack direction="row" spacing="8">
+            <NextLink href="/" passHref>
+              <Link>Log in</Link>
+            </NextLink>
+            <NextLink href="/setup" passHref>
+              <Link>Sign up</Link>
+            </NextLink>
+          </Stack>
         </Stack>
       </chakra.nav>
 
@@ -113,7 +113,7 @@ const Home: NextPage = () => {
             >
               <NextLink href="/setup" passHref>
                 <Button as={Link} size="lg">
-                  Setup my store
+                  Get Started{" "}
                 </Button>
               </NextLink>
               <NextLink href="/stores" passHref>
@@ -204,7 +204,7 @@ const Home: NextPage = () => {
             </NextLink>
           </Stack>
 
-          <Text
+          {/* <Text
             display={{ base: "none", md: "block" }}
             fontFamily="Darker Grotesque"
             fontSize="24px"
@@ -214,7 +214,7 @@ const Home: NextPage = () => {
             Qua is Permissionless.
             <br />
             Censorship-resistant.
-          </Text>
+          </Text> */}
         </Stack>
       </Container>
     </>
