@@ -129,9 +129,8 @@ const Page: NextPage = () => {
       </Head>
 
       <chakra.header
-        // borderBottom="1px"
-        // borderColor="rgba(0, 0, 0, 0.08)"
-        pos="fixed"
+        borderBottom={{ base: "1px solid rgba(0, 0, 0, 0.08)", md: "none" }}
+        pos={{ base: "relative", md: "fixed" }}
         top="0"
         w="100%"
         zIndex="2"
@@ -142,7 +141,18 @@ const Page: NextPage = () => {
           py={{ base: "4", md: "8" }}
         >
           <Stack direction="row" alignItems="center" justify="space-between">
-            <Image src="/svg/qua_mark_white.svg" boxSize="70" alt="Qua logo" />
+            <Image
+              src="/svg/qua_mark_white.svg"
+              display={{ base: "none", md: "block" }}
+              boxSize="70"
+              alt="Qua logo"
+            />
+            <Image
+              src="/svg/qua_mark_black.svg"
+              boxSize="50"
+              display={{ base: "block", md: "none" }}
+              alt="Qua logo"
+            />
 
             <Stack direction="row" spacing="8">
               <NextLink href="/" passHref>
@@ -156,10 +166,10 @@ const Page: NextPage = () => {
       <Container maxW="100%" p="0" m="0">
         <Stack direction={{ base: "column", md: "row" }} align="center">
           <chakra.aside
-            display={{ base: "none", md: "block" }}
-            h="100vh"
-            w="550px"
-            bgImage="url(/images/aside3d.png)"
+            // display={{ base: "none", md: "block" }}
+            h={{ base: "80px", md: "100vh" }}
+            w={{ base: "100%", md: "550px" }}
+            bgImage="url(/images/yash-bindra-NcMuToAOPUY-unsplash.jpg)"
             bgRepeat="no-repeat"
             bgSize="cover"
             bgPosition="center center"
@@ -171,30 +181,36 @@ const Page: NextPage = () => {
             display="flex"
             alignItems="center"
             justifyContent="center"
+            w="100%"
+            px={{ base: "8", md: "0" }}
+            pt={{ base: "6", md: "0" }}
           >
-            <Stack w="60%" justify="center">
+            <Stack w={{ base: "100%", md: "60%" }} justify="center">
               <chakra.form flex="2" onSubmit={onSubmit}>
                 <Text>
-                  <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
+                  <Text fontSize={{ base: "1.125rem", md: "1.2rem" }}>
                     Welcome,
                   </Text>
                   <Text
                     as="span"
                     color="#131415"
                     fontWeight="600"
-                    fontSize={{ base: "1.125rem", md: "1.8rem" }}
+                    fontSize={{ base: "1.4rem", md: "1.8rem" }}
                   >
                     Let&apos;s set you up!
                   </Text>
                 </Text>
 
-                <Stack py={{ base: "8", md: "12" }} spacing={12}>
+                <Stack
+                  py={{ base: "8", md: "12" }}
+                  spacing={{ base: "8", md: "12" }}
+                >
                   <Stack
                     direction={{ base: "column", md: "row" }}
                     spacing={{ base: "4", md: "8" }}
                   >
                     <Button
-                      flex="1"
+                      flex={{ base: "block", md: "1" }}
                       size="lg"
                       variant="solid-outline"
                       color="#131415"
@@ -203,7 +219,7 @@ const Page: NextPage = () => {
                       Sign up with Google
                     </Button>
                     <Button
-                      flex="1"
+                      flex={{ base: "block", md: "1" }}
                       size="lg"
                       variant="solid-outline"
                       color="#131415"
