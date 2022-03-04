@@ -252,24 +252,6 @@ const Page: NextPage = () => {
                     />
                   </FormGroup>
 
-                  <FormGroup
-                    id="psword"
-                    label="Password"
-                    labelProps={{ variant: "flushed" }}
-                  >
-                    <Input
-                      isRequired
-                      type="password"
-                      placeholder="••••••"
-                      variant="flushed"
-                      size="lg"
-                      value={formValue.email}
-                      onChange={(e) =>
-                        setFormValue({ ...formValue, email: e.target.value })
-                      }
-                    />
-                  </FormGroup>
-
                   <div>
                     <Button
                       size="lg"
@@ -281,7 +263,7 @@ const Page: NextPage = () => {
                         md: false,
                       })}
                     >
-                      Create my account
+                      Send me magic link
                     </Button>
                   </div>
                 </Stack>
