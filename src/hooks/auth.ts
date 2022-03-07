@@ -1,12 +1,16 @@
 import Api from "libs/api";
 import Cookies from "js-cookie";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { useQuery } from "react-query";
-import { useWeb3React } from "@web3-react/core";
+import { useMutation, useQuery } from "react-query";
+import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 import { destroyKeyPair, extractPublicKey, getKeyPair } from "libs/keys";
 import { AuthContext } from "contexts/auth";
-import { COOKIE_STORAGE_NAME } from "libs/cookie";
+import { COOKIE_STORAGE_NAME, toBase64 } from "libs/cookie";
 import { useEagerConnect } from "hooks/web3";
+import { useGoogleLogin } from "react-google-login";
+import { useToast, useDisclosure } from "@chakra-ui/react";
+import { injected, switchNetwork } from "libs/wallet";
+import { providers } from "ethers";
 
 export function useInitializeStoreAuth() {
   const [publicKey, setPublicKey] = useState<string | null>();
@@ -73,6 +77,134 @@ export function useStoreAuth() {
   const authContext = useContext(AuthContext);
   return authContext;
 }
+
+export const useGoogleAuth = () => {
+  const toast = useToast();
+  const googleAuthMutation = useMutation(
+    async (data: any) => {
+      const { payload } = await Api().post("/auth/google", {
+        googleId: data.tokenId,
+      });
+
+      if (!payload.token) {
+        throw new Error("No token returned from server");
+      }
+
+      // store token in cookie
+      Cookies.set(
+        COOKIE_STORAGE_NAME,
+        toBase64({ token: payload.token, email: data.email }),
+        {
+          expires: 365 * 10,
+          secure: true,
+        }
+      );
+
+      return payload.token;
+    },
+    {
+      onError: (err) => {
+        toast({
+          title: "Error Signing up",
+          description: "Something went wrong authenicating with Google",
+          position: "bottom-right",
+          status: "error",
+        });
+      },
+    }
+  );
+
+  const { loaded, signIn } = useGoogleLogin({
+    clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
+    onSuccess: (resp) => googleAuthMutation.mutateAsync(resp),
+  });
+
+  return {
+    ready: loaded,
+    loading: googleAuthMutation.isLoading,
+    signIn,
+  };
+};
+
+export const useWalletAuth = () => {
+  // ask user to sign data and send to the backend
+  const toast = useToast();
+  const [pending, setPending] = useState<boolean>(false);
+  const { activate, library, account } = useWeb3React();
+  const connectModal = useDisclosure();
+
+  const walletAuthMutation = useMutation(async (account: string) => {
+    // ask user to sign message
+    let provider: providers.Web3Provider = library;
+    const signer = provider.getSigner(account!);
+
+    const message = "Please sign this message to confirm you own this wallet";
+    const sig = await signer.signMessage(message);
+
+    console.log("Sign", { sig, address: account });
+
+    const { payload } = await Api().post("/auth/wallet", {
+      address: account,
+      sig,
+      message,
+    });
+
+    if (!payload.token) {
+      throw new Error("No token returned from server");
+    }
+
+    // store token in cookie
+    Cookies.set(
+      COOKIE_STORAGE_NAME,
+      toBase64({ token: payload.token, address: account }),
+      {
+        expires: 365 * 10,
+        secure: true,
+      }
+    );
+
+    return payload.token;
+  });
+
+  const tryActivate = async (connector?: any) => {
+    if (!connector) return;
+    setPending(true);
+
+    // activate wallet
+    try {
+      await activate(connector, undefined, true);
+    } catch (error) {
+      if (connector === injected && error instanceof UnsupportedChainIdError) {
+        await switchNetwork();
+        await activate(injected, (err) => {
+          toast({
+            title: "Error connecting account",
+            description: err.message,
+            position: "bottom-right",
+            status: "error",
+          });
+        });
+      }
+    } finally {
+      setPending(false);
+      connectModal.onClose();
+    }
+  };
+
+  useEffect(() => {
+    if (!account) return;
+    walletAuthMutation.mutate(account);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account]);
+
+  return {
+    isLoading: pending || walletAuthMutation.isLoading,
+    isModalOpen: connectModal.isOpen,
+    onModalClose: connectModal.onClose,
+    onModalOpen: connectModal.onOpen,
+    activate: tryActivate,
+  };
+};
 
 export function useLogout() {
   const storeAuth = useStoreAuth();

@@ -22,7 +22,12 @@ import { truncateAddress } from "libs/utils";
 import { injected, SUPPORTED_WALLETS, switchNetwork } from "libs/wallet";
 import { FiExternalLink } from "react-icons/fi";
 
-const ConnectModal = ({ isOpen, isPending, onClose, onActivate }: any) => {
+export const ConnectModal = ({
+  isOpen,
+  isPending,
+  onClose,
+  onActivate,
+}: any) => {
   return (
     <Modal isCentered size="xl" isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />

@@ -1,12 +1,10 @@
 /* eslint-disable import/no-anonymous-default-export */
 import type { NextApiRequest, NextApiResponse } from "next";
-import { OAuth2Client } from "google-auth-library";
+import { utils } from "ethers";
 import prisma from "libs/prisma";
 import jwt from "jsonwebtoken";
 
-const LOG_TAG = "[auth-google]";
-
-const authClient = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
+const LOG_TAG = "[auth-wallet]";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -14,35 +12,33 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     switch (method) {
       case "POST": {
-        const { token } = body;
+        const { sig, address, message } = body;
 
-        if (!token) {
-          return res.status(400).send({ error: "missing googleId" });
+        if (!sig || !address || !message) {
+          console.log(LOG_TAG, "[error]", "invalid payload", method);
+          return res.status(400).send({ error: "invalid payload" });
         }
 
-        // validate the id token
-        const ticket = await authClient.verifyIdToken({
-          idToken: token,
-          audience: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-        });
-        const payload = ticket.getPayload();
-
-        const googleId = payload?.sub;
-        const email = payload?.email;
+        // verify signature
+        const recoveredAddress = utils.verifyMessage(message, sig);
+        if (address !== recoveredAddress) {
+          console.log(LOG_TAG, "[error]", "wrong signature", method);
+          return res.status(400).send({ error: "wrong signature" });
+        }
 
         // store user details
         let user = await prisma.user.findFirst({
-          where: { email },
+          where: { address },
         });
 
         if (user) {
           user = await prisma.user.update({
             where: { id: user.id },
-            data: { googleId, email },
+            data: { address },
           });
         } else {
           user = await prisma.user.create({
-            data: { googleId, email },
+            data: { address },
           });
         }
 
@@ -50,8 +46,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const jwtToken = jwt.sign(
           {
             id: user.id,
-            email: user.email,
-            address: "",
+            email: "",
+            address: user.address,
           },
           process.env.AUTH_KEY || "",
           { expiresIn: "10days" }

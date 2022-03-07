@@ -22,45 +22,8 @@ import { Wallet } from "react-iconly";
 import { useGoogleLogin } from "react-google-login";
 import { useMutation } from "react-query";
 import { COOKIE_STORAGE_NAME, toBase64 } from "libs/cookie";
-
-const useGoogleAuth = () => {
-  const googleAuthMutation = useMutation(async (data: any) => {
-    const { payload } = await Api().post("/auth/google", {
-      googleId: data.tokenId,
-    });
-
-    if (!payload.token) {
-      throw new Error("No token returned from server");
-    }
-
-    // store token in cookie
-    Cookies.set(
-      COOKIE_STORAGE_NAME,
-      toBase64({ token: payload.token, email: data.email }),
-      {
-        expires: 365 * 10,
-        secure: true,
-      }
-    );
-
-    return payload.token;
-  });
-
-  const { loaded, signIn } = useGoogleLogin({
-    clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
-    onSuccess: (resp) => googleAuthMutation.mutateAsync(resp),
-  });
-
-  return {
-    ready: loaded,
-    loading: googleAuthMutation.isLoading,
-    signIn,
-  };
-};
-
-const useWalletAuth = () => {
-  // ask user to sign data and send to the backend
-};
+import { useGoogleAuth, useWalletAuth } from "hooks/auth";
+import { ConnectModal } from "components/wallet";
 
 const useEmailAuth = () => {
   // send user email to backend to continue
@@ -68,6 +31,7 @@ const useEmailAuth = () => {
 
 const Page: NextPage = () => {
   const googleAuth = useGoogleAuth();
+  const walletAuth = useWalletAuth();
 
   return (
     <>
@@ -173,6 +137,8 @@ const Page: NextPage = () => {
                     variant="solid-outline"
                     color="#131415"
                     leftIcon={<Wallet set="bold" />}
+                    isLoading={walletAuth.isLoading}
+                    onClick={() => walletAuth.onModalOpen()}
                   >
                     Connect Wallet
                   </Button>
@@ -217,6 +183,13 @@ const Page: NextPage = () => {
           </chakra.main>
         </Stack>
       </Container>
+
+      <ConnectModal
+        isOpen={walletAuth.isModalOpen}
+        isPending={walletAuth.isLoading}
+        onClose={walletAuth.onModalClose}
+        onActivate={walletAuth.activate}
+      />
     </>
   );
 };
