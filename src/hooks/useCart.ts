@@ -1,6 +1,6 @@
 import _cloneDeep from "lodash.clonedeep";
 import Api from "libs/api";
-import { CartContext, CartItem } from "libs/cart";
+import { CartContext, CartItem } from "contexts/cart";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
 

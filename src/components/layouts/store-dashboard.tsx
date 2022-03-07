@@ -17,7 +17,7 @@ import Link from "components/link";
 import { Wallet } from "components/wallet";
 import { useInitializeStoreAuth } from "hooks/auth";
 import { useCreateSigningKey } from "hooks/signing";
-import { AuthContext } from "libs/auth";
+import { AuthContext } from "contexts/auth";
 import { Bag, Category, Graph } from "react-iconly";
 import { CgMore } from "react-icons/cg";
 import { useGetLink } from "hooks/utils";

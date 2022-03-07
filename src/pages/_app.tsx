@@ -1,12 +1,14 @@
 import React from "react";
 import type { AppProps } from "next/app";
 import theme from "theme";
+import Script from "next/script";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Web3ReactProvider } from "@web3-react/core";
 import { Web3ReactManager } from "components/wallet/web3-manager";
 import { getLibrary } from "libs/wallet";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { useGoogleAuthSetup } from "hooks/google";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,8 +24,13 @@ function QuaApp({ Component, pageProps }: AppProps) {
   const Layout = (Component as any).Layout || React.Fragment;
   const layoutProps = pageProps.layoutProps;
 
+  useGoogleAuthSetup();
+
   return (
     <ChakraProvider theme={theme}>
+      {/* load the google auth script */}
+      <Script src="https://accounts.google.com/gsi/client" async defer />
+
       <QueryClientProvider client={queryClient}>
         <Web3ReactProvider getLibrary={getLibrary}>
           <Layout {...layoutProps}>

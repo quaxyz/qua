@@ -1,7 +1,9 @@
 import React from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
+import NextLink from "next/link";
 import Api from "libs/api";
+import Cookies from "js-cookie";
 import {
   chakra,
   Container,
@@ -12,115 +14,60 @@ import {
   Input,
   Button,
   useBreakpointValue,
-  useToast,
   Spacer,
 } from "@chakra-ui/react";
-// import { Wallet } from "components/wallet";
-import SelectMenu from "components/select";
-import { useMutation } from "react-query";
-import { useWeb3React } from "@web3-react/core";
-import { defaultCategories, domain, schemas } from "libs/constants";
-import { providers } from "ethers";
-import { useRouter } from "next/router";
 import { FormGroup } from "components/form-group";
-import NextLink from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { Wallet } from "react-iconly";
+import { useGoogleLogin } from "react-google-login";
+import { useMutation } from "react-query";
+import { COOKIE_STORAGE_NAME, toBase64 } from "libs/cookie";
 
-function useCreateStore() {
-  const { library, account } = useWeb3React();
-  const toast = useToast();
-  const router = useRouter();
+const useGoogleAuth = () => {
+  const googleAuthMutation = useMutation(async (data: any) => {
+    const { payload } = await Api().post("/auth/google", {
+      googleId: data.tokenId,
+    });
 
-  const createStoreMutation = useMutation(async (payload: any) => {
-    return Api().post("/setup", payload);
+    if (!payload.token) {
+      throw new Error("No token returned from server");
+    }
+
+    // store token in cookie
+    Cookies.set(
+      COOKIE_STORAGE_NAME,
+      toBase64({ token: payload.token, email: data.email }),
+      {
+        expires: 365 * 10,
+        secure: true,
+      }
+    );
+
+    return payload.token;
   });
 
-  return async (details: any) => {
-    if (!library || !account) {
-      console.error("useClient:", "Library or account is not ready", {
-        library,
-        account,
-      });
-      toast({
-        title: "Error saving details",
-        description: "Please connect your wallet",
-        position: "bottom-right",
-        status: "error",
-      });
+  const { loaded, signIn } = useGoogleLogin({
+    clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
+    onSuccess: (resp) => googleAuthMutation.mutateAsync(resp),
+  });
 
-      return null;
-    }
-
-    let provider: providers.Web3Provider = library;
-    const signer = provider.getSigner(account);
-
-    // format message into schema
-    const message = {
-      from: account,
-      timestamp: parseInt((Date.now() / 1000).toFixed()),
-      store: details.name,
-      details: JSON.stringify(details),
-    };
-
-    const data = {
-      domain,
-      types: { Store: schemas.Store },
-      message,
-    };
-
-    try {
-      const sig = await signer._signTypedData(
-        data.domain,
-        data.types,
-        data.message
-      );
-      console.log("Sign", { address: account, sig, data });
-
-      const { payload: result } = await createStoreMutation.mutateAsync({
-        address: account,
-        sig,
-        data,
-      });
-      console.log("Result", result);
-
-      router.push({
-        pathname: `/_store/[store]/dashboard/settings`,
-        query: { store: message.store.toLowerCase() },
-      });
-    } catch (err: any) {
-      toast({
-        title: "Error saving details",
-        description: err.message,
-        position: "bottom-right",
-        status: "error",
-      });
-    }
+  return {
+    ready: loaded,
+    loading: googleAuthMutation.isLoading,
+    signIn,
   };
-}
+};
+
+const useWalletAuth = () => {
+  // ask user to sign data and send to the backend
+};
+
+const useEmailAuth = () => {
+  // send user email to backend to continue
+};
 
 const Page: NextPage = () => {
-  const createStore = useCreateStore();
-
-  const [formValue, setFormValue] = React.useState({
-    name: "",
-    email: "",
-    category: null as any,
-  });
-
-  const [sending, setSending] = React.useState(false);
-
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (sending) return;
-
-    setSending(true);
-    console.log("Data", formValue);
-
-    // sign and save data
-    await createStore(formValue);
-    setSending(false);
-  };
+  const googleAuth = useGoogleAuth();
 
   return (
     <>
@@ -166,9 +113,8 @@ const Page: NextPage = () => {
       <Container maxW="100%" p="0" m="0">
         <Stack direction={{ base: "column", md: "row" }} align="center">
           <chakra.aside
-            // display={{ base: "none", md: "block" }}
             h={{ base: "80px", md: "100vh" }}
-            w={{ base: "100%", md: "550px" }}
+            w={{ base: "100%", md: "30vw" }}
             bgImage="url(/images/yash-bindra-NcMuToAOPUY-unsplash.jpg)"
             bgRepeat="no-repeat"
             bgSize="cover"
@@ -186,54 +132,59 @@ const Page: NextPage = () => {
             pt={{ base: "6", md: "0" }}
           >
             <Stack w={{ base: "100%", md: "60%" }} justify="center">
-              <chakra.form flex="2" onSubmit={onSubmit}>
-                <Text>
-                  <Text fontSize={{ base: "1.125rem", md: "1.2rem" }}>
-                    Welcome,
-                  </Text>
-                  <Text
-                    as="span"
-                    color="#131415"
-                    fontWeight="600"
-                    fontSize={{ base: "1.4rem", md: "1.8rem" }}
-                  >
-                    Let&apos;s set you up!
-                  </Text>
+              <div>
+                <Text fontSize={{ base: "1.125rem", md: "1.2rem" }}>
+                  Welcome,
                 </Text>
-
-                <Stack
-                  py={{ base: "8", md: "12" }}
-                  spacing={{ base: "8", md: "12" }}
+                <Text
+                  as="span"
+                  color="#131415"
+                  fontWeight="600"
+                  fontSize={{ base: "1.4rem", md: "1.8rem" }}
                 >
-                  <Stack
-                    direction={{ base: "column", md: "row" }}
-                    spacing={{ base: "4", md: "8" }}
-                  >
-                    <Button
-                      flex={{ base: "block", md: "1" }}
-                      size="lg"
-                      variant="solid-outline"
-                      color="#131415"
-                      leftIcon={<FcGoogle fontSize="24px" />}
-                    >
-                      Sign up with Google
-                    </Button>
-                    <Button
-                      flex={{ base: "block", md: "1" }}
-                      size="lg"
-                      variant="solid-outline"
-                      color="#131415"
-                      leftIcon={<Wallet set="bold" />}
-                    >
-                      Connect Wallet
-                    </Button>
-                  </Stack>
-                  <Stack direction="row" align="center" spacing={4}>
-                    <Spacer w="100%" h="1px" bgColor="rgba(19, 20, 21, 0.08)" />
-                    <Text lineHeight="1px">OR</Text>
-                    <Spacer w="100%" h="1px" bgColor="rgba(19, 20, 21, 0.08)" />
-                  </Stack>
+                  Let&apos;s set you up!
+                </Text>
+              </div>
 
+              <Stack
+                py={{ base: "8", md: "12" }}
+                spacing={{ base: "8", md: "12" }}
+              >
+                <Stack
+                  direction={{ base: "column", md: "row" }}
+                  spacing={{ base: "4", md: "8" }}
+                >
+                  <Button
+                    flex={{ base: "block", md: "1" }}
+                    size="lg"
+                    variant="solid-outline"
+                    color="#131415"
+                    leftIcon={<FcGoogle fontSize="24px" />}
+                    isDisabled={!googleAuth.ready}
+                    isLoading={googleAuth.loading}
+                    onClick={() => googleAuth.signIn()}
+                  >
+                    Sign up with Google
+                  </Button>
+
+                  <Button
+                    flex={{ base: "block", md: "1" }}
+                    size="lg"
+                    variant="solid-outline"
+                    color="#131415"
+                    leftIcon={<Wallet set="bold" />}
+                  >
+                    Connect Wallet
+                  </Button>
+                </Stack>
+
+                <Stack direction="row" align="center" spacing={4}>
+                  <Spacer w="100%" h="1px" bgColor="rgba(19, 20, 21, 0.08)" />
+                  <Text lineHeight="1px">OR</Text>
+                  <Spacer w="100%" h="1px" bgColor="rgba(19, 20, 21, 0.08)" />
+                </Stack>
+
+                <Stack as="form" spacing={4}>
                   <FormGroup
                     id="email"
                     label="Email"
@@ -245,29 +196,23 @@ const Page: NextPage = () => {
                       placeholder="shoo@mail.com"
                       variant="flushed"
                       size="lg"
-                      value={formValue.email}
-                      onChange={(e) =>
-                        setFormValue({ ...formValue, email: e.target.value })
-                      }
                     />
                   </FormGroup>
 
                   <div>
                     <Button
-                      size="lg"
                       variant="solid"
                       type="submit"
-                      isLoading={sending}
                       isFullWidth={useBreakpointValue({
                         base: true,
                         md: false,
                       })}
                     >
-                      Send me magic link
+                      Send me a magic link
                     </Button>
                   </div>
                 </Stack>
-              </chakra.form>
+              </Stack>
             </Stack>
           </chakra.main>
         </Stack>

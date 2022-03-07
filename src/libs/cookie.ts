@@ -1,12 +1,7 @@
-import { NextPageContext } from "next";
 import nextCookies from "next-cookies";
 import Cookies from "js-cookie";
 
 export const COOKIE_STORAGE_NAME = "QUA_WALLET";
-
-export interface ICookie {
-  address: string | null;
-}
 
 export function fromBase64(s: string | undefined) {
   const stringifiedCookie = Buffer.from(s || "", "base64").toString();
@@ -15,7 +10,7 @@ export function fromBase64(s: string | undefined) {
   return asObject;
 }
 
-export function toBase64(o: ICookie): string {
+export function toBase64(o: any): string {
   const stringified = JSON.stringify(o || {});
   const base64 = Buffer.from(stringified).toString("base64");
   return base64;
@@ -26,7 +21,7 @@ export function getAddressFromCookie(serverSide: boolean, context?: any) {
     ? nextCookies(context!)[COOKIE_STORAGE_NAME]
     : Cookies.get(COOKIE_STORAGE_NAME);
 
-  const { address } = fromBase64(cookie) as ICookie;
+  const { address } = fromBase64(cookie) as any;
 
   return address;
 }

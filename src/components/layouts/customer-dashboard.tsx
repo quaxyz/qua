@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import { Wallet } from "components/wallet";
-import { CartContext } from "libs/cart";
+import { CartContext } from "contexts/cart";
 import { useRouter } from "next/router";
 import { Bag2 } from "react-iconly";
 import { CgMore } from "react-icons/cg";

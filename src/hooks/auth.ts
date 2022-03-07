@@ -4,7 +4,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import { useWeb3React } from "@web3-react/core";
 import { destroyKeyPair, extractPublicKey, getKeyPair } from "libs/keys";
-import { AuthContext } from "libs/auth";
+import { AuthContext } from "contexts/auth";
 import { COOKIE_STORAGE_NAME } from "libs/cookie";
 import { useEagerConnect } from "hooks/web3";
 

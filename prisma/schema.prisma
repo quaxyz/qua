@@ -13,9 +13,9 @@ datasource db {
 
 model Store {
   id          Int      @id @default(autoincrement())
-  name        String   @unique
   createdAt   DateTime @default(now())
-  owner       String
+  name        String   @unique
+  owner       User     @relation(fields: [userId], references: [id])
   deliveryFee Float?
   email       String?
   category    String?
@@ -25,6 +25,7 @@ model Store {
   location    String?
   socialLinks Json?
 
+  userId   Int       @default(1)
   imageId  Int?
   products Product[]
   carts    Cart[]
@@ -32,12 +33,19 @@ model Store {
 }
 
 model User {
-  address   String   @unique
-  publicKey String[]
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
 
-  carts           Cart[]
+  address String? @unique
+  email   String? @unique
+
+  publicKey String[]
+  googleId  String?
+
   shippingDetails Json?
+
+  carts  Cart[]
+  stores Store[]
 }
 
 model Product {
