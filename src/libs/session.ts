@@ -1,6 +1,6 @@
 // this file is a wrapper with defaults to be used in both API routes and `getServerSideProps` functions
 import type { IronSessionOptions } from "iron-session";
-import { withIronSessionApiRoute } from "iron-session/next";
+import { withIronSessionApiRoute, withIronSessionSsr } from "iron-session/next";
 
 export const sessionOptions: IronSessionOptions = {
   password: process.env.SECRET_COOKIE_PASSWORD as string,
@@ -13,6 +13,9 @@ export const sessionOptions: IronSessionOptions = {
 
 export const withSession = (fn: any) =>
   withIronSessionApiRoute(fn, sessionOptions);
+
+export const withSsrSession = (fn: any) =>
+  withIronSessionSsr(fn, sessionOptions);
 
 // This is where we specify the typings of req.session.*
 declare module "iron-session" {

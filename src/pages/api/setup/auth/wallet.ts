@@ -4,7 +4,7 @@ import { withSession } from "libs/session";
 import { utils } from "ethers";
 import prisma from "libs/prisma";
 
-const LOG_TAG = "[auth-wallet]";
+const LOG_TAG = "[setup-auth-wallet]";
 
 export default withSession(
   async (req: NextApiRequest, res: NextApiResponse) => {

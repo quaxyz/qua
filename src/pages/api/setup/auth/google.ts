@@ -4,7 +4,7 @@ import { withSession } from "libs/session";
 import { OAuth2Client } from "google-auth-library";
 import prisma from "libs/prisma";
 
-const LOG_TAG = "[auth-google]";
+const LOG_TAG = "[setup-auth-google]";
 
 const authClient = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
 

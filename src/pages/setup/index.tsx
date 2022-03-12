@@ -224,6 +224,7 @@ const Page: NextPage = () => {
                     flex={{ base: "block", md: "1" }}
                     variant="solid-outline"
                     color="#131415"
+                    size="lg"
                     leftIcon={<FcGoogle fontSize="24px" />}
                     isDisabled={!googleAuth.ready}
                     isLoading={googleAuth.loading}
@@ -236,6 +237,7 @@ const Page: NextPage = () => {
                     flex={{ base: "block", md: "1" }}
                     variant="solid-outline"
                     color="#131415"
+                    size="lg"
                     leftIcon={<Wallet set="bold" />}
                     isLoading={walletAuth.isLoading}
                     onClick={() => walletAuth.onModalOpen()}
@@ -269,6 +271,7 @@ const Page: NextPage = () => {
                     <Button
                       variant="solid"
                       type="submit"
+                      size="lg"
                       isFullWidth={useBreakpointValue({
                         base: true,
                         md: false,

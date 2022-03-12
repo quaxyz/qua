@@ -1,5 +1,4 @@
 import React from "react";
-import type { NextPage } from "next";
 import Head from "next/head";
 import Api from "libs/api";
 import {
@@ -7,119 +6,37 @@ import {
   Container,
   Stack,
   Image,
-  Link,
   Text,
   Input,
   Button,
   useBreakpointValue,
-  useToast,
-  Spacer,
 } from "@chakra-ui/react";
-// import { Wallet } from "components/wallet";
 import SelectMenu from "components/select";
 import { useMutation } from "react-query";
-import { useWeb3React } from "@web3-react/core";
-import { defaultCategories, domain, schemas } from "libs/constants";
-import { providers } from "ethers";
+import { defaultCategories } from "libs/constants";
 import { useRouter } from "next/router";
 import { FormGroup } from "components/form-group";
-import NextLink from "next/link";
-import { FcGoogle } from "react-icons/fc";
-import { Wallet } from "react-iconly";
+import { withSsrSession } from "libs/session";
 
-function useCreateStore() {
-  const { library, account } = useWeb3React();
-  const toast = useToast();
+const Page = () => {
   const router = useRouter();
-
-  const createStoreMutation = useMutation(async (payload: any) => {
-    return Api().post("/setup", payload);
-  });
-
-  return async (details: any) => {
-    if (!library || !account) {
-      console.error("useClient:", "Library or account is not ready", {
-        library,
-        account,
-      });
-      toast({
-        title: "Error saving details",
-        description: "Please connect your wallet",
-        position: "bottom-right",
-        status: "error",
-      });
-
-      return null;
-    }
-
-    let provider: providers.Web3Provider = library;
-    const signer = provider.getSigner(account);
-
-    // format message into schema
-    const message = {
-      from: account,
-      timestamp: parseInt((Date.now() / 1000).toFixed()),
-      store: details.name,
-      details: JSON.stringify(details),
-    };
-
-    const data = {
-      domain,
-      types: { Store: schemas.Store },
-      message,
-    };
-
-    try {
-      const sig = await signer._signTypedData(
-        data.domain,
-        data.types,
-        data.message
-      );
-      console.log("Sign", { address: account, sig, data });
-
-      const { payload: result } = await createStoreMutation.mutateAsync({
-        address: account,
-        sig,
-        data,
-      });
-      console.log("Result", result);
-
-      router.push({
-        pathname: `/_store/[store]/dashboard/settings`,
-        query: { store: message.store.toLowerCase() },
-      });
-    } catch (err: any) {
-      toast({
-        title: "Error saving details",
-        description: err.message,
-        position: "bottom-right",
-        status: "error",
-      });
-    }
-  };
-}
-
-const Page: NextPage = () => {
-  const createStore = useCreateStore();
-
   const [formValue, setFormValue] = React.useState({
     name: "",
-    email: "",
     category: null as any,
   });
 
-  const [sending, setSending] = React.useState(false);
+  const createStore = useMutation(async (payload: any) => {
+    return Api().post("/setup/details", payload);
+  });
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (sending) return;
+    await createStore.mutateAsync(formValue);
 
-    setSending(true);
-    console.log("Data", formValue);
-
-    // sign and save data
-    await createStore(formValue);
-    setSending(false);
+    router.push({
+      pathname: `/_store/[store]/dashboard/settings`,
+      query: { store: formValue.name.toLowerCase() },
+    });
   };
 
   return (
@@ -153,12 +70,6 @@ const Page: NextPage = () => {
               display={{ base: "block", md: "none" }}
               alt="Qua logo"
             />
-
-            <Stack direction="row" spacing="8">
-              <NextLink href="/" passHref>
-                <Link>Log in</Link>
-              </NextLink>
-            </Stack>
           </Stack>
         </Container>
       </chakra.header>
@@ -167,7 +78,7 @@ const Page: NextPage = () => {
         <Stack direction={{ base: "column", md: "row" }} align="center">
           <chakra.aside
             h={{ base: "80px", md: "100vh" }}
-            w={{ base: "100%", md: "550px" }}
+            w={{ base: "100%", md: "30vw" }}
             bgImage="url(/images/yash-bindra-NcMuToAOPUY-unsplash.jpg)"
             bgRepeat="no-repeat"
             bgSize="cover"
@@ -244,7 +155,7 @@ const Page: NextPage = () => {
                       size="lg"
                       variant="solid"
                       type="submit"
-                      isLoading={sending}
+                      isLoading={createStore.isLoading}
                       isFullWidth={useBreakpointValue({
                         base: true,
                         md: false,
@@ -262,5 +173,24 @@ const Page: NextPage = () => {
     </>
   );
 };
+
+export const getServerSideProps = withSsrSession(async ({ req, res }: any) => {
+  const data = req.session.data;
+
+  if (data === undefined) {
+    res.setHeader("location", "/setup");
+    res.statusCode = 302;
+    res.end();
+    return {
+      props: {},
+    };
+  }
+
+  return {
+    props: {
+      ...data,
+    },
+  };
+});
 
 export default Page;
