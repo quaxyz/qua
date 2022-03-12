@@ -1,7 +1,7 @@
 import nextCookies from "next-cookies";
 import Cookies from "js-cookie";
 
-export const COOKIE_STORAGE_NAME = "QUA_WALLET";
+export const COOKIE_STORAGE_NAME = "QUA_AUTH";
 
 export function fromBase64(s: string | undefined) {
   const stringifiedCookie = Buffer.from(s || "", "base64").toString();

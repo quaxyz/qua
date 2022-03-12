@@ -3,7 +3,6 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import NextLink from "next/link";
 import Api from "libs/api";
-import Cookies from "js-cookie";
 import {
   chakra,
   Container,
@@ -15,15 +14,124 @@ import {
   Button,
   useBreakpointValue,
   Spacer,
+  useToast,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { FormGroup } from "components/form-group";
 import { FcGoogle } from "react-icons/fc";
 import { Wallet } from "react-iconly";
-import { useGoogleLogin } from "react-google-login";
-import { useMutation } from "react-query";
-import { COOKIE_STORAGE_NAME, toBase64 } from "libs/cookie";
-import { useGoogleAuth, useWalletAuth } from "hooks/auth";
 import { ConnectModal } from "components/wallet";
+import { useMutation } from "react-query";
+import { useGoogleLogin } from "react-google-login";
+import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
+import { providers } from "ethers";
+import { injected, switchNetwork } from "libs/wallet";
+
+export const useGoogleAuth = () => {
+  const toast = useToast();
+  const googleAuthMutation = useMutation(
+    async (data: any) => {
+      // automatically redirect to details page
+      await Api().post("/setup/auth/google", {
+        token: data.tokenId,
+      });
+    },
+    {
+      onError: (err) => {
+        toast({
+          title: "Error Signing up",
+          description: "Something went wrong authenicating with Google",
+          position: "bottom-right",
+          status: "error",
+        });
+      },
+    }
+  );
+
+  const { loaded, signIn } = useGoogleLogin({
+    clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
+    onSuccess: (resp) => googleAuthMutation.mutateAsync(resp),
+    onFailure: (err) => {
+      toast({
+        title: "Error Signing up",
+        description: "Something went wrong authenicating with Google",
+        position: "bottom-right",
+        status: "error",
+      });
+    },
+  });
+
+  return {
+    ready: loaded,
+    loading: googleAuthMutation.isLoading,
+    signIn,
+  };
+};
+
+export const useWalletAuth = () => {
+  // ask user to sign data and send to the backend
+  const toast = useToast();
+  const [pending, setPending] = React.useState<boolean>(false);
+  const { activate, library, account } = useWeb3React();
+  const connectModal = useDisclosure();
+
+  const walletAuthMutation = useMutation(async (account: string) => {
+    // ask user to sign message
+    let provider: providers.Web3Provider = library;
+    const signer = provider.getSigner(account!);
+
+    const message = "Please sign this message to confirm you own this wallet";
+    const sig = await signer.signMessage(message);
+
+    console.log("Sign", { sig, address: account });
+
+    // redirect to details page
+    await Api().post("/setup/auth/wallet", {
+      address: account,
+      sig,
+      message,
+    });
+  });
+
+  const tryActivate = async (connector?: any) => {
+    if (!connector) return;
+    setPending(true);
+
+    // activate wallet
+    try {
+      await activate(connector, undefined, true);
+    } catch (error) {
+      if (connector === injected && error instanceof UnsupportedChainIdError) {
+        await switchNetwork();
+        await activate(injected, (err) => {
+          toast({
+            title: "Error connecting account",
+            description: err.message,
+            position: "bottom-right",
+            status: "error",
+          });
+        });
+      }
+    } finally {
+      setPending(false);
+      connectModal.onClose();
+    }
+  };
+
+  React.useEffect(() => {
+    if (!account) return;
+    walletAuthMutation.mutate(account);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account]);
+
+  return {
+    isLoading: pending || walletAuthMutation.isLoading,
+    isModalOpen: connectModal.isOpen,
+    onModalClose: connectModal.onClose,
+    onModalOpen: connectModal.onOpen,
+    activate: tryActivate,
+  };
+};
 
 const useEmailAuth = () => {
   // send user email to backend to continue
@@ -64,12 +172,6 @@ const Page: NextPage = () => {
               display={{ base: "block", md: "none" }}
               alt="Qua logo"
             />
-
-            <Stack direction="row" spacing="8">
-              <NextLink href="/" passHref>
-                <Link>Log in</Link>
-              </NextLink>
-            </Stack>
           </Stack>
         </Container>
       </chakra.header>
@@ -120,7 +222,6 @@ const Page: NextPage = () => {
                 >
                   <Button
                     flex={{ base: "block", md: "1" }}
-                    size="lg"
                     variant="solid-outline"
                     color="#131415"
                     leftIcon={<FcGoogle fontSize="24px" />}
@@ -133,7 +234,6 @@ const Page: NextPage = () => {
 
                   <Button
                     flex={{ base: "block", md: "1" }}
-                    size="lg"
                     variant="solid-outline"
                     color="#131415"
                     leftIcon={<Wallet set="bold" />}

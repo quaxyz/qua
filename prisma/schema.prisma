@@ -15,7 +15,7 @@ model Store {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
   name        String   @unique
-  owner       User     @relation(fields: [userId], references: [id])
+  owner       String
   deliveryFee Float?
   email       String?
   category    String?
@@ -25,7 +25,6 @@ model Store {
   location    String?
   socialLinks Json?
 
-  userId   Int       @default(1)
   imageId  Int?
   products Product[]
   carts    Cart[]
@@ -44,8 +43,7 @@ model User {
 
   shippingDetails Json?
 
-  carts  Cart[]
-  stores Store[]
+  carts Cart[]
 }
 
 model Product {

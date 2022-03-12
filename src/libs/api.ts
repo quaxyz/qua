@@ -32,12 +32,16 @@ export default function Api() {
 
       // handle store url
       const urlWithSlash = `${url.charAt(0) !== "/" ? "/" : ""}${url}`;
-      return new Promise(() =>
-        Router.push({
-          pathname: `/_store/[store]${urlWithSlash}`,
-          query: { store },
-        })
-      );
+      return new Promise(() => {
+        if (store) {
+          Router.push({
+            pathname: `/_store/[store]${urlWithSlash}`,
+            query: { store },
+          });
+        } else {
+          Router.push(urlWithSlash);
+        }
+      });
     }
 
     return { payload, response };

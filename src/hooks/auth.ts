@@ -1,6 +1,7 @@
 import Api from "libs/api";
 import Cookies from "js-cookie";
-import { useContext, useEffect, useMemo, useState } from "react";
+import jwt from "jsonwebtoken";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 import { destroyKeyPair, extractPublicKey, getKeyPair } from "libs/keys";
@@ -78,6 +79,26 @@ export function useStoreAuth() {
   return authContext;
 }
 
+declare global {
+  var google: any;
+}
+
+export const useGoogleAuthSetup = () => {
+  const handleResponse = useCallback((resp) => {
+    const payload = jwt.decode(resp.credential);
+    console.log("Google auth", resp);
+  }, []);
+
+  useEffect(() => {
+    global.google?.accounts.id.initialize({
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      callback: handleResponse,
+    });
+
+    global.google?.accounts.id.prompt();
+  }, [handleResponse]);
+};
+
 export const useGoogleAuth = () => {
   const toast = useToast();
   const googleAuthMutation = useMutation(
@@ -117,6 +138,14 @@ export const useGoogleAuth = () => {
   const { loaded, signIn } = useGoogleLogin({
     clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
     onSuccess: (resp) => googleAuthMutation.mutateAsync(resp),
+    onFailure: (err) => {
+      toast({
+        title: "Error Signing up",
+        description: "Something went wrong authenicating with Google",
+        position: "bottom-right",
+        status: "error",
+      });
+    },
   });
 
   return {
