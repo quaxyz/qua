@@ -393,7 +393,6 @@ const Page = ({ storeDetails }: any) => {
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const store = (params?.store || "") as string;
-
   const storeDetails = await prisma.store.findUnique({
     where: { name: store },
     include: {

@@ -235,6 +235,17 @@ export const useWalletAuth = () => {
   };
 };
 
+export const useStoreUser = () => {
+  return useQuery({
+    queryKey: ["store-user"],
+    staleTime: Infinity,
+    queryFn: async () => {
+      const { payload } = await Api().get(`/dashboard/user`);
+      return payload;
+    },
+  });
+};
+
 export function useLogout() {
   const storeAuth = useStoreAuth();
   const { deactivate } = useWeb3React();

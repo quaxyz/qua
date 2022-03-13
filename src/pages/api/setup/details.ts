@@ -47,7 +47,8 @@ export default withSession(
             data: {
               name: body.name?.toLowerCase(),
               email: req.session.data.email,
-              owner: req.session.data.address || req.session.data.email || "", // using an empty string to silence TS
+              owner:
+                req.session.data.address || req.session.data.email || undefined,
               category: body.category,
             },
           });

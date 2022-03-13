@@ -15,9 +15,7 @@ import {
 } from "@chakra-ui/react";
 import Link from "components/link";
 import { Wallet } from "components/wallet";
-import { useInitializeStoreAuth } from "hooks/auth";
-import { useCreateSigningKey } from "hooks/signing";
-import { AuthContext } from "contexts/auth";
+import { useStoreUser } from "hooks/auth";
 import { Bag, Category, Graph } from "react-iconly";
 import { CgMore } from "react-icons/cg";
 import { useGetLink } from "hooks/utils";
@@ -47,23 +45,6 @@ const walletMenuLinks = [
   },
 ];
 
-const AuthNoAccount = () => (
-  <Stack minH="100%" align="center" justify="center">
-    <chakra.div
-      pos="absolute"
-      top="0"
-      left="0"
-      h="100vh"
-      w="100vw"
-      backdropFilter="blur(4px)"
-      bg="rgb(0 0 0 / 12%)"
-      zIndex="2"
-    />
-
-    <Wallet autoOpen closeable={false} />
-  </Stack>
-);
-
 const AuthNotOwner = () => (
   <Stack minH="100%" align="center" justify="center">
     <chakra.div
@@ -83,71 +64,33 @@ const AuthNotOwner = () => (
       </Heading>
 
       <Text fontWeight="400" mb={8}>
-        Your address does not match the owner of this store
+        You are not logged in as the owner of this store
       </Text>
 
-      <Link fontSize="sm" href="/">
-        Go back to products
-      </Link>
+      <Stack direction="row" spacing={4}>
+        <Link fontSize="sm" href="/dashboard/login">
+          Login
+        </Link>
+
+        <Text fontSize="sm">Or</Text>
+
+        <Link fontSize="sm" href="/">
+          Go back to products
+        </Link>
+      </Stack>
     </Container>
   </Stack>
 );
-
-const AuthNoSigningKey = () => {
-  const { loading, createSigningKey } = useCreateSigningKey();
-
-  return (
-    <Stack minH="100%" align="center" justify="center">
-      <chakra.div
-        pos="absolute"
-        top="0"
-        left="0"
-        h="100vh"
-        w="100vw"
-        backdropFilter="blur(4px)"
-        bg="rgb(0 0 0 / 12%)"
-        zIndex="2"
-      />
-
-      <Container maxW="lg" bg="#fff" pos="relative" zIndex="3" px={12} py={12}>
-        <Heading fontSize="xl" mb={8}>
-          Remember me
-        </Heading>
-
-        <Text fontWeight="400" mb={8}>
-          Skip approving every interaction with your wallet by allowing Qua to
-          remember you.
-        </Text>
-
-        <Button
-          size="lg"
-          variant="solid-outline"
-          mb={5}
-          onClick={() => createSigningKey()}
-          isLoading={loading}
-          isFullWidth
-        >
-          Generate signing key
-        </Button>
-
-        <Text textAlign="center" fontSize="sm" fontWeight="600" mb={8}>
-          Signing keys can only sign messages and cannot hold funds. They are
-          stored securely in the browser database.
-        </Text>
-      </Container>
-    </Stack>
-  );
-};
 
 const DashboardLayout = ({ title, children }: any) => {
   const getLink = useGetLink();
   const router = useRouter();
 
   // handle auth session here
-  const storeAuthData = useInitializeStoreAuth();
+  const storeUser = useStoreUser();
 
   return (
-    <AuthContext.Provider value={storeAuthData}>
+    <>
       <Head>
         <title>
           {title} - {_capitalize((router.query.store as string) || "")}
@@ -302,18 +245,12 @@ const DashboardLayout = ({ title, children }: any) => {
         </chakra.header>
 
         <chakra.main gridArea="main">
-          {!storeAuthData.loading ? (
-            {
-              "": children,
-              "no-account": <AuthNoAccount />,
-              "not-owner": <AuthNotOwner />,
-              "no-signing-key": <AuthNoSigningKey />,
-            }[storeAuthData.status]
-          ) : (
+          {storeUser.isLoading && (
             <Stack align="center" justify="center" minH="100%">
               <CircularProgress isIndeterminate color="black" />
             </Stack>
           )}
+          {storeUser.data?.user ? children : <AuthNotOwner />}
         </chakra.main>
 
         <chakra.aside
@@ -369,7 +306,7 @@ const DashboardLayout = ({ title, children }: any) => {
           </Stack>
         </chakra.aside>
       </Grid>
-    </AuthContext.Provider>
+    </>
   );
 };
 
