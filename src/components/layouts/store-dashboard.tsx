@@ -245,12 +245,15 @@ const DashboardLayout = ({ title, children }: any) => {
         </chakra.header>
 
         <chakra.main gridArea="main">
-          {storeUser.isLoading && (
+          {storeUser.isLoading ? (
             <Stack align="center" justify="center" minH="100%">
               <CircularProgress isIndeterminate color="black" />
             </Stack>
+          ) : storeUser.data?.user ? (
+            children
+          ) : (
+            <AuthNotOwner />
           )}
-          {storeUser.data?.user ? children : <AuthNotOwner />}
         </chakra.main>
 
         <chakra.aside

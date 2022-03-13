@@ -16,18 +16,11 @@ export default withSession(
           const { data: sessionData } = req.session;
 
           if (!sessionData || (!sessionData?.address && !sessionData?.email)) {
-            console.warn(
-              LOG_TAG,
-              "no logged in user found, redirect to login",
-              {
-                query,
-                session: sessionData,
-              }
-            );
-            return res.send({
-              redirect: true,
-              url: `/dashboard/login`,
+            console.warn(LOG_TAG, "no logged in user found", {
+              query,
+              session: sessionData,
             });
+            return res.send({ user: null });
           }
 
           // verify store owner
