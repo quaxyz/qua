@@ -23,6 +23,7 @@ import {
   InputLeftElement,
   Icon,
   useToast,
+  FormHelperText,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 import { useRouter } from "next/router";
@@ -220,40 +221,89 @@ const Page = ({ storeDetails }: any) => {
           as="form"
           onSubmit={onDetailsSubmit}
         >
-          <Stack w="full" spacing={6}>
-            <Heading fontSize="lg" textTransform="uppercase">
-              About
-            </Heading>
-            <Textarea
-              id="about"
-              placeholder="What should customers know about your business?"
-              value={formValue?.about}
-              onChange={(e) =>
-                setFormValue({ ...formValue, about: e.target.value })
-              }
-              size="md"
-              borderRadius="0"
-              rows={10}
-            />
+          <Stack
+            direction={{ base: "column", md: "row" }}
+            spacing={{ base: "4", md: "24" }}
+            w="100%"
+          >
+            <Stack w="full" spacing={6}>
+              <Heading fontSize="lg" textTransform="uppercase" opacity="80%">
+                About
+              </Heading>
+              <Textarea
+                id="about"
+                placeholder="What should customers know about your business?"
+                value={formValue?.about}
+                onChange={(e) =>
+                  setFormValue({ ...formValue, about: e.target.value })
+                }
+                size="md"
+                borderRadius="0"
+                rows={10}
+              />
+            </Stack>
+
+            <Stack w={{ base: "100%", md: "460px" }} spacing={6}>
+              <Heading fontSize="sm" textTransform="uppercase" opacity="80%">
+                Bank Transfer details
+              </Heading>
+              <FormControl id="">
+                <Input
+                  id="location"
+                  variant="outline"
+                  type="text"
+                  // value={formValue.location}
+                  // onChange={(e) =>
+                  //   setFormValue({ ...formValue, location: e.target.value })
+                  // }
+                  placeholder="Account name"
+                />
+              </FormControl>
+              <FormControl id="">
+                <Input
+                  id="location"
+                  variant="outline"
+                  type="number"
+                  // value={formValue.location}
+                  // onChange={(e) =>
+                  //   setFormValue({ ...formValue, location: e.target.value })
+                  // }
+                  placeholder="Account number"
+                />
+              </FormControl>
+              <FormControl id="">
+                <Input
+                  id="location"
+                  variant="outline"
+                  type="number"
+                  // value={formValue.location}
+                  // onChange={(e) =>
+                  //   setFormValue({ ...formValue, location: e.target.value })
+                  // }
+                  placeholder="Bank name"
+                />
+              </FormControl>
+            </Stack>
           </Stack>
 
-          <Stack w="full" spacing={6}>
-            <Heading fontSize="lg" fontWeight="bold" textTransform="uppercase">
+          <Stack w="full" spacing={12}>
+            <Heading fontSize="3xl" fontWeight="500">
               Settings
             </Heading>
 
             <Grid
               templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(2, 1fr)" }}
-              gridGap={5}
+              gridRowGap={8}
+              gridColumnGap={12}
             >
               <GridItem>
                 <FormControl id="location">
-                  <FormLabel textTransform="uppercase">
+                  <FormLabel textTransform="uppercase" opacity="72%">
                     Bussiness Location
                   </FormLabel>
                   <Input
                     id="location"
-                    variant="outline"
+                    variant="flushed"
                     type="text"
                     value={formValue.location}
                     onChange={(e) =>
@@ -266,21 +316,23 @@ const Page = ({ storeDetails }: any) => {
 
               <GridItem>
                 <FormControl id="name">
-                  <FormLabel textTransform="uppercase">Social Links</FormLabel>
+                  <FormLabel textTransform="uppercase" opacity="72%">
+                    Store Contacts
+                  </FormLabel>
                   <Stack direction="row">
                     <InputGroup>
                       <InputLeftElement pointerEvents="none">
                         <Icon
                           as={AiFillInstagram}
                           boxSize="5"
-                          color="#C13584"
+                          color="#E4405F"
                         />
                       </InputLeftElement>
 
                       <Input
                         id="instagram"
                         type="text"
-                        variant="outline"
+                        variant="flushed"
                         fontSize="sm"
                         placeholder="@myusername"
                         value={formValue.instagram}
@@ -301,7 +353,7 @@ const Page = ({ storeDetails }: any) => {
                       <Input
                         id="whatsapp"
                         type="text"
-                        variant="outline"
+                        variant="flushed"
                         fontSize="sm"
                         placeholder="+01 234 567 890"
                         value={formValue.whatsapp}
@@ -319,12 +371,12 @@ const Page = ({ storeDetails }: any) => {
 
               <GridItem>
                 <FormControl id="deliveryFee">
-                  <FormLabel textTransform="uppercase">
+                  <FormLabel textTransform="uppercase" opacity="72%">
                     Base delivery fee
                   </FormLabel>
                   <Input
                     id="deliveryFee"
-                    variant="outline"
+                    variant="flushed"
                     type="number"
                     value={formValue.deliveryFee}
                     onChange={(e) =>
@@ -338,7 +390,7 @@ const Page = ({ storeDetails }: any) => {
                 </FormControl>
               </GridItem>
 
-              <GridItem>
+              {/* <GridItem>
                 <FormControl id="name" isDisabled>
                   <FormLabel textTransform="uppercase">Store name</FormLabel>
                   <Input
@@ -347,9 +399,9 @@ const Page = ({ storeDetails }: any) => {
                     defaultValue={storeDetails.name}
                   />
                 </FormControl>
-              </GridItem>
+              </GridItem> */}
 
-              <GridItem>
+              {/* <GridItem>
                 <FormControl id="category" isDisabled>
                   <FormLabel textTransform="uppercase">Category</FormLabel>
                   <Input
@@ -362,16 +414,25 @@ const Page = ({ storeDetails }: any) => {
                     }
                   />
                 </FormControl>
-              </GridItem>
+              </GridItem> */}
 
               <GridItem>
-                <FormControl id="address" isDisabled>
-                  <FormLabel textTransform="uppercase">Owner Address</FormLabel>
+                <FormControl id="address">
+                  <FormLabel textTransform="uppercase" opacity="72%">
+                    Crypto Wallet Address
+                  </FormLabel>
                   <Input
-                    variant="outline"
+                    variant="flushed"
                     type="text"
                     defaultValue={storeDetails.owner}
                   />
+                  <FormHelperText
+                    fontStyle="italic"
+                    color="#131415"
+                    opacity="48%"
+                  >
+                    Crypto Payments will go to this address
+                  </FormHelperText>
                 </FormControl>
               </GridItem>
             </Grid>

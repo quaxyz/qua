@@ -145,14 +145,14 @@ export default extendTheme({
 
         flushed: {
           field: {
-            borderBottom: "1px solid rgb(0 0 0 / 24%)",
+            borderBottom: "1px solid rgba(19, 20, 21, 24%)",
 
             _hover: {
               borderColor: "rgb(0 0 0 / 60%)",
             },
 
             _placeholder: {
-              color: "rgb(0 0 0 / 12%)",
+              color: "rgb(0 0 0 / 36%)",
             },
 
             _focus: {
