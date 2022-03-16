@@ -91,7 +91,12 @@ const CustomerLayout = ({ title, isOwner, cart, children }: any) => {
               borderBottom="none"
               _hover={{ transform: "scale(1.05)" }}
             >
-              <Heading fontWeight="800" fontSize="2xl" px={3}>
+              <Heading
+                fontWeight="800"
+                textTransform="capitalize"
+                fontSize="2xl"
+                px={3}
+              >
                 {router.query.store}
               </Heading>
             </Link>

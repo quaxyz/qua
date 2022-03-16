@@ -298,25 +298,23 @@ const Page = ({ product, categories }: any) => {
 
             <TabPanels>
               <TabPanel>
-                <FormGroup id="description">
-                  <Textarea
-                    rows={8}
-                    fontSize={{ base: "0.9375rem", md: "1rem" }}
-                    placeholder="Tell customers more about the product..."
-                    disabled={saving}
-                    value={formValue.description}
-                    onChange={(e) =>
-                      setFormValue({
-                        ...formValue,
-                        description: e.target.value,
-                      })
-                    }
-                  />
-                </FormGroup>
-              </TabPanel>
-
-              <TabPanel>
                 <Stack spacing={4}>
+                  <FormGroup id="description">
+                    <Textarea
+                      rows={8}
+                      fontSize={{ base: "0.9375rem", md: "1rem" }}
+                      placeholder="Tell customers more about the product..."
+                      disabled={saving}
+                      value={formValue.description}
+                      onChange={(e) =>
+                        setFormValue({
+                          ...formValue,
+                          description: e.target.value,
+                        })
+                      }
+                    />
+                  </FormGroup>
+
                   <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
                     <Heading fontSize="md" fontWeight="600" mb={6}>
                       Pricing
@@ -360,7 +358,11 @@ const Page = ({ product, categories }: any) => {
                         </FormGroup> */}
                     </Stack>
                   </chakra.article>
+                </Stack>
+              </TabPanel>
 
+              <TabPanel>
+                <Stack spacing={4}>
                   <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
                     <Heading fontSize="md" fontWeight="600" mb={6}>
                       Stock
