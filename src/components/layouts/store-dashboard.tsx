@@ -3,6 +3,7 @@ import Head from "next/head";
 import _capitalize from "lodash.capitalize";
 import { useRouter } from "next/router";
 import {
+  Avatar,
   Button,
   chakra,
   CircularProgress,
@@ -16,7 +17,7 @@ import {
 import Link from "components/link";
 import { Wallet } from "components/wallet";
 import { useStoreUser } from "hooks/auth";
-import { Bag, Category, Graph } from "react-iconly";
+import { Bag, Category, Graph, User } from "react-iconly";
 import { CgMore } from "react-icons/cg";
 import { useGetLink } from "hooks/utils";
 
@@ -102,48 +103,100 @@ const DashboardLayout = ({ title, children }: any) => {
         templateRows="70px 1fr 70px"
         templateAreas={{
           base: `"topbar topbar" "main main" "bottombar bottombar"`,
-          md: `"sidebar main" "sidebar main" "sidebar main"`,
+          md: `"topbar topbar"
+          "sidebar main "
+          "sidebar main "`,
         }}
         minH="100vh"
       >
-        <chakra.aside
-          gridArea="sidebar"
-          bg="#000000"
-          px={6}
-          py={8}
-          pos="fixed"
-          left="0"
-          h="100vh"
-          w="280px"
-          display={{ base: "none", md: "block" }}
+        <chakra.nav
+          gridArea="topbar"
+          display={{ base: "none", md: "flex" }}
+          borderBottom="1px solid rgba(19, 20, 21, 0.08)"
         >
-          <Stack spacing={8} minH="100%">
+          <Stack
+            w="100%"
+            px={12}
+            direction="row"
+            align="center"
+            justify="space-between"
+          >
             <Heading
               as={Link}
               href="/"
               textTransform="capitalize"
               fontWeight="800"
-              fontSize="2xl"
-              color="#fff"
+              fontSize="22px"
+              color="#000"
               border="none"
-              px={3}
             >
               {router.query?.store}
             </Heading>
 
+            <Button
+              variant="props"
+              size="sm"
+              fontSize="15px"
+              bg="rgba(19, 20, 21, 0.04)"
+              borderRadius="12px"
+              border="1px solid rgba(19, 20, 21, 0.08)"
+            >
+              <Icon mr="2" as={(props) => <User set="bold" {...props} />} />
+              My Account
+            </Button>
+
+            {/* <Wallet
+              menuOptions={walletMenuLinks.map((m) => ({
+                ...m,
+                href: getLink(m.href),
+              }))}
+              ButtonProps={{
+                variant: "outline",
+                mt: "auto !important",
+
+                rounded: "8px",
+                borderColor: "rgb(255 255 255 / 16%)",
+                leftIcon: <Icon as={CgMore} mr={3} />,
+                ...(walletMenuLinks.some((m) => router.asPath.endsWith(m.href))
+                  ? {
+                      color: "#000",
+                      bg: "#000",
+                      _hover: { bg: "white" },
+                    }
+                  : {
+                      color: "#000",
+                      _hover: {
+                        bg: "transparent",
+                        borderColor: "rgb(255 255 255 / 48%)",
+                      },
+                    }),
+              }}
+            /> */}
+          </Stack>
+        </chakra.nav>
+
+        <chakra.aside
+          gridArea="sidebar"
+          px={10}
+          py={8}
+          display={{ base: "none", md: "block" }}
+          bg=" rgba(19, 20, 21, 0.02)"
+          borderRight="1px solid rgba(19, 20, 21, 0.08)"
+        >
+          <Stack spacing={8} minH="100%">
             <Stack spacing={6}>
               {navLinks.map((navLink, idx) => (
                 <Link
                   key={idx}
                   href={`/dashboard${navLink.url}`}
-                  px={3}
+                  px={4}
                   py={3}
-                  rounded="4px"
+                  rounded="50px"
                   borderBottom="none"
-                  _hover={{ transform: "scale(1.05)" }}
+                  _hover={{ transform: "scale(1.02)" }}
                   {...(router.asPath.endsWith(navLink.url)
-                    ? { color: "#000", bg: "#FFF" }
-                    : { color: "#FFF" })}
+                    ? { color: "#fff", bg: "#000" }
+                    : { color: "#000" })}
                 >
                   <Stack direction="row" spacing={4} align="center">
                     <Icon boxSize={5} as={navLink.icon} />
@@ -159,34 +212,6 @@ const DashboardLayout = ({ title, children }: any) => {
                 </Link>
               ))}
             </Stack>
-
-            <Wallet
-              menuOptions={walletMenuLinks.map((m) => ({
-                ...m,
-                href: getLink(m.href),
-              }))}
-              ButtonProps={{
-                variant: "outline",
-                mt: "auto !important",
-
-                rounded: "8px",
-                borderColor: "rgb(255 255 255 / 16%)",
-                leftIcon: <Icon as={CgMore} mr={3} />,
-                ...(walletMenuLinks.some((m) => router.asPath.endsWith(m.href))
-                  ? {
-                      color: "#000",
-                      bg: "#FFF",
-                      _hover: { bg: "white" },
-                    }
-                  : {
-                      color: "#FFF",
-                      _hover: {
-                        bg: "transparent",
-                        borderColor: "rgb(255 255 255 / 48%)",
-                      },
-                    }),
-              }}
-            />
           </Stack>
         </chakra.aside>
 
