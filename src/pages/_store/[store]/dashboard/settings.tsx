@@ -175,7 +175,7 @@ const Page = ({ storeDetails }: any) => {
         >
           {defaultCategories.find((c) => c.value === data?.category)?.label}
         </Text>
-        <Heading as="h2" fontSize={{ base: "2rem", md: "4rem" }}>
+        <Heading as="h2" opacity="48%" fontSize={{ base: "2rem", md: "4rem" }}>
           <Editable
             defaultValue={data?.title || "Store Title"}
             onSubmit={(title) => {

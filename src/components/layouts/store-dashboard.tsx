@@ -17,7 +17,7 @@ import {
 import Link from "components/link";
 import { Wallet } from "components/wallet";
 import { useStoreUser } from "hooks/auth";
-import { Bag, Category, Graph, User } from "react-iconly";
+import { Bag, Category, Graph, User, Show } from "react-iconly";
 import { CgMore } from "react-icons/cg";
 import { useGetLink } from "hooks/utils";
 
@@ -113,6 +113,13 @@ const DashboardLayout = ({ title, children }: any) => {
           gridArea="topbar"
           display={{ base: "none", md: "flex" }}
           borderBottom="1px solid rgba(19, 20, 21, 0.08)"
+          pos="fixed"
+          top="0"
+          left="0"
+          right="0"
+          bg="#fff"
+          zIndex="2"
+          h="70px"
         >
           <Stack
             w="100%"
@@ -121,17 +128,29 @@ const DashboardLayout = ({ title, children }: any) => {
             align="center"
             justify="space-between"
           >
-            <Heading
+            <Stack
               as={Link}
               href="/"
-              textTransform="capitalize"
-              fontWeight="800"
-              fontSize="22px"
-              color="#000"
+              direction="row"
               border="none"
+              align="center"
+              spacing={2}
             >
-              {router.query?.store}
-            </Heading>
+              <Heading
+                textTransform="capitalize"
+                fontWeight="800"
+                fontSize="22px"
+                color="#000"
+              >
+                {router.query?.store}
+              </Heading>
+              <Icon
+                fontSize="22"
+                color="#131415"
+                opacity="80%"
+                as={(props) => <Show set="bold" {...props} />}
+              />
+            </Stack>
 
             <Button
               variant="props"
@@ -177,13 +196,13 @@ const DashboardLayout = ({ title, children }: any) => {
 
         <chakra.aside
           gridArea="sidebar"
-          px={10}
           py={8}
           display={{ base: "none", md: "block" }}
           bg=" rgba(19, 20, 21, 0.02)"
           borderRight="1px solid rgba(19, 20, 21, 0.08)"
+          position="relative"
         >
-          <Stack spacing={8} minH="100%">
+          <Stack spacing={8} px={10} pos="fixed" left="0" minH="100%">
             <Stack spacing={6}>
               {navLinks.map((navLink, idx) => (
                 <Link
