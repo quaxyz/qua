@@ -204,10 +204,10 @@ const Page = ({ initialData }: any) => {
                 fontWeight="bold"
                 color="#000"
               >
-                Add and manage your products
+                No Products
               </Text>
               <Text fontSize={{ base: "md", md: "lg" }}>
-                You can add products and manage your pricing here.
+                Add products and manage your pricing here.
               </Text>
             </Stack>
           </Stack>

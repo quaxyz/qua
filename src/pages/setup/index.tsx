@@ -199,16 +199,20 @@ const Page: NextPage = () => {
           >
             <Stack w={{ base: "100%", md: "60%" }} justify="center">
               <div>
-                <Text fontSize={{ base: "1.125rem", md: "1.2rem" }}>
+                <Text
+                  fontSize={{ base: "1.125rem", md: "1.125rem" }}
+                  opacity="0.48"
+                  color="#131415"
+                >
                   Welcome,
                 </Text>
                 <Text
                   as="span"
                   color="#131415"
-                  fontWeight="600"
-                  fontSize={{ base: "1.4rem", md: "1.8rem" }}
+                  fontWeight="300"
+                  fontSize={{ base: "1.4rem", md: "2rem" }}
                 >
-                  Let&apos;s set you up!
+                  Setup your store
                 </Text>
               </div>
 

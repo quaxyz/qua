@@ -309,7 +309,7 @@ const Page = ({ storeDetails }: any) => {
                     onChange={(e) =>
                       setFormValue({ ...formValue, location: e.target.value })
                     }
-                    placeholder="Enter store address"
+                    placeholder="Enter address"
                   />
                 </FormControl>
               </GridItem>

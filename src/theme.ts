@@ -145,7 +145,8 @@ export default extendTheme({
 
         flushed: {
           field: {
-            borderBottom: "1px solid rgba(19, 20, 21, 24%)",
+            borderBottom: "1px solid",
+            borderColor: "rgb(19 20 21 / 24%)",
 
             _hover: {
               borderColor: "rgb(0 0 0 / 60%)",

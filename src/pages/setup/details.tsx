@@ -97,20 +97,23 @@ const Page = () => {
           >
             <Stack w={{ base: "100%", md: "60%" }} justify="center">
               <chakra.form flex="2" onSubmit={onSubmit}>
-                <Text>
-                  <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
-                    {/* Welcome, */}
-                    Almost done,
+                <div>
+                  <Text
+                    fontSize={{ base: "1.125rem", md: "1.125rem" }}
+                    opacity="0.48"
+                    color="#131415"
+                  >
+                    Complete setup,
                   </Text>
                   <Text
                     as="span"
                     color="#131415"
-                    fontWeight="600"
-                    fontSize={{ base: "1.4rem", md: "1.8rem" }}
+                    fontWeight="300"
+                    fontSize={{ base: "1.4rem", md: "2rem" }}
                   >
                     One Last Thing!
                   </Text>
-                </Text>
+                </div>
 
                 <Stack py={{ base: "8", md: "12" }} spacing={12}>
                   <FormGroup

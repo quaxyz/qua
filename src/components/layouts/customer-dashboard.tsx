@@ -21,6 +21,7 @@ import { Bag2 } from "react-iconly";
 import { CgMore } from "react-icons/cg";
 import { useEagerConnect } from "hooks/web3";
 import { useGetLink } from "hooks/utils";
+import { CustomerModal } from "components/modal";
 
 const navLinks = [
   {
@@ -143,6 +144,8 @@ const CustomerLayout = ({ title, isOwner, cart, children }: any) => {
                 leftIcon: account ? <Icon as={CgMore} mr={2} /> : undefined,
               }}
             />
+
+            <CustomerModal />
 
             <Link
               href={`/cart`}
