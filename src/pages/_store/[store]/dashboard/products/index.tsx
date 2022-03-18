@@ -157,7 +157,12 @@ const Page = ({ initialData }: any) => {
     <>
       <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
         <Stack direction="row" justify="space-between" align="center" mb={10}>
-          <Heading as="h2" fontSize="xl" fontWeight="600">
+          <Heading
+            as="h2"
+            fontSize={{ base: "18px", md: "24px" }}
+            fontWeight="500"
+            color="#131415"
+          >
             Products
           </Heading>
 
@@ -207,7 +212,7 @@ const Page = ({ initialData }: any) => {
                 No Products
               </Text>
               <Text fontSize={{ base: "md", md: "lg" }}>
-                Add products and manage your pricing here.
+                Add products and manage pricing here.
               </Text>
             </Stack>
           </Stack>

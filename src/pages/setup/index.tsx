@@ -212,7 +212,7 @@ const Page: NextPage = () => {
                   fontWeight="300"
                   fontSize={{ base: "1.4rem", md: "2rem" }}
                 >
-                  Setup your store
+                  Setup your account
                 </Text>
               </div>
 

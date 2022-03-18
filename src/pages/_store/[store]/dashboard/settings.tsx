@@ -275,7 +275,7 @@ const Page = ({ storeDetails }: any) => {
                 <Input
                   id="location"
                   variant="outline"
-                  type="number"
+                  type="text"
                   // value={formValue.location}
                   // onChange={(e) =>
                   //   setFormValue({ ...formValue, location: e.target.value })
@@ -372,7 +372,7 @@ const Page = ({ storeDetails }: any) => {
               <GridItem>
                 <FormControl id="deliveryFee">
                   <FormLabel textTransform="uppercase" opacity="72%">
-                    Base delivery fee
+                    Base shipping fee ($)
                   </FormLabel>
                   <Input
                     id="deliveryFee"
@@ -428,6 +428,7 @@ const Page = ({ storeDetails }: any) => {
                   />
                   <FormHelperText
                     fontStyle="italic"
+                    fontSize="xs"
                     color="#131415"
                     opacity="48%"
                   >

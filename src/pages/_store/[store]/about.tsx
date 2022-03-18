@@ -48,7 +48,7 @@ const Page = ({ storeDetails }: any) => {
               alignItems="center"
             >
               <Text
-                fontSize={{ base: "sm", md: "md" }}
+                fontSize={{ base: "xs", md: "sm" }}
                 textTransform="uppercase"
                 fontWeight="bold"
                 color="#fff"

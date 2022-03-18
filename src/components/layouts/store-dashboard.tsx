@@ -236,7 +236,12 @@ const DashboardLayout = ({ title, children }: any) => {
 
         <chakra.header
           gridArea="topbar"
-          bg="#000000"
+          borderBottom="1px solid rgba(19, 20, 21, 0.08)"
+          // pos="fixed"
+          // top="0"
+          // left="0"
+          // right="0"
+          bg="#fff"
           px={5}
           display={{ base: "block", md: "none" }}
         >
@@ -247,17 +252,29 @@ const DashboardLayout = ({ title, children }: any) => {
             h="100%"
             w="100%"
           >
-            <Heading
+            <Stack
               as={Link}
               href="/"
-              fontWeight="800"
-              fontSize="xl"
-              color="#fff"
-              textTransform="uppercase"
+              direction="row"
               border="none"
+              align="center"
+              spacing={2}
             >
-              {router.query?.store}
-            </Heading>
+              <Heading
+                textTransform="capitalize"
+                fontWeight="800"
+                fontSize="lg"
+                color="#000"
+              >
+                {router.query?.store}
+              </Heading>
+              <Icon
+                fontSize="22"
+                color="#131415"
+                opacity="80%"
+                as={(props) => <Show set="bold" {...props} />}
+              />
+            </Stack>
 
             <Wallet
               menuOptions={walletMenuLinks.map((m) => ({
@@ -273,11 +290,11 @@ const DashboardLayout = ({ title, children }: any) => {
                 ...(walletMenuLinks.some((m) => router.asPath.endsWith(m.href))
                   ? {
                       color: "#000",
-                      bg: "#FFF",
+                      bg: "#131415",
                       _hover: { bg: "white" },
                     }
                   : {
-                      color: "#FFF",
+                      color: "#131415",
                       _hover: {
                         bg: "transparent",
                         borderColor: "rgb(255 255 255 / 48%)",

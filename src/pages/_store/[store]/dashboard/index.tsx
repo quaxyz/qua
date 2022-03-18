@@ -258,16 +258,12 @@ const Page = ({ orders }: any) => {
         </Stack>
 
         <Stack>
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-          >
+          <Stack direction="row" justify="space-between" align="center" mb={10}>
             <Heading
               as="h2"
               fontSize={{ base: "18px", md: "24px" }}
               fontWeight="500"
-              color="#000"
+              color="#131415"
             >
               Activity
             </Heading>

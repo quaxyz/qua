@@ -34,8 +34,8 @@ const Home: NextPage = () => {
           align="center"
           direction="row"
           justify="space-between"
-          px={{ base: "4", md: "8rem" }}
-          py={{ base: "4", md: "8" }}
+          px={{ base: "5", md: "8rem" }}
+          py={{ base: "2", md: "8" }}
           maxW="100%"
           pos="absolute"
           top="0"
@@ -50,8 +50,8 @@ const Home: NextPage = () => {
                   src="/svg/qua_logo_white.svg"
                   alt="Qua logo"
                   layout="fixed"
-                  width={{ base: "3.75rem", md: "6rem" }}
-                  height={{ base: "3.75rem", md: "6rem" }}
+                  width={{ base: "5.75rem", md: "6rem" }}
+                  height={{ base: "5.75rem", md: "6rem" }}
                 />
               </Box>
             </a>
@@ -67,7 +67,7 @@ const Home: NextPage = () => {
 
       <Container
         maxW="100%"
-        h={{ base: "100%", md: "60vh" }}
+        h={{ base: "50vh", md: "58vh" }}
         bgRepeat="no-repeat"
         bgSize="cover"
         bgPosition="center"
@@ -79,44 +79,57 @@ const Home: NextPage = () => {
           justify="space-between"
           align="center"
           px={{ base: "2", md: "7rem" }}
-          // pr={{ base: "2", md: "5rem" }}
-          // pb={{ base: "4rem", md: "16rem" }}
-          pt={{ base: "7rem", md: "12rem" }}
+          pt={{ base: "8rem", md: "12rem" }}
           w="100%"
           spacing="0.6rem"
         >
           <Stack w="100%" pl={{ base: "0", md: "4rem" }}>
-            <Stack maxW={{ base: "100%", md: "48rem" }} mb="8">
+            <Stack
+              maxW={{ base: "100%", md: "48rem" }}
+              mb={{ base: "6", md: "8" }}
+            >
               <Heading
                 color="#fff"
                 fontWeight="800"
-                fontSize={{ base: "1.8rem", md: "62" }}
-                mb="4"
+                fontSize={{ base: "32px", md: "62" }}
+                mb={{ base: "2", md: "4" }}
               >
                 Welcome to Qua.
               </Heading>
               <Text
                 fontSize={{ base: "16px", md: "18px" }}
                 color="#fff"
-                opacity="0.72"
+                opacity="0.87"
               >
-                The home for modern eCommerce brands
+                The home for modern ecommerce brands and online shopping
               </Text>
             </Stack>
 
-            <Stack
-              direction={{ base: "column", md: "row" }}
-              w="100%"
-              align={{ base: "left", md: "center" }}
-              spacing="4"
-            >
+            <Stack direction="row" spacing="4">
               <NextLink href="/setup" passHref>
                 <Button
+                  display={{ base: "none", md: "flex" }}
                   as={Link}
                   variant="solid-outline"
                   px="12"
                   size="lg"
                   bgColor="#fff"
+                  border="none"
+                  color="#000"
+                >
+                  Get Started
+                </Button>
+              </NextLink>
+
+              <NextLink href="/setup" passHref>
+                <Button
+                  display={{ base: "flex", md: "none" }}
+                  as={Link}
+                  variant="solid-outline"
+                  size="md"
+                  m="0 !important"
+                  bgColor="#fff"
+                  border="none"
                   color="#000"
                 >
                   Get Started
@@ -126,8 +139,21 @@ const Home: NextPage = () => {
               <NextLink href="/stores" passHref>
                 <Button
                   as={Link}
+                  display={{ base: "none", md: "flex" }}
                   variant="solid-outline"
                   size="lg"
+                  color="#fff"
+                  borderColor="#fff"
+                >
+                  Go Shopping
+                </Button>
+              </NextLink>
+              <NextLink href="/stores" passHref>
+                <Button
+                  display={{ base: "flex", md: "none" }}
+                  as={Link}
+                  variant="solid-outline"
+                  size="md"
                   color="#fff"
                   borderColor="#fff"
                 >
@@ -138,12 +164,13 @@ const Home: NextPage = () => {
           </Stack>
 
           <Stack
+            display={{ base: "none", md: "flex" }}
             align="center"
             justify="center"
             spacing="12"
             position="fixed"
-            right={{ base: "1rem", md: "5rem" }}
-            top={{ base: "1", md: "10rem" }}
+            right={{ base: "0.015px", md: "5rem" }}
+            top={{ base: "6rem", md: "10rem" }}
           >
             <Stack
               h={{ base: "80px", md: "100" }}
@@ -155,7 +182,7 @@ const Home: NextPage = () => {
                 href="https://www.instagram.com/qua_xyz/"
                 color="#000"
                 textTransform="uppercase"
-                fontSize="xs"
+                fontSize={{ base: "10px", md: "12px" }}
                 // transformOrigin="0 0"
                 transform="rotate(90deg)"
                 borderBottom="none"
@@ -168,7 +195,7 @@ const Home: NextPage = () => {
                 href="https://discord.gg/nK8Vgae2W8"
                 color="#000"
                 textTransform="uppercase"
-                fontSize="xs"
+                fontSize={{ base: "10px", md: "12px" }}
                 transform="rotate(90deg)"
                 borderBottom="none"
                 isExternal
@@ -180,7 +207,7 @@ const Home: NextPage = () => {
                 href="https://twitter.com/qua_xyz"
                 color="#000"
                 textTransform="uppercase"
-                fontSize="xs"
+                fontSize={{ base: "10px", md: "12px" }}
                 transform="rotate(90deg)"
                 borderBottom="none"
                 isExternal
@@ -199,12 +226,12 @@ const Home: NextPage = () => {
 
       <Container maxW="100%">
         <Stack
-          px={{ base: "4", md: "11rem" }}
-          py={{ base: "2", md: "16" }}
+          px={{ base: "2", md: "11rem" }}
+          py={{ base: "0", md: "16" }}
           spacing="12"
         >
           <FormGroup id="search" labelProps={{ variant: "flushed" }}>
-            <InputGroup>
+            <InputGroup display={{ base: "none", md: "block" }}>
               <InputLeftElement pointerEvents="none" children={<Search />} />
               <Input
                 type="search"
@@ -212,6 +239,23 @@ const Home: NextPage = () => {
                 placeholder="What are you shopping for?"
                 variant="flushed"
                 size="lg"
+                // value={formValue.name}
+                // onChange={(e) =>
+                //   setFormValue({ ...formValue, name: e.target.value })
+                // }
+              />
+            </InputGroup>
+          </FormGroup>
+          {/* Mobile display */}
+          <FormGroup id="search" labelProps={{ variant: "flushed" }}>
+            <InputGroup display={{ base: "block", md: "none" }}>
+              <InputLeftElement pointerEvents="none" children={<Search />} />
+              <Input
+                type="search"
+                fontWeight="300"
+                placeholder="What are you shopping for?"
+                variant="flushed"
+                size="md"
                 // value={formValue.name}
                 // onChange={(e) =>
                 //   setFormValue({ ...formValue, name: e.target.value })
@@ -230,63 +274,81 @@ const Home: NextPage = () => {
               Shop from near you
             </Text>
             <Text
-              fontSize={{ base: "1.125rem", md: "1rem" }}
+              fontSize={{ base: "1rem", md: "1rem" }}
+              fontWeight="400"
               opacity="0.48"
               color="#131415"
             >
-              Cut carbon emmisions. Save the planet.
+              Save the planet.
             </Text>
 
-            <Stack py={{ base: "2", md: "6" }} direction="row" spacing="4">
+            <Stack
+              py={{ base: "2", md: "6" }}
+              direction="row"
+              // direction={{ base: "column", md: "row" }}
+              spacing="4"
+            >
               <Button
                 variant="solid-outline"
-                size="lg"
-                px={{ base: "1", md: "12" }}
+                size="md"
+                width={{ base: "100%", md: "auto" }}
+                px={{ base: "8", md: "12" }}
               >
-                Lagos
+                Chicago
               </Button>
               <Button
                 variant="solid-outline"
-                size="lg"
-                px={{ base: "1", md: "12" }}
+                size="md"
+                width={{ base: "100%", md: "auto" }}
+                px={{ base: "8", md: "12" }}
               >
-                Ikeja
+                New York
               </Button>
               <Button
                 variant="solid-outline"
-                size="lg"
-                px={{ base: "1", md: "12" }}
+                size="md"
+                width={{ base: "100%", md: "auto" }}
+                px={{ base: "8", md: "12" }}
               >
-                Abuja
+                Boston
               </Button>
             </Stack>
           </Stack>
 
-          <Stack>
+          <Stack py={{ base: "2", md: "0" }}>
             <Stack direction="row" align="center" justify="space-between">
               <Text
                 as="span"
                 color="#131415"
                 fontWeight="300"
-                fontSize={{ base: "1.4rem", md: "1.8rem" }}
+                fontSize={{ base: "1.2rem", md: "1.8rem" }}
               >
                 Shop by category
               </Text>
-              <Link fontSize={{ base: "1.125rem", md: "1rem" }} color="#131415">
+              <Link fontSize={{ base: "14px", md: "1rem" }} color="#131415">
                 See all
               </Link>
             </Stack>
 
-            <Stack py={{ base: "2", md: "6" }} direction="row" spacing="4">
+            <Stack
+              py={{ base: "2", md: "6" }}
+              direction={{ base: "column", md: "row" }}
+              spacing="4"
+            >
               <Box
                 flex="1"
-                h="350px"
+                h={{ base: "200px", md: "350px" }}
                 bgRepeat="no-repeat"
                 bgSize="cover"
                 bgPosition="center"
                 bgImage="url(/images/rachit-tank-2cFZ_FB08UM-unsplash.jpg)"
               >
-                <Stack w="100%" p="8" h="100%">
+                <Stack
+                  w="100%"
+                  p={{ base: "4", md: "8" }}
+                  h="100%"
+                  spacing={{ base: "12", md: "4" }}
+                >
                   <Heading flex="1" fontSize={{ base: "1.125rem", md: "24px" }}>
                     Electronics
                   </Heading>
@@ -294,8 +356,8 @@ const Home: NextPage = () => {
                     alignSelf="flex-end"
                     variant="primary-outline"
                     bgColor="#fff"
-                    px="12"
-                    py="6"
+                    px={{ base: "8", md: "12" }}
+                    py={{ base: "4", md: "6" }}
                     border="none"
                     color="#000"
                   >
@@ -305,13 +367,18 @@ const Home: NextPage = () => {
               </Box>
               <Box
                 flex="1"
-                h="350px"
+                h={{ base: "200px", md: "350px" }}
                 bgRepeat="no-repeat"
                 bgSize="cover"
                 bgPosition="center"
                 bgImage="url(/images/ehimetalor-akhere-unuabona-okTqiC9Xqho-unsplash.jpg)"
               >
-                <Stack w="100%" p="8" h="100%">
+                <Stack
+                  w="100%"
+                  p={{ base: "4", md: "8" }}
+                  h="100%"
+                  spacing={{ base: "12", md: "4" }}
+                >
                   <Heading flex="1" fontSize={{ base: "1.125rem", md: "24px" }}>
                     Fashion
                   </Heading>
@@ -319,8 +386,8 @@ const Home: NextPage = () => {
                     alignSelf="flex-end"
                     variant="primary-outline"
                     bgColor="#fff"
-                    px="12"
-                    py="6"
+                    px={{ base: "8", md: "12" }}
+                    py={{ base: "4", md: "6" }}
                     border="none"
                     color="#000"
                   >
@@ -333,16 +400,23 @@ const Home: NextPage = () => {
         </Stack>
       </Container>
 
-      <Stack py="4" borderTop="0.8px solid rgba(0, 0, 0, 0.24)" w="100%" />
+      <Stack pt="4" borderTop="0.8px solid rgba(0, 0, 0, 0.24)" w="100%" />
 
-      <Container maxW="100%" px="8">
+      <Container
+        maxW="100%"
+        px={{ base: "2", md: "8" }}
+        py={{ base: "0", md: "2" }}
+      >
         <Stack
           bgRepeat="no-repeat"
           bgSize="cover"
           bgPosition="center"
-          bgImage="url(/images/kamran-abdullayev-DvFrRwuyn88-unsplash.jpg)"
-          px={{ base: "4", md: "11rem" }}
-          py={{ base: "2", md: "10rem" }}
+          bgImage={{
+            base: "url(/images/grow_mobile.png)",
+            md: "url(/images/kamran-abdullayev-DvFrRwuyn88-unsplash.jpg)",
+          }}
+          px={{ base: "6", md: "11rem" }}
+          py={{ base: "12", md: "10rem" }}
           spacing="2"
         >
           <Stack maxW={{ base: "100%", md: "48rem" }} mb="8" spacing="2">
@@ -352,19 +426,17 @@ const Home: NextPage = () => {
               fontSize={{ base: "1.8rem", md: "64" }}
               mb="4"
             >
-              Grow your <br />
-              bussiness with Qua{" "}
+              Grow your <br /> business with Qua{" "}
             </Heading>
             <Text
-              fontSize={{ base: "16px", md: "18px" }}
+              fontSize={{ base: "15px", md: "18px" }}
               color="#fff"
               opacity="87%"
-              w={{ base: "100%", md: "570px" }}
+              w={{ base: "100%", md: "548px" }}
             >
-              Set up a personalized store in an instant, sell to anyone,
-              anywhere — Get the insights you need to grow with a simple
-              dashboard to manage orders, shipping, and payments all in one
-              place.
+              Set up your brand store in an instant, sell to anyone, anywhere —
+              Get the insights to grow with a simple dashboard to manage orders,
+              shipping, and payments all in one place.
             </Text>
           </Stack>
           <NextLink href="/setup" passHref>

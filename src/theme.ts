@@ -30,6 +30,7 @@ export default extendTheme({
     Link: {
       baseStyle: {
         borderBottom: "1px solid",
+
         _hover: {
           textDecoration: "none",
           transform: "scale(1.02)",

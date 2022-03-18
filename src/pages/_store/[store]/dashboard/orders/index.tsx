@@ -41,17 +41,17 @@ const Page = ({ initialData }: any) => {
   const isEmpty = !queryResp?.data?.pages.filter((p) => p.length).length;
 
   return (
-    <Box px={{ base: "1rem", md: "4rem" }}>
-      <Flex justifyContent="space-between" py="2rem" alignItems="center">
+    <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
+      <Stack direction="row" justify="space-between" align="center" mb={10}>
         <Heading
           as="h2"
           fontSize={{ base: "18px", md: "24px" }}
           fontWeight="500"
-          color="#000"
+          color="#131415"
         >
           All orders
         </Heading>
-      </Flex>
+      </Stack>
 
       {!isEmpty ? (
         <>
@@ -219,7 +219,7 @@ const Page = ({ initialData }: any) => {
           </Stack>
         </Container>
       )}
-    </Box>
+    </Container>
   );
 };
 

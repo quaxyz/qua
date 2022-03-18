@@ -104,6 +104,7 @@ const SelectMenu = ({
                   onClick={() => onItemSelect(option.value)}
                   size="lg"
                   variant="solid-outline"
+                  borderColor="rgba(19, 20, 21, 16%)"
                   isFullWidth
                   whiteSpace="initial"
                   justifyContent="flex-start"
