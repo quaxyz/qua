@@ -15,7 +15,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Link from "components/link";
-import { Wallet } from "components/wallet";
+import { AccountMenu } from "components/account-menu";
 import { useStoreUser } from "hooks/auth";
 import { Bag, Category, Graph, User, Show } from "react-iconly";
 import { CgMore } from "react-icons/cg";
@@ -152,45 +152,21 @@ const DashboardLayout = ({ title, children }: any) => {
               />
             </Stack>
 
-            <Button
-              variant="props"
-              size="sm"
-              fontSize="15px"
-              bg="rgba(19, 20, 21, 0.04)"
-              borderRadius="12px"
-              border="1px solid rgba(19, 20, 21, 0.08)"
-            >
-              <Icon mr="2" as={(props) => <User set="bold" {...props} />} />
-              My Account
-            </Button>
-
-            {/* <Wallet
-              menuOptions={walletMenuLinks.map((m) => ({
-                ...m,
-                href: getLink(m.href),
-              }))}
-              ButtonProps={{
-                variant: "outline",
-                mt: "auto !important",
-
-                rounded: "8px",
-                borderColor: "rgb(255 255 255 / 16%)",
-                leftIcon: <Icon as={CgMore} mr={3} />,
-                ...(walletMenuLinks.some((m) => router.asPath.endsWith(m.href))
-                  ? {
-                      color: "#000",
-                      bg: "#000",
-                      _hover: { bg: "white" },
-                    }
-                  : {
-                      color: "#000",
-                      _hover: {
-                        bg: "transparent",
-                        borderColor: "rgb(255 255 255 / 48%)",
-                      },
-                    }),
-              }}
-            /> */}
+            <AccountMenu options={walletMenuLinks}>
+              <Button
+                variant="outline"
+                size="sm"
+                fontSize="15px"
+                bg="rgba(19, 20, 21, 0.04)"
+                borderRadius="12px"
+                border="1px solid rgba(19, 20, 21, 0.08)"
+                leftIcon={
+                  <Icon mr="2" as={(props) => <User set="bold" {...props} />} />
+                }
+              >
+                My Account
+              </Button>
+            </AccountMenu>
           </Stack>
         </chakra.nav>
 
@@ -237,10 +213,6 @@ const DashboardLayout = ({ title, children }: any) => {
         <chakra.header
           gridArea="topbar"
           borderBottom="1px solid rgba(19, 20, 21, 0.08)"
-          // pos="fixed"
-          // top="0"
-          // left="0"
-          // right="0"
           bg="#fff"
           px={5}
           display={{ base: "block", md: "none" }}
@@ -276,18 +248,14 @@ const DashboardLayout = ({ title, children }: any) => {
               />
             </Stack>
 
-            <Wallet
-              menuOptions={walletMenuLinks.map((m) => ({
-                ...m,
-                href: getLink(m.href),
-              }))}
-              ButtonProps={{
-                variant: "outline",
-                rounded: "8px",
-                size: "sm",
-                borderColor: "rgb(255 255 255 / 16%)",
-                rightIcon: <Icon as={CgMore} />,
-                ...(walletMenuLinks.some((m) => router.asPath.endsWith(m.href))
+            <AccountMenu options={walletMenuLinks}>
+              <Button
+                variant="outline"
+                rounded="8px"
+                size="sm"
+                borderColor="rgb(255 255 255 / 16%)"
+                rightIcon={<Icon as={CgMore} />}
+                {...(walletMenuLinks.some((m) => router.asPath.endsWith(m.href))
                   ? {
                       color: "#000",
                       bg: "#131415",
@@ -299,9 +267,11 @@ const DashboardLayout = ({ title, children }: any) => {
                         bg: "transparent",
                         borderColor: "rgb(255 255 255 / 48%)",
                       },
-                    }),
-              }}
-            />
+                    })}
+              >
+                My Account
+              </Button>
+            </AccountMenu>
           </Stack>
         </chakra.header>
 

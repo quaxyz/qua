@@ -32,6 +32,11 @@ export default withSession(
           });
 
           if (!data) {
+            console.warn(LOG_TAG, "no store found for this user", {
+              query,
+              session: sessionData,
+            });
+
             return res.status(200).send({ user: null });
           }
 

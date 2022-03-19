@@ -86,6 +86,8 @@ export default extendTheme({
           border: "1px solid rgba(19, 20, 21, 80%)",
           backgroundColor: "transparent",
           rounded: "0px",
+          color: "#000",
+          _hover: { backgroundColor: "rgba(19, 20, 21)", color: "#fff" },
           _focus: { boxShadow: "0 0 0 1.8px rgba(0, 0, 0, 0.4)" },
         },
 

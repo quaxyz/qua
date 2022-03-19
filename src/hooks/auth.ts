@@ -238,7 +238,8 @@ export const useWalletAuth = () => {
 export const useStoreUser = () => {
   return useQuery({
     queryKey: ["store-user"],
-    staleTime: Infinity,
+    staleTime: 0, // always stale
+    cacheTime: 0,
     queryFn: async () => {
       const { payload } = await Api().get(`/dashboard/user`);
       return payload;
