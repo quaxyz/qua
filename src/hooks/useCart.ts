@@ -4,9 +4,9 @@ import { CartContext, CartItem } from "contexts/cart";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
 
-const useCart = (props: any) => {
-  const [items, setItems] = useState<CartItem[]>(props?.items || []);
-  const [subTotal, setSubtotal] = useState(props?.total || 0);
+const useCart = (cart?: any) => {
+  const [items, setItems] = useState<CartItem[]>(cart?.items || []);
+  const [subTotal, setSubtotal] = useState(cart?.total || 0);
 
   const [loadingCart, setLoadingCart] = useState(false);
   const [syncingCart, setSyncingCart] = useState(false);

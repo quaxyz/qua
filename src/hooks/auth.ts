@@ -2,16 +2,13 @@ import Api from "libs/api";
 import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { useMutation, useQuery } from "react-query";
-import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useWeb3React } from "@web3-react/core";
 import { destroyKeyPair, extractPublicKey, getKeyPair } from "libs/keys";
 import { AuthContext } from "contexts/auth";
-import { COOKIE_STORAGE_NAME, toBase64 } from "libs/cookie";
+import { COOKIE_STORAGE_NAME } from "libs/cookie";
 import { useEagerConnect } from "hooks/web3";
-import { useGoogleLogin } from "react-google-login";
-import { useToast, useDisclosure } from "@chakra-ui/react";
-import { injected, switchNetwork } from "libs/wallet";
-import { providers } from "ethers";
+import { useToast } from "@chakra-ui/react";
 
 export function useInitializeStoreAuth() {
   const [publicKey, setPublicKey] = useState<string | null>();
@@ -83,51 +80,26 @@ declare global {
   var google: any;
 }
 
-export const useGoogleAuthSetup = () => {
-  const handleResponse = useCallback((resp) => {
-    const payload = jwt.decode(resp.credential);
-    console.log("Google auth", resp);
-  }, []);
-
-  useEffect(() => {
-    global.google?.accounts.id.initialize({
-      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-      callback: handleResponse,
-    });
-
-    global.google?.accounts.id.prompt();
-  }, [handleResponse]);
-};
-
-export const useGoogleAuth = () => {
+export const useGoogleOneTap = (isLoggedIn: boolean) => {
   const toast = useToast();
+  const queryClient = useQueryClient();
+
   const googleAuthMutation = useMutation(
     async (data: any) => {
-      const { payload } = await Api().post("/auth/google", {
-        googleId: data.tokenId,
+      console.log(data);
+      await Api().post("/login/google", {
+        token: data.credential,
       });
-
-      if (!payload.token) {
-        throw new Error("No token returned from server");
-      }
-
-      // store token in cookie
-      Cookies.set(
-        COOKIE_STORAGE_NAME,
-        toBase64({ token: payload.token, email: data.email }),
-        {
-          expires: 365 * 10,
-          secure: true,
-        }
-      );
-
-      return payload.token;
     },
     {
-      onError: (err) => {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries("customer-data");
+      },
+
+      onError: (err: any) => {
         toast({
-          title: "Error Signing up",
-          description: "Something went wrong authenicating with Google",
+          title: "Error login in",
+          description: err?.message,
           position: "bottom-right",
           status: "error",
         });
@@ -135,104 +107,16 @@ export const useGoogleAuth = () => {
     }
   );
 
-  const { loaded, signIn } = useGoogleLogin({
-    clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
-    onSuccess: (resp) => googleAuthMutation.mutateAsync(resp),
-    onFailure: (err) => {
-      toast({
-        title: "Error Signing up",
-        description: "Something went wrong authenicating with Google",
-        position: "bottom-right",
-        status: "error",
-      });
-    },
-  });
+  useEffect(() => {
+    if (isLoggedIn) return;
 
-  return {
-    ready: loaded,
-    loading: googleAuthMutation.isLoading,
-    signIn,
-  };
-};
-
-export const useWalletAuth = () => {
-  // ask user to sign data and send to the backend
-  const toast = useToast();
-  const [pending, setPending] = useState<boolean>(false);
-  const { activate, library, account } = useWeb3React();
-  const connectModal = useDisclosure();
-
-  const walletAuthMutation = useMutation(async (account: string) => {
-    // ask user to sign message
-    let provider: providers.Web3Provider = library;
-    const signer = provider.getSigner(account!);
-
-    const message = "Please sign this message to confirm you own this wallet";
-    const sig = await signer.signMessage(message);
-
-    console.log("Sign", { sig, address: account });
-
-    const { payload } = await Api().post("/auth/wallet", {
-      address: account,
-      sig,
-      message,
+    global.google?.accounts.id.initialize({
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      callback: (resp: any) => googleAuthMutation.mutateAsync(resp),
     });
 
-    if (!payload.token) {
-      throw new Error("No token returned from server");
-    }
-
-    // store token in cookie
-    Cookies.set(
-      COOKIE_STORAGE_NAME,
-      toBase64({ token: payload.token, address: account }),
-      {
-        expires: 365 * 10,
-        secure: true,
-      }
-    );
-
-    return payload.token;
-  });
-
-  const tryActivate = async (connector?: any) => {
-    if (!connector) return;
-    setPending(true);
-
-    // activate wallet
-    try {
-      await activate(connector, undefined, true);
-    } catch (error) {
-      if (connector === injected && error instanceof UnsupportedChainIdError) {
-        await switchNetwork();
-        await activate(injected, (err) => {
-          toast({
-            title: "Error connecting account",
-            description: err.message,
-            position: "bottom-right",
-            status: "error",
-          });
-        });
-      }
-    } finally {
-      setPending(false);
-      connectModal.onClose();
-    }
-  };
-
-  useEffect(() => {
-    if (!account) return;
-    walletAuthMutation.mutate(account);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account]);
-
-  return {
-    isLoading: pending || walletAuthMutation.isLoading,
-    isModalOpen: connectModal.isOpen,
-    onModalClose: connectModal.onClose,
-    onModalOpen: connectModal.onOpen,
-    activate: tryActivate,
-  };
+    global.google?.accounts.id.prompt();
+  }, [googleAuthMutation, isLoggedIn]);
 };
 
 export const useStoreUser = () => {
@@ -242,6 +126,18 @@ export const useStoreUser = () => {
     cacheTime: 0,
     queryFn: async () => {
       const { payload } = await Api().get(`/dashboard/user`);
+      return payload;
+    },
+  });
+};
+
+export const useCustomerData = () => {
+  return useQuery({
+    queryKey: ["customer-data"],
+    staleTime: 0, // always stale
+    cacheTime: 0,
+    queryFn: async () => {
+      const { payload } = await Api().get(`/user`);
       return payload;
     },
   });

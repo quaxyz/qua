@@ -19,7 +19,6 @@ import { AccountMenu } from "components/account-menu";
 import { useStoreUser } from "hooks/auth";
 import { Bag, Category, Graph, User, Show } from "react-iconly";
 import { CgMore } from "react-icons/cg";
-import { useGetLink } from "hooks/utils";
 
 const navLinks = [
   {

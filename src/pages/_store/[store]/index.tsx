@@ -3,7 +3,7 @@ import prisma from "libs/prisma";
 import Api from "libs/api";
 import NextLink from "next/link";
 import Link from "components/link";
-import type { GetServerSideProps } from "next";
+import type { GetStaticProps } from "next";
 import {
   chakra,
   Container,
@@ -17,7 +17,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import { getLayoutProps } from "components/layouts/customer-props";
+import { getStorePaths } from "libs/store-paths";
 import { useRouter } from "next/router";
 import { useInfiniteQuery } from "react-query";
 import { useIntersection } from "react-use";
@@ -170,19 +170,20 @@ const Page = ({ initialData, categories }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const store = ctx?.params?.store as string;
-  const category = ctx?.query?.category as string;
+export const getStaticPaths = getStorePaths;
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const storeName = params?.store as string;
 
-  let layoutProps = await getLayoutProps(ctx);
-  if (!layoutProps) return { notFound: true };
+  const store = await prisma.store.findUnique({
+    where: { name: storeName },
+  });
+  if (!store) return { notFound: true };
 
   const data = await prisma.product.findMany({
     take: 12,
     where: {
-      category,
       Store: {
-        name: store as string,
+        name: store.name,
       },
     },
     orderBy: {
@@ -204,7 +205,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const distinctCategories = await prisma.product.findMany({
     distinct: ["category"],
     where: {
-      Store: { name: store },
+      Store: { name: store.name },
     },
     select: {
       category: true,
@@ -219,7 +220,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       initialData: JSON.parse(JSON.stringify(data)),
       categories,
       layoutProps: {
-        ...layoutProps,
         title: `Products`,
       },
     },

@@ -38,7 +38,7 @@ export const useGoogleAuth = () => {
     {
       onError: (err: any) => {
         toast({
-          title: "Error Signing up",
+          title: "Error login in",
           description: err?.message,
           position: "bottom-right",
           status: "error",
@@ -95,7 +95,7 @@ export const useWalletAuth = () => {
     {
       onError: (err: any) => {
         toast({
-          title: "Error Signing up",
+          title: "Error login in",
           description: err?.message,
           position: "bottom-right",
           status: "error",

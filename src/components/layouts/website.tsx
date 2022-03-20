@@ -34,11 +34,6 @@ const WebsiteLayout: React.FC = ({ children }) => {
           px="8rem"
           py="2"
           maxW="100%"
-          // pos="absolute"
-          // top="0"
-          // left="0"
-          // right="0"
-          // zIndex="2"
         >
           <NextLink href="/" passHref>
             <a>
