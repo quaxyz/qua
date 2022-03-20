@@ -28,20 +28,11 @@ export default withSession(
           }
 
           // store user details
-          let user = await prisma.user.findFirst({
+          let user = await prisma.user.upsert({
             where: { address },
+            create: { address },
+            update: { address },
           });
-
-          if (user) {
-            user = await prisma.user.update({
-              where: { id: user.id },
-              data: { address },
-            });
-          } else {
-            user = await prisma.user.create({
-              data: { address },
-            });
-          }
 
           // generate jwt token for user
           req.session.data = {

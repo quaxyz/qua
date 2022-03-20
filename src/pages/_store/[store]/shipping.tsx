@@ -3,7 +3,7 @@ import prisma from "libs/prisma";
 import Api from "libs/api";
 import type { GetServerSideProps } from "next";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import { getLayoutProps } from "components/layouts/props";
+import { getLayoutProps } from "components/layouts/customer-props";
 import {
   Button,
   chakra,

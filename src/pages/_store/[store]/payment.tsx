@@ -25,7 +25,7 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FcCheckmark } from "react-icons/fc";
 import { useMutation, useQuery } from "react-query";
-import { getLayoutProps } from "components/layouts/props";
+import { getLayoutProps } from "components/layouts/customer-props";
 
 function pay({ name, email, amount }: any) {
   return new Promise((resolve, reject) => {

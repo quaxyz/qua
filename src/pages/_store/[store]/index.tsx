@@ -17,7 +17,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import { getLayoutProps } from "components/layouts/props";
+import { getLayoutProps } from "components/layouts/customer-props";
 import { useRouter } from "next/router";
 import { useInfiniteQuery } from "react-query";
 import { useIntersection } from "react-use";

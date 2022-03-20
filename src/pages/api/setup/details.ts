@@ -14,20 +14,12 @@ export default withSession(
         case "POST": {
           console.log(LOG_TAG, "setup store", { body });
 
-          console.log(
-            "no session",
-            !req.session.data ||
-              (!req.session.data?.address && !req.session.data?.email)
-          );
-
-          if (
-            !req.session.data ||
-            (!req.session.data?.address && !req.session.data?.email)
-          ) {
+          if (!req.session.data || !req.session.data.userId) {
             console.warn(LOG_TAG, "no store owner found, redirect to login", {
               body,
               session: req.session.data,
             });
+
             return res.send({
               redirect: true,
               url: `/setup`,
@@ -47,9 +39,12 @@ export default withSession(
             data: {
               name: body.name?.toLowerCase(),
               email: req.session.data.email,
-              owner:
-                req.session.data.address || req.session.data.email || undefined,
               category: body.category,
+              owner: {
+                connect: {
+                  id: req.session.data.userId,
+                },
+              },
             },
           });
 

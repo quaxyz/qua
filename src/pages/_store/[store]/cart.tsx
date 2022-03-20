@@ -22,7 +22,7 @@ import { useCartStore } from "hooks/useCart";
 import { Delete } from "react-iconly";
 import { useMutation, useQuery } from "react-query";
 import { useDebounce } from "react-use";
-import { getLayoutProps } from "components/layouts/props";
+import { getLayoutProps } from "components/layouts/customer-props";
 
 const CartItem = ({ item }: any) => {
   const cartStore = useCartStore();

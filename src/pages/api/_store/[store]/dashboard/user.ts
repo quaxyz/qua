@@ -15,7 +15,7 @@ export default withSession(
 
           const { data: sessionData } = req.session;
 
-          if (!sessionData || (!sessionData?.address && !sessionData?.email)) {
+          if (!sessionData || !sessionData?.userId) {
             console.warn(LOG_TAG, "no logged in user found", {
               query,
               session: sessionData,
@@ -27,7 +27,9 @@ export default withSession(
           const data = await prisma.store.findFirst({
             where: {
               name: query.store as string,
-              owner: sessionData.address || sessionData.email || undefined,
+              owner: {
+                id: sessionData.userId,
+              },
             },
           });
 

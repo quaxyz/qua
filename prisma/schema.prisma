@@ -1,55 +1,59 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["filterJson"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Store {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  name        String   @unique
-  owner       String
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  owner       User?   @relation(fields: [userId], references: [id])
+  owner_old   String? // TODO after migration
   deliveryFee Float?
   email       String?
   category    String?
   title       String?
-  image       Image?   @relation(fields: [imageId], references: [id])
   about       String?
   location    String?
   socialLinks Json?
+  bankDetails Json?
 
-  imageId  Int?
-  products Product[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  image    Image?    @relation(fields: [imageId], references: [id])
   carts    Cart[]
   orders   Order[]
+  products Product[]
+
+  imageId Int?
+  userId  Int?
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
+  id Int @id @default(autoincrement())
 
   address String? @unique
   email   String? @unique
 
-  publicKey String[]
-  googleId  String?
-
+  googleId        String? @unique
   shippingDetails Json?
 
-  carts Cart[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  carts  Cart[]
+  stores Store[]
 }
 
 model Product {
   id            Int      @id @default(autoincrement())
   name          String
-  images        Image[]
   price         Float
   physical      Boolean
   description   String?
@@ -62,28 +66,25 @@ model Product {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   deleted       Boolean  @default(false)
-
-  Store   Store @relation(fields: [storeId], references: [id])
-  storeId Int
+  storeId       Int
+  Store         Store    @relation(fields: [storeId], references: [id])
+  images        Image[]
 }
 
 model Cart {
-  id    Int  @id @default(autoincrement())
-  items Json
-
-  owner        User   @relation(fields: [ownerAddress], references: [address])
+  id           Int    @id @default(autoincrement())
+  items        Json
   ownerAddress String
-
-  store     Store  @relation(fields: [storeName], references: [name])
-  storeName String
+  storeName    String
+  owner        User   @relation(fields: [ownerAddress], references: [address])
+  store        Store  @relation(fields: [storeName], references: [name])
 
   @@unique([ownerAddress, storeName])
 }
 
 model Order {
-  id   Int    @id @default(autoincrement())
-  hash String @unique
-
+  id               Int                @id @default(autoincrement())
+  hash             String             @unique
   items            Json
   customerAddress  String
   customerDetails  Json
@@ -96,15 +97,22 @@ model Order {
   payoutHash       String?
   status           OrderStatus
   paymentStatus    OrderPaymentStatus
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  Store   Store @relation(fields: [storeId], references: [id])
-  storeId Int
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  storeId          Int
+  Store            Store              @relation(fields: [storeId], references: [id])
 }
 
-// enums
+model Image {
+  id        Int      @id @default(autoincrement())
+  hash      String   @unique
+  key       String
+  url       String
+  productId Int?
+  Product   Product? @relation(fields: [productId], references: [id])
+  Store     Store[]
+}
+
 enum OrderStatus {
   FULFILLED
   UNFULFILLED
@@ -115,17 +123,4 @@ enum OrderPaymentStatus {
   PAID
   UNPAID
   CONTACT_SELLER
-}
-
-// metas
-model Image {
-  id   Int    @id @default(autoincrement())
-  hash String @unique
-  key  String
-  url  String
-
-  Product   Product? @relation(fields: [productId], references: [id])
-  productId Int?
-
-  Store Store[]
 }

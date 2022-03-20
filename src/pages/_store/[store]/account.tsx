@@ -24,7 +24,7 @@ import { useMutation } from "react-query";
 import { truncateAddress } from "libs/utils";
 import { providers } from "ethers";
 import { domain, schemas } from "libs/constants";
-import { getLayoutProps } from "components/layouts/props";
+import { getLayoutProps } from "components/layouts/customer-props";
 
 const useSaveDetails = () => {
   const router = useRouter();

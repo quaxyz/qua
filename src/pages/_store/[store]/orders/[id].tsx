@@ -16,7 +16,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import { getLayoutProps } from "components/layouts/props";
+import { getLayoutProps } from "components/layouts/customer-props";
 import { ArrowLeft } from "react-iconly";
 import { parseJSON, format } from "date-fns";
 import { useMutation, useQuery, useQueryClient } from "react-query";
