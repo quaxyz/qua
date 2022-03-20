@@ -19,7 +19,7 @@ export default withSession(
             session,
           });
 
-          // verify address
+          // verify session
           if (!session || !session.userId) {
             console.warn(LOG_TAG, "No logged in user found", {
               query,
@@ -101,10 +101,8 @@ export default withSession(
             },
           });
 
-          console.log(LOG_TAG, "produt created", { result });
-          return res
-            .status(200)
-            .send({ product: result, message: "product created" });
+          console.log(LOG_TAG, "product created", { result });
+          return res.status(200).send({ message: "product created" });
         }
         default:
           console.log(LOG_TAG, "[error]", "unauthorized method", method);
