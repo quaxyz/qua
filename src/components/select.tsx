@@ -224,7 +224,7 @@ export const CreateableSelectMenu = ({
                 <Input
                   id="search"
                   border="none"
-                  placeholder="Search or create..."
+                  placeholder="Type name and press enter to select"
                 />
               </InputGroup>
             </form>

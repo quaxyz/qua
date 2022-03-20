@@ -1,8 +1,9 @@
 import React from "react";
+import { GetStaticProps } from "next";
+import { getStorePaths } from "libs/store-paths";
 import Link from "components/link";
 import Api from "libs/api";
 import prisma from "libs/prisma";
-import { GetServerSideProps } from "next";
 import { useInfiniteQuery, useMutation, useQueryClient } from "react-query";
 import {
   Box,
@@ -411,7 +412,8 @@ const Page = ({ initialData }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getStaticPaths = getStorePaths;
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const store = (params?.store as string) || "";
 
   const data = await prisma.product.findMany({
@@ -445,6 +447,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       layoutProps: {
         title: "Products",
       },
+      revalidate: 60 * 60,
     },
   };
 };

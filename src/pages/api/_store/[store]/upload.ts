@@ -5,7 +5,7 @@ import fleekStorage from "@fleekhq/fleek-storage-js";
 
 const LOG_TAG = "[upload]";
 
-const ACCEPTED_TYPES = ["png", "pdf", "jpg", "jpeg"];
+const ACCEPTED_TYPES = ["png", "pdf", "jpg", "jpeg", "webp"];
 
 function getBuffer(req: NextApiRequest) {
   return new Promise((resolve, reject) => {
