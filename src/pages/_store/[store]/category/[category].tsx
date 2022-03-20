@@ -3,7 +3,7 @@ import prisma from "libs/prisma";
 import Api from "libs/api";
 import NextLink from "next/link";
 import Link from "components/link";
-import type { GetStaticProps } from "next";
+import type { GetStaticPaths, GetStaticProps } from "next";
 import {
   chakra,
   Container,
@@ -17,13 +17,14 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import { getStorePaths } from "libs/store-paths";
 import { useInfiniteQuery } from "react-query";
 import { useIntersection } from "react-use";
 import { formatCurrency } from "libs/currency";
 import { useGetLink } from "hooks/utils";
+import { useRouter } from "next/router";
 
 function useQueryProducts({ initialData }: any) {
+  const router = useRouter();
   const intersectionRef = React.useRef(null);
 
   const intersection = useIntersection(intersectionRef, {
@@ -33,11 +34,13 @@ function useQueryProducts({ initialData }: any) {
   });
 
   const queryResp = useInfiniteQuery({
-    queryKey: ["store-products"],
+    queryKey: ["store-category-products", router.query.category],
     staleTime: Infinity,
     initialData: { pages: [initialData], pageParams: [] },
     queryFn: async ({ pageParam = 1 }) => {
-      const { payload }: any = await Api().get(`/products?cursor=${pageParam}`);
+      const { payload }: any = await Api().get(
+        `/category/${router.query.category}?cursor=${pageParam}`
+      );
       return payload;
     },
     getNextPageParam: (lastPage: any) => {
@@ -166,9 +169,39 @@ const Page = ({ initialData, categories }: any) => {
   );
 };
 
-export const getStaticPaths = getStorePaths;
+export const getStaticPaths: GetStaticPaths = async () => {
+  const stores = await prisma.store.findMany({
+    select: {
+      name: true,
+      products: {
+        distinct: ["category"],
+        select: {
+          category: true,
+        },
+      },
+    },
+  });
+
+  const paths = [];
+  for (let store of stores) {
+    for (let product of store.products) {
+      paths.push({
+        params: {
+          category: `${product.category}`,
+          store: store.name,
+        },
+      });
+    }
+  }
+
+  return {
+    paths,
+    fallback: "blocking",
+  };
+};
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const storeName = params?.store as string;
+  const category = params?.category as string;
 
   const store = await prisma.store.findUnique({
     where: { name: storeName },
@@ -178,6 +211,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const data = await prisma.product.findMany({
     take: 12,
     where: {
+      category: category,
       Store: {
         name: store.name,
       },
@@ -216,7 +250,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       initialData: JSON.parse(JSON.stringify(data)),
       categories,
       layoutProps: {
-        title: `Products`,
+        title: `Category: ${category}`,
       },
     },
   };

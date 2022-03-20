@@ -12,7 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       case "GET": {
         console.log(LOG_TAG, "fetch store products", { query });
 
-        if (!query.store || !query.cursor) {
+        if (!query.store || !query.cursor || !query.category) {
           console.log(LOG_TAG, "[warning]", "invalid query", { query });
           return res.status(400).send({ error: "invalid params" });
         }
@@ -28,6 +28,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           // query
           where: {
+            category: query.category as string,
             Store: {
               name: store as string,
             },

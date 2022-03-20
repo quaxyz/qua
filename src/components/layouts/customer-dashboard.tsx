@@ -51,7 +51,7 @@ const CustomerLayout = ({ title, children }: any) => {
   const customerData = useCustomerData();
   const cartStore = useCart(customerData.data?.cart);
 
-  useGoogleOneTap(!!customerData?.data?.user);
+  // useGoogleOneTap(!!customerData?.data?.user);
 
   return (
     <CartContext.Provider value={cartStore}>
