@@ -211,6 +211,7 @@ const Page = ({ categories }: any) => {
 
         <Button
           variant="primary"
+          colorScheme="black"
           onClick={onPublish}
           isLoading={addProductMutation.isLoading}
         >
@@ -247,7 +248,6 @@ const Page = ({ categories }: any) => {
               disabled={addProductMutation.isLoading}
               maxFiles={8}
               setFiles={(images) => {
-                console.log({ images });
                 setFormValue({ ...formValue, images });
               }}
             />
@@ -296,6 +296,8 @@ const Page = ({ categories }: any) => {
                           variant="flushed"
                           disabled={addProductMutation.isLoading}
                           value={formValue.price}
+                          // @ts-ignore
+                          onWheel={(e) => e.target.blur()}
                           onChange={(e) =>
                             setFormValue({
                               ...formValue,

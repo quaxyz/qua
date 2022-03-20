@@ -1,4 +1,5 @@
 import { extendTheme } from "@chakra-ui/react";
+import { transparentize } from "@chakra-ui/theme-tools";
 
 export default extendTheme({
   fonts: {
@@ -47,18 +48,20 @@ export default extendTheme({
       },
 
       variants: {
-        primary: {
-          backgroundColor: "black",
-          rounded: "8px",
-          color: "#fff",
-          _hover: {
-            backgroundColor: "rgb(0 0 0 / 90%)",
-            transform: "scale(1.02)",
-            _disabled: {
-              backgroundColor: "rgb(0 0 0 / 90%)",
+        primary: ({ theme, colorScheme }: any) => {
+          return {
+            background: transparentize(`${colorScheme}.500`, 1)(theme),
+            rounded: "8px",
+            color: "#fff",
+            _hover: {
+              background: transparentize(`${colorScheme}.500`, 0.9)(theme),
+              transform: "scale(1.02)",
+              _disabled: {
+                background: transparentize(`${colorScheme}.500`, 0.9)(theme),
+              },
             },
-          },
-          _focus: { boxShadow: "0 0 0 1.8px rgba(0, 0, 0, 0.4)" },
+            _focus: { boxShadow: "0 0 0 1.8px rgba(0, 0, 0, 0.4)" },
+          };
         },
 
         "primary-outline": {
@@ -106,7 +109,7 @@ export default extendTheme({
           mx: 5,
         },
         header: {
-          borderBottom: "1px solid rgb(0 0 0 / 24%)",
+          borderBottom: "1px solid rgb(0 0 0 / 20%)",
         },
       },
     },

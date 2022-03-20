@@ -207,6 +207,7 @@ const Page = ({ initialData }: any) => {
                 as={Button}
                 href={`/dashboard/products/new`}
                 variant="primary"
+                colorScheme="black"
               >
                 <Plus
                   set="bold"

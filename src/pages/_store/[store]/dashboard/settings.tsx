@@ -179,6 +179,7 @@ const Page = ({ storeDetails }: any) => {
           isLoading={saveSettings.isLoading || filePicker.loading}
           isDisabled={saveSettings.isLoading}
           variant="primary"
+          colorScheme="black"
         >
           Upload image
         </Button>

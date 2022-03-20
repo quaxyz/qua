@@ -103,14 +103,12 @@ export default withSession(
           ]);
 
           console.log(LOG_TAG, "produt updated", { result });
-          return res
-            .status(200)
-            .send({ product: result, message: "product updated" });
+          return res.status(200).send({ message: "product updated" });
         }
 
         case "DELETE": {
           const { data: session } = req.session;
-          console.log(LOG_TAG, "update product", { body, query, session });
+          console.log(LOG_TAG, "delete product", { body, query, session });
 
           // verify session
           if (!session || !session.userId) {

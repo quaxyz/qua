@@ -102,7 +102,9 @@ export default withSession(
           });
 
           console.log(LOG_TAG, "product created", { result });
-          return res.status(200).send({ message: "product created" });
+          return res
+            .status(200)
+            .send({ product: result, message: "product created" });
         }
         default:
           console.log(LOG_TAG, "[error]", "unauthorized method", method);

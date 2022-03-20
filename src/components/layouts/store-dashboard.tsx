@@ -84,7 +84,6 @@ const AuthNotOwner = () => (
 );
 
 const DashboardLayout = ({ title, children }: any) => {
-  const getLink = useGetLink();
   const router = useRouter();
 
   // handle auth session here
@@ -186,7 +185,7 @@ const DashboardLayout = ({ title, children }: any) => {
                   href={`/dashboard${navLink.url}`}
                   px={4}
                   py={3}
-                  rounded="50px"
+                  rounded="8px"
                   borderBottom="none"
                   _hover={{ transform: "scale(1.02)" }}
                   {...(router.asPath.endsWith(navLink.url)

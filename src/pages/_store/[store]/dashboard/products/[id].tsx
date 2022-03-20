@@ -1,8 +1,7 @@
 import React from "react";
 import prisma from "libs/prisma";
 import Api from "libs/api";
-import type { GetStaticProps } from "next";
-import { getStorePaths } from "libs/store-paths";
+import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 import Link from "components/link";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
@@ -223,6 +222,7 @@ const Page = ({ product, categories }: any) => {
 
         <Button
           variant="primary"
+          colorScheme="black"
           onClick={onPublish}
           isLoading={updateProductMutation.isLoading}
         >
@@ -303,6 +303,8 @@ const Page = ({ product, categories }: any) => {
                           type="number"
                           placeholder="0.00"
                           variant="flushed"
+                          // @ts-ignore
+                          onWheel={(e) => e.target.blur()}
                           disabled={updateProductMutation.isLoading}
                           value={formValue.price}
                           onChange={(e) =>
@@ -490,7 +492,36 @@ const Page = ({ product, categories }: any) => {
   );
 };
 
-export const getStaticPaths = getStorePaths;
+export const getStaticPaths: GetStaticPaths = async () => {
+  const stores = await prisma.store.findMany({
+    select: {
+      name: true,
+      products: {
+        select: {
+          id: true,
+        },
+      },
+    },
+  });
+
+  const paths = [];
+  for (let store of stores) {
+    for (let product of store.products) {
+      paths.push({
+        params: {
+          id: `${product.id}`,
+          store: store.name,
+        },
+      });
+    }
+  }
+
+  return {
+    paths,
+    fallback: "blocking",
+  };
+};
+
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const store = params?.store as string;
   const id = params?.id as string;
