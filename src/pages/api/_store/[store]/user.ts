@@ -20,8 +20,8 @@ export default withSession(
               query,
             });
             return res.send({
-              user: null,
               isOwner: false,
+              isLoggedIn: false,
               cart: {
                 items: [],
                 total: 0,
@@ -30,8 +30,8 @@ export default withSession(
           }
 
           const responseData = {
-            user: session,
             isOwner: false,
+            isLoggedIn: true,
             cart: {
               items: [] as any[],
               total: 0,

@@ -41,7 +41,7 @@ const navLinks = [
 const walletMenuLinks = [
   {
     label: "Settings",
-    href: `/dashboard/settings`,
+    url: `/dashboard/settings`,
   },
 ];
 
@@ -259,7 +259,7 @@ const DashboardLayout = ({ title, children }: any) => {
                 size="sm"
                 borderColor="rgb(255 255 255 / 16%)"
                 rightIcon={<Icon as={CgMore} />}
-                {...(walletMenuLinks.some((m) => router.asPath.endsWith(m.href))
+                {...(walletMenuLinks.some((m) => router.asPath.endsWith(m.url))
                   ? {
                       color: "#000",
                       bg: "#131415",

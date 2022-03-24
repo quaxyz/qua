@@ -14,13 +14,11 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
 import { CartContext } from "contexts/cart";
 import { useRouter } from "next/router";
 import { Bag2, User } from "react-iconly";
-import { CgMore } from "react-icons/cg";
-import { useCustomerData } from "hooks/auth";
 import { AccountMenu } from "components/account";
+import { useCustomerData } from "hooks/auth";
 
 const navLinks = [
   {
@@ -33,14 +31,14 @@ const navLinks = [
   },
 ];
 
-const accounttMenuLinks = [
+const accountMenuLinks = [
   {
     label: "Account",
-    href: `/account`,
+    url: `/account`,
   },
   {
     label: "Orders",
-    href: `/orders`,
+    url: `/orders`,
   },
 ];
 
@@ -52,10 +50,14 @@ const CustomerLayout = ({
   children,
 }: any) => {
   const router = useRouter();
-  const { account } = useWeb3React();
+  const { data } = useCustomerData({
+    cart,
+    isLoggedIn,
+    isOwner,
+  });
 
-  const cartStore = useCart(cart, {
-    isLoggedIn: isLoggedIn,
+  const cartStore = useCart(data?.cart, {
+    isLoggedIn: data?.isLoggedIn,
   });
 
   return (
@@ -129,12 +131,12 @@ const CustomerLayout = ({
 
           <Stack direction="row" spacing={12} align="center">
             <AccountMenu
-              isLoggedIn={isLoggedIn}
+              isLoggedIn={data?.isLoggedIn}
               options={[
-                ...(isOwner
-                  ? [{ label: "Dashboard", href: "/dashboard" }]
+                ...(data?.isOwner
+                  ? [{ label: "Dashboard", url: "/dashboard" }]
                   : []),
-                ...accounttMenuLinks,
+                ...accountMenuLinks,
               ]}
             >
               <Button
@@ -220,9 +222,12 @@ const CustomerLayout = ({
             </Link>
 
             <AccountMenu
+              isLoggedIn={data?.isLoggedIn}
               options={[
-                ...(isOwner ? [{ label: "Dashboard", url: "/dashboard" }] : []),
-                ...accounttMenuLinks,
+                ...(data?.isOwner
+                  ? [{ label: "Dashboard", url: "/dashboard" }]
+                  : []),
+                ...accountMenuLinks,
               ]}
             >
               <Button
@@ -230,7 +235,6 @@ const CustomerLayout = ({
                 bg="rgba(0, 0, 0, 0.04)"
                 rounded="50px"
                 _hover={{ bg: "transparent", borderColor: "rgb(0 0 0 / 12%)" }}
-                leftIcon={account ? <Icon as={CgMore} mr={2} /> : undefined}
               >
                 My Account
               </Button>

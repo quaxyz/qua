@@ -36,7 +36,7 @@ const OptionsModal = ({ options, isOpen, onClose }: any) => {
             {options.map((option: any, idx: number) => (
               <Button
                 key={idx}
-                href={option.href}
+                href={option.url}
                 as={Link}
                 size="lg"
                 variant="solid-outline"
