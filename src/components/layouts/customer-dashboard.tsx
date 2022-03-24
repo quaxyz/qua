@@ -19,8 +19,8 @@ import { CartContext } from "contexts/cart";
 import { useRouter } from "next/router";
 import { Bag2, User } from "react-iconly";
 import { CgMore } from "react-icons/cg";
-import { useCustomerData, useGoogleOneTap } from "hooks/auth";
-import { AccountMenu } from "components/account-menu";
+import { useCustomerData } from "hooks/auth";
+import { AccountMenu } from "components/account";
 
 const navLinks = [
   {
@@ -44,14 +44,19 @@ const accounttMenuLinks = [
   },
 ];
 
-const CustomerLayout = ({ title, children }: any) => {
+const CustomerLayout = ({
+  title,
+  isLoggedIn,
+  isOwner,
+  cart,
+  children,
+}: any) => {
   const router = useRouter();
   const { account } = useWeb3React();
 
-  const customerData = useCustomerData();
-  const cartStore = useCart(customerData.data?.cart);
-
-  // useGoogleOneTap(!!customerData?.data?.user);
+  const cartStore = useCart(cart, {
+    isLoggedIn: isLoggedIn,
+  });
 
   return (
     <CartContext.Provider value={cartStore}>
@@ -124,9 +129,9 @@ const CustomerLayout = ({ title, children }: any) => {
 
           <Stack direction="row" spacing={12} align="center">
             <AccountMenu
-              isLoggedIn={!!customerData.data?.user}
+              isLoggedIn={isLoggedIn}
               options={[
-                ...(customerData?.data?.isOwner
+                ...(isOwner
                   ? [{ label: "Dashboard", href: "/dashboard" }]
                   : []),
                 ...accounttMenuLinks,
@@ -216,9 +221,7 @@ const CustomerLayout = ({ title, children }: any) => {
 
             <AccountMenu
               options={[
-                ...(customerData?.data?.isOwner
-                  ? [{ label: "Dashboard", url: "/dashboard" }]
-                  : []),
+                ...(isOwner ? [{ label: "Dashboard", url: "/dashboard" }] : []),
                 ...accounttMenuLinks,
               ]}
             >

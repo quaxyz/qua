@@ -90,7 +90,7 @@ export default extendTheme({
           backgroundColor: "transparent",
           rounded: "0px",
           color: "#000",
-          _hover: { backgroundColor: "rgba(19, 20, 21)", color: "#fff" },
+          _hover: { backgroundColor: "transparent", transform: "scale(1.02)" },
           _focus: { boxShadow: "0 0 0 1.8px rgba(0, 0, 0, 0.4)" },
         },
 

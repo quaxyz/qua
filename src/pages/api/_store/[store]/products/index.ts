@@ -28,6 +28,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           // query
           where: {
+            category: (query.category as string) || undefined,
             Store: {
               name: store as string,
             },

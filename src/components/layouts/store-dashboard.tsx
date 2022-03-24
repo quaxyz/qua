@@ -15,7 +15,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Link from "components/link";
-import { AccountMenu } from "components/account-menu";
+import { AccountMenu } from "components/account";
 import { useStoreUser } from "hooks/auth";
 import { Bag, Category, Graph, User, Show } from "react-iconly";
 import { CgMore } from "react-icons/cg";
@@ -150,7 +150,10 @@ const DashboardLayout = ({ title, children }: any) => {
               />
             </Stack>
 
-            <AccountMenu options={walletMenuLinks}>
+            <AccountMenu
+              isLoggedIn={!!storeUser.data}
+              options={walletMenuLinks}
+            >
               <Button
                 variant="outline"
                 size="sm"
@@ -246,7 +249,10 @@ const DashboardLayout = ({ title, children }: any) => {
               />
             </Stack>
 
-            <AccountMenu options={walletMenuLinks}>
+            <AccountMenu
+              isLoggedIn={!!storeUser.data}
+              options={walletMenuLinks}
+            >
               <Button
                 variant="outline"
                 rounded="8px"

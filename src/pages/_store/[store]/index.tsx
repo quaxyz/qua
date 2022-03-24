@@ -3,7 +3,6 @@ import prisma from "libs/prisma";
 import Api from "libs/api";
 import NextLink from "next/link";
 import Link from "components/link";
-import type { GetStaticProps } from "next";
 import {
   chakra,
   Container,
@@ -17,13 +16,17 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import { getStorePaths } from "libs/store-paths";
+import { getLayoutProps } from "components/layouts/customer-props";
 import { useInfiniteQuery } from "react-query";
 import { useIntersection } from "react-use";
 import { formatCurrency } from "libs/currency";
 import { useGetLink } from "hooks/utils";
+import { GetServerSideProps } from "next";
+import { withSsrSession } from "libs/session";
+import { useRouter } from "next/router";
 
 function useQueryProducts({ initialData }: any) {
+  const router = useRouter();
   const intersectionRef = React.useRef(null);
 
   const intersection = useIntersection(intersectionRef, {
@@ -33,15 +36,17 @@ function useQueryProducts({ initialData }: any) {
   });
 
   const queryResp = useInfiniteQuery({
-    queryKey: ["store-products"],
-    staleTime: Infinity,
+    queryKey: ["store-products", router.query?.category],
     initialData: { pages: [initialData], pageParams: [] },
-    queryFn: async ({ pageParam = 1 }) => {
-      const { payload }: any = await Api().get(`/products?cursor=${pageParam}`);
+    staleTime: Infinity,
+    queryFn: async ({ pageParam }) => {
+      const { payload }: any = await Api().get(
+        `/products?cursor=${pageParam}&category=${router.query?.category}`
+      );
       return payload;
     },
     getNextPageParam: (lastPage: any) => {
-      if (lastPage?.length >= 12) {
+      if (lastPage?.length > 0) {
         return lastPage[lastPage?.length - 1].id;
       }
     },
@@ -59,7 +64,6 @@ function useQueryProducts({ initialData }: any) {
 }
 
 const Page = ({ initialData, categories }: any) => {
-  const getLink = useGetLink();
   const { ref, queryResp } = useQueryProducts({ initialData });
 
   return (
@@ -91,7 +95,7 @@ const Page = ({ initialData, categories }: any) => {
         {categories.map((category: string) => (
           <Link
             key={category}
-            href={`/category/${category}`}
+            href={`/?category=${category}`}
             borderBottom="none"
             _hover={{ transform: "scale(1.05)" }}
             textDecoration="underline"
@@ -137,7 +141,7 @@ const Page = ({ initialData, categories }: any) => {
                       alt={data.name}
                     />
 
-                    <NextLink href={getLink(`/products/${data.id}`)} passHref>
+                    <NextLink href={`/products/${data.id}`} passHref>
                       <LinkOverlay>
                         <Heading
                           as="h1"
@@ -166,20 +170,19 @@ const Page = ({ initialData, categories }: any) => {
   );
 };
 
-export const getStaticPaths = getStorePaths;
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const storeName = params?.store as string;
+const getServerSidePropsFn: GetServerSideProps = async (ctx) => {
+  const store = ctx?.params?.store as string;
+  const category = ctx?.query?.category as string;
 
-  const store = await prisma.store.findUnique({
-    where: { name: storeName },
-  });
-  if (!store) return { notFound: true };
+  let layoutProps = await getLayoutProps(ctx);
+  if (!layoutProps) return { notFound: true };
 
   const data = await prisma.product.findMany({
     take: 12,
     where: {
+      category,
       Store: {
-        name: store.name,
+        name: store as string,
       },
     },
     orderBy: {
@@ -201,7 +204,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const distinctCategories = await prisma.product.findMany({
     distinct: ["category"],
     where: {
-      Store: { name: store.name },
+      Store: { name: store },
     },
     select: {
       category: true,
@@ -216,11 +219,13 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       initialData: JSON.parse(JSON.stringify(data)),
       categories,
       layoutProps: {
+        ...layoutProps,
         title: `Products`,
       },
     },
   };
 };
+export const getServerSideProps = withSsrSession(getServerSidePropsFn);
 
 Page.Layout = CustomerLayout;
 export default Page;

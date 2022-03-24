@@ -1,5 +1,6 @@
 import React from "react";
-import type { GetServerSideProps } from "next";
+import type { GetServerSideProps, GetStaticProps } from "next";
+import prisma from "libs/prisma";
 import Api from "libs/api";
 import CustomerLayout from "components/layouts/customer-dashboard";
 import {
@@ -22,13 +23,15 @@ import { useCartStore } from "hooks/useCart";
 import { Delete } from "react-iconly";
 import { useMutation, useQuery } from "react-query";
 import { useDebounce } from "react-use";
+import { AuthButton } from "components/account/login";
+import { withSsrSession } from "libs/session";
 import { getLayoutProps } from "components/layouts/customer-props";
 
 const CartItem = ({ item }: any) => {
   const cartStore = useCartStore();
   const [quantity, setQuantity] = React.useState(item.quantity);
 
-  const [, cancel] = useDebounce(
+  useDebounce(
     () => {
       if (quantity !== item.quantity) {
         cartStore?.updateCartItem(item.productId, quantity, item.price);
@@ -50,7 +53,7 @@ const CartItem = ({ item }: any) => {
         justify="space-between"
         maxWidth="100%"
       >
-        <Stack direction="row" w="100%" spacing={4}>
+        <Stack direction="row" w="100%" spacing={6}>
           <Stack direction="row" align="center">
             <IconButton
               onClick={() =>
@@ -60,14 +63,15 @@ const CartItem = ({ item }: any) => {
               aria-label="Delete"
               icon={<Delete set="light" />}
             />
+
             <Image
-              width="100px"
-              height="100px"
+              boxSize="80px"
               objectFit="cover"
               src={item.image}
               alt="Product Image"
             />
           </Stack>
+
           <Heading as="h1" size="sm" pt={4} fontWeight="300">
             {item.name}
           </Heading>
@@ -96,7 +100,6 @@ const CartItem = ({ item }: any) => {
       </Stack>
 
       {/* Mobile display */}
-
       <Stack
         display={{ base: "flex", md: "none" }}
         direction="column"
@@ -111,8 +114,7 @@ const CartItem = ({ item }: any) => {
           border="0.5px solid rgba(0, 0, 0, 16%)"
         >
           <Image
-            width="100px"
-            height="100px"
+            boxSize="80px"
             objectFit="cover"
             src={item.image}
             alt="Product Image"
@@ -172,15 +174,14 @@ const CartItem = ({ item }: any) => {
 };
 
 const Page = () => {
-  const { account } = useWeb3React();
   const cartStore = useCartStore();
   const toast = useToast();
 
   const items = cartStore?.items.map((c) => c.productId);
   const cartDetailsQueryResp = useQuery({
     queryKey: ["productItemDetails", items],
-    onError: () => console.warn("Error fetching cart details from API"),
     enabled: (items?.length || 0) > 0,
+    onError: () => console.warn("Error fetching cart details from API"),
     queryFn: async () => {
       const { payload } = await Api().post(`/products/details`, { items });
       return payload;
@@ -205,10 +206,8 @@ const Page = () => {
 
   const checkoutMutation = useMutation(
     () => {
-      if (!account) throw new Error("No connected account");
       if (cartStore?.items.length === 0) throw new Error("No items in cart");
-
-      return Api().get(`/checkout?address=${account}`);
+      return Api().get(`/checkout`);
     },
     {
       onError: (e: any) => {
@@ -258,7 +257,7 @@ const Page = () => {
           </Stack>
         </Stack>
 
-        {cartDetailsQueryResp.isLoading && (
+        {!cartDetailsQueryResp.data?.length && (
           <Stack align="center" justify="center" h="200px">
             <CircularProgress isIndeterminate color="black" />
           </Stack>
@@ -286,25 +285,21 @@ const Page = () => {
         <CostSummary data={costSummary} />
         <Text fontSize="sm">Shipping will be calculated at next step</Text>
 
-        {!account ? (
-          <Wallet ButtonProps={{ variant: "solid", size: "lg", w: "100%" }} />
-        ) : (
-          <Button
-            size="lg"
-            variant="solid"
-            width="100%"
-            onClick={() => checkoutMutation.mutate()}
-            isLoading={checkoutMutation.isLoading}
-          >
-            Proceed to checkout
-          </Button>
-        )}
+        <AuthButton
+          size="lg"
+          variant="solid"
+          width="100%"
+          onClick={() => checkoutMutation.mutate()}
+          isLoading={checkoutMutation.isLoading}
+        >
+          Proceed to checkout
+        </AuthButton>
       </Stack>
     </Container>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+const getServerSidePropsFn: GetServerSideProps = async (ctx) => {
   let layoutProps = await getLayoutProps(ctx);
   if (!layoutProps) return { notFound: true };
 
@@ -317,6 +312,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     },
   };
 };
+export const getServerSideProps = withSsrSession(getServerSidePropsFn);
 
 Page.Layout = CustomerLayout;
 export default Page;

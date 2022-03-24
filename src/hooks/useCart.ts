@@ -2,15 +2,13 @@ import _cloneDeep from "lodash.clonedeep";
 import Api from "libs/api";
 import { CartContext, CartItem } from "contexts/cart";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { useWeb3React } from "@web3-react/core";
 
-const useCart = (cart?: any) => {
+const useCart = (cart?: any, options?: any) => {
   const [items, setItems] = useState<CartItem[]>(cart?.items || []);
   const [subTotal, setSubtotal] = useState(cart?.total || 0);
 
   const [loadingCart, setLoadingCart] = useState(false);
   const [syncingCart, setSyncingCart] = useState(false);
-  const { account } = useWeb3React();
 
   const fetchCartItems = useCallback(async () => {
     setLoadingCart(true);
@@ -34,8 +32,8 @@ const useCart = (cart?: any) => {
       const locallyStoredCart = localStorage.getItem("cartItems");
       if (!locallyStoredCart) return;
 
-      await Api().post(`/cart?address=${account}`, {
-        cart: JSON.parse(locallyStoredCart),
+      await Api().post(`/cart`, {
+        cart: JSON.parse(locallyStoredCart).items,
       });
 
       console.log("Cart synced");
@@ -45,7 +43,7 @@ const useCart = (cart?: any) => {
     } finally {
       setSyncingCart(false);
     }
-  }, [account]);
+  }, []);
 
   const addCartItem = useCallback(
     async (item: CartItem, price: number) => {
@@ -68,8 +66,8 @@ const useCart = (cart?: any) => {
       setItems(editableItems);
       setSubtotal(subtotal);
 
-      if (account) {
-        await Api().post(`/cart?address=${account}`, {
+      if (options?.isLoggedIn) {
+        await Api().post(`/cart`, {
           cart: editableItems,
         });
       } else {
@@ -82,7 +80,7 @@ const useCart = (cart?: any) => {
         );
       }
     },
-    [account, items, subTotal]
+    [items, subTotal, options?.isLoggedIn]
   );
 
   const removeCartItem = useCallback(
@@ -97,8 +95,8 @@ const useCart = (cart?: any) => {
       setItems(newItems);
       setSubtotal(newSubtotal);
 
-      if (account) {
-        await Api().post(`/cart?address=${account}`, {
+      if (options?.isLoggedIn) {
+        await Api().post(`/cart`, {
           cart: newItems,
         });
       } else {
@@ -111,7 +109,7 @@ const useCart = (cart?: any) => {
         );
       }
     },
-    [account, items, subTotal]
+    [options?.isLoggedIn, items, subTotal]
   );
 
   const updateCartItem = useCallback(
@@ -131,8 +129,8 @@ const useCart = (cart?: any) => {
       setItems(editableItems);
       setSubtotal(subtotal);
 
-      if (account) {
-        await Api().post(`/cart?address=${account}`, {
+      if (options?.isLoggedIn) {
+        await Api().post(`/cart`, {
           cart: editableItems,
         });
       } else {
@@ -145,15 +143,15 @@ const useCart = (cart?: any) => {
         );
       }
     },
-    [account, items, subTotal]
+    [options?.isLoggedIn, items, subTotal]
   );
 
   const clearCart = useCallback(async () => {
     setItems([]);
     setSubtotal(0);
 
-    if (account) {
-      await Api().post(`/cart?address=${account}`, {
+    if (options?.isLoggedIn) {
+      await Api().post(`/cart`, {
         cart: [],
       });
     } else {
@@ -165,12 +163,20 @@ const useCart = (cart?: any) => {
         })
       );
     }
-  }, [account]);
+  }, [options?.isLoggedIn]);
 
   useEffect(() => {
-    if (account) syncLocalCartItem();
+    if (options?.isLoggedIn) syncLocalCartItem();
     fetchCartItems();
-  }, [account, fetchCartItems, syncLocalCartItem]);
+  }, [options?.isLoggedIn, fetchCartItems, syncLocalCartItem]);
+
+  // listen for cart changes
+  useEffect(() => {
+    if (options?.isLoggedIn) {
+      setItems(cart.items);
+      setSubtotal(cart.total);
+    }
+  }, [cart, options?.isLoggedIn]);
 
   return useMemo(
     () => ({

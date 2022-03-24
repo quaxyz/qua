@@ -3,7 +3,6 @@ import prisma from "libs/prisma";
 import Api from "libs/api";
 import type { GetServerSideProps } from "next";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import { getLayoutProps } from "components/layouts/customer-props";
 import {
   Button,
   chakra,
@@ -21,68 +20,17 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useWeb3React } from "@web3-react/core";
 import { useMutation } from "react-query";
 import { useCartStore } from "hooks/useCart";
 import { mapSocialLink } from "libs/utils";
 import { CostSummary } from "components/cost-summary";
-import { domain, schemas } from "libs/constants";
-import { providers } from "ethers";
-
-const useSaveDetails = () => {
-  const router = useRouter();
-  const { library, account } = useWeb3React();
-
-  const updateDetailsMutation = useMutation(async (payload: any) => {
-    if (!library || !account) {
-      throw new Error("Please connect your wallet");
-    }
-
-    let provider: providers.Web3Provider = library;
-    const signer = provider.getSigner(account);
-
-    // format message into schema
-    const message = {
-      from: account,
-      timestamp: parseInt((Date.now() / 1000).toFixed()),
-      store: router.query.store,
-      details: JSON.stringify({
-        name: payload.name,
-        email: payload.email,
-        phone: payload.phone,
-        address: payload.address,
-        deliveryMethod: payload.deliveryMethod,
-      }),
-    };
-
-    const data = {
-      domain,
-      types: { AccountDetails: schemas.AccountDetails },
-      message,
-    };
-
-    const sig = await signer._signTypedData(
-      data.domain,
-      data.types,
-      data.message
-    );
-    console.log("Sign", { address: account, sig, data });
-
-    return Api().post(`/account`, {
-      address: account,
-      sig,
-      data,
-    });
-  });
-
-  return updateDetailsMutation;
-};
+import { withSsrSession } from "libs/session";
+import { getLayoutProps } from "components/layouts/customer-props";
 
 const Page = ({ shippingDetails, storeDetails }: any) => {
   const toast = useToast();
   const router = useRouter();
   const cartStore = useCartStore();
-  const updateDetailsMutation = useSaveDetails();
 
   const [saveDetails, setSaveDetails] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
@@ -93,6 +41,10 @@ const Page = ({ shippingDetails, storeDetails }: any) => {
     phone: shippingDetails?.phone || "",
     address: shippingDetails?.address || "",
     deliveryMethod: shippingDetails?.deliveryMethod || "DOOR_DELIVERY",
+  });
+
+  const updateDetailsMutation = useMutation(async (payload: any) => {
+    return Api().post(`/account`, payload);
   });
 
   const checkForErrors = (state: any) => ({
@@ -128,8 +80,7 @@ const Page = ({ shippingDetails, storeDetails }: any) => {
       }
 
       return router.push({
-        pathname: "/_store/[store]/payment",
-        query: { store: router.query.store },
+        pathname: "/payment",
       });
     } catch (error: any) {
       toast({
@@ -324,41 +275,52 @@ const Page = ({ shippingDetails, storeDetails }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const store = ctx?.params?.store as string;
+const getServerSidePropsFn: GetServerSideProps = async (ctx) => {
+  // if no user redirect back to cart
+  if (!ctx?.req.session.data?.userId) {
+    return {
+      redirect: {
+        destination: "/cart",
+        permanent: false,
+      },
+    };
+  }
+
   let layoutProps = await getLayoutProps(ctx);
   if (!layoutProps) return { notFound: true };
 
-  if (!layoutProps?.cart || layoutProps.cart.items.length === 0) {
-    return { notFound: true };
+  if (!layoutProps.cart?.items.length) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
   }
 
   const storeDetails = await prisma.store.findUnique({
-    where: { name: store },
+    where: { name: ctx.params?.store as string },
     select: { deliveryFee: true, socialLinks: true, email: true, owner: true },
   });
 
-  const props: any = {
-    storeDetails: JSON.parse(JSON.stringify(storeDetails)),
-    layoutProps: {
-      ...layoutProps,
-      title: "Shipping",
-    },
-  };
-
-  if (!layoutProps.account) {
-    return { props };
-  }
-
   const user = await prisma.user.findUnique({
-    where: { address: layoutProps.account },
+    where: { id: ctx?.req.session.data?.userId },
     select: { shippingDetails: true },
   });
 
-  props.shippingDetails = JSON.parse(JSON.stringify(user?.shippingDetails));
-
-  return { props };
+  return {
+    props: {
+      shippingDetails: JSON.parse(JSON.stringify(user?.shippingDetails)),
+      storeDetails: JSON.parse(JSON.stringify(storeDetails)),
+      layoutProps: {
+        ...layoutProps,
+        title: "Shipping",
+      },
+    },
+  };
 };
+
+export const getServerSideProps = withSsrSession(getServerSidePropsFn);
 
 Page.Layout = CustomerLayout;
 export default Page;

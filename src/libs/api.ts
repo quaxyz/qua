@@ -35,7 +35,7 @@ export default function Api() {
       return new Promise(() => {
         if (store) {
           Router.push({
-            pathname: `/_store/[store]${urlWithSlash}`,
+            pathname: urlWithSlash,
             query: { store },
           });
         } else {

@@ -1,33 +1,32 @@
 import React from "react";
 import Api from "libs/api";
 import {
-  Button,
-  Input,
   Modal,
-  ModalBody,
-  ModalCloseButton,
+  ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalOverlay,
-  Spacer,
   Stack,
+  ModalBody,
+  Button,
+  Spacer,
+  Input,
   Text,
   useBreakpointValue,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import Link from "./link";
-import { Wallet } from "react-iconly";
-import { FcGoogle } from "react-icons/fc";
-import { FormGroup } from "./form-group";
 import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
+import { FormGroup } from "components/form-group";
+import { ConnectModal } from "components/wallet";
 import { providers } from "ethers";
 import { injected, switchNetwork } from "libs/wallet";
 import { useGoogleLogin } from "react-google-login";
-import { useMutation, useQueryClient } from "react-query";
-import { ConnectModal } from "./wallet";
+import { Wallet } from "react-iconly";
+import { FcGoogle } from "react-icons/fc";
+import { useQueryClient, useMutation } from "react-query";
+import { useCustomerData } from "hooks/auth";
 
-export const useGoogleAuth = ({ onClose }: any) => {
+const useGoogleAuth = ({ onClose }: any) => {
   const toast = useToast();
   const queryClient = useQueryClient();
 
@@ -58,12 +57,7 @@ export const useGoogleAuth = ({ onClose }: any) => {
     clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
     onSuccess: (resp) => googleAuthMutation.mutateAsync(resp),
     onFailure: (err) => {
-      toast({
-        title: "Error Signing up",
-        description: "Something went wrong authenicating with Google",
-        position: "bottom-right",
-        status: "error",
-      });
+      console.warn(err);
     },
   });
 
@@ -74,7 +68,7 @@ export const useGoogleAuth = ({ onClose }: any) => {
   };
 };
 
-export const useWalletAuth = ({ onClose }: any) => {
+const useWalletAuth = ({ onClose }: any) => {
   const toast = useToast();
   const queryClient = useQueryClient();
   const [pending, setPending] = React.useState<boolean>(false);
@@ -156,50 +150,7 @@ export const useWalletAuth = ({ onClose }: any) => {
   };
 };
 
-const OptionsModal = ({ options, isOpen, onClose }: any) => {
-  return (
-    <Modal isCentered isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-
-      <ModalContent>
-        <ModalCloseButton
-          rounded="full"
-          bg="rgba(0, 0, 0, 0.02)"
-          size="lg"
-          fontSize="sm"
-          top={6}
-          right={5}
-        />
-        <ModalHeader align="center" color="black" py={8}>
-          My Account
-        </ModalHeader>
-
-        <ModalBody py={5}>
-          <Stack direction="column" spacing={2}>
-            {options.map((option: any, idx: number) => (
-              <Link
-                key={idx}
-                href={option.href}
-                as={Button}
-                size="lg"
-                variant="solid-outline"
-                isFullWidth
-                onClick={() => {
-                  if (option.onClick) option.onClick();
-                  onClose();
-                }}
-              >
-                {option.label}
-              </Link>
-            ))}
-          </Stack>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
-  );
-};
-
-const LoginModal = ({ isOpen, onClose }: any) => {
+export const LoginModal = ({ isOpen, onClose }: any) => {
   const googleAuth = useGoogleAuth({ onClose });
   const walletAuth = useWalletAuth({ onClose });
 
@@ -314,22 +265,17 @@ const LoginModal = ({ isOpen, onClose }: any) => {
   );
 };
 
-export const AccountMenu = ({ children, options, isLoggedIn }: any) => {
-  const accountModal = useDisclosure();
+export const AuthButton = (props: any) => {
+  const customerData = useCustomerData();
   const loginModal = useDisclosure();
 
   return (
     <>
-      {React.cloneElement(children, {
-        onClick: () =>
-          isLoggedIn ? accountModal.onOpen() : loginModal.onOpen(),
-      })}
-
-      <OptionsModal
-        isOpen={accountModal.isOpen}
-        onClose={accountModal.onClose}
-        options={options}
-      />
+      {customerData?.data?.user ? (
+        <Button {...props} />
+      ) : (
+        <Button {...props} onClick={loginModal.onOpen} />
+      )}
 
       <LoginModal isOpen={loginModal.isOpen} onClose={loginModal.onClose} />
     </>

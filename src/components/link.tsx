@@ -7,14 +7,8 @@ const Link = ({ isExternal, href, ...props }: any) => {
   const router = useRouter();
   const Comp = props.as || ChakraLink;
 
-  const pathPrefix =
-    process.env.NODE_ENV !== "production"
-      ? `/_store/${router.query.store}`
-      : ``;
-  const path = `${pathPrefix}${href.charAt(0) !== "/" ? "/" : ""}${href}`;
-
   return (
-    <NextLink href={isExternal ? href : path} passHref>
+    <NextLink href={href} passHref>
       <Comp {...props} />
     </NextLink>
   );

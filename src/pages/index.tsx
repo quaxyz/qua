@@ -110,12 +110,17 @@ const Home: NextPage = () => {
                 <Button
                   display={{ base: "none", md: "flex" }}
                   as={Link}
-                  variant="solid-outline"
+                  variant="solid"
                   px="12"
                   size="lg"
                   bgColor="#fff"
                   border="none"
                   color="#000"
+                  _hover={{
+                    bg: "#fff",
+                    color: "#000",
+                    transform: "scale(1.02)",
+                  }}
                 >
                   Get Started
                 </Button>
@@ -232,34 +237,30 @@ const Home: NextPage = () => {
         >
           <FormGroup id="search" labelProps={{ variant: "flushed" }}>
             <InputGroup display={{ base: "none", md: "block" }}>
-              <InputLeftElement pointerEvents="none" children={<Search />} />
+              <InputLeftElement pointerEvents="none">
+                <Search />
+              </InputLeftElement>
               <Input
                 type="search"
                 fontWeight="300"
                 placeholder="What are you shopping for?"
                 variant="flushed"
                 size="lg"
-                // value={formValue.name}
-                // onChange={(e) =>
-                //   setFormValue({ ...formValue, name: e.target.value })
-                // }
               />
             </InputGroup>
           </FormGroup>
           {/* Mobile display */}
           <FormGroup id="search" labelProps={{ variant: "flushed" }}>
             <InputGroup display={{ base: "block", md: "none" }}>
-              <InputLeftElement pointerEvents="none" children={<Search />} />
+              <InputLeftElement pointerEvents="none">
+                <Search />
+              </InputLeftElement>
               <Input
                 type="search"
                 fontWeight="300"
                 placeholder="What are you shopping for?"
                 variant="flushed"
                 size="md"
-                // value={formValue.name}
-                // onChange={(e) =>
-                //   setFormValue({ ...formValue, name: e.target.value })
-                // }
               />
             </InputGroup>
           </FormGroup>
@@ -442,13 +443,18 @@ const Home: NextPage = () => {
           <NextLink href="/setup" passHref>
             <Button
               as={Link}
-              variant="solid-outline"
+              variant="solid"
               alignSelf="flex-start"
               px="12"
               size="lg"
               bgColor="#fff"
               border="none"
               color="#000"
+              _hover={{
+                bg: "#fff",
+                color: "#000",
+                transform: "scale(1.02)",
+              }}
             >
               Get Started
             </Button>

@@ -16,6 +16,7 @@ import { getLayoutProps } from "components/layouts/customer-props";
 import { mapSocialLink, truncateAddress } from "libs/utils";
 import { FiExternalLink } from "react-icons/fi";
 import { defaultCategories } from "libs/constants";
+import { withSsrSession } from "libs/session";
 
 const Page = ({ storeDetails }: any) => {
   return (
@@ -84,16 +85,6 @@ const Page = ({ storeDetails }: any) => {
                 email
               </Link>
 
-              <Link
-                href={`https://chat.blockscan.com/index?a=${storeDetails.owner}`}
-                color="#fff"
-                textTransform="uppercase"
-                fontSize="sm"
-                isExternal
-              >
-                blockscan
-              </Link>
-
               {Object.entries(storeDetails.socialLinks || {})
                 .filter(([_, value]: any) => value.length)
                 .map(([social, link]: any) => (
@@ -146,18 +137,8 @@ const Page = ({ storeDetails }: any) => {
             textTransform="uppercase"
             pb="2"
           >
-            Verified owner address
+            Verified owner
           </Text>
-          <Button
-            as={Link}
-            href={`https://etherscan.io/address/${storeDetails.owner}`}
-            rightIcon={<FiExternalLink />}
-            size="md"
-            variant="solid-outline"
-            isExternal
-          >
-            {truncateAddress(storeDetails.owner || "", 6)}
-          </Button>
         </Box>
         {storeDetails.location && (
           <Stack spacing="2" mt="8">
@@ -177,7 +158,7 @@ const Page = ({ storeDetails }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+const getServerSidePropsFn: GetServerSideProps = async (ctx) => {
   const store = ctx.params?.store as string;
   const layoutProps = await getLayoutProps(ctx);
 
@@ -204,6 +185,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     },
   };
 };
+export const getServerSideProps = withSsrSession(getServerSidePropsFn);
 
 Page.Layout = CustomerLayout;
 export default Page;

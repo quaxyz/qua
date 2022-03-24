@@ -15,17 +15,15 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
 import { CostSummary } from "components/cost-summary";
-import { providers } from "ethers";
 import { useCartStore } from "hooks/useCart";
-import { domain, schemas } from "libs/constants";
 import { mapSocialLink } from "libs/utils";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FcCheckmark } from "react-icons/fc";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 import { getLayoutProps } from "components/layouts/customer-props";
+import { withSsrSession } from "libs/session";
 
 function pay({ name, email, amount }: any) {
   return new Promise((resolve, reject) => {
@@ -53,107 +51,6 @@ function pay({ name, email, amount }: any) {
   });
 }
 
-function usePlaceOrder() {
-  const { library, account } = useWeb3React();
-  const toast = useToast();
-  const router = useRouter();
-  const cartStore = useCartStore();
-
-  const items = cartStore?.items.map((c) => c.productId);
-  const cartDetailsQueryResp = useQuery({
-    queryKey: ["productItemDetails", items],
-    onError: () => console.warn("Error fetching cart details from API"),
-    enabled: (items?.length || 0) > 0,
-    queryFn: async () => {
-      const { payload } = await Api().post(`/products/details`, { items });
-
-      return payload;
-    },
-    select: (data) =>
-      data.map((product: any) => {
-        const cartItem = cartStore?.items.find(
-          (item) => product.id === item.productId
-        );
-        return {
-          productId: product.id,
-          quantity: cartItem?.quantity,
-          name: product.name,
-          price: product.price,
-        };
-      }),
-  });
-
-  const createOrderMutation = useMutation(async (payload: any) => {
-    return Api().post("/orders/create", payload);
-  });
-
-  return async ({ shipping, paymentMethod }: any) => {
-    if (!library || !account) {
-      console.error("Library or account is not ready", {
-        library,
-        account,
-      });
-
-      toast({
-        title: "Error creating order",
-        description: "Please connect your wallet",
-        position: "bottom-right",
-        status: "error",
-      });
-
-      return null;
-    }
-
-    let provider: providers.Web3Provider = library;
-    const signer = provider.getSigner(account);
-
-    // format message into schema
-    const message = {
-      from: account,
-      timestamp: parseInt((Date.now() / 1000).toFixed()),
-      store: router.query.store,
-      cart: JSON.stringify(cartDetailsQueryResp?.data || []),
-      shipping: JSON.stringify(shipping || {}),
-      paymentMethod,
-    };
-
-    const data = {
-      domain,
-      types: { Order: schemas.Order },
-      message,
-    };
-
-    try {
-      const sig = await signer._signTypedData(
-        data.domain,
-        data.types,
-        data.message
-      );
-      console.log("Sign", { address: account, sig, data });
-
-      const { payload: result } = await createOrderMutation.mutateAsync({
-        address: account,
-        sig,
-        data,
-      });
-      console.log("Result", result);
-
-      return result;
-    } catch (err: any) {
-      console.warn("Error creating order", err);
-
-      toast({
-        title: "Error creating order",
-        description: err.message,
-        position: "bottom-right",
-        status: "error",
-      });
-
-      throw err;
-    }
-  };
-}
-
 function useHandlePayment() {
   const toast = useToast();
 
@@ -161,7 +58,7 @@ function useHandlePayment() {
     return Api().post("/payment/confirm", payload);
   });
 
-  return async ({ orderHash, shippingDetails, amount }: any) => {
+  return async ({ orderId, shippingDetails, amount }: any) => {
     try {
       const payload: any = await pay({
         name: shippingDetails?.name,
@@ -171,7 +68,7 @@ function useHandlePayment() {
       if (!payload) throw Error("payment modal closed before confirmation");
 
       await confirmPaymentMutation.mutateAsync({
-        orderHash,
+        orderId,
         paymentPayload: payload,
       });
     } catch (err: any) {
@@ -186,10 +83,26 @@ function useHandlePayment() {
 }
 
 const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
+  const toast = useToast();
   const router = useRouter();
   const cartStore = useCartStore();
-  const placeOrder = usePlaceOrder();
   const handlePayment = useHandlePayment();
+  const placeOrder = useMutation(
+    async (payload: any) => {
+      return Api().post("/orders/create", payload);
+    },
+    {
+      onError: (err: any) => {
+        toast({
+          title: "Error placing order",
+          description: err?.message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+        });
+      },
+    }
+  );
 
   const [shippingDetails, setShippingDetails] =
     React.useState(userShippingDetails);
@@ -202,8 +115,7 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
 
       if (!localShippingDetails) {
         router.push({
-          pathname: "/_store/[store]/shipping",
-          query: { store: router.query.store },
+          pathname: "/shipping",
         });
 
         return;
@@ -221,7 +133,7 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
 
     try {
       // sign and create order
-      const orderResult = await placeOrder({
+      const orderResult = await placeOrder.mutateAsync({
         shipping: shippingDetails,
         paymentMethod,
       });
@@ -230,7 +142,7 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
         // handle payment
         await handlePayment({
           shippingDetails,
-          orderHash: orderResult?.hash,
+          orderId: orderResult?.id,
           amount: orderResult?.totalAmount,
         });
       }
@@ -243,8 +155,8 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
 
       // redirect to order page
       router.push({
-        pathname: "/_store/[store]/orders/[id]",
-        query: { store: router.query.store, id: orderResult?.id },
+        pathname: "/orders/[id]",
+        query: { id: orderResult?.id },
       });
     } catch (e) {
     } finally {
@@ -392,11 +304,39 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
                       Pay with crypto makes you eligible for platform rewards.
                     </Text>
                   </Radio>
+                  <Radio size="md" value="BANK_TRANSFER">
+                    Pay with Bank Transfer
+                  </Radio>
+                  <Radio size="md" value="CASH">
+                    Pay With Cash
+                  </Radio>
                   <Radio size="md" value="CONTACT_SELLER">
-                    Contact seller for payment option
+                    Contact seller for more payment option
                   </Radio>
                 </Stack>
               </RadioGroup>
+
+              {paymentMethod === "BANK_TRANSFER" && (
+                <Stack
+                  direction="row"
+                  spacing={3}
+                  py={3}
+                  px={2}
+                  border="1px solid rgb(0 0 0 / 12%)"
+                  borderLeft="none"
+                  borderRight="none"
+                >
+                  <Text textTransform="capitalize" isExternal>
+                    Bank Name: {storeDetails.bankDetails?.name}
+                  </Text>
+                  <Text textTransform="capitalize" isExternal>
+                    Account Name: {storeDetails.bankDetails?.accountName}
+                  </Text>
+                  <Text textTransform="capitalize" isExternal>
+                    Account Name: {storeDetails.bankDetails?.accountNumber}
+                  </Text>
+                </Stack>
+              )}
 
               {paymentMethod === "CONTACT_SELLER" && (
                 <Stack
@@ -453,40 +393,49 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const store = ctx?.params?.store as string;
-  let layoutProps = await getLayoutProps(ctx);
-  if (!layoutProps) return { notFound: true };
+export const getServerSideProps: GetServerSideProps = withSsrSession(
+  async (ctx: any) => {
+    const store = ctx?.params?.store as string;
+    let layoutProps = await getLayoutProps(ctx);
+    if (!layoutProps) return { notFound: true };
 
-  if (!layoutProps?.cart || layoutProps.cart.items.length === 0) {
-    return { notFound: true };
+    if (!layoutProps.cart?.items.length) {
+      return {
+        redirect: {
+          destination: "/",
+          permanent: false,
+        },
+      };
+    }
+
+    const storeDetails = await prisma.store.findUnique({
+      where: { name: store },
+      select: {
+        deliveryFee: true,
+        socialLinks: true,
+        email: true,
+        owner: true,
+        bankDetails: true,
+      },
+    });
+
+    const user = await prisma.user.findUnique({
+      where: { id: ctx?.req.session.data?.userId },
+      select: { shippingDetails: true },
+    });
+
+    return {
+      props: {
+        shippingDetails: JSON.parse(JSON.stringify(user?.shippingDetails)),
+        storeDetails: JSON.parse(JSON.stringify(storeDetails)),
+        layoutProps: {
+          ...layoutProps,
+          title: "Payment",
+        },
+      },
+    };
   }
-
-  const storeDetails = await prisma.store.findUnique({
-    where: { name: store },
-    select: { deliveryFee: true, socialLinks: true, email: true, owner: true },
-  });
-
-  const props: any = {
-    storeDetails: JSON.parse(JSON.stringify(storeDetails)),
-    layoutProps: {
-      ...layoutProps,
-      title: "Payment",
-    },
-  };
-
-  if (!layoutProps.account) {
-    return { props };
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { address: layoutProps.account },
-    select: { shippingDetails: true },
-  });
-  props.shippingDetails = JSON.parse(JSON.stringify(user?.shippingDetails));
-
-  return { props };
-};
+);
 
 Page.Layout = CustomerLayout;
 export default Page;

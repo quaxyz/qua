@@ -50,11 +50,8 @@ const WebsiteLayout: React.FC = ({ children }) => {
           </NextLink>
 
           <Stack>
-            <NextLink href="/" passHref>
-              <Link>Log in</Link>
-            </NextLink>
-            <NextLink href="/" passHref>
-              <Link>Register</Link>
+            <NextLink href="/setup" passHref>
+              <Link>Start selling</Link>
             </NextLink>
           </Stack>
         </Stack>

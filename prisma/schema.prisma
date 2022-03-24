@@ -49,6 +49,7 @@ model User {
 
   carts  Cart[]
   stores Store[]
+  orders Order[]
 }
 
 model Product {
@@ -72,21 +73,20 @@ model Product {
 }
 
 model Cart {
-  id           Int    @id @default(autoincrement())
-  items        Json
-  ownerAddress String
-  storeName    String
-  owner        User   @relation(fields: [ownerAddress], references: [address])
-  store        Store  @relation(fields: [storeName], references: [name])
+  id        Int    @id @default(autoincrement())
+  items     Json
+  ownerId   Int
+  storeName String
+  owner     User?  @relation(fields: [ownerId], references: [id])
+  store     Store  @relation(fields: [storeName], references: [name])
 
-  @@unique([ownerAddress, storeName])
+  @@unique([ownerId, storeName])
 }
 
 model Order {
   id               Int                @id @default(autoincrement())
-  hash             String             @unique
   items            Json
-  customerAddress  String
+  customerId       Int
   customerDetails  Json
   subtotal         Float
   totalAmount      Float
@@ -100,7 +100,8 @@ model Order {
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   storeId          Int
-  Store            Store              @relation(fields: [storeId], references: [id])
+  customer         User               @relation(fields: [customerId], references: [id])
+  store            Store              @relation(fields: [storeId], references: [id])
 }
 
 model Image {
@@ -123,4 +124,5 @@ enum OrderPaymentStatus {
   PAID
   UNPAID
   CONTACT_SELLER
+  BANK_TRANSFER
 }
