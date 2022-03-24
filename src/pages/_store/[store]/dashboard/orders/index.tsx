@@ -1,3 +1,7 @@
+import React from "react";
+import Api from "libs/api";
+import prisma from "libs/prisma";
+import { GetStaticProps } from "next";
 import {
   Box,
   Button,
@@ -11,20 +15,13 @@ import {
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 import Link from "components/link";
 import { OrderPaymentStatus, OrderStatus } from "components/order-pill";
-import Api from "libs/api";
-import prisma from "libs/prisma";
-import { truncateAddress } from "libs/utils";
-import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
-import React from "react";
-import { Plus } from "react-iconly";
+import { getStorePaths } from "libs/store-paths";
 import { useInfiniteQuery } from "react-query";
+import { Plus } from "react-iconly";
 
 const Page = ({ initialData }: any) => {
-  const router = useRouter();
-
   const queryResp = useInfiniteQuery({
-    queryKey: "store-dashboard-orders",
+    queryKey: ["store-dashboard-orders"],
     initialData: { pages: [initialData], pageParams: [] },
     getNextPageParam: (lastPage: any) => {
       if (lastPage?.length >= 0) {
@@ -55,22 +52,6 @@ const Page = ({ initialData }: any) => {
 
       {!isEmpty ? (
         <>
-          {/* <Box maxW="403px" pt="5px" pb={{ base: "28px", md: "45px" }}>
-            <InputGroup>
-              <InputLeftElement fontSize="1rem" pointerEvents="none">
-                <Icon
-                  boxSize="10px"
-                  as={() => <Search set="light" primaryColor="#0E0F0F" />}
-                />
-              </InputLeftElement>
-              <Input
-                type="text"
-                color="rgba(180, 182, 184, 1)"
-                placeholder="Search"
-              />
-            </InputGroup>
-          </Box> */}
-
           <Box pb="3rem">
             <Stack
               direction="row"
@@ -126,8 +107,7 @@ const Page = ({ initialData }: any) => {
                         fontWeight={{ base: "600", md: "600" }}
                         mb={{ base: "2", md: "0" }}
                       >
-                        {data.customerDetails?.name}{" "}
-                        {truncateAddress(data.customerAddress, 4)}
+                        {data.customerDetails?.name}
                       </Text>
                     </Flex>
                     <Flex w="100%" justify="space-between">
@@ -224,13 +204,14 @@ const Page = ({ initialData }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getStaticPaths = getStorePaths;
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const store = (params?.store as string) || "";
 
   const data = await prisma.order.findMany({
     take: 10,
     where: {
-      Store: {
+      store: {
         name: store,
       },
     },
@@ -239,7 +220,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
     select: {
       id: true,
-      customerAddress: true,
+      customer: true,
       customerDetails: true,
       status: true,
       paymentStatus: true,
@@ -248,7 +229,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   return {
     props: {
-      initialData: data,
+      initialData: JSON.parse(JSON.stringify(data)),
       layoutProps: {
         title: "Orders",
       },
