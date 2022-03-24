@@ -158,34 +158,35 @@ const Page = ({ storeDetails }: any) => {
   );
 };
 
-const getServerSidePropsFn: GetServerSideProps = async (ctx) => {
-  const store = ctx.params?.store as string;
-  const layoutProps = await getLayoutProps(ctx);
+export const getServerSideProps: GetServerSideProps = withSsrSession(
+  async (ctx) => {
+    const store = ctx.params?.store as string;
+    const layoutProps = await getLayoutProps(ctx);
 
-  if (!layoutProps) return { notFound: true };
+    if (!layoutProps) return { notFound: true };
 
-  const storeDetails = await prisma.store.findUnique({
-    where: { name: store },
-    include: {
-      image: {
-        select: {
-          url: true,
+    const storeDetails = await prisma.store.findUnique({
+      where: { name: store },
+      include: {
+        image: {
+          select: {
+            url: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  return {
-    props: {
-      storeDetails: JSON.parse(JSON.stringify(storeDetails)),
-      layoutProps: {
-        ...layoutProps,
-        title: `About`,
+    return {
+      props: {
+        storeDetails: JSON.parse(JSON.stringify(storeDetails)),
+        layoutProps: {
+          ...layoutProps,
+          title: `About`,
+        },
       },
-    },
-  };
-};
-export const getServerSideProps = withSsrSession(getServerSidePropsFn);
+    };
+  }
+);
 
 Page.Layout = CustomerLayout;
 export default Page;

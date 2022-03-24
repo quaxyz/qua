@@ -24,49 +24,15 @@ import { useWeb3React } from "@web3-react/core";
 import { useRouter } from "next/router";
 import { domain, schemas } from "libs/constants";
 import { providers } from "ethers";
-import base from "@emotion/styled/types/base";
+import { withSsrSession } from "libs/session";
 
 function useCancelOrder() {
-  const { library, account } = useWeb3React();
   const toast = useToast();
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const cancelOrderMutation = useMutation(
     async ({ orderId }: any) => {
-      if (!library || !account) {
-        throw Error("Please connect your wallet");
-      }
-
-      let provider: providers.Web3Provider = library;
-      const signer = provider.getSigner(account);
-
-      // format message into schema
-      const message = {
-        from: account,
-        timestamp: parseInt((Date.now() / 1000).toFixed()),
-        store: router.query.store,
-        orderId,
-      };
-
-      const data = {
-        domain,
-        types: { OrderCancel: schemas.OrderCancel },
-        message,
-      };
-
-      const sig = await signer._signTypedData(
-        data.domain,
-        data.types,
-        data.message
-      );
-      console.log("Sign", { address: account, sig, data });
-
-      return Api().post("/orders/cancel", {
-        address: account,
-        sig,
-        data,
-      });
+      return Api().post("/orders/cancel", { orderId });
     },
     {
       onSuccess: ({ payload: result }) => {
@@ -254,38 +220,44 @@ const Page = (props: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const orderID = ctx.params?.id as string;
-  const store = ctx?.params?.store as string;
-  let layoutProps = await getLayoutProps(ctx);
-  if (!layoutProps) return { notFound: true };
+export const getServerSideProps: GetServerSideProps = withSsrSession(
+  async (ctx) => {
+    const orderID = ctx.params?.id as string;
+    const store = ctx?.params?.store as string;
 
-  const order = await prisma.order.findFirst({
-    where: { id: parseInt(orderID, 10), Store: { name: store } },
-    select: {
-      id: true,
-      hash: true,
-      items: true,
-      createdAt: true,
-      totalAmount: true,
-      paymentStatus: true,
-      status: true,
-    },
-  });
-  if (!order) {
-    return { notFound: true };
-  }
+    let layoutProps = await getLayoutProps(ctx);
+    if (!layoutProps) return { notFound: true };
 
-  return {
-    props: {
-      order: JSON.parse(JSON.stringify(order)),
-      layoutProps: {
-        ...layoutProps,
-        title: "Order Details",
+    const order = await prisma.order.findFirst({
+      where: {
+        id: parseInt(orderID, 10),
+        store: { name: store },
+        customer: { id: ctx.req.session.data?.userId },
       },
-    },
-  };
-};
+      select: {
+        id: true,
+        items: true,
+        createdAt: true,
+        totalAmount: true,
+        paymentStatus: true,
+        status: true,
+      },
+    });
+    if (!order) {
+      return { notFound: true };
+    }
+
+    return {
+      props: {
+        order: JSON.parse(JSON.stringify(order)),
+        layoutProps: {
+          ...layoutProps,
+          title: "Order Details",
+        },
+      },
+    };
+  }
+);
 
 Page.Layout = CustomerLayout;
 export default Page;

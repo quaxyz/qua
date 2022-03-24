@@ -170,62 +170,63 @@ const Page = ({ initialData, categories }: any) => {
   );
 };
 
-const getServerSidePropsFn: GetServerSideProps = async (ctx) => {
-  const store = ctx?.params?.store as string;
-  const category = ctx?.query?.category as string;
+export const getServerSideProps: GetServerSideProps = withSsrSession(
+  async (ctx) => {
+    const store = ctx?.params?.store as string;
+    const category = ctx?.query?.category as string;
 
-  let layoutProps = await getLayoutProps(ctx);
-  if (!layoutProps) return { notFound: true };
+    let layoutProps = await getLayoutProps(ctx);
+    if (!layoutProps) return { notFound: true };
 
-  const data = await prisma.product.findMany({
-    take: 12,
-    where: {
-      category,
-      Store: {
-        name: store as string,
-      },
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      images: {
-        take: 1,
-        select: {
-          url: true,
+    const data = await prisma.product.findMany({
+      take: 12,
+      where: {
+        category,
+        Store: {
+          name: store as string,
         },
       },
-    },
-  });
-
-  const distinctCategories = await prisma.product.findMany({
-    distinct: ["category"],
-    where: {
-      Store: { name: store },
-    },
-    select: {
-      category: true,
-    },
-  });
-  const categories = (distinctCategories || [])
-    .map((p) => p.category)
-    .filter(Boolean);
-
-  return {
-    props: {
-      initialData: JSON.parse(JSON.stringify(data)),
-      categories,
-      layoutProps: {
-        ...layoutProps,
-        title: `Products`,
+      orderBy: {
+        updatedAt: "desc",
       },
-    },
-  };
-};
-export const getServerSideProps = withSsrSession(getServerSidePropsFn);
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        images: {
+          take: 1,
+          select: {
+            url: true,
+          },
+        },
+      },
+    });
+
+    const distinctCategories = await prisma.product.findMany({
+      distinct: ["category"],
+      where: {
+        Store: { name: store },
+      },
+      select: {
+        category: true,
+      },
+    });
+    const categories = (distinctCategories || [])
+      .map((p) => p.category)
+      .filter(Boolean);
+
+    return {
+      props: {
+        initialData: JSON.parse(JSON.stringify(data)),
+        categories,
+        layoutProps: {
+          ...layoutProps,
+          title: `Products`,
+        },
+      },
+    };
+  }
+);
 
 Page.Layout = CustomerLayout;
 export default Page;

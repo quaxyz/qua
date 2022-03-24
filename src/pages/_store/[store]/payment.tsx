@@ -88,8 +88,9 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
   const cartStore = useCartStore();
   const handlePayment = useHandlePayment();
   const placeOrder = useMutation(
-    async (payload: any) => {
-      return Api().post("/orders/create", payload);
+    async (data: any) => {
+      const { payload } = await Api().post("/orders/create", data);
+      return payload;
     },
     {
       onError: (err: any) => {

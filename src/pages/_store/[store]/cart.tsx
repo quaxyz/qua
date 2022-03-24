@@ -299,20 +299,21 @@ const Page = () => {
   );
 };
 
-const getServerSidePropsFn: GetServerSideProps = async (ctx) => {
-  let layoutProps = await getLayoutProps(ctx);
-  if (!layoutProps) return { notFound: true };
+export const getServerSideProps: GetServerSideProps = withSsrSession(
+  async (ctx) => {
+    let layoutProps = await getLayoutProps(ctx);
+    if (!layoutProps) return { notFound: true };
 
-  return {
-    props: {
-      layoutProps: {
-        ...layoutProps,
-        title: "Cart",
+    return {
+      props: {
+        layoutProps: {
+          ...layoutProps,
+          title: "Cart",
+        },
       },
-    },
-  };
-};
-export const getServerSideProps = withSsrSession(getServerSidePropsFn);
+    };
+  }
+);
 
 Page.Layout = CustomerLayout;
 export default Page;

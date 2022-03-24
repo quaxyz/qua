@@ -36,7 +36,6 @@ export default function Api() {
         if (store) {
           Router.push({
             pathname: urlWithSlash,
-            query: { store },
           });
         } else {
           Router.push(urlWithSlash);

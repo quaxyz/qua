@@ -185,53 +185,53 @@ const Page = ({ product }: any) => {
   );
 };
 
-const getServerSidePropsFn: GetServerSideProps = async (ctx) => {
-  const id = ctx.params?.id as string;
-  const storeName = ctx.params?.store as string;
+export const getServerSideProps: GetServerSideProps = withSsrSession(
+  async (ctx) => {
+    const id = ctx.params?.id as string;
+    const storeName = ctx.params?.store as string;
 
-  let layoutProps = await getLayoutProps(ctx);
-  if (!layoutProps) return { notFound: true };
+    let layoutProps = await getLayoutProps(ctx);
+    if (!layoutProps) return { notFound: true };
 
-  const product = await prisma.product.findFirst({
-    where: {
-      id: parseInt(id, 10),
-      Store: {
-        name: storeName,
-      },
-    },
-
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      description: true,
-      totalStocks: true,
-      images: {
-        select: {
-          url: true,
+    const product = await prisma.product.findFirst({
+      where: {
+        id: parseInt(id, 10),
+        Store: {
+          name: storeName,
         },
       },
-    },
-  });
 
-  if (!product) {
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        description: true,
+        totalStocks: true,
+        images: {
+          select: {
+            url: true,
+          },
+        },
+      },
+    });
+
+    if (!product) {
+      return {
+        notFound: true,
+      };
+    }
+
     return {
-      notFound: true,
+      props: {
+        product,
+        layoutProps: {
+          ...layoutProps,
+          title: product.name,
+        },
+      },
     };
   }
-
-  return {
-    props: {
-      product,
-      layoutProps: {
-        ...layoutProps,
-        title: product.name,
-      },
-    },
-  };
-};
-
-export const getServerSideProps = withSsrSession(getServerSidePropsFn);
+);
 
 Page.Layout = CustomerLayout;
 export default Page;

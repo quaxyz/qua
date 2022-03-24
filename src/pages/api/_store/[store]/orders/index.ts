@@ -1,108 +1,120 @@
 /* eslint-disable import/no-anonymous-default-export */
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
-import { fromBase64 } from "libs/cookie";
+import { withSession } from "libs/session";
 
 const LOG_TAG = "[store-customer-orders]";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  try {
-    const { method, query } = req;
+export default withSession(
+  async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+      const { method, query } = req;
 
-    switch (method) {
-      case "GET": {
-        console.log(LOG_TAG, "fetch store customer orders", { query });
+      switch (method) {
+        case "GET": {
+          console.log(LOG_TAG, "fetch customer orders", { query });
 
-        if (!query.store || !query.cursor) {
-          console.log(LOG_TAG, "[warning]", "invalid query", { query });
-          return res.status(400).send({ error: "invalid params" });
-        }
-
-        const { address } = fromBase64(req.cookies["QUA_WALLET"] || "");
-        if (!address || !address.length) {
-          console.log(LOG_TAG, "[warning]", "address not found in cookie", {
-            cookie: req.cookies,
+          const { data: session } = req.session;
+          console.log(LOG_TAG, "fetch customer orders", {
+            query,
+            session,
           });
 
-          // we send 200 not to trigger an error on the client side
-          return res.status(200).send([]);
-        }
+          if (!session || !session.userId) {
+            console.warn(LOG_TAG, "No logged in user found", {
+              query,
+              session,
+            });
 
-        const store = query.store as string;
-        const orders = await prisma.order.findMany({
-          // pagination
-          take: 10,
-          skip: 1,
-          cursor: {
-            id: parseInt(query.cursor as string, 10),
-          },
+            return res.send({ redirect: true, url: "/" });
+          }
 
-          where: { customerAddress: address, Store: { name: store } },
-          orderBy: { updatedAt: "desc" },
-          select: { id: true, status: true, paymentStatus: true, items: true },
-        });
+          if (!query.store || !query.cursor) {
+            console.log(LOG_TAG, "[warning]", "invalid query", { query });
+            return res.status(400).send({ error: "invalid params" });
+          }
 
-        const itemsIds: any[] = orders
-          .map((o: any) => (o.items[0] || {}).productId)
-          .filter((i) => Boolean(i));
-        const products = await prisma.product.findMany({
-          where: {
-            Store: {
-              name: store,
+          const store = query.store as string;
+          const orders = await prisma.order.findMany({
+            // pagination
+            take: 10,
+            skip: 1,
+            cursor: {
+              id: parseInt(query.cursor as string, 10),
             },
-            id: {
-              in: itemsIds,
+
+            where: { customer: { id: session.userId }, store: { name: store } },
+            orderBy: { updatedAt: "desc" },
+            select: {
+              id: true,
+              status: true,
+              paymentStatus: true,
+              items: true,
             },
-          },
-          select: {
-            id: true,
-            name: true,
-            price: true,
-            totalStocks: true,
-            images: {
-              take: 1,
-              select: {
-                url: true,
+          });
+
+          const itemsIds: any[] = orders
+            .map((o: any) => (o.items[0] || {}).productId)
+            .filter((i) => Boolean(i));
+          const products = await prisma.product.findMany({
+            where: {
+              Store: {
+                name: store,
+              },
+              id: {
+                in: itemsIds,
               },
             },
-          },
-        });
-
-        const formatedOrders = [];
-        for (let order of orders) {
-          const product = products.find(
-            (p) => p.id === ((order.items as any)[0] || {}).productId
-          );
-          if (!product) continue;
-
-          formatedOrders.push({
-            id: order?.id,
-            status: order?.status,
-            paymentStatus: order?.paymentStatus,
-            product: {
-              id: product?.id,
-              name: product?.name,
-              image: product?.images[0]?.url,
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              totalStocks: true,
+              images: {
+                take: 1,
+                select: {
+                  url: true,
+                },
+              },
             },
           });
+
+          const formatedOrders = [];
+          for (let order of orders) {
+            const product = products.find(
+              (p) => p.id === ((order.items as any)[0] || {}).productId
+            );
+            if (!product) continue;
+
+            formatedOrders.push({
+              id: order?.id,
+              status: order?.status,
+              paymentStatus: order?.paymentStatus,
+              product: {
+                id: product?.id,
+                name: product?.name,
+                image: product?.images[0]?.url,
+              },
+            });
+          }
+
+          console.log(LOG_TAG, "[info]", "returning orders", {
+            orders: formatedOrders,
+          });
+          return res.status(200).send(formatedOrders);
         }
-
-        console.log(LOG_TAG, "[info]", "returning orders", {
-          orders: formatedOrders,
-        });
-        return res.status(200).send(formatedOrders);
+        default:
+          console.log(LOG_TAG, "[error]", "unauthorized method", method);
+          return res.status(500).send({ error: "unauthorized method" });
       }
-      default:
-        console.log(LOG_TAG, "[error]", "unauthorized method", method);
-        return res.status(500).send({ error: "unauthorized method" });
-    }
-  } catch (error) {
-    console.log(LOG_TAG, "[error]", "general error", {
-      name: (error as any).name,
-      message: (error as any).message,
-      stack: (error as any).stack,
-    });
+    } catch (error) {
+      console.log(LOG_TAG, "[error]", "general error", {
+        name: (error as any).name,
+        message: (error as any).message,
+        stack: (error as any).stack,
+      });
 
-    return res.status(500).send({ error: "request failed" });
+      return res.status(500).send({ error: "request failed" });
+    }
   }
-};
+);

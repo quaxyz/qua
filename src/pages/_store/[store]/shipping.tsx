@@ -275,7 +275,7 @@ const Page = ({ shippingDetails, storeDetails }: any) => {
   );
 };
 
-const getServerSidePropsFn: GetServerSideProps = async (ctx) => {
+export const getServerSideProps = withSsrSession(async (ctx) => {
   // if no user redirect back to cart
   if (!ctx?.req.session.data?.userId) {
     return {
@@ -318,9 +318,7 @@ const getServerSidePropsFn: GetServerSideProps = async (ctx) => {
       },
     },
   };
-};
-
-export const getServerSideProps = withSsrSession(getServerSidePropsFn);
+});
 
 Page.Layout = CustomerLayout;
 export default Page;

@@ -113,7 +113,9 @@ export default withSession(
           const cart = cartProducts.map((p) => {
             const item = cartItems.find((c) => c.productId === p.id);
             return {
-              ...p,
+              price: p.price,
+              name: p.name,
+              productId: p.id,
               quantity: item.quantity,
             };
           });
@@ -144,24 +146,6 @@ export default withSession(
             paymentStatus: "UNPAID",
             paymentMethod,
           };
-
-          // hash order
-          const encoder = new TextEncoder();
-          const digest = crypto
-            .createHash("sha256")
-            .update(
-              encoder.encode(
-                JSON.stringify({
-                  ...orderData,
-                  timestamp: parseInt((Date.now() / 1000).toFixed()),
-                  store: query.store,
-                })
-              )
-            )
-            .digest("base64")
-            .replace(/\+/g, "-")
-            .replace(/\//g, "_")
-            .replace(/=/g, "");
 
           // store order in DB
           const result = await prisma.order.create({
