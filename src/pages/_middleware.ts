@@ -1,4 +1,3 @@
-import { domain } from "libs/constants";
 import { NextRequest, NextResponse } from "next/server";
 
 export default function middleware(req: NextRequest) {
@@ -17,7 +16,6 @@ export default function middleware(req: NextRequest) {
       return NextResponse.next();
     }
 
-    // Only redirect in prod since all cookies will be lost when redireting locally
     if (isPublicPages && url.pathname.includes("_store")) {
       const store = url.pathname.split("/")[2];
       const root = "qua.xyz";
@@ -28,11 +26,7 @@ export default function middleware(req: NextRequest) {
         { hostname, store, path }
       );
 
-      if (process.env.NODE_ENV === "production") {
-        return NextResponse.redirect(`https://${store}.${root}${path}/`);
-      } else {
-        return NextResponse.next();
-      }
+      return NextResponse.redirect(`https://${store}.${root}${path}/`);
     }
 
     // Get store name from subdomain (e.g. store, umzug360, etc.)

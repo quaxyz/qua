@@ -27,7 +27,7 @@ import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 import { providers } from "ethers";
 import { injected, switchNetwork } from "libs/wallet";
 
-export const useGoogleAuth = () => {
+const useGoogleAuth = () => {
   const toast = useToast();
   const googleAuthMutation = useMutation(
     async (data: any) => {
@@ -69,7 +69,7 @@ export const useGoogleAuth = () => {
   };
 };
 
-export const useWalletAuth = () => {
+const useWalletAuth = () => {
   // ask user to sign data and send to the backend
   const toast = useToast();
   const [pending, setPending] = React.useState<boolean>(false);
@@ -135,12 +135,17 @@ export const useWalletAuth = () => {
 };
 
 const useEmailAuth = () => {
-  // send user email to backend to continue
+  return useMutation(async (email: string) => {
+    await Api().post("/setup/auth/email", {
+      email,
+    });
+  });
 };
 
 const Page: NextPage = () => {
   const googleAuth = useGoogleAuth();
   const walletAuth = useWalletAuth();
+  const emailAuth = useEmailAuth();
 
   return (
     <>
@@ -257,7 +262,14 @@ const Page: NextPage = () => {
                   <Spacer w="100%" h="1px" bgColor="rgba(19, 20, 21, 0.08)" />
                 </Stack>
 
-                <Stack as="form" spacing={4}>
+                <Stack
+                  as="form"
+                  onSubmit={(e: any) => {
+                    e.preventDefault();
+                    emailAuth.mutate(e.target.email.value);
+                  }}
+                  spacing={4}
+                >
                   <FormGroup
                     id="email"
                     label="Email"
@@ -266,6 +278,7 @@ const Page: NextPage = () => {
                     <Input
                       isRequired
                       type="email"
+                      id="email"
                       placeholder="shoo@mail.com"
                       variant="flushed"
                       size="lg"
@@ -277,12 +290,13 @@ const Page: NextPage = () => {
                       variant="solid"
                       type="submit"
                       size="lg"
+                      isLoading={emailAuth.isLoading}
                       isFullWidth={useBreakpointValue({
                         base: true,
                         md: false,
                       })}
                     >
-                      Send me a magic link
+                      Continue
                     </Button>
                   </div>
                 </Stack>

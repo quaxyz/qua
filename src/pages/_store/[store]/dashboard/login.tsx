@@ -16,6 +16,7 @@ import {
   useToast,
   useDisclosure,
   Link,
+  toast,
 } from "@chakra-ui/react";
 import { FormGroup } from "components/form-group";
 import { FcGoogle } from "react-icons/fc";
@@ -84,7 +85,7 @@ const useGoogleAuth = () => {
   return googleAuthMutation;
 };
 
-export const useWalletAuth = () => {
+const useWalletAuth = () => {
   const queryClient = useQueryClient();
   const toast = useToast();
   const [pending, setPending] = React.useState<boolean>(false);
@@ -165,13 +166,32 @@ export const useWalletAuth = () => {
 };
 
 const useEmailAuth = () => {
-  // send user email to backend to continue
+  const toast = useToast();
+
+  return useMutation(
+    async (email: string) => {
+      await Api().post("/dashboard/login/email", {
+        email,
+      });
+    },
+    {
+      onSuccess: () => {
+        toast({
+          title: "Login link sent",
+          description: "Please check your email for the next steps",
+          position: "top-right",
+          status: "success",
+        });
+      },
+    }
+  );
 };
 
 const Page: NextPage = () => {
   const router = useRouter();
   const googleAuth = useGoogleAuth();
   const walletAuth = useWalletAuth();
+  const emailAuth = useEmailAuth();
 
   return (
     <>
@@ -284,7 +304,14 @@ const Page: NextPage = () => {
                   <Spacer w="100%" h="1px" bgColor="rgba(19, 20, 21, 0.08)" />
                 </Stack>
 
-                <Stack as="form" spacing={4}>
+                <Stack
+                  as="form"
+                  onSubmit={(e: any) => {
+                    e.preventDefault();
+                    emailAuth.mutate(e.target.email.value);
+                  }}
+                  spacing={4}
+                >
                   <FormGroup
                     id="email"
                     label="Email"
@@ -292,6 +319,7 @@ const Page: NextPage = () => {
                   >
                     <Input
                       isRequired
+                      id="email"
                       type="email"
                       placeholder="shoo@mail.com"
                       variant="flushed"
@@ -304,6 +332,7 @@ const Page: NextPage = () => {
                       variant="solid"
                       type="submit"
                       size="lg"
+                      isLoading={emailAuth.isLoading}
                       isFullWidth={useBreakpointValue({
                         base: true,
                         md: false,
