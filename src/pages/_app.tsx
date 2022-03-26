@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { AppProps } from "next/app";
 import theme from "theme";
 import { ChakraProvider } from "@chakra-ui/react";
@@ -36,7 +36,7 @@ function QuaApp({ Component, pageProps }: AppProps) {
           </Layout>
         </Web3ReactProvider>
 
-        <ReactQueryDevtools initialIsOpen />
+        <ReactQueryDevtools />
       </QueryClientProvider>
     </ChakraProvider>
   );

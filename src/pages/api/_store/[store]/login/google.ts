@@ -6,24 +6,44 @@ import prisma from "libs/prisma";
 
 const LOG_TAG = "[store-customer-google-login]";
 
-const authClient = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
+const authClient = new OAuth2Client(
+  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL
+);
 
 export default withSession(
   async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-      const { method, body } = req;
+      const { method, body, query } = req;
 
       switch (method) {
         case "POST": {
-          const { token } = body;
+          const { code } = body;
 
-          if (!token) {
-            return res.status(400).send({ error: "missing token" });
+          if (!code) {
+            console.warn(LOG_TAG, "no code found in payload", {
+              query,
+              body,
+            });
+            return res.status(400).json({ error: "Login failed" });
+          }
+
+          // get user
+          const { tokens } = await authClient.getToken(code as string);
+          if (!tokens.id_token) {
+            console.warn(LOG_TAG, "Invalid code in payload", {
+              query,
+              body,
+            });
+            return res.status(400).json({
+              error: "Login failed",
+            });
           }
 
           // validate the id token
           const ticket = await authClient.verifyIdToken({
-            idToken: token,
+            idToken: tokens.id_token,
             audience: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
           });
           const payload = ticket.getPayload();
@@ -43,14 +63,14 @@ export default withSession(
             email: user.email,
           };
           await req.session.save();
-          return res.send({ message: "is logged in" });
+          return res.send({ message: "Login successful" });
         }
         default:
-          console.log(LOG_TAG, "[error]", "unauthorized method", method);
+          console.warn(LOG_TAG, "unauthorized method", method);
           return res.status(500).send({ error: "unauthorized method" });
       }
     } catch (error) {
-      console.log(LOG_TAG, "[error]", "general error", {
+      console.error(LOG_TAG, "general error", {
         name: (error as any).name,
         message: (error as any).message,
         stack: (error as any).stack,

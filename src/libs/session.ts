@@ -5,7 +5,7 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
 export const sessionOptions: IronSessionOptions = {
   password: process.env.SECRET_COOKIE_PASSWORD as string,
-  cookieName: "qua",
+  cookieName: "QUA_SESSION",
   // secure: true should be used in production (HTTPS) but can't be used in development (HTTP)
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",

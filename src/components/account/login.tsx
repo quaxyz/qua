@@ -14,26 +14,56 @@ import {
   useBreakpointValue,
   useDisclosure,
   useToast,
+  Link,
 } from "@chakra-ui/react";
 import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
 import { FormGroup } from "components/form-group";
 import { ConnectModal } from "components/wallet";
 import { providers } from "ethers";
 import { injected, switchNetwork } from "libs/wallet";
-import { useGoogleLogin } from "react-google-login";
 import { Wallet } from "react-iconly";
 import { FcGoogle } from "react-icons/fc";
 import { useQueryClient, useMutation } from "react-query";
 import { useCustomerData } from "hooks/auth";
+import { useRouter } from "next/router";
+import { useOath2Login } from "hooks/useOauth2Login";
 
 const useGoogleAuth = ({ onClose }: any) => {
-  const toast = useToast();
   const queryClient = useQueryClient();
+  const router = useRouter();
+  const toast = useToast();
+
+  const url = React.useMemo(() => {
+    const url = "https://accounts.google.com/o/oauth2/v2/auth";
+    const params = new URLSearchParams({
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
+      redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL || "",
+      response_type: "code",
+      access_type: "offline",
+      prompt: "consent",
+      scope: "https://www.googleapis.com/auth/userinfo.email",
+      state: JSON.stringify({
+        store: router.query.store,
+        path: global.location?.href,
+      }),
+    }).toString();
+
+    return `${url}?${params}`;
+  }, [router.query.store]);
+
+  const googleSignIn = useOath2Login({
+    id: "google-login",
+    url,
+    redirect_origin: "http://localhost:8888",
+  });
 
   const googleAuthMutation = useMutation(
-    async (data: any) => {
+    async () => {
+      const data = await googleSignIn();
+
+      // redirect to details page
       await Api().post("/login/google", {
-        token: data.tokenId,
+        code: data.code,
       });
     },
     {
@@ -53,19 +83,7 @@ const useGoogleAuth = ({ onClose }: any) => {
     }
   );
 
-  const { loaded, signIn } = useGoogleLogin({
-    clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
-    onSuccess: (resp) => googleAuthMutation.mutateAsync(resp),
-    onFailure: (err) => {
-      console.warn(err);
-    },
-  });
-
-  return {
-    ready: loaded,
-    loading: googleAuthMutation.isLoading,
-    signIn,
-  };
+  return googleAuthMutation;
 };
 
 const useWalletAuth = ({ onClose }: any) => {
@@ -76,7 +94,10 @@ const useWalletAuth = ({ onClose }: any) => {
   const connectModal = useDisclosure();
 
   const walletAuthMutation = useMutation(
-    async (account: string) => {
+    async (account?: string) => {
+      if (!account) {
+        throw new Error("Connect wallet to continue");
+      }
       // ask user to sign message
       let provider: providers.Web3Provider = library;
       const signer = provider.getSigner(account!);
@@ -137,9 +158,12 @@ const useWalletAuth = ({ onClose }: any) => {
 
   React.useEffect(() => {
     if (!account) return;
-    walletAuthMutation.mutate(account);
+    if (walletAuthMutation.isIdle) {
+      walletAuthMutation.mutate(account);
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account]);
+  }, [account, walletAuthMutation.isIdle]);
 
   return {
     isLoading: pending || walletAuthMutation.isLoading,
@@ -195,9 +219,10 @@ export const LoginModal = ({ isOpen, onClose }: any) => {
                   color="#131415"
                   size="lg"
                   leftIcon={<FcGoogle fontSize="24px" />}
-                  isDisabled={!googleAuth.ready}
-                  isLoading={googleAuth.loading}
-                  onClick={() => googleAuth.signIn()}
+                  isLoading={googleAuth.isLoading}
+                  onClick={() => googleAuth.mutate()}
+                  // as={Link}
+                  // href={googleAuth.url}
                 >
                   Continue with Google
                 </Button>

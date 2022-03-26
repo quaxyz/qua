@@ -328,7 +328,6 @@ const Page = ({ orders }: any) => {
                         mb={{ base: "2", md: "0" }}
                       >
                         {order.customerDetails?.name}{" "}
-                        {truncateAddress(order.customerAddress, 4)}
                       </Text>
                     </Flex>
                     <Flex w="100%" justify="space-between">
@@ -414,7 +413,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const data = await prisma.order.findMany({
     take: 5,
     where: {
-      Store: {
+      store: {
         name: store,
       },
     },
@@ -423,7 +422,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     },
     select: {
       id: true,
-      customerAddress: true,
       customerDetails: true,
       status: true,
       paymentStatus: true,

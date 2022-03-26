@@ -52,6 +52,7 @@ export const useGoogleAuth = () => {
     clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
     onSuccess: (resp) => googleAuthMutation.mutateAsync(resp),
     onFailure: (err) => {
+      console.log(err);
       toast({
         title: "Error Signing up",
         description: "Something went wrong authenicating with Google",
