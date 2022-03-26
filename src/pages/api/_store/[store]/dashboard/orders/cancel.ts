@@ -1,7 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
-import { verifyApiBody } from "../utils";
 import { withSession } from "libs/session";
 
 const LOG_TAG = "[store-dashboard-cancel-order]";
