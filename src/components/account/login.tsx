@@ -174,9 +174,35 @@ const useWalletAuth = ({ onClose }: any) => {
   };
 };
 
+const useEmailAuth = ({ onClose }: any) => {
+  const toast = useToast();
+  const router = useRouter();
+
+  return useMutation(
+    async (email: string) => {
+      await Api().post("/login/email", {
+        email,
+        redirectTo: router.asPath,
+      });
+    },
+    {
+      onSuccess: () => {
+        onClose();
+        toast({
+          title: "Login link sent",
+          description: "Please check your email for the next steps",
+          position: "top-right",
+          status: "success",
+        });
+      },
+    }
+  );
+};
+
 export const LoginModal = ({ isOpen, onClose }: any) => {
   const googleAuth = useGoogleAuth({ onClose });
   const walletAuth = useWalletAuth({ onClose });
+  const emailAuth = useEmailAuth({ onClose });
 
   return (
     <>
@@ -221,8 +247,6 @@ export const LoginModal = ({ isOpen, onClose }: any) => {
                   leftIcon={<FcGoogle fontSize="24px" />}
                   isLoading={googleAuth.isLoading}
                   onClick={() => googleAuth.mutate()}
-                  // as={Link}
-                  // href={googleAuth.url}
                 >
                   Continue with Google
                 </Button>
@@ -246,7 +270,14 @@ export const LoginModal = ({ isOpen, onClose }: any) => {
                 <Spacer w="100%" h="1px" bgColor="rgba(19, 20, 21, 0.08)" />
               </Stack>
 
-              <Stack as="form" spacing={4}>
+              <Stack
+                as="form"
+                onSubmit={(e: any) => {
+                  e.preventDefault();
+                  emailAuth.mutate(e.target.email.value);
+                }}
+                spacing={4}
+              >
                 <FormGroup
                   id="email"
                   label="Email"
@@ -254,6 +285,7 @@ export const LoginModal = ({ isOpen, onClose }: any) => {
                 >
                   <Input
                     isRequired
+                    id="email"
                     type="email"
                     placeholder="shoo@mail.com"
                     variant="flushed"
@@ -266,6 +298,7 @@ export const LoginModal = ({ isOpen, onClose }: any) => {
                     variant="solid"
                     type="submit"
                     size="lg"
+                    isLoading={emailAuth.isLoading}
                     isFullWidth={useBreakpointValue({
                       base: true,
                       md: false,
