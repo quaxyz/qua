@@ -195,11 +195,13 @@ const Page: NextPage = () => {
 
   return (
     <>
-      <Head>
-        <title>
-          Login - {_capitalize((router.query.store as string) || "")}
-        </title>
-      </Head>
+      {router.query.store && (
+        <Head>
+          <title>
+            Login - {_capitalize((router.query.store as string) || "")}
+          </title>
+        </Head>
+      )}
 
       <chakra.header
         borderBottom={{ base: "1px solid rgba(0, 0, 0, 0.08)", md: "none" }}

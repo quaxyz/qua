@@ -3,7 +3,6 @@ import Head from "next/head";
 import _capitalize from "lodash.capitalize";
 import { useRouter } from "next/router";
 import {
-  Avatar,
   Button,
   chakra,
   CircularProgress,
@@ -24,17 +23,17 @@ const navLinks = [
   {
     name: "Dashboard",
     icon: (props: any) => <Category set="light" {...props} />,
-    url: "/",
+    url: "/dashboard/",
   },
   {
     name: "Products",
     icon: (props: any) => <Graph set="light" {...props} />,
-    url: "/products",
+    url: "/dashboard/products/",
   },
   {
     name: "Orders",
     icon: (props: any) => <Bag set="light" {...props} />,
-    url: "/orders",
+    url: "/dashboard/orders/",
   },
 ];
 
@@ -150,24 +149,21 @@ const DashboardLayout = ({ title, children }: any) => {
               />
             </Stack>
 
-            <AccountMenu
-              isLoggedIn={!!storeUser.data}
-              options={walletMenuLinks}
+            <Button
+              variant="outline"
+              size="sm"
+              fontSize="15px"
+              bg="rgba(19, 20, 21, 0.04)"
+              borderRadius="12px"
+              border="1px solid rgba(19, 20, 21, 0.08)"
+              leftIcon={
+                <Icon mr="2" as={(props) => <User set="bold" {...props} />} />
+              }
+              as={Link}
+              href="/dashboard/settings"
             >
-              <Button
-                variant="outline"
-                size="sm"
-                fontSize="15px"
-                bg="rgba(19, 20, 21, 0.04)"
-                borderRadius="12px"
-                border="1px solid rgba(19, 20, 21, 0.08)"
-                leftIcon={
-                  <Icon mr="2" as={(props) => <User set="bold" {...props} />} />
-                }
-              >
-                My Account
-              </Button>
-            </AccountMenu>
+              My Account
+            </Button>
           </Stack>
         </chakra.nav>
 
@@ -184,13 +180,13 @@ const DashboardLayout = ({ title, children }: any) => {
               {navLinks.map((navLink, idx) => (
                 <Link
                   key={idx}
-                  href={`/dashboard${navLink.url}`}
+                  href={navLink.url}
                   px={4}
                   py={3}
                   rounded="8px"
                   borderBottom="none"
                   _hover={{ transform: "scale(1.02)" }}
-                  {...(router.asPath.endsWith(navLink.url)
+                  {...(router.asPath === navLink.url
                     ? { color: "#fff", bg: "#000" }
                     : { color: "#000" })}
                 >
@@ -249,33 +245,30 @@ const DashboardLayout = ({ title, children }: any) => {
               />
             </Stack>
 
-            <AccountMenu
-              isLoggedIn={!!storeUser.data}
-              options={walletMenuLinks}
+            <Button
+              variant="outline"
+              rounded="8px"
+              size="sm"
+              borderColor="rgb(255 255 255 / 16%)"
+              rightIcon={<Icon as={CgMore} />}
+              as={Link}
+              href="/dashboard/settings"
+              {...(router.asPath === "/dashboard/settings/"
+                ? {
+                    color: "#000",
+                    bg: "#131415",
+                    _hover: { bg: "white" },
+                  }
+                : {
+                    color: "#131415",
+                    _hover: {
+                      bg: "transparent",
+                      borderColor: "rgb(255 255 255 / 48%)",
+                    },
+                  })}
             >
-              <Button
-                variant="outline"
-                rounded="8px"
-                size="sm"
-                borderColor="rgb(255 255 255 / 16%)"
-                rightIcon={<Icon as={CgMore} />}
-                {...(walletMenuLinks.some((m) => router.asPath.endsWith(m.url))
-                  ? {
-                      color: "#000",
-                      bg: "#131415",
-                      _hover: { bg: "white" },
-                    }
-                  : {
-                      color: "#131415",
-                      _hover: {
-                        bg: "transparent",
-                        borderColor: "rgb(255 255 255 / 48%)",
-                      },
-                    })}
-              >
-                My Account
-              </Button>
-            </AccountMenu>
+              My Account
+            </Button>
           </Stack>
         </chakra.header>
 
@@ -311,10 +304,10 @@ const DashboardLayout = ({ title, children }: any) => {
             {navLinks.map((NavLink, idx) => (
               <Link
                 key={idx}
-                href={`/dashboard${NavLink.url}`}
+                href={NavLink.url}
                 borderBottom="none"
                 color="#FFF"
-                {...(router.asPath.endsWith(NavLink.url)
+                {...(router.asPath === NavLink.url
                   ? { textDecoration: "underline" }
                   : {})}
               >
@@ -323,7 +316,7 @@ const DashboardLayout = ({ title, children }: any) => {
                     boxSize={5}
                     as={(props) => (
                       <NavLink.icon
-                        {...(router.asPath.endsWith(NavLink.url)
+                        {...(router.asPath === NavLink.url
                           ? { set: "bold" }
                           : {})}
                         {...props}

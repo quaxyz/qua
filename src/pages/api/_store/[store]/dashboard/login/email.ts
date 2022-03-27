@@ -67,7 +67,7 @@ export default withSession(
           await req.session.save();
 
           // parse token and create session
-          return res.redirect("/dashboard");
+          return res.redirect("/dashboard/settings");
         }
         case "POST": {
           const { email } = body;
