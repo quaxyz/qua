@@ -4,7 +4,7 @@ import { withSession } from "libs/session";
 import { OAuth2Client } from "google-auth-library";
 import prisma from "libs/prisma";
 
-const LOG_TAG = "[setup-auth-google]";
+const LOG_TAG = "[setup-auth-email]";
 
 /**
  * Since we don't plan on authenicating now, we just need to create the
@@ -20,8 +20,10 @@ export default withSession(
           const { email } = body;
 
           // store user details
-          let user = await prisma.user.create({
-            data: { email },
+          let user = await prisma.user.upsert({
+            where: { email },
+            create: { email },
+            update: { email },
           });
 
           // generate jwt token for user
