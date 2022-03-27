@@ -18,15 +18,16 @@ export default function middleware(req: NextRequest) {
 
     if (isPublicPages && url.pathname.includes("_store")) {
       const store = url.pathname.split("/")[2];
-      const root = "qua.xyz";
-      const path = url.pathname.replace(`/_store/${store}`, "/");
+      const root =
+        process.env.NODE_ENV === "production" ? "qua.xyz" : "localhost:8888";
+      const path = url.pathname.replace(`/_store/${store}`, "");
 
       console.log(
-        `[middleware] found store from pathname. Redirecting to page https://${store}.${root}${path} %j`,
+        `[middleware] found store from pathname. Redirecting to page http://${store}.${root}${path} %j`,
         { hostname, store, path }
       );
 
-      return NextResponse.redirect(`https://${store}.${root}${path}/`);
+      return NextResponse.redirect(`http://${store}.${root}${path}/`);
     }
 
     // Get store name from subdomain (e.g. store, umzug360, etc.)
