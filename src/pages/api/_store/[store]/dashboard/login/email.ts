@@ -51,7 +51,9 @@ export default withSession(
           });
 
           if (!store) {
-            console.warn(LOG_TAG, "User not owner of the store");
+            console.warn(LOG_TAG, "User not owner of the store", {
+              user: user.id,
+            });
             return res.status(404).send({
               error: "not found",
             });
