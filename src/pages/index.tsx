@@ -34,9 +34,12 @@ const Home: NextPage = () => {
           align="center"
           direction="row"
           justify="space-between"
-          px={{ base: "5", md: "8rem" }}
+          px={{ base: "5", md: "24" }}
           py={{ base: "2", md: "8" }}
+          bgColor="rgba(255, 255, 255, 98%)"
+          backdropFilter="blur(24px)"
           maxW="100%"
+          h="72px"
           pos="absolute"
           top="0"
           left="0"
@@ -45,23 +48,21 @@ const Home: NextPage = () => {
         >
           <NextLink href="/" passHref>
             <a>
-              <Box pl={{ base: "0", md: "4rem" }}>
+              <Box>
                 <Image
-                  src="/svg/qua_logo_white.svg"
+                  src="/svg/qua_mark_black.svg"
                   alt="Qua logo"
                   layout="fixed"
-                  width={{ base: "5.75rem", md: "6rem" }}
-                  height={{ base: "5.75rem", md: "6rem" }}
+                  width={{ base: "5.75rem", md: "3.75rem" }}
+                  height={{ base: "5.75rem", md: "3.75rem" }}
                 />
               </Box>
             </a>
           </NextLink>
 
-          <Stack direction="row" spacing="8">
-            <NextLink href="/setup" passHref>
-              <Link>Start selling</Link>
-            </NextLink>
-          </Stack>
+          <NextLink href="/setup" passHref>
+            <Link>Start selling</Link>
+          </NextLink>
         </Stack>
       </chakra.nav>
 
@@ -78,30 +79,32 @@ const Home: NextPage = () => {
           direction="row"
           justify="space-between"
           align="center"
-          px={{ base: "2", md: "7rem" }}
+          px={{ base: "2", md: "24" }}
           pt={{ base: "8rem", md: "12rem" }}
           w="100%"
-          spacing="0.6rem"
         >
-          <Stack w="100%" pl={{ base: "0", md: "4rem" }}>
+          <Stack w="100%">
             <Stack
               maxW={{ base: "100%", md: "48rem" }}
               mb={{ base: "6", md: "8" }}
             >
               <Heading
                 color="#fff"
+                as="h2"
                 fontWeight="800"
-                fontSize={{ base: "32px", md: "62" }}
+                fontSize={{ base: "32px", md: "48px" }}
                 mb={{ base: "2", md: "4" }}
               >
                 Welcome to Qua.
               </Heading>
               <Text
-                fontSize={{ base: "16px", md: "18px" }}
+                as="h1"
+                fontSize={{ base: "16px", md: "17px" }}
                 color="#fff"
                 opacity="0.87"
               >
-                The home for modern ecommerce brands and online shopping
+                The online mall for indie brands, ecommerce, retail and
+                shopping.
               </Text>
             </Stack>
 
@@ -167,235 +170,154 @@ const Home: NextPage = () => {
               </NextLink>
             </Stack>
           </Stack>
-
-          <Stack
-            display={{ base: "none", md: "flex" }}
-            align="center"
-            justify="center"
-            spacing="12"
-            position="fixed"
-            right={{ base: "0.015px", md: "5rem" }}
-            top={{ base: "6rem", md: "10rem" }}
-          >
-            <Stack
-              h={{ base: "80px", md: "100" }}
-              w="0.8px"
-              bgColor="rgba(0, 0, 0, 0.24)"
-            />
-            <VStack spacing="8">
-              <Link
-                href="https://www.instagram.com/qua_xyz/"
-                color="#000"
-                textTransform="uppercase"
-                fontSize={{ base: "10px", md: "12px" }}
-                // transformOrigin="0 0"
-                transform="rotate(90deg)"
-                borderBottom="none"
-                isExternal
-              >
-                Instagram
-              </Link>{" "}
-              <Spacer mx="2" />
-              <Link
-                href="https://discord.gg/nK8Vgae2W8"
-                color="#000"
-                textTransform="uppercase"
-                fontSize={{ base: "10px", md: "12px" }}
-                transform="rotate(90deg)"
-                borderBottom="none"
-                isExternal
-              >
-                Discord
-              </Link>{" "}
-              <Spacer mx="2" />
-              <Link
-                href="https://twitter.com/qua_xyz"
-                color="#000"
-                textTransform="uppercase"
-                fontSize={{ base: "10px", md: "12px" }}
-                transform="rotate(90deg)"
-                borderBottom="none"
-                isExternal
-              >
-                Twitter
-              </Link>
-            </VStack>
-            <Stack
-              h={{ base: "80px", md: "100" }}
-              w="0.8px"
-              bgColor="rgba(0, 0, 0, 0.24)"
-            />
-          </Stack>
         </Stack>
       </Container>
 
-      <Container maxW="100%">
-        <Stack
-          px={{ base: "2", md: "11rem" }}
-          py={{ base: "0", md: "16" }}
-          spacing="12"
-        >
-          <FormGroup id="search" labelProps={{ variant: "flushed" }}>
-            <InputGroup display={{ base: "none", md: "block" }}>
-              <InputLeftElement pointerEvents="none">
-                <Search />
-              </InputLeftElement>
-              <Input
-                type="search"
-                fontWeight="300"
-                placeholder="What are you shopping for?"
-                variant="flushed"
-                size="lg"
-              />
-            </InputGroup>
-          </FormGroup>
-          {/* Mobile display */}
-          <FormGroup id="search" labelProps={{ variant: "flushed" }}>
-            <InputGroup display={{ base: "block", md: "none" }}>
-              <InputLeftElement pointerEvents="none">
-                <Search />
-              </InputLeftElement>
-              <Input
-                type="search"
-                fontWeight="300"
-                placeholder="What are you shopping for?"
-                variant="flushed"
-                size="md"
-              />
-            </InputGroup>
-          </FormGroup>
-
-          <Stack>
-            <Text
-              as="span"
-              color="#131415"
-              fontWeight="300"
-              fontSize={{ base: "1.4rem", md: "2rem" }}
+      <Container maxW="100%" py={{ base: "0", md: "16" }}>
+        <Stack spacing="4">
+          <Stack
+            direction={{ base: "column", md: "row" }}
+            px={{ base: "2", md: "24" }}
+            h="536px"
+            spacing="4"
+          >
+            <Stack
+              p="12"
+              w="100%"
+              align="center"
+              bg="#FAFAFA"
+              // rounded="8px"
+              h="100%"
+              spacing="12"
             >
-              Shop from near you
-            </Text>
-            <Text
-              fontSize={{ base: "1rem", md: "1rem" }}
-              fontWeight="400"
-              opacity="0.48"
-              color="#131415"
-            >
-              Save the planet.
-            </Text>
+              <Heading
+                color="#1D1D1F"
+                fontWeight="600"
+                fontSize={{ base: "1rem", md: "32px" }}
+              >
+                Sell Computer & Electronics
+              </Heading>
+              <chakra.figure
+                bgRepeat="no-repeat"
+                bgSize="contain"
+                bgPosition="center center"
+                bgImage="url(/images/electronics.png)"
+                width="100%"
+                height="100%"
+              ></chakra.figure>
+            </Stack>
 
             <Stack
-              py={{ base: "2", md: "6" }}
-              direction="row"
-              // direction={{ base: "column", md: "row" }}
-              spacing="4"
+              p="12"
+              w="100%"
+              align="center"
+              bg="#FAFAFA"
+              // rounded="8px"
+              h="100%"
+              spacing="12"
             >
-              <Button
-                variant="solid-outline"
-                size="md"
-                width={{ base: "100%", md: "auto" }}
-                px={{ base: "8", md: "12" }}
+              <Heading
+                color="#1D1D1F"
+                fontWeight="600"
+                fontSize={{ base: "1rem", md: "32px" }}
               >
-                Chicago
-              </Button>
-              <Button
-                variant="solid-outline"
-                size="md"
-                width={{ base: "100%", md: "auto" }}
-                px={{ base: "8", md: "12" }}
-              >
-                New York
-              </Button>
-              <Button
-                variant="solid-outline"
-                size="md"
-                width={{ base: "100%", md: "auto" }}
-                px={{ base: "8", md: "12" }}
-              >
-                Boston
-              </Button>
+                Sell Wears & Cosmetics
+              </Heading>
+
+              <chakra.figure
+                bgRepeat="no-repeat"
+                bgSize="contain"
+                bgPosition="center center"
+                bgImage="url(/images/wears.png)"
+                width="100%"
+                height="100%"
+              ></chakra.figure>
             </Stack>
           </Stack>
 
-          <Stack py={{ base: "2", md: "0" }}>
-            <Stack direction="row" align="center" justify="space-between">
-              <Text
-                as="span"
-                color="#131415"
-                fontWeight="300"
-                fontSize={{ base: "1.2rem", md: "1.8rem" }}
+          <Stack
+            direction={{ base: "column", md: "row" }}
+            px={{ base: "2", md: "24" }}
+            h="500px"
+            spacing="4"
+          >
+            <Stack
+              p="12"
+              w={{ base: "100%", md: "1280px" }}
+              align="center"
+              bg="#FAFAFA"
+              // rounded="8px"
+              h="100%"
+              spacing="12"
+            >
+              <Heading
+                color="#1D1D1F"
+                fontWeight="600"
+                fontSize={{ base: "1rem", md: "32px" }}
               >
-                Shop by category
-              </Text>
-              <Link fontSize={{ base: "14px", md: "1rem" }} color="#131415">
-                See all
-              </Link>
+                Sell Edibles & Pharma
+              </Heading>
+              <chakra.figure
+                bgRepeat="no-repeat"
+                bgSize="contain"
+                bgPosition="center center"
+                bgImage="url(/images/edible.png)"
+                width="100%"
+                height="100%"
+              ></chakra.figure>
             </Stack>
 
             <Stack
-              py={{ base: "2", md: "6" }}
-              direction={{ base: "column", md: "row" }}
-              spacing="4"
+              p="12"
+              w="100%"
+              align="center"
+              justify="center"
+              bg="#FAFAFA"
+              bgRepeat="no-repeat"
+              bgSize="cover"
+              bgPosition="center center"
+              bgImage="linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)),url(/images/highlight.jpg)"
+              rounded="8px"
+              h="100%"
             >
-              <Box
-                flex="1"
-                h={{ base: "200px", md: "350px" }}
-                bgRepeat="no-repeat"
-                bgSize="cover"
-                bgPosition="center"
-                bgImage="url(/images/rachit-tank-2cFZ_FB08UM-unsplash.jpg)"
-              >
-                <Stack
-                  w="100%"
-                  p={{ base: "4", md: "8" }}
-                  h="100%"
-                  spacing={{ base: "12", md: "4" }}
+              <Stack align="center" justify="center" spacing="4">
+                <Heading
+                  color="#fff"
+                  fontWeight="600"
+                  fontSize={{ base: "1rem", md: "32px" }}
                 >
-                  <Heading flex="1" fontSize={{ base: "1.125rem", md: "24px" }}>
-                    Electronics
-                  </Heading>
-                  <Button
-                    alignSelf="flex-end"
-                    variant="primary-outline"
-                    bgColor="#fff"
-                    px={{ base: "8", md: "12" }}
-                    py={{ base: "4", md: "6" }}
-                    border="none"
-                    color="#000"
+                  Sell Everything
+                </Heading>
+                <Stack align="center" spacing="2">
+                  <Text
+                    textAlign="center"
+                    w={{ base: "100%", md: "400px" }}
+                    color="#fff"
                   >
-                    Shop now
-                  </Button>
+                    All you need is one store that delivers the best experience
+                    to your customers
+                  </Text>
+                  <Text fontWeight="300" fontSize="xs" color="#fff">
+                    0 competition. 100% customer loyalty.
+                  </Text>
                 </Stack>
-              </Box>
-              <Box
-                flex="1"
-                h={{ base: "200px", md: "350px" }}
-                bgRepeat="no-repeat"
-                bgSize="cover"
-                bgPosition="center"
-                bgImage="url(/images/ehimetalor-akhere-unuabona-okTqiC9Xqho-unsplash.jpg)"
-              >
-                <Stack
-                  w="100%"
-                  p={{ base: "4", md: "8" }}
-                  h="100%"
-                  spacing={{ base: "12", md: "4" }}
-                >
-                  <Heading flex="1" fontSize={{ base: "1.125rem", md: "24px" }}>
-                    Fashion
-                  </Heading>
+                <NextLink href="/setup" passHref>
                   <Button
-                    alignSelf="flex-end"
-                    variant="primary-outline"
+                    as={Link}
+                    borderBottom="none"
+                    variant="primary"
+                    size="xs"
+                    rounded="50px"
+                    p="4"
                     bgColor="#fff"
-                    px={{ base: "8", md: "12" }}
-                    py={{ base: "4", md: "6" }}
-                    border="none"
                     color="#000"
+                    _hover={{ bgColor: "#f2f2f2" }}
+                    _focus={{ border: "none" }}
                   >
-                    Shop now
+                    Start Today - Free
                   </Button>
-                </Stack>
-              </Box>
+                </NextLink>
+              </Stack>
             </Stack>
           </Stack>
         </Stack>
@@ -471,18 +393,68 @@ const Home: NextPage = () => {
         px={{ base: "4", md: "12rem" }}
         py="8"
       >
-        <Stack direction="row" spacing="12">
-          <NextLink href="/about" passHref>
-            <Link fontWeight="normal" color="inherit" fontSize="sm" as="span">
-              About Qua
-            </Link>
-          </NextLink>
+        <Stack
+          direction="row"
+          justify="space-between"
+          w="100%"
+          align="center"
+          spacing="12"
+        >
+          <Stack direction="row" spacing="12">
+            <NextLink href="/about" passHref>
+              <Link fontWeight="normal" color="inherit" fontSize="sm" as="span">
+                About Qua
+              </Link>
+            </NextLink>
 
-          <NextLink href="/stores" passHref>
-            <Link fontWeight="normal" color="inherit" fontSize="sm" as="span">
-              P2P Stores
-            </Link>
-          </NextLink>
+            <NextLink href="/stores" passHref>
+              <Link fontWeight="normal" color="inherit" fontSize="sm" as="span">
+                P2P Stores
+              </Link>
+            </NextLink>
+          </Stack>
+
+          <Stack
+            display={{ base: "none", md: "flex" }}
+            direction="row"
+            align="center"
+            spacing="12"
+          >
+            <Stack w="80px" h="1px" bgColor="rgba(0, 0, 0, 0.24)" />
+            <Stack direction="row" align="center" spacing="8">
+              <Link
+                href="https://www.instagram.com/qua_xyz/"
+                color="#000"
+                textTransform="uppercase"
+                fontSize={{ base: "10px", md: "12px" }}
+                borderBottom="none"
+                isExternal
+              >
+                Instagram
+              </Link>
+              <Link
+                href="https://discord.gg/nK8Vgae2W8"
+                color="#000"
+                textTransform="uppercase"
+                fontSize={{ base: "10px", md: "12px" }}
+                borderBottom="none"
+                isExternal
+              >
+                Discord
+              </Link>
+              <Link
+                href="https://twitter.com/qua_xyz"
+                color="#000"
+                textTransform="uppercase"
+                fontSize={{ base: "10px", md: "12px" }}
+                borderBottom="none"
+                isExternal
+              >
+                Twitter
+              </Link>
+            </Stack>
+            <Stack w="80px" h="1px" bgColor="rgba(0, 0, 0, 0.24)" />
+          </Stack>
         </Stack>
       </Stack>
     </>
