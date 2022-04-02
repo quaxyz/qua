@@ -291,11 +291,11 @@ const Home: NextPage = () => {
                 <Stack align="center" spacing="2">
                   <Text
                     textAlign="center"
-                    w={{ base: "100%", md: "400px" }}
+                    w={{ base: "100%", md: "380px" }}
                     color="#fff"
                   >
-                    All you need is one store that delivers the best experience
-                    to your customers
+                    With one store link that delivers the best experience to
+                    your customers
                   </Text>
                   <Text fontWeight="300" fontSize="xs" color="#fff">
                     0 competition. 100% customer loyalty.
