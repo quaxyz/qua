@@ -25,6 +25,7 @@ import { truncateAddress } from "libs/utils";
 import { providers } from "ethers";
 import { domain, schemas } from "libs/constants";
 import { getLayoutProps } from "components/layouts/customer-props";
+import { withSsrSession } from "libs/session";
 
 const useSaveDetails = () => {
   const router = useRouter();
@@ -267,29 +268,32 @@ const Page = ({ accountDetails }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  let layoutProps = await getLayoutProps(ctx);
-  if (!layoutProps) return { notFound: true };
+export const getServerSideProps: GetServerSideProps = withSsrSession(
+  async (ctx) => {
+    let layoutProps = await getLayoutProps(ctx);
+    if (!layoutProps) return { notFound: true };
 
-  let props: any = {
-    layoutProps: {
-      ...layoutProps,
-      title: "Account",
-    },
-  };
+    let props: any = {
+      layoutProps: {
+        ...layoutProps,
+        title: "Account",
+      },
+    };
 
-  if (!layoutProps.account) {
+    const userId = ctx.req.session?.data?.userId;
+    if (!userId) {
+      return { props };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { shippingDetails: true },
+    });
+    props.accountDetails = user?.shippingDetails;
+
     return { props };
   }
-
-  const user = await prisma.user.findUnique({
-    where: { address: props.layoutProps.account },
-    select: { shippingDetails: true },
-  });
-  props.accountDetails = user?.shippingDetails;
-
-  return { props };
-};
+);
 
 Page.Layout = CustomerLayout;
 export default Page;

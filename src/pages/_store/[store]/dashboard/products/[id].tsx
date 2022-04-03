@@ -517,7 +517,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   if (!product) {
     return {
       notFound: true,
-      revalidate: 5 * 60 * 60,
     };
   }
 
@@ -540,7 +539,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         title: "Edit Product",
       },
     },
-    revalidate: 5 * 60 * 60,
   };
 };
 
