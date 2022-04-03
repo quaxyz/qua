@@ -162,14 +162,14 @@ const Page: NextPage = () => {
       >
         <Container
           maxW="100%"
-          px={{ base: "4", md: "16" }}
-          py={{ base: "4", md: "8" }}
+          px={{ base: "4", md: "24" }}
+          py={{ base: "1", md: "8" }}
         >
           <Stack direction="row" alignItems="center" justify="space-between">
             <Image
               src="/svg/qua_mark_white.svg"
               display={{ base: "none", md: "block" }}
-              boxSize="70"
+              boxSize="50"
               alt="Qua logo"
             />
             <Image
