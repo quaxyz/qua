@@ -6,21 +6,13 @@ import {
   Heading,
   Image,
   Stack,
-  Input,
   Text,
   Link,
-  VStack,
-  Spacer,
-  InputLeftElement,
-  InputGroup,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import NextLink from "next/link";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { FormGroup } from "components/form-group";
-import { Wallet } from "components/wallet";
-import { Search } from "react-iconly";
 
 const Home: NextPage = () => {
   return (
@@ -34,12 +26,12 @@ const Home: NextPage = () => {
           align="center"
           direction="row"
           justify="space-between"
-          px={{ base: "5", md: "24" }}
+          px={{ base: "4", md: "24" }}
           py={{ base: "2", md: "8" }}
           bgColor="rgba(255, 255, 255, 98%)"
           backdropFilter="blur(24px)"
           maxW="100%"
-          h="72px"
+          h={{ base: "60px", md: "72px" }}
           pos="absolute"
           top="0"
           left="0"
@@ -51,10 +43,8 @@ const Home: NextPage = () => {
               <Box>
                 <Image
                   src="/svg/qua_mark_black.svg"
+                  boxSize="50"
                   alt="Qua logo"
-                  layout="fixed"
-                  width={{ base: "5.75rem", md: "3.75rem" }}
-                  height={{ base: "5.75rem", md: "3.75rem" }}
                 />
               </Box>
             </a>
@@ -68,19 +58,19 @@ const Home: NextPage = () => {
 
       <Container
         maxW="100%"
-        h={{ base: "50vh", md: "58vh" }}
+        h={{ base: "50vh", md: "50vh" }}
         bgRepeat="no-repeat"
         bgSize="cover"
-        bgPosition="center"
-        bgImage="url(/images/header.png)"
+        bgPosition="50% 60%"
+        bgImage="linear-gradient(0deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.04)), url(/images/header.png)"
         position="relative"
       >
         <Stack
           direction="row"
           justify="space-between"
           align="center"
-          px={{ base: "2", md: "24" }}
-          pt={{ base: "8rem", md: "12rem" }}
+          px={{ base: "4", md: "24" }}
+          pt={{ base: "7rem", md: "12rem" }}
           w="100%"
         >
           <Stack w="100%">
@@ -92,8 +82,8 @@ const Home: NextPage = () => {
                 color="#fff"
                 as="h2"
                 fontWeight="800"
-                fontSize={{ base: "32px", md: "48px" }}
-                mb={{ base: "2", md: "4" }}
+                fontSize={{ base: "28px", md: "48px" }}
+                mb="2"
               >
                 Welcome to Qua.
               </Heading>
@@ -133,18 +123,24 @@ const Home: NextPage = () => {
                 <Button
                   display={{ base: "flex", md: "none" }}
                   as={Link}
-                  variant="solid-outline"
+                  variant="solid"
+                  px="8"
                   size="md"
                   m="0 !important"
                   bgColor="#fff"
                   border="none"
                   color="#000"
+                  _hover={{
+                    bg: "#fff",
+                    color: "#000",
+                    transform: "scale(1.02)",
+                  }}
                 >
                   Get Started
                 </Button>
               </NextLink>
 
-              <NextLink href="/stores" passHref>
+              {/* <NextLink href="/stores" passHref>
                 <Button
                   as={Link}
                   display={{ base: "none", md: "flex" }}
@@ -155,8 +151,8 @@ const Home: NextPage = () => {
                 >
                   Go Shopping
                 </Button>
-              </NextLink>
-              <NextLink href="/stores" passHref>
+              </NextLink> */}
+              {/* <NextLink href="/stores" passHref>
                 <Button
                   display={{ base: "flex", md: "none" }}
                   as={Link}
@@ -167,33 +163,33 @@ const Home: NextPage = () => {
                 >
                   Go Shopping
                 </Button>
-              </NextLink>
+              </NextLink> */}
             </Stack>
           </Stack>
         </Stack>
       </Container>
 
-      <Container maxW="100%" py={{ base: "0", md: "16" }}>
+      <Container maxW="100%" py={{ base: "12", md: "16" }}>
         <Stack spacing="4">
           <Stack
             direction={{ base: "column", md: "row" }}
             px={{ base: "2", md: "24" }}
-            h="536px"
-            spacing="4"
+            h={{ base: "636px", md: "536px" }}
+            spacing={{ base: "2", md: "4" }}
           >
             <Stack
-              p="12"
+              p={{ base: "8", md: "12" }}
               w="100%"
               align="center"
               bg="#FAFAFA"
-              // rounded="8px"
               h="100%"
-              spacing="12"
+              spacing={{ base: "6", md: "12" }}
             >
               <Heading
                 color="#1D1D1F"
                 fontWeight="600"
-                fontSize={{ base: "1rem", md: "32px" }}
+                fontSize={{ base: "1.125rem", md: "28px" }}
+                textAlign="center"
               >
                 Sell Computer & Electronics
               </Heading>
@@ -208,18 +204,18 @@ const Home: NextPage = () => {
             </Stack>
 
             <Stack
-              p="12"
+              p={{ base: "8", md: "12" }}
               w="100%"
               align="center"
               bg="#FAFAFA"
-              // rounded="8px"
               h="100%"
-              spacing="12"
+              spacing={{ base: "6", md: "12" }}
             >
               <Heading
                 color="#1D1D1F"
                 fontWeight="600"
-                fontSize={{ base: "1rem", md: "32px" }}
+                fontSize={{ base: "1.125rem", md: "28px" }}
+                textAlign="center"
               >
                 Sell Wears & Cosmetics
               </Heading>
@@ -238,22 +234,22 @@ const Home: NextPage = () => {
           <Stack
             direction={{ base: "column", md: "row" }}
             px={{ base: "2", md: "24" }}
-            h="500px"
-            spacing="4"
+            h={{ base: "636px", md: "536px" }}
+            spacing={{ base: "4", md: "4" }}
           >
             <Stack
-              p="12"
+              p={{ base: "8", md: "12" }}
               w={{ base: "100%", md: "1280px" }}
               align="center"
               bg="#FAFAFA"
-              // rounded="8px"
               h="100%"
-              spacing="12"
+              spacing={{ base: "6", md: "12" }}
             >
               <Heading
                 color="#1D1D1F"
                 fontWeight="600"
-                fontSize={{ base: "1rem", md: "32px" }}
+                fontSize={{ base: "1.125rem", md: "28px" }}
+                textAlign="center"
               >
                 Sell Edibles & Pharma
               </Heading>
@@ -284,7 +280,7 @@ const Home: NextPage = () => {
                 <Heading
                   color="#fff"
                   fontWeight="600"
-                  fontSize={{ base: "1rem", md: "32px" }}
+                  fontSize={{ base: "24px", md: "32px" }}
                 >
                   Sell Everything
                 </Heading>
@@ -292,12 +288,13 @@ const Home: NextPage = () => {
                   <Text
                     textAlign="center"
                     w={{ base: "100%", md: "380px" }}
+                    fontSize={{ base: "12px", md: "1rem" }}
                     color="#fff"
                   >
                     With one store link that delivers the best experience to
                     your customers
                   </Text>
-                  <Text fontWeight="300" fontSize="xs" color="#fff">
+                  <Text fontWeight="300" fontSize="10px" color="#fff">
                     0 competition. 100% customer loyalty.
                   </Text>
                 </Stack>
@@ -402,13 +399,13 @@ const Home: NextPage = () => {
         >
           <Stack direction="row" spacing="12">
             <NextLink href="/about" passHref>
-              <Link fontWeight="normal" color="inherit" fontSize="sm" as="span">
+              <Link fontWeight="normal" color="inherit" fontSize="xs" as="span">
                 About Qua
               </Link>
             </NextLink>
 
             <NextLink href="/stores" passHref>
-              <Link fontWeight="normal" color="inherit" fontSize="sm" as="span">
+              <Link fontWeight="normal" color="inherit" fontSize="xs" as="span">
                 P2P Stores
               </Link>
             </NextLink>
