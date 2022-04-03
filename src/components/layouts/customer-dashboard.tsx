@@ -5,6 +5,7 @@ import useCart from "hooks/useCart";
 import _capitalize from "lodash.capitalize";
 import {
   Box,
+  Button,
   Center,
   chakra,
   Grid,
@@ -13,14 +14,11 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
-import { Wallet } from "components/wallet";
-import { CartContext } from "libs/cart";
+import { CartContext } from "contexts/cart";
 import { useRouter } from "next/router";
-import { Bag2 } from "react-iconly";
-import { CgMore } from "react-icons/cg";
-import { useEagerConnect } from "hooks/web3";
-import { useGetLink } from "hooks/utils";
+import { Bag2, User } from "react-iconly";
+import { AccountMenu } from "components/account";
+import { useCustomerData } from "hooks/auth";
 
 const navLinks = [
   {
@@ -33,25 +31,34 @@ const navLinks = [
   },
 ];
 
-const walletMenuLinks = [
+const accountMenuLinks = [
   {
     label: "Account",
-    href: `/account`,
+    url: `/account`,
   },
   {
     label: "Orders",
-    href: `/orders`,
+    url: `/orders`,
   },
 ];
 
-const CustomerLayout = ({ title, isOwner, cart, children }: any) => {
-  const getLink = useGetLink();
+const CustomerLayout = ({
+  title,
+  isLoggedIn,
+  isOwner,
+  cart,
+  children,
+}: any) => {
   const router = useRouter();
-  const { account } = useWeb3React();
-  const cartStore = useCart(cart);
+  const { data } = useCustomerData({
+    cart,
+    isLoggedIn,
+    isOwner,
+  });
 
-  // try to eagerly connect to an injected provider, if it exists and has granted access already
-  useEagerConnect();
+  const cartStore = useCart(data?.cart, {
+    isLoggedIn: data?.isLoggedIn,
+  });
 
   return (
     <CartContext.Provider value={cartStore}>
@@ -91,7 +98,12 @@ const CustomerLayout = ({ title, isOwner, cart, children }: any) => {
               borderBottom="none"
               _hover={{ transform: "scale(1.05)" }}
             >
-              <Heading fontWeight="800" fontSize="2xl" px={3}>
+              <Heading
+                fontWeight="800"
+                textTransform="capitalize"
+                fontSize="2xl"
+                px={3}
+              >
                 {router.query.store}
               </Heading>
             </Link>
@@ -118,26 +130,25 @@ const CustomerLayout = ({ title, isOwner, cart, children }: any) => {
           </Stack>
 
           <Stack direction="row" spacing={12} align="center">
-            <Wallet
-              menuOptions={[
-                ...(isOwner
-                  ? [
-                      {
-                        label: "Store Dashboard",
-                        href: getLink("/dashboard"),
-                      },
-                    ]
+            <AccountMenu
+              isLoggedIn={data?.isLoggedIn}
+              options={[
+                ...(data?.isOwner
+                  ? [{ label: "Dashboard", url: "/dashboard" }]
                   : []),
-                ...walletMenuLinks.map((m) => ({
-                  ...m,
-                  href: getLink(m.href),
-                })),
+                ...accountMenuLinks,
               ]}
-              ButtonProps={{
-                variant: "primary",
-                leftIcon: account ? <Icon as={CgMore} mr={2} /> : undefined,
-              }}
-            />
+            >
+              <Button
+                variant="primary"
+                colorScheme="black"
+                leftIcon={
+                  <Icon mr="2" as={(props) => <User set="bold" {...props} />} />
+                }
+              >
+                My Account
+              </Button>
+            </AccountMenu>
 
             <Link
               href={`/cart`}
@@ -210,32 +221,24 @@ const CustomerLayout = ({ title, isOwner, cart, children }: any) => {
               </Heading>
             </Link>
 
-            <Wallet
-              menuOptions={[
-                ...(isOwner
-                  ? [
-                      {
-                        label: "Store Dashboard",
-                        href: getLink("/dashboard"),
-                      },
-                    ]
+            <AccountMenu
+              isLoggedIn={data?.isLoggedIn}
+              options={[
+                ...(data?.isOwner
+                  ? [{ label: "Dashboard", url: "/dashboard" }]
                   : []),
-                ...walletMenuLinks.map((m) => ({
-                  ...m,
-                  href: getLink(m.href),
-                })),
+                ...accountMenuLinks,
               ]}
-              ButtonProps={{
-                variant: "outline",
-                bg: " rgba(0, 0, 0, 0.04)",
-                rounded: "50px",
-                leftIcon: account ? <Icon as={CgMore} mr={0} /> : undefined,
-                _hover: {
-                  bg: "transparent",
-                  borderColor: "rgb(0 0 0 / 12%)",
-                },
-              }}
-            />
+            >
+              <Button
+                variant="outline"
+                bg="rgba(0, 0, 0, 0.04)"
+                rounded="50px"
+                _hover={{ bg: "transparent", borderColor: "rgb(0 0 0 / 12%)" }}
+              >
+                My Account
+              </Button>
+            </AccountMenu>
           </Stack>
         </chakra.header>
 

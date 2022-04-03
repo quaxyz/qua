@@ -19,7 +19,7 @@ export default function Api() {
     }
 
     if (!response.ok) {
-      console.log({ payload, response });
+      console.warn({ payload, response });
       throw new Error(
         payload.error ||
           `${options.method} ${pathWithSlash} - ${response.statusText}`
@@ -32,12 +32,15 @@ export default function Api() {
 
       // handle store url
       const urlWithSlash = `${url.charAt(0) !== "/" ? "/" : ""}${url}`;
-      return new Promise(() =>
-        Router.push({
-          pathname: `/_store/[store]${urlWithSlash}`,
-          query: { store },
-        })
-      );
+      return new Promise(() => {
+        if (store) {
+          Router.push({
+            pathname: urlWithSlash,
+          });
+        } else {
+          Router.push(urlWithSlash);
+        }
+      });
     }
 
     return { payload, response };

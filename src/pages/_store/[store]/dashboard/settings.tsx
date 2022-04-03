@@ -1,7 +1,7 @@
 import React from "react";
 import Api from "libs/api";
 import prisma from "libs/prisma";
-import { GetServerSideProps } from "next";
+import { GetStaticProps } from "next";
 import {
   Box,
   Button,
@@ -22,23 +22,19 @@ import {
   InputGroup,
   InputLeftElement,
   Icon,
+  FormHelperText,
   useToast,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 import { useRouter } from "next/router";
-import { useWeb3React } from "@web3-react/core";
 import { AiFillInstagram } from "react-icons/ai";
 import { IoLogoWhatsapp } from "react-icons/io";
-import { getKeyPair } from "libs/keys";
-import { signData } from "libs/signing";
 import { useFileUpload } from "components/file-picker";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { defaultCategories } from "libs/constants";
+import { getStorePaths } from "libs/store-paths";
 
 function useSaveSettings() {
-  const [loading, setLoading] = React.useState(false);
-
-  const { account } = useWeb3React();
   const toast = useToast();
   const queryClient = useQueryClient();
 
@@ -49,66 +45,37 @@ function useSaveSettings() {
     {
       onSuccess: ({ payload: result }) => {
         queryClient.setQueryData("store-details", result.settings);
+        toast({
+          title: "Saved settings",
+          position: "top-right",
+          status: "success",
+        });
+      },
+      onError: (err: any) => {
+        toast({
+          title: "Error saving settings",
+          description: err?.message,
+          position: "bottom-right",
+          status: "error",
+        });
       },
     }
   );
 
-  const saveStore = async (details: any) => {
-    try {
-      setLoading(true);
-
-      // sign data
-      const timestamp = parseInt((Date.now() / 1000).toFixed());
-
-      const keyPair = await getKeyPair();
-      const data = {
-        ...details,
-        timestamp,
-      };
-      console.log("Data", data);
-
-      const signedContent = await signData(keyPair, data);
-      console.log("Sig", signedContent);
-
-      // send data to server
-      const { payload: result } = await updateStoreMutation.mutateAsync({
-        address: account,
-        digest: signedContent.digest,
-        key: JSON.stringify(signedContent.publicKey),
-        payload: JSON.stringify(data),
-        signature: signedContent.signature,
-        timestamp,
-      });
-
-      console.log("Result", result);
-
-      toast({
-        title: "Settings updated",
-        position: "top-right",
-        status: "success",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error saving details",
-        description: error.message,
-        position: "bottom-right",
-        status: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { loading, saveStore };
+  return updateStoreMutation;
 }
 
 const Page = ({ storeDetails }: any) => {
   const router = useRouter();
   const [formValue, setFormValue] = React.useState({
+    ownerAddress: storeDetails.owner.address || "",
     about: storeDetails.about || "",
     location: storeDetails.location || "",
     whatsapp: storeDetails.socialLinks?.whatsapp || "",
     instagram: storeDetails.socialLinks?.instagram || "",
+    bankName: storeDetails.bankDetails?.name || "",
+    bankAccountNumber: storeDetails.bankDetails?.accountNumber || "",
+    bankAccountName: storeDetails.bankDetails?.accountName || "",
     deliveryFee: storeDetails.deliveryFee || 0,
   });
 
@@ -122,13 +89,14 @@ const Page = ({ storeDetails }: any) => {
   const saveSettings = useSaveSettings();
   const filePicker = useFileUpload({
     bucket: router.query.store as string,
-    onUpload: async ([file]) => saveSettings.saveStore({ image: file }),
+    onUpload: async ([file]) => saveSettings.mutateAsync({ image: file }),
   });
 
   const onDetailsSubmit = (e: any) => {
     e.preventDefault();
 
     const details = {
+      address: formValue.ownerAddress,
       about: formValue.about,
       location: formValue.location,
       deliveryFee: formValue.deliveryFee,
@@ -136,9 +104,14 @@ const Page = ({ storeDetails }: any) => {
         whatsapp: formValue.whatsapp,
         instagram: formValue.instagram,
       },
+      bankDetails: {
+        name: formValue.bankName,
+        accountNumber: formValue.bankAccountNumber,
+        accountName: formValue.bankAccountName,
+      },
     };
 
-    saveSettings.saveStore(details);
+    saveSettings.mutate(details);
   };
 
   return (
@@ -174,13 +147,13 @@ const Page = ({ storeDetails }: any) => {
         >
           {defaultCategories.find((c) => c.value === data?.category)?.label}
         </Text>
-        <Heading as="h2" fontSize={{ base: "2rem", md: "4rem" }}>
+        <Heading as="h2" opacity="48%" fontSize={{ base: "2rem", md: "4rem" }}>
           <Editable
             defaultValue={data?.title || "Store Title"}
             onSubmit={(title) => {
-              if (data?.title !== title) saveSettings.saveStore({ title });
+              if (data?.title !== title) saveSettings.mutateAsync({ title });
             }}
-            isDisabled={saveSettings.loading}
+            isDisabled={saveSettings.isLoading}
           >
             <EditablePreview />
             <EditableInput
@@ -203,9 +176,10 @@ const Page = ({ storeDetails }: any) => {
       >
         <Button
           onClick={() => filePicker.open()}
-          isLoading={saveSettings.loading || filePicker.loading}
-          isDisabled={saveSettings.loading}
+          isLoading={saveSettings.isLoading || filePicker.loading}
+          isDisabled={saveSettings.isLoading}
           variant="primary"
+          colorScheme="black"
         >
           Upload image
         </Button>
@@ -220,67 +194,124 @@ const Page = ({ storeDetails }: any) => {
           as="form"
           onSubmit={onDetailsSubmit}
         >
-          <Stack w="full" spacing={6}>
-            <Heading fontSize="lg" textTransform="uppercase">
-              About
-            </Heading>
-            <Textarea
-              id="about"
-              placeholder="What should customers know about your business?"
-              value={formValue?.about}
-              onChange={(e) =>
-                setFormValue({ ...formValue, about: e.target.value })
-              }
-              size="md"
-              borderRadius="0"
-              rows={10}
-            />
+          <Stack
+            direction={{ base: "column", md: "row" }}
+            spacing={{ base: "4", md: "16" }}
+            w="100%"
+          >
+            <Stack w="full" spacing={6}>
+              <Heading fontSize="lg" textTransform="uppercase" opacity="80%">
+                About
+              </Heading>
+              <Textarea
+                id="about"
+                placeholder="What should customers know about your business?"
+                value={formValue?.about}
+                onChange={(e) =>
+                  setFormValue({ ...formValue, about: e.target.value })
+                }
+                size="md"
+                borderRadius="0"
+                rows={10}
+              />
+            </Stack>
+
+            <Stack w={{ base: "100%", md: "460px" }} spacing={6}>
+              <Heading fontSize="sm" textTransform="uppercase" opacity="80%">
+                Bank Transfer details
+              </Heading>
+              <FormControl id="">
+                <Input
+                  id="location"
+                  variant="outline"
+                  type="text"
+                  value={formValue.bankAccountName}
+                  onChange={(e) =>
+                    setFormValue({
+                      ...formValue,
+                      bankAccountName: e.target.value,
+                    })
+                  }
+                  placeholder="Account name"
+                />
+              </FormControl>
+              <FormControl id="">
+                <Input
+                  id="location"
+                  variant="outline"
+                  type="number"
+                  value={formValue.bankAccountNumber}
+                  onChange={(e) =>
+                    setFormValue({
+                      ...formValue,
+                      bankAccountNumber: e.target.value,
+                    })
+                  }
+                  placeholder="Account number"
+                />
+              </FormControl>
+              <FormControl id="">
+                <Input
+                  id="location"
+                  variant="outline"
+                  type="text"
+                  value={formValue.bankName}
+                  onChange={(e) =>
+                    setFormValue({ ...formValue, bankName: e.target.value })
+                  }
+                  placeholder="Bank name"
+                />
+              </FormControl>
+            </Stack>
           </Stack>
 
-          <Stack w="full" spacing={6}>
-            <Heading fontSize="lg" fontWeight="bold" textTransform="uppercase">
+          <Stack w="full" spacing={12}>
+            <Heading fontSize="3xl" fontWeight="500">
               Settings
             </Heading>
 
             <Grid
               templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(2, 1fr)" }}
-              gridGap={5}
+              gridRowGap={8}
+              gridColumnGap={12}
             >
               <GridItem>
                 <FormControl id="location">
-                  <FormLabel textTransform="uppercase">
+                  <FormLabel textTransform="uppercase" opacity="72%">
                     Bussiness Location
                   </FormLabel>
                   <Input
                     id="location"
-                    variant="outline"
+                    variant="flushed"
                     type="text"
                     value={formValue.location}
                     onChange={(e) =>
                       setFormValue({ ...formValue, location: e.target.value })
                     }
-                    placeholder="Enter store address"
+                    placeholder="Enter address"
                   />
                 </FormControl>
               </GridItem>
 
               <GridItem>
                 <FormControl id="name">
-                  <FormLabel textTransform="uppercase">Social Links</FormLabel>
+                  <FormLabel textTransform="uppercase" opacity="72%">
+                    Store Contacts
+                  </FormLabel>
                   <Stack direction="row">
                     <InputGroup>
                       <InputLeftElement pointerEvents="none">
                         <Icon
                           as={AiFillInstagram}
                           boxSize="5"
-                          color="#C13584"
+                          color="#E4405F"
                         />
                       </InputLeftElement>
 
                       <Input
                         id="instagram"
                         type="text"
-                        variant="outline"
+                        variant="flushed"
                         fontSize="sm"
                         placeholder="@myusername"
                         value={formValue.instagram}
@@ -301,7 +332,7 @@ const Page = ({ storeDetails }: any) => {
                       <Input
                         id="whatsapp"
                         type="text"
-                        variant="outline"
+                        variant="flushed"
                         fontSize="sm"
                         placeholder="+01 234 567 890"
                         value={formValue.whatsapp}
@@ -319,12 +350,12 @@ const Page = ({ storeDetails }: any) => {
 
               <GridItem>
                 <FormControl id="deliveryFee">
-                  <FormLabel textTransform="uppercase">
-                    Base delivery fee
+                  <FormLabel textTransform="uppercase" opacity="72%">
+                    Base shipping fee ($)
                   </FormLabel>
                   <Input
                     id="deliveryFee"
-                    variant="outline"
+                    variant="flushed"
                     type="number"
                     value={formValue.deliveryFee}
                     onChange={(e) =>
@@ -339,39 +370,29 @@ const Page = ({ storeDetails }: any) => {
               </GridItem>
 
               <GridItem>
-                <FormControl id="name" isDisabled>
-                  <FormLabel textTransform="uppercase">Store name</FormLabel>
+                <FormControl id="address">
+                  <FormLabel textTransform="uppercase" opacity="72%">
+                    Crypto Wallet Address
+                  </FormLabel>
                   <Input
-                    variant="outline"
+                    variant="flushed"
                     type="text"
-                    defaultValue={storeDetails.name}
-                  />
-                </FormControl>
-              </GridItem>
-
-              <GridItem>
-                <FormControl id="category" isDisabled>
-                  <FormLabel textTransform="uppercase">Category</FormLabel>
-                  <Input
-                    variant="outline"
-                    type="text"
-                    defaultValue={
-                      defaultCategories.find(
-                        (c) => c.value === storeDetails.category
-                      )?.label
+                    value={formValue.ownerAddress}
+                    onChange={(e) =>
+                      setFormValue({
+                        ...formValue,
+                        ownerAddress: e.target.value,
+                      })
                     }
                   />
-                </FormControl>
-              </GridItem>
-
-              <GridItem>
-                <FormControl id="address" isDisabled>
-                  <FormLabel textTransform="uppercase">Owner Address</FormLabel>
-                  <Input
-                    variant="outline"
-                    type="text"
-                    defaultValue={storeDetails.owner}
-                  />
+                  <FormHelperText
+                    fontStyle="italic"
+                    fontSize="xs"
+                    color="#131415"
+                    opacity="48%"
+                  >
+                    Crypto Payments will go to this address
+                  </FormHelperText>
                 </FormControl>
               </GridItem>
             </Grid>
@@ -380,8 +401,8 @@ const Page = ({ storeDetails }: any) => {
           <Button
             type="submit"
             size="lg"
-            isLoading={saveSettings.loading}
-            isDisabled={saveSettings.loading}
+            isLoading={saveSettings.isLoading}
+            isDisabled={filePicker.loading}
           >
             Save Changes
           </Button>
@@ -391,12 +412,17 @@ const Page = ({ storeDetails }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const store = (params?.store || "") as string;
-
   const storeDetails = await prisma.store.findUnique({
     where: { name: store },
     include: {
+      owner: {
+        select: {
+          email: true,
+          address: true,
+        },
+      },
       image: {
         select: {
           url: true,
@@ -408,6 +434,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   if (!storeDetails) {
     return {
       notFound: true,
+      revalidate: 60 * 60,
     };
   }
 
@@ -418,8 +445,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         title: "Settings",
       },
     },
+    revalidate: 60 * 60,
   };
 };
+
+export const getStaticPaths = getStorePaths;
 
 Page.Layout = StoreDashboardLayout;
 export default Page;

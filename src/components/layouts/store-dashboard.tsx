@@ -14,55 +14,35 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Link from "components/link";
-import { Wallet } from "components/wallet";
-import { useInitializeStoreAuth } from "hooks/auth";
-import { useCreateSigningKey } from "hooks/signing";
-import { AuthContext } from "libs/auth";
-import { Bag, Category, Graph } from "react-iconly";
+import { AccountMenu } from "components/account";
+import { useStoreUser } from "hooks/auth";
+import { Bag, Category, Graph, User, Show } from "react-iconly";
 import { CgMore } from "react-icons/cg";
-import { useGetLink } from "hooks/utils";
 
 const navLinks = [
   {
     name: "Dashboard",
     icon: (props: any) => <Category set="light" {...props} />,
-    url: "/",
+    url: "/dashboard/",
   },
   {
     name: "Products",
     icon: (props: any) => <Graph set="light" {...props} />,
-    url: "/products",
+    url: "/dashboard/products/",
   },
   {
     name: "Orders",
     icon: (props: any) => <Bag set="light" {...props} />,
-    url: "/orders",
+    url: "/dashboard/orders/",
   },
 ];
 
 const walletMenuLinks = [
   {
     label: "Settings",
-    href: `/dashboard/settings`,
+    url: `/dashboard/settings`,
   },
 ];
-
-const AuthNoAccount = () => (
-  <Stack minH="100%" align="center" justify="center">
-    <chakra.div
-      pos="absolute"
-      top="0"
-      left="0"
-      h="100vh"
-      w="100vw"
-      backdropFilter="blur(4px)"
-      bg="rgb(0 0 0 / 12%)"
-      zIndex="2"
-    />
-
-    <Wallet autoOpen closeable={false} />
-  </Stack>
-);
 
 const AuthNotOwner = () => (
   <Stack minH="100%" align="center" justify="center">
@@ -83,71 +63,32 @@ const AuthNotOwner = () => (
       </Heading>
 
       <Text fontWeight="400" mb={8}>
-        Your address does not match the owner of this store
+        You are not logged in as the owner of this store
       </Text>
 
-      <Link fontSize="sm" href="/">
-        Go back to products
-      </Link>
+      <Stack direction="row" spacing={4}>
+        <Link fontSize="sm" href="/dashboard/login">
+          Login
+        </Link>
+
+        <Text fontSize="sm">Or</Text>
+
+        <Link fontSize="sm" href="/">
+          Go back to products
+        </Link>
+      </Stack>
     </Container>
   </Stack>
 );
 
-const AuthNoSigningKey = () => {
-  const { loading, createSigningKey } = useCreateSigningKey();
-
-  return (
-    <Stack minH="100%" align="center" justify="center">
-      <chakra.div
-        pos="absolute"
-        top="0"
-        left="0"
-        h="100vh"
-        w="100vw"
-        backdropFilter="blur(4px)"
-        bg="rgb(0 0 0 / 12%)"
-        zIndex="2"
-      />
-
-      <Container maxW="lg" bg="#fff" pos="relative" zIndex="3" px={12} py={12}>
-        <Heading fontSize="xl" mb={8}>
-          Remember me
-        </Heading>
-
-        <Text fontWeight="400" mb={8}>
-          Skip approving every interaction with your wallet by allowing Qua to
-          remember you.
-        </Text>
-
-        <Button
-          size="lg"
-          variant="solid-outline"
-          mb={5}
-          onClick={() => createSigningKey()}
-          isLoading={loading}
-          isFullWidth
-        >
-          Generate signing key
-        </Button>
-
-        <Text textAlign="center" fontSize="sm" fontWeight="600" mb={8}>
-          Signing keys can only sign messages and cannot hold funds. They are
-          stored securely in the browser database.
-        </Text>
-      </Container>
-    </Stack>
-  );
-};
-
 const DashboardLayout = ({ title, children }: any) => {
-  const getLink = useGetLink();
   const router = useRouter();
 
   // handle auth session here
-  const storeAuthData = useInitializeStoreAuth();
+  const storeUser = useStoreUser();
 
   return (
-    <AuthContext.Provider value={storeAuthData}>
+    <>
       <Head>
         <title>
           {title} - {_capitalize((router.query.store as string) || "")}
@@ -159,48 +100,95 @@ const DashboardLayout = ({ title, children }: any) => {
         templateRows="70px 1fr 70px"
         templateAreas={{
           base: `"topbar topbar" "main main" "bottombar bottombar"`,
-          md: `"sidebar main" "sidebar main" "sidebar main"`,
+          md: `"topbar topbar"
+          "sidebar main "
+          "sidebar main "`,
         }}
         minH="100vh"
       >
-        <chakra.aside
-          gridArea="sidebar"
-          bg="#000000"
-          px={6}
-          py={8}
+        <chakra.nav
+          gridArea="topbar"
+          display={{ base: "none", md: "flex" }}
+          borderBottom="1px solid rgba(19, 20, 21, 0.08)"
           pos="fixed"
+          top="0"
           left="0"
-          h="100vh"
-          w="280px"
-          display={{ base: "none", md: "block" }}
+          right="0"
+          bg="#fff"
+          zIndex="2"
+          h="70px"
         >
-          <Stack spacing={8} minH="100%">
-            <Heading
+          <Stack
+            w="100%"
+            px={12}
+            direction="row"
+            align="center"
+            justify="space-between"
+          >
+            <Stack
               as={Link}
               href="/"
-              textTransform="capitalize"
-              fontWeight="800"
-              fontSize="2xl"
-              color="#fff"
+              direction="row"
               border="none"
-              px={3}
+              align="center"
+              spacing={2}
             >
-              {router.query?.store}
-            </Heading>
+              <Heading
+                textTransform="capitalize"
+                fontWeight="800"
+                fontSize="22px"
+                color="#000"
+              >
+                {router.query?.store}
+              </Heading>
+              <Icon
+                fontSize="22"
+                color="#131415"
+                opacity="80%"
+                as={(props) => <Show set="bold" {...props} />}
+              />
+            </Stack>
 
+            <Button
+              variant="outline"
+              size="sm"
+              fontSize="15px"
+              bg="rgba(19, 20, 21, 0.04)"
+              borderRadius="12px"
+              border="1px solid rgba(19, 20, 21, 0.08)"
+              leftIcon={
+                <Icon mr="2" as={(props) => <User set="bold" {...props} />} />
+              }
+              as={Link}
+              href="/dashboard/settings"
+            >
+              My Account
+            </Button>
+          </Stack>
+        </chakra.nav>
+
+        <chakra.aside
+          gridArea="sidebar"
+          py={8}
+          display={{ base: "none", md: "block" }}
+          bg=" rgba(19, 20, 21, 0.02)"
+          borderRight="1px solid rgba(19, 20, 21, 0.08)"
+          position="relative"
+        >
+          <Stack spacing={8} px={10} pos="fixed" left="0" minH="100%">
             <Stack spacing={6}>
               {navLinks.map((navLink, idx) => (
                 <Link
                   key={idx}
-                  href={`/dashboard${navLink.url}`}
-                  px={3}
+                  href={navLink.url}
+                  px={4}
                   py={3}
-                  rounded="4px"
+                  rounded="8px"
                   borderBottom="none"
-                  _hover={{ transform: "scale(1.05)" }}
-                  {...(router.asPath.endsWith(navLink.url)
-                    ? { color: "#000", bg: "#FFF" }
-                    : { color: "#FFF" })}
+                  _hover={{ transform: "scale(1.02)" }}
+                  {...(router.asPath === navLink.url
+                    ? { color: "#fff", bg: "#000" }
+                    : { color: "#000" })}
                 >
                   <Stack direction="row" spacing={4} align="center">
                     <Icon boxSize={5} as={navLink.icon} />
@@ -216,40 +204,13 @@ const DashboardLayout = ({ title, children }: any) => {
                 </Link>
               ))}
             </Stack>
-
-            <Wallet
-              menuOptions={walletMenuLinks.map((m) => ({
-                ...m,
-                href: getLink(m.href),
-              }))}
-              ButtonProps={{
-                variant: "outline",
-                mt: "auto !important",
-
-                rounded: "8px",
-                borderColor: "rgb(255 255 255 / 16%)",
-                leftIcon: <Icon as={CgMore} mr={3} />,
-                ...(walletMenuLinks.some((m) => router.asPath.endsWith(m.href))
-                  ? {
-                      color: "#000",
-                      bg: "#FFF",
-                      _hover: { bg: "white" },
-                    }
-                  : {
-                      color: "#FFF",
-                      _hover: {
-                        bg: "transparent",
-                        borderColor: "rgb(255 255 255 / 48%)",
-                      },
-                    }),
-              }}
-            />
           </Stack>
         </chakra.aside>
 
         <chakra.header
           gridArea="topbar"
-          bg="#000000"
+          borderBottom="1px solid rgba(19, 20, 21, 0.08)"
+          bg="#fff"
           px={5}
           display={{ base: "block", md: "none" }}
         >
@@ -260,59 +221,66 @@ const DashboardLayout = ({ title, children }: any) => {
             h="100%"
             w="100%"
           >
-            <Heading
+            <Stack
               as={Link}
               href="/"
-              fontWeight="800"
-              fontSize="xl"
-              color="#fff"
-              textTransform="uppercase"
+              direction="row"
               border="none"
+              align="center"
+              spacing={2}
             >
-              {router.query?.store}
-            </Heading>
+              <Heading
+                textTransform="capitalize"
+                fontWeight="800"
+                fontSize="lg"
+                color="#000"
+              >
+                {router.query?.store}
+              </Heading>
+              <Icon
+                fontSize="22"
+                color="#131415"
+                opacity="80%"
+                as={(props) => <Show set="bold" {...props} />}
+              />
+            </Stack>
 
-            <Wallet
-              menuOptions={walletMenuLinks.map((m) => ({
-                ...m,
-                href: getLink(m.href),
-              }))}
-              ButtonProps={{
-                variant: "outline",
-                rounded: "8px",
-                size: "sm",
-                borderColor: "rgb(255 255 255 / 16%)",
-                rightIcon: <Icon as={CgMore} />,
-                ...(walletMenuLinks.some((m) => router.asPath.endsWith(m.href))
-                  ? {
-                      color: "#000",
-                      bg: "#FFF",
-                      _hover: { bg: "white" },
-                    }
-                  : {
-                      color: "#FFF",
-                      _hover: {
-                        bg: "transparent",
-                        borderColor: "rgb(255 255 255 / 48%)",
-                      },
-                    }),
-              }}
-            />
+            <Button
+              variant="outline"
+              rounded="8px"
+              size="sm"
+              borderColor="rgb(255 255 255 / 16%)"
+              rightIcon={<Icon as={CgMore} />}
+              as={Link}
+              href="/dashboard/settings"
+              {...(router.asPath === "/dashboard/settings/"
+                ? {
+                    color: "#000",
+                    bg: "#131415",
+                    _hover: { bg: "white" },
+                  }
+                : {
+                    color: "#131415",
+                    _hover: {
+                      bg: "transparent",
+                      borderColor: "rgb(255 255 255 / 48%)",
+                    },
+                  })}
+            >
+              My Account
+            </Button>
           </Stack>
         </chakra.header>
 
         <chakra.main gridArea="main">
-          {!storeAuthData.loading ? (
-            {
-              "": children,
-              "no-account": <AuthNoAccount />,
-              "not-owner": <AuthNotOwner />,
-              "no-signing-key": <AuthNoSigningKey />,
-            }[storeAuthData.status]
-          ) : (
+          {storeUser.isLoading ? (
             <Stack align="center" justify="center" minH="100%">
               <CircularProgress isIndeterminate color="black" />
             </Stack>
+          ) : storeUser.data?.user ? (
+            children
+          ) : (
+            <AuthNotOwner />
           )}
         </chakra.main>
 
@@ -336,10 +304,10 @@ const DashboardLayout = ({ title, children }: any) => {
             {navLinks.map((NavLink, idx) => (
               <Link
                 key={idx}
-                href={`/dashboard${NavLink.url}`}
+                href={NavLink.url}
                 borderBottom="none"
                 color="#FFF"
-                {...(router.asPath.endsWith(NavLink.url)
+                {...(router.asPath === NavLink.url
                   ? { textDecoration: "underline" }
                   : {})}
               >
@@ -348,7 +316,7 @@ const DashboardLayout = ({ title, children }: any) => {
                     boxSize={5}
                     as={(props) => (
                       <NavLink.icon
-                        {...(router.asPath.endsWith(NavLink.url)
+                        {...(router.asPath === NavLink.url
                           ? { set: "bold" }
                           : {})}
                         {...props}
@@ -369,7 +337,7 @@ const DashboardLayout = ({ title, children }: any) => {
           </Stack>
         </chakra.aside>
       </Grid>
-    </AuthContext.Provider>
+    </>
   );
 };
 

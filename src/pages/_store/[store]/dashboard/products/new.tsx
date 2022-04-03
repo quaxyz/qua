@@ -1,7 +1,8 @@
 import React from "react";
 import Api from "libs/api";
 import prisma from "libs/prisma";
-import type { GetServerSideProps } from "next";
+import type { GetStaticProps } from "next";
+import { getStorePaths } from "libs/store-paths";
 import { useRouter } from "next/router";
 import Link from "components/link";
 import {
@@ -31,9 +32,6 @@ import { FilePicker } from "components/file-picker";
 import { FormGroup } from "components/form-group";
 import { CreateableSelectMenu } from "components/select";
 import { ArrowLeft } from "react-iconly";
-import { useWeb3React } from "@web3-react/core";
-import { getKeyPair } from "libs/keys";
-import { signData } from "libs/signing";
 import { useMutation, useQueryClient } from "react-query";
 
 const Variants = (props: { onChange: (variants: any[]) => void }) => {
@@ -128,9 +126,7 @@ const Page = ({ categories }: any) => {
   const toast = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { account } = useWeb3React();
 
-  const [saving, setSaving] = React.useState(false);
   const [hasVariant, setHasVariant] = React.useState(false);
   const [isLimited, setIsLimited] = React.useState(false);
 
@@ -153,8 +149,21 @@ const Page = ({ categories }: any) => {
       return Api().post(`/dashboard/products/new`, payload);
     },
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries("store-dashboard-products");
+      onSuccess: async ({ payload: result }) => {
+        await queryClient.invalidateQueries("store-dashboard-products");
+
+        router.push({
+          pathname: `/_store/[store]/dashboard/products/[id]`,
+          query: { store: router.query.store, id: result.product.id },
+        });
+      },
+      onError: (err: any) => {
+        toast({
+          title: "Error saving product",
+          description: err?.message,
+          position: "bottom-right",
+          status: "error",
+        });
       },
     }
   );
@@ -166,60 +175,21 @@ const Page = ({ categories }: any) => {
   });
 
   const onPublish = async () => {
-    try {
-      // verify input
-      const formErrors: any = checkForErrors(formValue);
+    // verify input
+    const formErrors: any = checkForErrors(formValue);
 
-      const formHasError = Object.keys(formErrors).filter(
-        (field) => formErrors[field]
-      ).length;
+    const formHasError = Object.keys(formErrors).filter(
+      (field) => formErrors[field]
+    ).length;
 
-      if (formHasError) {
-        setErrors({ ...formErrors });
-        return;
-      }
-
-      setSaving(true);
-
-      // sign data
-      const timestamp = parseInt((Date.now() / 1000).toFixed());
-      const keyPair = await getKeyPair();
-      const data = {
-        ...formValue,
-        timestamp,
-      };
-
-      console.log("Data", data);
-
-      const signedContent = await signData(keyPair, data);
-      console.log("Sig", signedContent);
-
-      // send data to server
-      const { payload: result } = await addProductMutation.mutateAsync({
-        address: account,
-        digest: signedContent.digest,
-        key: JSON.stringify(signedContent.publicKey),
-        payload: JSON.stringify(data),
-        signature: signedContent.signature,
-        timestamp,
-      });
-      console.log("Result", result);
-
-      toast({
-        title: "Product saved",
-        position: "top-right",
-        status: "success",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error saving product",
-        description: error.message,
-        position: "bottom-right",
-        status: "error",
-      });
-    } finally {
-      setSaving(false);
+    if (formHasError) {
+      setErrors({ ...formErrors });
+      return;
     }
+
+    addProductMutation.mutate({
+      ...formValue,
+    });
   };
 
   return (
@@ -239,7 +209,12 @@ const Page = ({ categories }: any) => {
           </Heading>
         </Stack>
 
-        <Button variant="primary" onClick={onPublish} isLoading={saving}>
+        <Button
+          variant="primary"
+          colorScheme="black"
+          onClick={onPublish}
+          isLoading={addProductMutation.isLoading}
+        >
           Publish
         </Button>
       </Stack>
@@ -256,7 +231,7 @@ const Page = ({ categories }: any) => {
               type="text"
               placeholder="Hair growth oil"
               variant="outline"
-              disabled={saving}
+              disabled={addProductMutation.isLoading}
               value={formValue.name}
               onChange={(e) =>
                 setFormValue({ ...formValue, name: e.target.value })
@@ -270,10 +245,9 @@ const Page = ({ categories }: any) => {
             <FilePicker
               files={formValue.images}
               bucket={router.query.store as string}
-              disabled={saving}
+              disabled={addProductMutation.isLoading}
               maxFiles={8}
               setFiles={(images) => {
-                console.log({ images });
                 setFormValue({ ...formValue, images });
               }}
             />
@@ -290,25 +264,23 @@ const Page = ({ categories }: any) => {
 
             <TabPanels>
               <TabPanel>
-                <FormGroup id="description">
-                  <Textarea
-                    rows={8}
-                    fontSize={{ base: "0.9375rem", md: "1rem" }}
-                    placeholder="Tell customers more about the product..."
-                    disabled={saving}
-                    value={formValue.description}
-                    onChange={(e) =>
-                      setFormValue({
-                        ...formValue,
-                        description: e.target.value,
-                      })
-                    }
-                  />
-                </FormGroup>
-              </TabPanel>
-
-              <TabPanel>
                 <Stack spacing={4}>
+                  <FormGroup id="description">
+                    <Textarea
+                      rows={8}
+                      fontSize={{ base: "0.9375rem", md: "1rem" }}
+                      placeholder="Tell customers more about the product..."
+                      disabled={addProductMutation.isLoading}
+                      value={formValue.description}
+                      onChange={(e) =>
+                        setFormValue({
+                          ...formValue,
+                          description: e.target.value,
+                        })
+                      }
+                    />
+                  </FormGroup>
+
                   <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
                     <Heading fontSize="md" fontWeight="600" mb={6}>
                       Pricing
@@ -316,14 +288,16 @@ const Page = ({ categories }: any) => {
 
                     <Stack direction="row" justify="space-between" spacing={6}>
                       <FormControl id="price" isInvalid={errors.price}>
-                        <FormLabel htmlFor="price">Price</FormLabel>
+                        <FormLabel htmlFor="price">Price ($)</FormLabel>
                         <Input
                           isRequired
                           type="number"
                           placeholder="0.00"
                           variant="flushed"
-                          disabled={saving}
+                          disabled={addProductMutation.isLoading}
                           value={formValue.price}
+                          // @ts-ignore
+                          onWheel={(e) => e.target.blur()}
                           onChange={(e) =>
                             setFormValue({
                               ...formValue,
@@ -333,26 +307,13 @@ const Page = ({ categories }: any) => {
                         />
                         <FormErrorMessage>Price is required</FormErrorMessage>
                       </FormControl>
-
-                      {/* <FormGroup id="discountPrice" label="Discount Price">
-                        <Input
-                          isRequired
-                          type="number"
-                          placeholder="0.00"
-                          variant="flushed"
-                          disabled={saving}
-                          value={formValue.discountPrice}
-                          onChange={(e) =>
-                            setFormValue({
-                              ...formValue,
-                              discountPrice: e.target.value,
-                            })
-                          }
-                        />
-                      </FormGroup> */}
                     </Stack>
                   </chakra.article>
+                </Stack>
+              </TabPanel>
 
+              <TabPanel>
+                <Stack spacing={4}>
                   <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
                     <Heading fontSize="md" fontWeight="600" mb={6}>
                       Stock
@@ -360,7 +321,7 @@ const Page = ({ categories }: any) => {
 
                     <Checkbox
                       mb={6}
-                      disabled={saving}
+                      disabled={addProductMutation.isLoading}
                       checked={isLimited}
                       onChange={(e) => setIsLimited(e.target.checked)}
                     >
@@ -383,7 +344,7 @@ const Page = ({ categories }: any) => {
                             type="number"
                             placeholder="0"
                             variant="flushed"
-                            disabled={saving}
+                            disabled={addProductMutation.isLoading}
                             value={formValue.stock}
                             onChange={(e) =>
                               setFormValue({
@@ -404,7 +365,7 @@ const Page = ({ categories }: any) => {
 
                     <Checkbox
                       mb={6}
-                      disabled={saving}
+                      disabled={addProductMutation.isLoading}
                       checked={formValue.physical}
                       onChange={(e) =>
                         setFormValue({
@@ -472,7 +433,7 @@ const Page = ({ categories }: any) => {
                   placeholder="Select"
                   variant="outline"
                   size="md"
-                  disabled={saving}
+                  disabled={addProductMutation.isLoading}
                   value={formValue.category}
                   onChange={(value) =>
                     setFormValue({ ...formValue, category: value })
@@ -489,7 +450,7 @@ const Page = ({ categories }: any) => {
               <FormGroup id="tag" label="Tags" labelProps={{ fontSize: "sm" }}>
                 <Input
                   placeholder="Vintage, cotton, summer"
-                  disabled={saving}
+                  disabled={addProductMutation.isLoading}
                   value={formValue.tags}
                   onChange={(e) =>
                     setFormValue({ ...formValue, tags: e.target.value })
@@ -504,7 +465,8 @@ const Page = ({ categories }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getStaticPaths = getStorePaths;
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const store = params?.store as string;
   const allProducts = await prisma.product.findMany({
     distinct: ["category"],
@@ -524,6 +486,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         title: "Add Product",
       },
     },
+    revalidate: 60 * 60,
   };
 };
 

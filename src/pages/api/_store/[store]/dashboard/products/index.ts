@@ -33,6 +33,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           // query
           where: {
+            name: {
+              search: query.search as string,
+              mode: "insensitive",
+            },
             Store: {
               name: store as string,
             },

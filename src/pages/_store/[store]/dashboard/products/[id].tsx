@@ -1,7 +1,7 @@
 import React from "react";
 import prisma from "libs/prisma";
 import Api from "libs/api";
-import type { GetServerSideProps } from "next";
+import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 import Link from "components/link";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
@@ -31,9 +31,6 @@ import { FilePicker } from "components/file-picker";
 import { FormGroup } from "components/form-group";
 import { CreateableSelectMenu } from "components/select";
 import { ArrowLeft } from "react-iconly";
-import { useWeb3React } from "@web3-react/core";
-import { getKeyPair } from "libs/keys";
-import { signData } from "libs/signing";
 import { useMutation, useQueryClient } from "react-query";
 
 const Variants = (props: {
@@ -132,9 +129,7 @@ const Page = ({ product, categories }: any) => {
   const toast = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { account } = useWeb3React();
 
-  const [saving, setSaving] = React.useState(false);
   const [hasVariant, setHasVariant] = React.useState(
     product.variants && product.variants.length
   );
@@ -164,8 +159,22 @@ const Page = ({ product, categories }: any) => {
       return Api().post(`/dashboard/products/${product.id}`, payload);
     },
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries("store-dashboard-products");
+      onSuccess: async () => {
+        toast({
+          title: "Product updated",
+          position: "top-right",
+          status: "success",
+        });
+
+        await queryClient.invalidateQueries("store-dashboard-products");
+      },
+      onError: (err: any) => {
+        toast({
+          title: "Error saving product",
+          description: err?.message,
+          position: "bottom-right",
+          status: "error",
+        });
       },
     }
   );
@@ -177,60 +186,21 @@ const Page = ({ product, categories }: any) => {
   });
 
   const onPublish = async () => {
-    try {
-      // verify input
-      const formErrors: any = checkForErrors(formValue);
+    // verify input
+    const formErrors: any = checkForErrors(formValue);
 
-      const formHasError = Object.keys(formErrors).filter(
-        (field) => formErrors[field]
-      ).length;
+    const formHasError = Object.keys(formErrors).filter(
+      (field) => formErrors[field]
+    ).length;
 
-      if (formHasError) {
-        setErrors({ ...formErrors });
-        return;
-      }
-
-      setSaving(true);
-
-      // sign data
-      const timestamp = parseInt((Date.now() / 1000).toFixed());
-      const keyPair = await getKeyPair();
-      const data = {
-        ...formValue,
-        timestamp,
-      };
-
-      console.log("Data", data);
-
-      const signedContent = await signData(keyPair, data);
-      console.log("Sig", signedContent);
-
-      // send data to server
-      const { payload: result } = await updateProductMutation.mutateAsync({
-        address: account,
-        digest: signedContent.digest,
-        key: JSON.stringify(signedContent.publicKey),
-        payload: JSON.stringify(data),
-        signature: signedContent.signature,
-        timestamp,
-      });
-      console.log("Result", result);
-
-      toast({
-        title: "Product updated",
-        position: "top-right",
-        status: "success",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error saving product",
-        description: error.message,
-        position: "bottom-right",
-        status: "error",
-      });
-    } finally {
-      setSaving(false);
+    if (formHasError) {
+      setErrors({ ...formErrors });
+      return;
     }
+
+    updateProductMutation.mutate({
+      ...formValue,
+    });
   };
 
   return (
@@ -250,7 +220,12 @@ const Page = ({ product, categories }: any) => {
           </Heading>
         </Stack>
 
-        <Button variant="primary" onClick={onPublish} isLoading={saving}>
+        <Button
+          variant="primary"
+          colorScheme="black"
+          onClick={onPublish}
+          isLoading={updateProductMutation.isLoading}
+        >
           Update
         </Button>
       </Stack>
@@ -267,7 +242,7 @@ const Page = ({ product, categories }: any) => {
               type="text"
               placeholder="Hair growth oil"
               variant="outline"
-              disabled={saving}
+              disabled={updateProductMutation.isLoading}
               value={formValue.name}
               onChange={(e) =>
                 setFormValue({ ...formValue, name: e.target.value })
@@ -281,7 +256,7 @@ const Page = ({ product, categories }: any) => {
             <FilePicker
               files={formValue.images}
               bucket={router.query.store as string}
-              disabled={saving}
+              disabled={updateProductMutation.isLoading}
               maxFiles={8}
               setFiles={(images) => setFormValue({ ...formValue, images })}
             />
@@ -298,25 +273,23 @@ const Page = ({ product, categories }: any) => {
 
             <TabPanels>
               <TabPanel>
-                <FormGroup id="description">
-                  <Textarea
-                    rows={8}
-                    fontSize={{ base: "0.9375rem", md: "1rem" }}
-                    placeholder="Tell customers more about the product..."
-                    disabled={saving}
-                    value={formValue.description}
-                    onChange={(e) =>
-                      setFormValue({
-                        ...formValue,
-                        description: e.target.value,
-                      })
-                    }
-                  />
-                </FormGroup>
-              </TabPanel>
-
-              <TabPanel>
                 <Stack spacing={4}>
+                  <FormGroup id="description">
+                    <Textarea
+                      rows={8}
+                      fontSize={{ base: "0.9375rem", md: "1rem" }}
+                      placeholder="Tell customers more about the product..."
+                      disabled={updateProductMutation.isLoading}
+                      value={formValue.description}
+                      onChange={(e) =>
+                        setFormValue({
+                          ...formValue,
+                          description: e.target.value,
+                        })
+                      }
+                    />
+                  </FormGroup>
+
                   <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
                     <Heading fontSize="md" fontWeight="600" mb={6}>
                       Pricing
@@ -324,13 +297,15 @@ const Page = ({ product, categories }: any) => {
 
                     <Stack direction="row" justify="space-between" spacing={6}>
                       <FormControl id="price" isInvalid={errors.price}>
-                        <FormLabel htmlFor="price">Price</FormLabel>
+                        <FormLabel htmlFor="price">Price ($)</FormLabel>
                         <Input
                           isRequired
                           type="number"
                           placeholder="0.00"
                           variant="flushed"
-                          disabled={saving}
+                          // @ts-ignore
+                          onWheel={(e) => e.target.blur()}
+                          disabled={updateProductMutation.isLoading}
                           value={formValue.price}
                           onChange={(e) =>
                             setFormValue({
@@ -360,7 +335,11 @@ const Page = ({ product, categories }: any) => {
                         </FormGroup> */}
                     </Stack>
                   </chakra.article>
+                </Stack>
+              </TabPanel>
 
+              <TabPanel>
+                <Stack spacing={4}>
                   <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
                     <Heading fontSize="md" fontWeight="600" mb={6}>
                       Stock
@@ -368,7 +347,7 @@ const Page = ({ product, categories }: any) => {
 
                     <Checkbox
                       mb={6}
-                      disabled={saving}
+                      disabled={updateProductMutation.isLoading}
                       isChecked={isLimited}
                       onChange={(e) => setIsLimited(e.target.checked)}
                     >
@@ -391,7 +370,7 @@ const Page = ({ product, categories }: any) => {
                             type="number"
                             placeholder="0"
                             variant="flushed"
-                            disabled={saving}
+                            disabled={updateProductMutation.isLoading}
                             value={formValue.stock}
                             onChange={(e) =>
                               setFormValue({
@@ -412,7 +391,7 @@ const Page = ({ product, categories }: any) => {
 
                     <Checkbox
                       mb={6}
-                      disabled={saving}
+                      disabled={updateProductMutation.isLoading}
                       isChecked={formValue.physical}
                       onChange={(e) =>
                         setFormValue({
@@ -481,7 +460,7 @@ const Page = ({ product, categories }: any) => {
                   placeholder="Select"
                   variant="outline"
                   size="md"
-                  disabled={saving}
+                  disabled={updateProductMutation.isLoading}
                   value={formValue.category}
                   onChange={(value) =>
                     setFormValue({ ...formValue, category: value })
@@ -498,7 +477,7 @@ const Page = ({ product, categories }: any) => {
               <FormGroup id="tag" label="Tags" labelProps={{ fontSize: "sm" }}>
                 <Input
                   placeholder="Vintage, cotton, summer"
-                  disabled={saving}
+                  disabled={updateProductMutation.isLoading}
                   value={formValue.tags}
                   onChange={(e) =>
                     setFormValue({ ...formValue, tags: e.target.value })
@@ -513,7 +492,37 @@ const Page = ({ product, categories }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const stores = await prisma.store.findMany({
+    select: {
+      name: true,
+      products: {
+        select: {
+          id: true,
+        },
+      },
+    },
+  });
+
+  const paths = [];
+  for (let store of stores) {
+    for (let product of store.products) {
+      paths.push({
+        params: {
+          id: `${product.id}`,
+          store: store.name,
+        },
+      });
+    }
+  }
+
+  return {
+    paths,
+    fallback: "blocking",
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const store = params?.store as string;
   const id = params?.id as string;
 
@@ -536,7 +545,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   });
 
   if (!product) {
-    return { notFound: true };
+    return {
+      notFound: true,
+      revalidate: 60 * 60,
+    };
   }
 
   const allProducts = await prisma.product.findMany({
@@ -558,6 +570,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         title: "Edit Product",
       },
     },
+    revalidate: 60 * 60,
   };
 };
 

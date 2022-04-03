@@ -5,7 +5,7 @@ import fleekStorage from "@fleekhq/fleek-storage-js";
 
 const LOG_TAG = "[upload]";
 
-const ACCEPTED_TYPES = ["png", "pdf", "jpg", "jpeg"];
+const ACCEPTED_TYPES = ["png", "pdf", "jpg", "jpeg", "webp"];
 
 function getBuffer(req: NextApiRequest) {
   return new Promise((resolve, reject) => {
@@ -34,9 +34,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         const name = (query.filename as string).replace(/\.[^/.]+$/, "");
-        const filename = `${name}-${(Date.now() / 1000).toFixed()}-${
-          query.bucket
-        }-qua.${ext}`;
+        const filename = `qua/${query.store}/${name}-${(
+          Date.now() / 1000
+        ).toFixed()}.${ext}`;
 
         const content = (await getBuffer(req)) as Buffer;
 
@@ -58,7 +58,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           data: content,
         });
 
-        return res.status(200).send(uploadedFile);
+        console.log(LOG_TAG, "uploaded file", { uploadedFile });
+        return res.status(200).send({
+          ...uploadedFile,
+          publicUrl: `https://storageapi2.fleek.co/${uploadedFile.bucket}/${uploadedFile.key}`,
+        });
       }
 
       case "DELETE": {

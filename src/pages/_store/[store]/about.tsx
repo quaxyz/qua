@@ -12,10 +12,11 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import { getLayoutProps } from "components/layouts/props";
+import { getLayoutProps } from "components/layouts/customer-props";
 import { mapSocialLink, truncateAddress } from "libs/utils";
 import { FiExternalLink } from "react-icons/fi";
 import { defaultCategories } from "libs/constants";
+import { withSsrSession } from "libs/session";
 
 const Page = ({ storeDetails }: any) => {
   return (
@@ -48,7 +49,7 @@ const Page = ({ storeDetails }: any) => {
               alignItems="center"
             >
               <Text
-                fontSize={{ base: "sm", md: "md" }}
+                fontSize={{ base: "xs", md: "sm" }}
                 textTransform="uppercase"
                 fontWeight="bold"
                 color="#fff"
@@ -82,16 +83,6 @@ const Page = ({ storeDetails }: any) => {
                 isExternal
               >
                 email
-              </Link>
-
-              <Link
-                href={`https://chat.blockscan.com/index?a=${storeDetails.owner}`}
-                color="#fff"
-                textTransform="uppercase"
-                fontSize="sm"
-                isExternal
-              >
-                blockscan
               </Link>
 
               {Object.entries(storeDetails.socialLinks || {})
@@ -146,18 +137,8 @@ const Page = ({ storeDetails }: any) => {
             textTransform="uppercase"
             pb="2"
           >
-            Verified owner address
+            Verified owner
           </Text>
-          <Button
-            as={Link}
-            href={`https://etherscan.io/address/${storeDetails.owner}`}
-            rightIcon={<FiExternalLink />}
-            size="md"
-            variant="solid-outline"
-            isExternal
-          >
-            {truncateAddress(storeDetails.owner || "", 6)}
-          </Button>
         </Box>
         {storeDetails.location && (
           <Stack spacing="2" mt="8">
@@ -177,33 +158,35 @@ const Page = ({ storeDetails }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const store = ctx.params?.store as string;
-  const layoutProps = await getLayoutProps(ctx);
+export const getServerSideProps: GetServerSideProps = withSsrSession(
+  async (ctx) => {
+    const store = ctx.params?.store as string;
+    const layoutProps = await getLayoutProps(ctx);
 
-  if (!layoutProps) return { notFound: true };
+    if (!layoutProps) return { notFound: true };
 
-  const storeDetails = await prisma.store.findUnique({
-    where: { name: store },
-    include: {
-      image: {
-        select: {
-          url: true,
+    const storeDetails = await prisma.store.findUnique({
+      where: { name: store },
+      include: {
+        image: {
+          select: {
+            url: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  return {
-    props: {
-      storeDetails: JSON.parse(JSON.stringify(storeDetails)),
-      layoutProps: {
-        ...layoutProps,
-        title: `About`,
+    return {
+      props: {
+        storeDetails: JSON.parse(JSON.stringify(storeDetails)),
+        layoutProps: {
+          ...layoutProps,
+          title: `About`,
+        },
       },
-    },
-  };
-};
+    };
+  }
+);
 
 Page.Layout = CustomerLayout;
 export default Page;

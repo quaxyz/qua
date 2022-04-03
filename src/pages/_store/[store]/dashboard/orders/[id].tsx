@@ -1,6 +1,6 @@
 import React from "react";
 import Api from "libs/api";
-import type { GetServerSideProps } from "next";
+import type { GetStaticPaths, GetStaticProps } from "next";
 import Link from "components/link";
 import prisma from "libs/prisma";
 import {
@@ -21,39 +21,16 @@ import { parseJSON, format } from "date-fns";
 import { formatCurrency } from "libs/currency";
 import { CostSummary } from "components/cost-summary";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useWeb3React } from "@web3-react/core";
-import { getKeyPair } from "libs/keys";
-import { signData } from "libs/signing";
 import { OrderPaymentStatus, OrderStatus } from "components/order-pill";
+import { getStorePaths } from "libs/store-paths";
 
 function useCancelOrder() {
-  const { account } = useWeb3React();
   const toast = useToast();
   const queryClient = useQueryClient();
 
   return useMutation(
     async ({ orderId }: any) => {
-      // sign data
-      const timestamp = parseInt((Date.now() / 1000).toFixed());
-
-      const keyPair = await getKeyPair();
-      const data = {
-        orderId,
-        timestamp,
-      };
-      console.log("Data", data);
-
-      const signedContent = await signData(keyPair, data);
-      console.log("Sig", signedContent);
-
-      return Api().post(`/dashboard/orders/cancel`, {
-        address: account,
-        digest: signedContent.digest,
-        key: JSON.stringify(signedContent.publicKey),
-        payload: JSON.stringify(data),
-        signature: signedContent.signature,
-        timestamp,
-      });
+      return Api().post(`/dashboard/orders/cancel`, { orderId });
     },
     {
       onSuccess: async ({ payload: result }) => {
@@ -90,33 +67,12 @@ function useCancelOrder() {
 }
 
 function useFulfillOrder() {
-  const { account } = useWeb3React();
   const toast = useToast();
   const queryClient = useQueryClient();
 
   return useMutation(
     async ({ orderId }: any) => {
-      // sign data
-      const timestamp = parseInt((Date.now() / 1000).toFixed());
-
-      const keyPair = await getKeyPair();
-      const data = {
-        orderId,
-        timestamp,
-      };
-      console.log("Data", data);
-
-      const signedContent = await signData(keyPair, data);
-      console.log("Sig", signedContent);
-
-      return Api().post(`/dashboard/orders/fulfill`, {
-        address: account,
-        digest: signedContent.digest,
-        key: JSON.stringify(signedContent.publicKey),
-        payload: JSON.stringify(data),
-        signature: signedContent.signature,
-        timestamp,
-      });
+      return Api().post(`/dashboard/orders/fulfill`, { orderId });
     },
     {
       onSuccess: async ({ payload: result }) => {
@@ -321,7 +277,7 @@ const Page = (props: any) => {
                     Cancel Order
                   </Button>
                 </Stack>
-                <Stack direction="row" align="center" py="4" userSelect="none">
+                <Stack direction="row" align="center" py="4">
                   <InfoCircle set="bold" primaryColor="orange" />
                   <Text>Careful - Fulfill only paid orders.</Text>
                 </Stack>
@@ -358,7 +314,7 @@ const Page = (props: any) => {
                   textAlign="center"
                 >
                   <Text fontSize={{ base: "sm", md: "md" }}>
-                    {truncateAddress(order.customerAddress || "", 4)}
+                    {truncateAddress(order.customer?.address || "", 4)}
                   </Text>
                 </Box>
               </Stack>
@@ -384,6 +340,24 @@ const Page = (props: any) => {
                 {order.customerDetails?.address}
               </Text>
             </Stack>
+
+            <Stack spacing={2}>
+              <Heading as="h4" size="md">
+                Payment Method
+              </Heading>
+              <Text color="#000" opacity="0.72" mt={{ base: "1", md: "2" }}>
+                {
+                  (
+                    {
+                      CASH: "Cash on delivery",
+                      CRYPTO: "Crypto",
+                      BANK_TRANSFER: "Bank transfer",
+                      CONTACT_SELLER: "Contacting you",
+                    } as any
+                  )[order.paymentMethod]
+                }
+              </Text>
+            </Stack>
           </Stack>
         </Stack>
       </Stack>
@@ -391,7 +365,37 @@ const Page = (props: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const stores = await prisma.store.findMany({
+    select: {
+      name: true,
+      orders: {
+        select: {
+          id: true,
+        },
+      },
+    },
+  });
+
+  const paths = [];
+  for (let store of stores) {
+    for (let order of store.orders) {
+      paths.push({
+        params: {
+          id: `${order.id}`,
+          store: store.name,
+        },
+      });
+    }
+  }
+
+  return {
+    paths,
+    fallback: "blocking",
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const store = (params?.store as string) || "";
   const orderId = parseInt(params?.id as string);
 
@@ -399,7 +403,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     take: 10,
     where: {
       id: orderId,
-      Store: {
+      store: {
         name: store,
       },
     },
@@ -409,11 +413,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     select: {
       id: true,
       createdAt: true,
-      customerAddress: true,
+      customer: true,
       customerDetails: true,
       items: true,
       status: true,
       paymentStatus: true,
+      paymentMethod: true,
       pricingBreakdown: true,
     },
   });

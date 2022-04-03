@@ -1,9 +1,8 @@
 /* eslint-disable import/no-anonymous-default-export */
 import type { NextApiRequest, NextApiResponse } from "next";
-import { utils } from "ethers";
-import { domain } from "libs/constants";
 import crypto from "crypto";
 import prisma from "libs/prisma";
+import { withSession } from "libs/session";
 
 const LOG_TAG = "[store-orders]";
 
@@ -43,137 +42,147 @@ async function calculateOrderPricing({
   };
 }
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  try {
-    const { method, body, query } = req;
+export default withSession(
+  async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+      const { method, body, query } = req;
 
-    switch (method) {
-      case "POST": {
-        console.log(LOG_TAG, "create customer order %j", { body });
-        if (!query.store) {
-          console.log(LOG_TAG, "[warning]", "invalid query", { query });
-          return res.status(400).send({ error: "invalid params" });
-        }
+      switch (method) {
+        case "POST": {
+          const { data: session } = req.session;
+          console.log(LOG_TAG, "create customer orders", {
+            query,
+            body,
+            session,
+          });
 
-        const { data, address, sig } = body;
+          if (!session || !session.userId) {
+            console.warn(LOG_TAG, "No logged in user found", {
+              query,
+              session,
+            });
 
-        // verify timestamp
-        const ts = Date.now() / 1000;
-        const overTs = (ts + 180).toFixed(); // +3 min
-        const underTs = (ts - 180).toFixed(); /// -3 min
+            return res.status(401).send({ error: "User not logged in" });
+          }
 
-        if (
-          data.message.timestamp > overTs ||
-          data.message.timestamp < underTs
-        ) {
-          console.log(LOG_TAG, "[error]", "wrong timestamp", method);
-          return res.status(400).send({ error: "wrong timestamp" });
-        }
+          if (!query.store) {
+            console.log(LOG_TAG, "[warning]", "invalid query", { query });
+            return res.status(400).send({ error: "invalid params" });
+          }
 
-        // verify domain
-        if (
-          domain.name !== data.domain.name ||
-          domain.version !== data.domain.version
-        ) {
-          console.log(LOG_TAG, "[error]", "wrong doamin", method);
-          return res.status(400).send({ error: "wrong domain" });
-        }
+          // create order
+          const shipping = body.shipping;
+          const paymentMethod = body.paymentMethod;
 
-        // verify signature
-        const recoveredAddress = utils.verifyTypedData(
-          domain,
-          data.types,
-          data.message,
-          sig
-        );
-        if (address !== recoveredAddress) {
-          console.log(LOG_TAG, "[error]", "wrong signature", method);
-          return res.status(400).send({ error: "wrong signature" });
-        }
-
-        // create order
-        const cart = JSON.parse(data.message.cart);
-        const shipping = JSON.parse(data.message.shipping);
-        const paymentMethod = data.message.paymentMethod;
-
-        // verify data
-        if (!cart.length) {
-          console.log(LOG_TAG, "[error]", "can't create empty order", method);
-          return res.status(400).send({ error: "can't create empty order" });
-        }
-        // - any other form of validation?
-
-        // calculate pricing
-        const pricing = await calculateOrderPricing({
-          store: data.message.store,
-          items: cart,
-          shipping,
-          paymentMethod,
-        });
-
-        // order data
-        const orderData: any = {
-          items: cart,
-          customerAddress: address,
-          customerDetails: shipping,
-          subtotal: pricing.subtotal,
-          totalAmount: pricing.total,
-          pricingBreakdown: pricing,
-          status: "UNFULFILLED",
-          paymentStatus: "UNPAID",
-          paymentMethod,
-        };
-
-        // hash order
-        const encoder = new TextEncoder();
-        const digest = crypto
-          .createHash("sha256")
-          .update(
-            encoder.encode(
-              JSON.stringify({
-                ...orderData,
-                timestamp: data.message.timestamp,
-                store: data.message.store,
-              })
-            )
-          )
-          .digest("base64")
-          .replace(/\+/g, "-")
-          .replace(/\//g, "_")
-          .replace(/=/g, "");
-
-        // store order in DB
-        const result = await prisma.order.create({
-          data: {
-            ...orderData,
-            hash: digest,
-            Store: {
-              connect: {
-                name: data.message.store,
+          // fetch cart
+          const userCart = await prisma.cart.findUnique({
+            where: {
+              ownerId_storeName: {
+                ownerId: session.userId,
+                storeName: query.store as string,
               },
             },
-          },
-          select: {
-            id: true,
-            hash: true,
-            totalAmount: true,
-          },
-        });
+            select: { items: true },
+          });
 
-        console.log(LOG_TAG, "order created", { result });
-        return res.status(200).send(result);
+          if (!userCart) {
+            console.log(LOG_TAG, "[error]", "cart not found", {
+              query,
+              session,
+            });
+
+            return res.status(400).send({ error: "No cart found" });
+          }
+
+          const cartItems = userCart.items as any[];
+          const cartProducts = await prisma.product.findMany({
+            where: {
+              Store: {
+                name: query.store as string,
+              },
+              id: {
+                in: cartItems.map((c) => c.productId),
+              },
+            },
+            select: {
+              id: true,
+              name: true,
+              price: true,
+            },
+          });
+          const cart = cartProducts.map((p) => {
+            const item = cartItems.find((c) => c.productId === p.id);
+            return {
+              price: p.price,
+              name: p.name,
+              productId: p.id,
+              quantity: item.quantity,
+            };
+          });
+
+          // verify data
+          if (!cart.length) {
+            console.log(LOG_TAG, "[error]", "can't create empty order", method);
+            return res.status(400).send({ error: "Can't create empty order" });
+          }
+          // - any other form of validation?
+
+          // calculate pricing
+          const pricing = await calculateOrderPricing({
+            store: query.store,
+            items: cart,
+            shipping,
+            paymentMethod,
+          });
+
+          // order data
+          const orderData: any = {
+            items: cart,
+            customerDetails: shipping,
+            subtotal: pricing.subtotal,
+            totalAmount: pricing.total,
+            pricingBreakdown: pricing,
+            status: "UNFULFILLED",
+            paymentStatus: "UNPAID",
+            paymentMethod,
+          };
+
+          // store order in DB
+          const result = await prisma.order.create({
+            data: {
+              ...orderData,
+              store: {
+                connect: {
+                  name: query.store,
+                },
+              },
+              customer: {
+                connect: {
+                  id: session.userId,
+                },
+              },
+            },
+            select: {
+              id: true,
+              totalAmount: true,
+            },
+          });
+
+          console.log(LOG_TAG, "order created", { result });
+          return res.status(200).send(result);
+        }
+        default:
+          console.log(LOG_TAG, "[error]", "unauthorized method", method);
+          return res.status(500).send({ error: "unauthorized method" });
       }
-      default:
-        console.log(LOG_TAG, "[error]", "unauthorized method", method);
-        return res.status(500).send({ error: "unauthorized method" });
-    }
-  } catch (error) {
-    console.log(LOG_TAG, "[error]", "general error", {
-      name: (error as any).name,
-      message: (error as any).message,
-      stack: (error as any).stack,
-    });
+    } catch (error) {
+      console.log(LOG_TAG, "[error]", "general error", {
+        name: (error as any).name,
+        message: (error as any).message,
+        stack: (error as any).stack,
+      });
 
-    return res.status(500).send({ error: "request failed" });
+      return res.status(500).send({ error: "request failed" });
+    }
   }
-};
+);

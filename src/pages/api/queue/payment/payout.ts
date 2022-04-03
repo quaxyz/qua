@@ -16,7 +16,7 @@ export default Queue("/api/queue/payment/payout", async (payload: any) => {
 
   // fetch order
   const order = await prisma.order.findFirst({
-    where: { hash: payload.orderHash, Store: { name: payload.storeName } },
+    where: { id: payload.orderId, store: { name: payload.storeName } },
     select: { pricingBreakdown: true, storeId: true },
   });
 
@@ -25,16 +25,20 @@ export default Queue("/api/queue/payment/payout", async (payload: any) => {
     select: { owner: true },
   });
 
-  if (!order || !store) {
+  if (!order || !store || !store.owner) {
     throw new Error("Order not found");
   }
 
   const { subtotal, shipping } = order.pricingBreakdown as any;
 
+  if (!store.owner.address) {
+    throw new Error("Store does not accept crypto");
+  }
+
   const payoutResponse = await lazerPay.Payment.transferFunds({
     amount: (subtotal || 0) + (shipping || 0),
     coin: payload.coin,
-    recipient: store.owner,
+    recipient: store.owner.address,
     blockchain: "Binance Smart Chain",
   });
 

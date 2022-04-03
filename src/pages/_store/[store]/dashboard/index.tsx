@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useState } from "react";
-import { GetServerSideProps } from "next";
+import { GetStaticProps } from "next";
+import { getStorePaths } from "libs/store-paths";
 import Link from "components/link";
 import prisma from "libs/prisma";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
@@ -258,16 +259,12 @@ const Page = ({ orders }: any) => {
         </Stack>
 
         <Stack>
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-          >
+          <Stack direction="row" justify="space-between" align="center" mb={10}>
             <Heading
               as="h2"
               fontSize={{ base: "18px", md: "24px" }}
               fontWeight="500"
-              color="#000"
+              color="#131415"
             >
               Activity
             </Heading>
@@ -331,7 +328,6 @@ const Page = ({ orders }: any) => {
                         mb={{ base: "2", md: "0" }}
                       >
                         {order.customerDetails?.name}{" "}
-                        {truncateAddress(order.customerAddress, 4)}
                       </Text>
                     </Flex>
                     <Flex w="100%" justify="space-between">
@@ -392,6 +388,7 @@ const Page = ({ orders }: any) => {
                   as={Button}
                   href={`/dashboard/products/new`}
                   variant="primary"
+                  colorScheme="black"
                 >
                   <Plus
                     set="bold"
@@ -409,13 +406,14 @@ const Page = ({ orders }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getStaticPaths = getStorePaths;
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const store = (params?.store as string) || "";
 
   const data = await prisma.order.findMany({
     take: 5,
     where: {
-      Store: {
+      store: {
         name: store,
       },
     },
@@ -424,7 +422,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
     select: {
       id: true,
-      customerAddress: true,
       customerDetails: true,
       status: true,
       paymentStatus: true,
@@ -438,6 +435,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         title: "Dashboard",
       },
     },
+    revalidate: 60 * 60,
   };
 };
 

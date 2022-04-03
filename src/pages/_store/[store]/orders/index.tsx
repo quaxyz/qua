@@ -13,10 +13,11 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import { getLayoutProps } from "components/layouts/props";
+import { getLayoutProps } from "components/layouts/customer-props";
 import { OrderStatus } from "components/order-pill";
 import { useIntersection } from "react-use";
 import { useInfiniteQuery } from "react-query";
+import { withSsrSession } from "libs/session";
 
 function useQueryOrders({ initialData }: any) {
   const intersectionRef = React.useRef(null);
@@ -31,7 +32,7 @@ function useQueryOrders({ initialData }: any) {
     queryKey: ["store-orders"],
     initialData: { pages: [initialData], pageParams: [] },
     staleTime: Infinity,
-    queryFn: async ({ pageParam }) => {
+    queryFn: async ({ pageParam = 0 }) => {
       const { payload }: any = await Api().get(`/orders?cursor=${pageParam}`);
 
       return payload;
@@ -146,77 +147,80 @@ const Page = ({ orders }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const store = ctx?.params?.store as string;
-  let layoutProps = await getLayoutProps(ctx);
-  if (!layoutProps) return { notFound: true };
+export const getServerSideProps: GetServerSideProps = withSsrSession(
+  async (ctx) => {
+    const store = ctx?.params?.store as string;
 
-  const orders = await prisma.order.findMany({
-    take: 10,
-    where: {
-      customerAddress: layoutProps?.account || "",
-      Store: { name: store },
-    },
-    orderBy: { updatedAt: "desc" },
-    select: { id: true, status: true, paymentStatus: true, items: true },
-  });
+    let layoutProps = await getLayoutProps(ctx);
+    if (!layoutProps) return { notFound: true };
 
-  const itemsIds: any[] = orders
-    .map((o: any) => (o.items[0] || {}).productId)
-    .filter(Boolean);
-
-  const products = await prisma.product.findMany({
-    where: {
-      Store: {
-        name: store,
+    const orders = await prisma.order.findMany({
+      take: 10,
+      where: {
+        customer: { id: ctx.req.session.data?.userId },
+        store: { name: store },
       },
-      id: {
-        in: itemsIds,
-      },
-    },
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      totalStocks: true,
-      images: {
-        take: 1,
-        select: {
-          url: true,
+      orderBy: { updatedAt: "desc" },
+      select: { id: true, status: true, paymentStatus: true, items: true },
+    });
+
+    const itemsIds: any[] = orders
+      .map((o: any) => (o.items[0] || {}).productId)
+      .filter(Boolean);
+
+    const products = await prisma.product.findMany({
+      where: {
+        Store: {
+          name: store,
+        },
+        id: {
+          in: itemsIds,
         },
       },
-    },
-  });
-
-  const formatedOrders = [];
-  for (let order of orders) {
-    const product = products.find(
-      (p) => p.id === ((order.items as any)[0] || {}).productId
-    );
-    if (!product) continue;
-
-    formatedOrders.push({
-      id: order?.id,
-      status: order?.status,
-      paymentStatus: order?.paymentStatus,
-      product: {
-        id: product?.id,
-        name: product?.name,
-        image: product?.images[0]?.url,
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        totalStocks: true,
+        images: {
+          take: 1,
+          select: {
+            url: true,
+          },
+        },
       },
     });
-  }
 
-  return {
-    props: {
-      orders: formatedOrders,
-      layoutProps: {
-        ...layoutProps,
-        title: "Orders",
+    const formatedOrders = [];
+    for (let order of orders) {
+      const product = products.find(
+        (p) => p.id === ((order.items as any)[0] || {}).productId
+      );
+      if (!product) continue;
+
+      formatedOrders.push({
+        id: order?.id,
+        status: order?.status,
+        paymentStatus: order?.paymentStatus,
+        product: {
+          id: product?.id,
+          name: product?.name,
+          image: product?.images[0]?.url,
+        },
+      });
+    }
+
+    return {
+      props: {
+        orders: formatedOrders,
+        layoutProps: {
+          ...layoutProps,
+          title: "Orders",
+        },
       },
-    },
-  };
-};
+    };
+  }
+);
 
 Page.Layout = CustomerLayout;
 export default Page;

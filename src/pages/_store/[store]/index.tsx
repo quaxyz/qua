@@ -3,7 +3,6 @@ import prisma from "libs/prisma";
 import Api from "libs/api";
 import NextLink from "next/link";
 import Link from "components/link";
-import type { GetServerSideProps } from "next";
 import {
   chakra,
   Container,
@@ -17,12 +16,14 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import { getLayoutProps } from "components/layouts/props";
-import { useRouter } from "next/router";
+import { getLayoutProps } from "components/layouts/customer-props";
 import { useInfiniteQuery } from "react-query";
 import { useIntersection } from "react-use";
 import { formatCurrency } from "libs/currency";
 import { useGetLink } from "hooks/utils";
+import { GetServerSideProps } from "next";
+import { withSsrSession } from "libs/session";
+import { useRouter } from "next/router";
 
 function useQueryProducts({ initialData }: any) {
   const router = useRouter();
@@ -63,7 +64,6 @@ function useQueryProducts({ initialData }: any) {
 }
 
 const Page = ({ initialData, categories }: any) => {
-  const getLink = useGetLink();
   const { ref, queryResp } = useQueryProducts({ initialData });
 
   return (
@@ -141,7 +141,7 @@ const Page = ({ initialData, categories }: any) => {
                       alt={data.name}
                     />
 
-                    <NextLink href={getLink(`/products/${data.id}`)} passHref>
+                    <NextLink href={`/products/${data.id}`} passHref>
                       <LinkOverlay>
                         <Heading
                           as="h1"
@@ -170,61 +170,63 @@ const Page = ({ initialData, categories }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const store = ctx?.params?.store as string;
-  const category = ctx?.query?.category as string;
+export const getServerSideProps: GetServerSideProps = withSsrSession(
+  async (ctx) => {
+    const store = ctx?.params?.store as string;
+    const category = ctx?.query?.category as string;
 
-  let layoutProps = await getLayoutProps(ctx);
-  if (!layoutProps) return { notFound: true };
+    let layoutProps = await getLayoutProps(ctx);
+    if (!layoutProps) return { notFound: true };
 
-  const data = await prisma.product.findMany({
-    take: 12,
-    where: {
-      category,
-      Store: {
-        name: store as string,
-      },
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      images: {
-        take: 1,
-        select: {
-          url: true,
+    const data = await prisma.product.findMany({
+      take: 12,
+      where: {
+        category,
+        Store: {
+          name: store as string,
         },
       },
-    },
-  });
-
-  const distinctCategories = await prisma.product.findMany({
-    distinct: ["category"],
-    where: {
-      Store: { name: store },
-    },
-    select: {
-      category: true,
-    },
-  });
-  const categories = (distinctCategories || [])
-    .map((p) => p.category)
-    .filter(Boolean);
-
-  return {
-    props: {
-      initialData: JSON.parse(JSON.stringify(data)),
-      categories,
-      layoutProps: {
-        ...layoutProps,
-        title: `Products`,
+      orderBy: {
+        updatedAt: "desc",
       },
-    },
-  };
-};
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        images: {
+          take: 1,
+          select: {
+            url: true,
+          },
+        },
+      },
+    });
+
+    const distinctCategories = await prisma.product.findMany({
+      distinct: ["category"],
+      where: {
+        Store: { name: store },
+      },
+      select: {
+        category: true,
+      },
+    });
+    const categories = (distinctCategories || [])
+      .map((p) => p.category)
+      .filter(Boolean);
+
+    return {
+      props: {
+        initialData: JSON.parse(JSON.stringify(data)),
+        categories,
+        layoutProps: {
+          ...layoutProps,
+          title: `Products`,
+        },
+      },
+    };
+  }
+);
 
 Page.Layout = CustomerLayout;
 export default Page;

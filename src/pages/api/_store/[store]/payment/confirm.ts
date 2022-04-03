@@ -52,7 +52,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         const storeName = query.store as string;
 
-        const { orderHash, paymentPayload } = body;
+        const { orderId, paymentPayload } = body;
         const { coin, reference, recipientAddress } = paymentPayload;
 
         try {
@@ -81,7 +81,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         // get order
         const order = await prisma.order.findFirst({
-          where: { hash: orderHash, Store: { name: storeName } },
+          where: { id: orderId, store: { name: storeName } },
           select: { subtotal: true, pricingBreakdown: true, storeId: true },
         });
 
@@ -108,6 +108,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(404).send({ error: "Error processing payment" });
         }
 
+        if (!store?.owner.address) {
+          console.log(LOG_TAG, "[error]", "store does not accept crypto", {
+            query,
+            body,
+          });
+          return res.status(400).send({
+            error:
+              "Store does not accept crypto payments, contack us for a refund",
+          });
+        }
+
         /**
          * So we try to do the payout here, and if it fails we then add it to the job queue so it can be retried later
          */
@@ -117,7 +128,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           const payoutPayload = {
             amount: (subtotal || 0) + (shipping || 0),
             coin: coin,
-            recipient: store.owner,
+            recipient: store.owner.address, // TODO: set default address for crypto payments,
             blockchain: "Binance Smart Chain",
           };
           const payoutResponse = await lazerPay.Payment.transferFunds(
@@ -150,7 +161,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           await PayoutQueue.enqueue(
             {
-              orderHash,
+              orderId,
               storeName,
               coin,
             },
@@ -173,7 +184,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         // store payout hash
         // set status to paid
         const result = await prisma.order.update({
-          where: { hash: orderHash },
+          where: { id: orderId },
           data: {
             payoutHash,
             paymentReference: reference,

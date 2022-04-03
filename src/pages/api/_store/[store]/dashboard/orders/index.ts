@@ -33,7 +33,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           // query
           where: {
-            Store: {
+            store: {
               name: store,
             },
           },
@@ -42,9 +42,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           },
           select: {
             id: true,
-            customerAddress: true,
+            customer: true,
             customerDetails: true,
             status: true,
+            paymentMethod: true,
             paymentStatus: true,
           },
         });

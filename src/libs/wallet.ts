@@ -53,23 +53,6 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     iconUrl: "/wallets/walletconnect.svg",
     label: "Sign in with Wallet Connect",
   },
-  // WALLET_LINK: {
-  //   connector: walletlink,
-  //   name: "Coinbase Wallet",
-  //   iconURL: "/wallets/coinbase.svg",
-  //   description: "Use Coinbase Wallet app on mobile device",
-  //   href: null,
-  //   color: "#315CF5",
-  // },
-  // COINBASE_LINK: {
-  //   name: "Open in Coinbase Wallet",
-  //   iconURL: "/wallets/coinbase.svg",
-  //   description: "Open in Coinbase Wallet app.",
-  //   href: "https://go.cb-w.com/mtUDhEZPy1",
-  //   color: "#315CF5",
-  //   mobile: true,
-  //   mobileOnly: true,
-  // },
 };
 
 // helper methods

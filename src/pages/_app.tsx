@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { AppProps } from "next/app";
 import theme from "theme";
 import { ChakraProvider } from "@chakra-ui/react";
@@ -24,6 +24,9 @@ function QuaApp({ Component, pageProps }: AppProps) {
 
   return (
     <ChakraProvider theme={theme}>
+      {/* load the google auth script */}
+      {/* <Script src="https://accounts.google.com/gsi/client" async defer /> */}
+
       <QueryClientProvider client={queryClient}>
         <Web3ReactProvider getLibrary={getLibrary}>
           <Layout {...layoutProps}>
@@ -33,7 +36,7 @@ function QuaApp({ Component, pageProps }: AppProps) {
           </Layout>
         </Web3ReactProvider>
 
-        <ReactQueryDevtools initialIsOpen />
+        <ReactQueryDevtools />
       </QueryClientProvider>
     </ChakraProvider>
   );

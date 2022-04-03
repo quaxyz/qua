@@ -1,5 +1,5 @@
 import React from "react";
-import type { GetServerSideProps } from "next";
+import type { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
 import Link from "components/link";
 import prisma from "libs/prisma";
 import { useRouter } from "next/router";
@@ -18,10 +18,11 @@ import {
 } from "@chakra-ui/react";
 import { FileGallery } from "components/file-gallery";
 import CustomerLayout from "components/layouts/customer-dashboard";
-import { getLayoutProps } from "components/layouts/props";
 import { Quantity } from "components/quantity";
 import { useCartStore } from "hooks/useCart";
 import { formatCurrency } from "libs/currency";
+import { withSsrSession } from "libs/session";
+import { getLayoutProps } from "components/layouts/customer-props";
 
 const Page = ({ product }: any) => {
   const router = useRouter();
@@ -50,8 +51,7 @@ const Page = ({ product }: any) => {
     );
 
     router.push({
-      pathname: `/_store/[store]/cart`,
-      query: { store: router.query.store },
+      pathname: `/cart`,
     });
   };
 
@@ -185,50 +185,53 @@ const Page = ({ product }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const id = ctx?.params?.id as string;
-  const store = ctx?.params?.store as string;
-  let layoutProps = await getLayoutProps(ctx);
-  if (!layoutProps) return { notFound: true };
+export const getServerSideProps: GetServerSideProps = withSsrSession(
+  async (ctx) => {
+    const id = ctx.params?.id as string;
+    const storeName = ctx.params?.store as string;
 
-  const product = await prisma.product.findFirst({
-    where: {
-      id: parseInt(id, 10),
-      Store: {
-        name: store,
-      },
-    },
+    let layoutProps = await getLayoutProps(ctx);
+    if (!layoutProps) return { notFound: true };
 
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      description: true,
-      totalStocks: true,
-      images: {
-        select: {
-          url: true,
+    const product = await prisma.product.findFirst({
+      where: {
+        id: parseInt(id, 10),
+        Store: {
+          name: storeName,
         },
       },
-    },
-  });
 
-  if (!product) {
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        description: true,
+        totalStocks: true,
+        images: {
+          select: {
+            url: true,
+          },
+        },
+      },
+    });
+
+    if (!product) {
+      return {
+        notFound: true,
+      };
+    }
+
     return {
-      notFound: true,
+      props: {
+        product,
+        layoutProps: {
+          ...layoutProps,
+          title: product.name,
+        },
+      },
     };
   }
-
-  return {
-    props: {
-      product,
-      layoutProps: {
-        ...layoutProps,
-        title: product.name,
-      },
-    },
-  };
-};
+);
 
 Page.Layout = CustomerLayout;
 export default Page;

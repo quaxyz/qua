@@ -1,12 +1,16 @@
 import React from "react";
+import { GetStaticProps } from "next";
+import { getStorePaths } from "libs/store-paths";
 import Link from "components/link";
 import Api from "libs/api";
 import prisma from "libs/prisma";
-import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+import { useDebounce } from "react-use";
 import { useInfiniteQuery, useMutation, useQueryClient } from "react-query";
 import {
   Box,
   Button,
+  CircularProgress,
   Container,
   Grid,
   GridItem,
@@ -21,46 +25,30 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Stack,
   Text,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 import { Plus, Search } from "react-iconly";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { formatCurrency } from "libs/currency";
-import { useWeb3React } from "@web3-react/core";
-import { getKeyPair } from "libs/keys";
-import { signData } from "libs/signing";
 
 function useDeleteProduct() {
-  const { account } = useWeb3React();
   const toast = useToast();
   const queryClient = useQueryClient();
 
   return useMutation(
     async (id: any) => {
-      // sign data
-      const timestamp = parseInt((Date.now() / 1000).toFixed());
-
-      const keyPair = await getKeyPair();
-      const data = {
-        id,
-        timestamp,
-      };
-      console.log("Data", data);
-
-      const signedContent = await signData(keyPair, data);
-      console.log("Sig", signedContent);
-
-      return Api().post(`/dashboard/products/delete`, {
-        address: account,
-        digest: signedContent.digest,
-        key: JSON.stringify(signedContent.publicKey),
-        payload: JSON.stringify(data),
-        signature: signedContent.signature,
-        timestamp,
-      });
+      return Api().delete(`/dashboard/products/${id}`);
     },
     {
       onSuccess: async () => {
@@ -88,55 +76,157 @@ function useDeleteProduct() {
 }
 
 const ActionMenu = ({ id, ButtonProps }: any) => {
+  const deleteModal = useDisclosure();
   const deleteProduct = useDeleteProduct();
 
   return (
-    <Menu>
-      <MenuButton
-        variant="outlined"
-        size="sm"
-        fontSize="2xl"
-        aria-label="product actions"
-        as={IconButton}
-        icon={<FiMoreHorizontal />}
-        {...ButtonProps}
-      />
+    <>
+      <Menu>
+        <MenuButton
+          variant="outlined"
+          size="sm"
+          fontSize="2xl"
+          aria-label="product actions"
+          as={IconButton}
+          icon={<FiMoreHorizontal />}
+          {...ButtonProps}
+        />
 
-      <MenuList>
-        <Link
-          as={MenuItem}
-          border="none"
-          href={`/products/${id}`}
-          _hover={{ transform: "none", boxShadow: "none" }}
-        >
-          View
-        </Link>
+        <MenuList>
+          <Link
+            as={MenuItem}
+            border="none"
+            href={`/products/${id}`}
+            _focus={{
+              transform: "none",
+              boxShadow: "none !important",
+              bgColor: "#ffff",
+              border: "none",
+              fontWeight: "600",
+            }}
+            _hover={{
+              transform: "none",
+              bgColor: "#ffff",
+              border: "none",
+              fontWeight: "600",
+            }}
+          >
+            View
+          </Link>
 
-        <Link
-          as={MenuItem}
-          border="none"
-          href={`/dashboard/products/${id}`}
-          _hover={{ transform: "none", boxShadow: "none" }}
-        >
-          Edit
-        </Link>
+          <Link
+            as={MenuItem}
+            border="none"
+            href={`/dashboard/products/${id}`}
+            _focus={{
+              transform: "none",
+              boxShadow: "none !important",
+              bgColor: "#ffff",
+              border: "none",
+              fontWeight: "600",
+            }}
+            _hover={{
+              transform: "none",
+              bgColor: "#ffff",
+              border: "none",
+              fontWeight: "600",
+            }}
+          >
+            Edit
+          </Link>
 
-        <MenuItem
-          onClick={() => deleteProduct.mutate(id)}
-          fontWeight="600"
-          color="red.500"
-        >
-          Delete
-        </MenuItem>
-      </MenuList>
-    </Menu>
+          <MenuItem
+            onClick={() => deleteModal.onOpen()}
+            color="red.500"
+            _focus={{
+              transform: "none",
+              boxShadow: "none !important",
+              bgColor: "#ffff",
+              border: "none",
+              fontWeight: "600",
+            }}
+            _hover={{
+              transform: "none",
+              bgColor: "#ffff",
+              border: "none",
+              fontWeight: "600",
+            }}
+          >
+            Delete
+          </MenuItem>
+        </MenuList>
+      </Menu>
+
+      <Modal
+        isCentered
+        isOpen={deleteModal.isOpen}
+        onClose={deleteModal.onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader fontSize="lg" color="rgb(0 0 0 / 90%)">
+            Delete Product
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody color="rgb(0 0 0 / 50%)" py={5}>
+            Are you sure you want to delete this product?
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              variant="ghost"
+              colorScheme="gray"
+              mr={3}
+              px={10}
+              onClick={deleteModal.onClose}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              colorScheme="red"
+              px={10}
+              onClick={() => deleteProduct.mutate(id)}
+              isLoading={deleteProduct.isLoading}
+            >
+              Delete
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 
 const Page = ({ initialData }: any) => {
+  const router = useRouter();
+  const [search, setSearch] = React.useState<string>(
+    (router.query.search as string) || ""
+  );
+
+  useDebounce(
+    () => {
+      if (search.length > 0) {
+        router.push(
+          {
+            pathname: `/_store/[store]/dashboard/products`,
+            query: { store: router.query.store, search },
+          },
+          undefined,
+          { shallow: true }
+        );
+      }
+    },
+    1000,
+    [search]
+  );
+
   const queryResp = useInfiniteQuery({
-    queryKey: "store-dashboard-products",
-    initialData: { pages: [initialData], pageParams: [] },
+    queryKey: ["store-dashboard-products", router.query.search],
+    initialData: () => {
+      if (search === "") return { pages: [initialData], pageParams: [] };
+      return undefined;
+    },
     getNextPageParam: (lastPage: any) => {
       if (lastPage?.length >= 10) {
         return lastPage[lastPage?.length - 1]?.id;
@@ -144,7 +234,7 @@ const Page = ({ initialData }: any) => {
     },
     queryFn: async ({ pageParam = 0 }) => {
       const { payload }: any = await Api().get(
-        `/dashboard/products?cursor=${pageParam}`
+        `/dashboard/products?cursor=${pageParam}&search=${router.query.search}`
       );
 
       return payload;
@@ -157,7 +247,12 @@ const Page = ({ initialData }: any) => {
     <>
       <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
         <Stack direction="row" justify="space-between" align="center" mb={10}>
-          <Heading as="h2" fontSize="xl" fontWeight="600">
+          <Heading
+            as="h2"
+            fontSize={{ base: "18px", md: "24px" }}
+            fontWeight="500"
+            color="#131415"
+          >
             Products
           </Heading>
 
@@ -165,6 +260,7 @@ const Page = ({ initialData }: any) => {
             href="/dashboard/products/new"
             as={Button}
             variant="primary"
+            colorScheme="black"
             leftIcon={<Plus set="bold" primaryColor="#ffffff" />}
           >
             New Product
@@ -177,12 +273,21 @@ const Page = ({ initialData }: any) => {
               <InputLeftElement fontSize="1rem" pointerEvents="none">
                 <Icon as={(props) => <Search set="light" {...props} />} />
               </InputLeftElement>
-              <Input type="text" placeholder="Search" />
+              <Input
+                type="text"
+                placeholder="Search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </InputGroup>
           </Box>
         )}
 
-        {isEmpty ? (
+        {queryResp.isLoading ? (
+          <Stack alignItems="center" justifyContent="center" minH={24}>
+            <CircularProgress isIndeterminate color="black" />
+          </Stack>
+        ) : isEmpty ? (
           <Stack
             direction="column"
             alignItems="center"
@@ -204,10 +309,10 @@ const Page = ({ initialData }: any) => {
                 fontWeight="bold"
                 color="#000"
               >
-                Add and manage your products
+                No Products
               </Text>
               <Text fontSize={{ base: "md", md: "lg" }}>
-                You can add products and manage your pricing here.
+                Add products and manage pricing here.
               </Text>
             </Stack>
           </Stack>
@@ -305,7 +410,7 @@ const Page = ({ initialData }: any) => {
                       <Stack direction="row" spacing={2}>
                         <Text fontSize="sm">In stock:</Text>
                         <Text fontSize="sm" fontWeight="600">
-                          {data.totalStocks || 0}
+                          {data.totalStocks ?? "unlimited"}
                         </Text>
                       </Stack>
 
@@ -318,7 +423,7 @@ const Page = ({ initialData }: any) => {
                     </Stack>
 
                     <Box>
-                      <ActionMenu />
+                      <ActionMenu id={data?.id} />
                     </Box>
                   </Stack>
 
@@ -406,7 +511,8 @@ const Page = ({ initialData }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getStaticPaths = getStorePaths;
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const store = (params?.store as string) || "";
 
   const data = await prisma.product.findMany({
@@ -440,7 +546,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       layoutProps: {
         title: "Products",
       },
+      revalidate: 60 * 60,
     },
+    revalidate: 60 * 60,
   };
 };
 

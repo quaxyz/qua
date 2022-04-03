@@ -9,6 +9,6 @@ export async function getStorePaths() {
 
   return {
     paths: stores.map((store) => ({ params: { store: store.name as string } })),
-    fallback: false,
+    fallback: "blocking",
   };
 }
