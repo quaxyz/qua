@@ -1,6 +1,6 @@
 import React from "react";
 import Api from "libs/api";
-import type { GetStaticPaths, GetStaticProps } from "next";
+import type { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
 import Link from "components/link";
 import prisma from "libs/prisma";
 import {
@@ -365,37 +365,7 @@ const Page = (props: any) => {
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const stores = await prisma.store.findMany({
-    select: {
-      name: true,
-      orders: {
-        select: {
-          id: true,
-        },
-      },
-    },
-  });
-
-  const paths = [];
-  for (let store of stores) {
-    for (let order of store.orders) {
-      paths.push({
-        params: {
-          id: `${order.id}`,
-          store: store.name,
-        },
-      });
-    }
-  }
-
-  return {
-    paths,
-    fallback: "blocking",
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const store = (params?.store as string) || "";
   const orderId = parseInt(params?.id as string);
 

@@ -1,7 +1,7 @@
 import React from "react";
 import Api from "libs/api";
 import prisma from "libs/prisma";
-import { GetStaticProps } from "next";
+import { GetServerSideProps, GetStaticProps } from "next";
 import {
   Box,
   Button,
@@ -204,8 +204,7 @@ const Page = ({ initialData }: any) => {
   );
 };
 
-export const getStaticPaths = getStorePaths;
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const store = (params?.store as string) || "";
 
   const data = await prisma.order.findMany({

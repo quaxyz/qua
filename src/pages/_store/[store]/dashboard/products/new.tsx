@@ -1,7 +1,7 @@
 import React from "react";
 import Api from "libs/api";
 import prisma from "libs/prisma";
-import type { GetStaticProps } from "next";
+import type { GetServerSideProps, GetStaticProps } from "next";
 import { getStorePaths } from "libs/store-paths";
 import { useRouter } from "next/router";
 import Link from "components/link";
@@ -465,8 +465,7 @@ const Page = ({ categories }: any) => {
   );
 };
 
-export const getStaticPaths = getStorePaths;
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const store = params?.store as string;
   const allProducts = await prisma.product.findMany({
     distinct: ["category"],
@@ -486,7 +485,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         title: "Add Product",
       },
     },
-    revalidate: 5 * 60 * 60,
   };
 };
 

@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from "react";
-import { GetStaticProps } from "next";
+import { GetServerSideProps, GetStaticProps } from "next";
 import { getStorePaths } from "libs/store-paths";
 import Link from "components/link";
 import prisma from "libs/prisma";
@@ -406,8 +406,7 @@ const Page = ({ orders }: any) => {
   );
 };
 
-export const getStaticPaths = getStorePaths;
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const store = (params?.store as string) || "";
 
   const data = await prisma.order.findMany({
@@ -435,7 +434,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         title: "Dashboard",
       },
     },
-    revalidate: 5 * 60 * 60,
   };
 };
 

@@ -1,7 +1,7 @@
 import React from "react";
 import Api from "libs/api";
 import prisma from "libs/prisma";
-import { GetStaticProps } from "next";
+import { GetServerSideProps, GetStaticProps } from "next";
 import {
   Box,
   Button,
@@ -412,7 +412,7 @@ const Page = ({ storeDetails }: any) => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const store = (params?.store || "") as string;
   const storeDetails = await prisma.store.findUnique({
     where: { name: store },
@@ -434,7 +434,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   if (!storeDetails) {
     return {
       notFound: true,
-      revalidate: 5 * 60 * 60,
     };
   }
 
@@ -445,11 +444,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         title: "Settings",
       },
     },
-    revalidate: 5 * 60 * 60,
   };
 };
-
-export const getStaticPaths = getStorePaths;
 
 Page.Layout = StoreDashboardLayout;
 export default Page;
