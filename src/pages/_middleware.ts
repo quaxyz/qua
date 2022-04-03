@@ -16,7 +16,7 @@ export default function middleware(req: NextRequest) {
       return NextResponse.next();
     }
 
-    if (isPublicPages && url.pathname.includes("_store")) {
+    if (url.pathname.includes("_store")) {
       const store = url.pathname.split("/")[2];
       const root =
         process.env.NODE_ENV === "production" ? "qua.xyz" : "localhost:8888";
