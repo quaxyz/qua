@@ -547,7 +547,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   if (!product) {
     return {
       notFound: true,
-      revalidate: 60 * 60,
+      revalidate: 5 * 60 * 60,
     };
   }
 
@@ -570,7 +570,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         title: "Edit Product",
       },
     },
-    revalidate: 60 * 60,
+    revalidate: 5 * 60 * 60,
   };
 };
 

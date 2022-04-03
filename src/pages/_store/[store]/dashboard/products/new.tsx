@@ -486,7 +486,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         title: "Add Product",
       },
     },
-    revalidate: 60 * 60,
+    revalidate: 5 * 60 * 60,
   };
 };
 

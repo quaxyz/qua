@@ -435,7 +435,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         title: "Dashboard",
       },
     },
-    revalidate: 60 * 60,
+    revalidate: 5 * 60 * 60,
   };
 };
 

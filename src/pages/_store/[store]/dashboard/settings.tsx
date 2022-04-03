@@ -434,7 +434,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   if (!storeDetails) {
     return {
       notFound: true,
-      revalidate: 60 * 60,
+      revalidate: 5 * 60 * 60,
     };
   }
 
@@ -445,7 +445,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         title: "Settings",
       },
     },
-    revalidate: 60 * 60,
+    revalidate: 5 * 60 * 60,
   };
 };
 
