@@ -34,7 +34,7 @@ export default function middleware(req: NextRequest) {
     // For local we get the brand from subdomain
     const store =
       process.env.NODE_ENV === "production" && process.env.VERCEL === "1"
-        ? (hostname || "").replace("qua.xyz", "")
+        ? (hostname || "").replace(".qua.xyz", "")
         : (hostname || "").replace(`.localhost:8888`, "");
 
     if (store) {
