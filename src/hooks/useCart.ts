@@ -32,9 +32,12 @@ const useCart = (cart?: any, options?: any) => {
       const locallyStoredCart = localStorage.getItem("cartItems");
       if (!locallyStoredCart) return;
 
-      await Api().post(`/cart`, {
+      const { payload } = await Api().post(`/cart`, {
         cart: JSON.parse(locallyStoredCart).items,
       });
+
+      setItems(payload.items);
+      setSubtotal(payload.total);
 
       console.log("Cart synced");
       localStorage.removeItem("cartItems");

@@ -324,12 +324,12 @@ export const LoginModal = ({ isOpen, onClose }: any) => {
 };
 
 export const AuthButton = (props: any) => {
-  const customerData = useCustomerData();
+  const { data } = useCustomerData();
   const loginModal = useDisclosure();
 
   return (
     <>
-      {customerData?.data?.user ? (
+      {data?.isLoggedIn ? (
         <Button {...props} />
       ) : (
         <Button {...props} onClick={loginModal.onOpen} />

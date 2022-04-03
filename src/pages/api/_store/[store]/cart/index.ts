@@ -127,7 +127,46 @@ export default withSession(
             },
           });
 
-          return res.status(200).send(result.items || []);
+          const resultItems = result.items as any[];
+          const cartIds = resultItems.map((c) => c.productId);
+          const products = await prisma.product.findMany({
+            where: {
+              Store: {
+                name: storeName,
+              },
+              id: {
+                in: cartIds,
+              },
+            },
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              totalStocks: true,
+              images: {
+                take: 1,
+                select: {
+                  url: true,
+                },
+              },
+            },
+          });
+
+          const total = products.reduce((acc, product) => {
+            const cart = resultItems.find(
+              (item) => item.productId === product.id
+            );
+            return acc + cart.quantity * product.price;
+          }, 0);
+
+          console.log(LOG_TAG, "cart updated", {
+            items: resultItems,
+            total,
+          });
+          return res.status(200).send({
+            items: resultItems,
+            total,
+          });
         }
         default:
           console.log(LOG_TAG, "[error]", "unauthorized method", method);

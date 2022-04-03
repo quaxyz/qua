@@ -33,6 +33,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(415).send({ error: "invalid content type" });
         }
 
+        // TODO: use subfolders
         const name = (query.filename as string).replace(/\.[^/.]+$/, "");
         const filename = `${name}-${(Date.now() / 1000).toFixed()}-${
           query.bucket

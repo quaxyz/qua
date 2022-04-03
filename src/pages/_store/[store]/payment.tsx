@@ -172,7 +172,9 @@ const Page = ({ shippingDetails: userShippingDetails, storeDetails }: any) => {
         ? 0
         : storeDetails?.deliveryFee || 0,
     "Network Fee":
-      paymentMethod === "CRYPTO" ? (cartStore?.subTotal || 0) * 0.01 : 0,
+      paymentMethod === "CRYPTO"
+        ? Number((cartStore?.subTotal || 0) * 0.01).toFixed(2)
+        : 0,
   };
 
   return (

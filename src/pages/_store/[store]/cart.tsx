@@ -257,7 +257,7 @@ const Page = () => {
           </Stack>
         </Stack>
 
-        {!cartDetailsQueryResp.data?.length && (
+        {cartDetailsQueryResp.isLoading && !cartDetailsQueryResp.data && (
           <Stack align="center" justify="center" h="200px">
             <CircularProgress isIndeterminate color="black" />
           </Stack>
