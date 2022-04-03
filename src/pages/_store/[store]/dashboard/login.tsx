@@ -55,7 +55,10 @@ const useGoogleAuth = () => {
   const googleSignIn = useOath2Login({
     id: "google-login",
     url,
-    redirect_origin: "http://localhost:8888",
+    redirect_origin:
+      process.env.NODE_ENV !== "production"
+        ? "http://localhost:8888"
+        : "https://www.qua.xyz",
   });
 
   const googleAuthMutation = useMutation(
