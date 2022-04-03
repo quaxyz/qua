@@ -281,6 +281,7 @@ const Page: NextPage = () => {
                     variant="solid-outline"
                     color="#131415"
                     size="lg"
+                    isLoading={googleAuth.isLoading}
                     leftIcon={<FcGoogle fontSize="24px" />}
                     onClick={() => googleAuth.mutate()}
                   >
