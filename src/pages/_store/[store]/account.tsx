@@ -143,7 +143,7 @@ const Page = ({ accountDetails }: any) => {
       px={{ base: "4", md: "16" }}
       py={{ base: "4", md: "16" }}
     >
-      <Text mb={3}>Welcome,</Text>
+      <Text>Welcome back.</Text>
 
       {account ? (
         <Stack
@@ -175,9 +175,9 @@ const Page = ({ accountDetails }: any) => {
           direction={{ base: "column", md: "row" }}
           align={{ base: "flex-start", md: "center" }}
         >
-          <Heading as="h6" color="#000" fontSize={{ base: "xl", md: "2xl" }}>
+          {/* <Heading as="h6" color="#000" fontSize={{ base: "xl", md: "2xl" }}>
             Please connect your account
-          </Heading>
+          </Heading> */}
         </Stack>
       )}
 

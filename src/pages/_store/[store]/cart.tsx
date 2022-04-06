@@ -4,6 +4,7 @@ import prisma from "libs/prisma";
 import Api from "libs/api";
 import CustomerLayout from "components/layouts/customer-dashboard";
 import {
+  Box,
   Button,
   chakra,
   CircularProgress,
@@ -54,7 +55,7 @@ const CartItem = ({ item }: any) => {
         maxWidth="100%"
       >
         <Stack direction="row" w="100%" spacing={6}>
-          <Stack direction="row" align="center">
+          <Stack direction="row" w="25rem" align="center">
             <IconButton
               onClick={() =>
                 cartStore?.removeCartItem(item.productId, item.price)
@@ -70,11 +71,19 @@ const CartItem = ({ item }: any) => {
               src={item.image}
               alt="Product Image"
             />
+            <Heading
+              as="h1"
+              size="sm"
+              pt={4}
+              fontWeight="300"
+              // noOfLines={[1]}
+              // w={{ base: "100%", md: "324px" }}
+              isTruncated
+              title={item.name}
+            >
+              {item.name}
+            </Heading>
           </Stack>
-
-          <Heading as="h1" size="sm" pt={4} fontWeight="300">
-            {item.name}
-          </Heading>
         </Stack>
 
         <Stack w="100%" align="center">

@@ -133,7 +133,7 @@ const Page = ({ initialData, categories }: any) => {
             {page.map((data: any) => (
               <GridItem key={data.id} mb={5}>
                 <LinkBox>
-                  <chakra.section>
+                  <chakra.section title={data.name}>
                     <Image
                       boxSize={{ base: "100%", md: "12rem", lg: "18rem" }}
                       objectFit="cover"
@@ -148,6 +148,7 @@ const Page = ({ initialData, categories }: any) => {
                           fontSize="md"
                           fontWeight="normal"
                           mt={4}
+                          noOfLines={[1, 2]}
                         >
                           {data.name}
                         </Heading>

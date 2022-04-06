@@ -229,7 +229,7 @@ const Page = ({ categories }: any) => {
             <Input
               isRequired
               type="text"
-              placeholder="Hair growth oil"
+              placeholder="Enter Title"
               variant="outline"
               disabled={addProductMutation.isLoading}
               value={formValue.name}

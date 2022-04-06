@@ -15,7 +15,7 @@ export function FileGallery(props: FileGalleryProps) {
         <Image
           src={activeImage}
           alt={props.alt || "product image"}
-          objectFit="cover"
+          objectFit="contain"
           w="full"
           height="full"
           cursor="pointer"
