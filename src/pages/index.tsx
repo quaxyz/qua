@@ -28,11 +28,11 @@ const Home: NextPage = () => {
           justify="space-between"
           px={{ base: "4", md: "24" }}
           py={{ base: "2", md: "8" }}
-          bgColor="rgba(255, 255, 255, 98%)"
+          bgColor="rgba(255, 255, 255, 90%)"
           backdropFilter="blur(24px)"
           maxW="100%"
           h={{ base: "60px", md: "72px" }}
-          pos="absolute"
+          pos="fixed"
           top="0"
           left="0"
           right="0"
@@ -51,7 +51,7 @@ const Home: NextPage = () => {
           </NextLink>
 
           <NextLink href="/setup" passHref>
-            <Link>Start selling</Link>
+            <Link>Try Demo</Link>
           </NextLink>
         </Stack>
       </chakra.nav>
@@ -62,7 +62,8 @@ const Home: NextPage = () => {
         bgRepeat="no-repeat"
         bgSize="cover"
         bgPosition="50% 60%"
-        bgImage="linear-gradient(0deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.04)), url(/images/header.png)"
+        bgImage="linear-gradient(0deg, rgba(0, 0, 0, 90%), rgba(0, 0, 0, 80%)), url(/images/highlight.png)"
+        bgAttachment="scroll, local"
         position="relative"
       >
         <Stack
@@ -207,7 +208,7 @@ const Home: NextPage = () => {
 
           <Stack
             direction={{ base: "column", md: "row" }}
-            px={{ base: "2", md: "24" }}
+            px={{ base: "2", md: "16" }}
             h={{ base: "436px", md: "636px" }}
             spacing={{ base: "4", md: "4" }}
           >
@@ -219,9 +220,10 @@ const Home: NextPage = () => {
               bg="#FAFAFA"
               bgRepeat="no-repeat"
               bgSize="cover"
-              bgPosition="center center"
-              bgImage="linear-gradient(0deg, rgba(0, 0, 0, 48%), rgba(0, 0, 0, 90%)),url(/images/highlight.png)"
-              rounded="8px"
+              bgPosition="10% 60%"
+              bgImage="linear-gradient(0deg, rgba(0, 0, 0, 99%), rgba(0, 0, 0, 80%)),url(/images/highlight.png)"
+              bgAttachment="local, fixed"
+              rounded="16px"
               h="100%"
             >
               <Stack
