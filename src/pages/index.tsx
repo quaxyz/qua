@@ -220,9 +220,9 @@ const Home: NextPage = () => {
               bg="#FAFAFA"
               bgRepeat="no-repeat"
               bgSize="cover"
-              bgPosition="top left"
+              bgPosition="left center"
               bgImage="linear-gradient(0deg, rgba(0, 0, 0, 99%), rgba(0, 0, 0, 80%)),url(/images/highlight.png)"
-              bgAttachment="scroll, fixed"
+              bgAttachment="fixed"
               rounded="16px"
               h="100%"
             >
