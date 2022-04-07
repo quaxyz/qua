@@ -18,7 +18,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Qua | Decentralized eCommerce</title>
+        <title>Qua | Decentralized P2P eCommerce</title>
       </Head>
 
       <chakra.nav position="relative">
@@ -93,8 +93,7 @@ const Home: NextPage = () => {
                 color="#fff"
                 opacity="0.87"
               >
-                The online mall for indie brands, ecommerce, retail and
-                shopping.
+                Your one store link to sell products directly to your customers
               </Text>
             </Stack>
 
@@ -125,7 +124,7 @@ const Home: NextPage = () => {
                   as={Link}
                   variant="solid"
                   px="8"
-                  size="md"
+                  size="lg"
                   m="0 !important"
                   bgColor="#fff"
                   border="none"
@@ -139,31 +138,6 @@ const Home: NextPage = () => {
                   Get Started
                 </Button>
               </NextLink>
-
-              {/* <NextLink href="/stores" passHref>
-                <Button
-                  as={Link}
-                  display={{ base: "none", md: "flex" }}
-                  variant="solid-outline"
-                  size="lg"
-                  color="#fff"
-                  borderColor="#fff"
-                >
-                  Go Shopping
-                </Button>
-              </NextLink> */}
-              {/* <NextLink href="/stores" passHref>
-                <Button
-                  display={{ base: "flex", md: "none" }}
-                  as={Link}
-                  variant="solid-outline"
-                  size="md"
-                  color="#fff"
-                  borderColor="#fff"
-                >
-                  Go Shopping
-                </Button>
-              </NextLink> */}
             </Stack>
           </Stack>
         </Stack>
@@ -234,35 +208,9 @@ const Home: NextPage = () => {
           <Stack
             direction={{ base: "column", md: "row" }}
             px={{ base: "2", md: "24" }}
-            h={{ base: "636px", md: "536px" }}
+            h={{ base: "436px", md: "636px" }}
             spacing={{ base: "4", md: "4" }}
           >
-            <Stack
-              p={{ base: "8", md: "12" }}
-              w={{ base: "100%", md: "1280px" }}
-              align="center"
-              bg="#FAFAFA"
-              h="100%"
-              spacing={{ base: "6", md: "12" }}
-            >
-              <Heading
-                color="#1D1D1F"
-                fontWeight="600"
-                fontSize={{ base: "1.125rem", md: "28px" }}
-                textAlign="center"
-              >
-                Sell Edibles & Pharma
-              </Heading>
-              <chakra.figure
-                bgRepeat="no-repeat"
-                bgSize="contain"
-                bgPosition="center center"
-                bgImage="url(/images/edible.png)"
-                width="100%"
-                height="100%"
-              ></chakra.figure>
-            </Stack>
-
             <Stack
               p="12"
               w="100%"
@@ -272,29 +220,37 @@ const Home: NextPage = () => {
               bgRepeat="no-repeat"
               bgSize="cover"
               bgPosition="center center"
-              bgImage="linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)),url(/images/highlight.jpg)"
+              bgImage="linear-gradient(0deg, rgba(0, 0, 0, 48%), rgba(0, 0, 0, 90%)),url(/images/highlight.png)"
               rounded="8px"
               h="100%"
             >
-              <Stack align="center" justify="center" spacing="4">
+              <Stack
+                align="center"
+                justify="center"
+                spacing={{ base: "4", md: "6" }}
+              >
                 <Heading
                   color="#fff"
                   fontWeight="600"
-                  fontSize={{ base: "24px", md: "32px" }}
+                  fontSize={{ base: "26px", md: "46px" }}
                 >
-                  Sell Everything
+                  Sell Your Thing.
                 </Heading>
                 <Stack align="center" spacing="2">
                   <Text
                     textAlign="center"
                     w={{ base: "100%", md: "380px" }}
-                    fontSize={{ base: "12px", md: "1rem" }}
+                    fontSize={{ base: "12px", md: "1.125rem" }}
                     color="#fff"
                   >
                     With one store link that delivers the best experience to
                     your customers
                   </Text>
-                  <Text fontWeight="300" fontSize="10px" color="#fff">
+                  <Text
+                    fontWeight="300"
+                    fontSize={{ base: "xs", md: "sm" }}
+                    color="#fff"
+                  >
                     0 competition. 100% customer loyalty.
                   </Text>
                 </Stack>
@@ -303,7 +259,7 @@ const Home: NextPage = () => {
                     as={Link}
                     borderBottom="none"
                     variant="primary"
-                    size="xs"
+                    size="md"
                     rounded="50px"
                     p="4"
                     bgColor="#fff"
@@ -375,7 +331,7 @@ const Home: NextPage = () => {
                 transform: "scale(1.02)",
               }}
             >
-              Get Started
+              Setup my store
             </Button>
           </NextLink>
         </Stack>
@@ -404,11 +360,11 @@ const Home: NextPage = () => {
               </Link>
             </NextLink>
 
-            <NextLink href="/stores" passHref>
+            {/* <NextLink href="/stores" passHref>
               <Link fontWeight="normal" color="inherit" fontSize="xs" as="span">
                 P2P Stores
               </Link>
-            </NextLink>
+            </NextLink> */}
           </Stack>
 
           <Stack
