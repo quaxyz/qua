@@ -222,7 +222,7 @@ const Home: NextPage = () => {
               bgSize="cover"
               bgPosition="10% 60%"
               bgImage="linear-gradient(0deg, rgba(0, 0, 0, 99%), rgba(0, 0, 0, 80%)),url(/images/highlight.png)"
-              bgAttachment="local, fixed"
+              bgAttachment="scroll, fixed"
               rounded="16px"
               h="100%"
             >
