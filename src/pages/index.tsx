@@ -58,7 +58,7 @@ const Home: NextPage = () => {
 
       <Container
         maxW="100%"
-        h={{ base: "50vh", md: "50vh" }}
+        pb={{ base: "3rem", md: "8rem" }}
         bgRepeat="no-repeat"
         bgSize="cover"
         bgPosition="50% 60%"
@@ -94,7 +94,8 @@ const Home: NextPage = () => {
                 color="#fff"
                 opacity="0.87"
               >
-                Your one store link to sell products directly to your customers
+                Your unique store link to sell products directly to your
+                customers
               </Text>
             </Stack>
 
