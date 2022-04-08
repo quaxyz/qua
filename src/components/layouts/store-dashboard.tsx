@@ -16,26 +16,36 @@ import { useStoreUser } from "hooks/auth";
 import { Bag, Category, Graph, User, Show } from "react-iconly";
 import { CgMore } from "react-icons/cg";
 
-const navLinks = [
-  {
-    name: "Dashboard",
-    icon: (props: any) => <Category set="light" {...props} />,
-    url: "/dashboard/",
-  },
-  {
-    name: "Products",
-    icon: (props: any) => <Graph set="light" {...props} />,
-    url: "/dashboard/products/",
-  },
-  {
-    name: "Orders",
-    icon: (props: any) => <Bag set="light" {...props} />,
-    url: "/dashboard/orders/",
-  },
-];
+const useNavLinks = () => {
+  const router = useRouter();
+  return React.useMemo(() => {
+    console.log(router.asPath);
+    return [
+      {
+        name: "Dashboard",
+        icon: (props: any) => <Category set="light" {...props} />,
+        url: `/${router.query.store}/`,
+        isActive: router.asPath === `/${router.query.store}/`,
+      },
+      {
+        name: "Products",
+        icon: (props: any) => <Graph set="light" {...props} />,
+        url: `/${router.query.store}/products/`,
+        isActive: router.asPath?.includes("products"),
+      },
+      {
+        name: "Orders",
+        icon: (props: any) => <Bag set="light" {...props} />,
+        url: `/${router.query.store}/orders/`,
+        isActive: router.asPath?.includes("orders"),
+      },
+    ];
+  }, [router]);
+};
 
 const DashboardLayout = ({ title, children }: any) => {
   const router = useRouter();
+  const navLinks = useNavLinks();
 
   // handle auth session here
   const user = useStoreUser();
@@ -118,7 +128,7 @@ const DashboardLayout = ({ title, children }: any) => {
                 <Icon mr="2" as={(props) => <User set="bold" {...props} />} />
               }
               as={Link}
-              href="/dashboard/settings"
+              href={`/${router.query.store}/settings`}
             >
               My Account
             </Button>
@@ -145,7 +155,7 @@ const DashboardLayout = ({ title, children }: any) => {
                   rounded="8px"
                   borderBottom="none"
                   _hover={{ transform: "scale(1.02)" }}
-                  {...(router.asPath === navLink.url
+                  {...(navLink.isActive
                     ? { color: "#fff", bg: "#000" }
                     : { color: "#000" })}
                 >
@@ -212,20 +222,12 @@ const DashboardLayout = ({ title, children }: any) => {
               borderColor="rgb(255 255 255 / 16%)"
               rightIcon={<Icon as={CgMore} />}
               as={Link}
-              href="/dashboard/settings"
-              {...(router.asPath === "/dashboard/settings/"
-                ? {
-                    color: "#000",
-                    bg: "#131415",
-                    _hover: { bg: "white" },
-                  }
-                : {
-                    color: "#131415",
-                    _hover: {
-                      bg: "transparent",
-                      borderColor: "rgb(255 255 255 / 48%)",
-                    },
-                  })}
+              href={`/${router.query.store}/settings`}
+              color="#131415"
+              _hover={{
+                bg: "transparent",
+                borderColor: "rgb(255 255 255 / 48%)",
+              }}
             >
               My Account
             </Button>
@@ -267,18 +269,14 @@ const DashboardLayout = ({ title, children }: any) => {
                 href={NavLink.url}
                 borderBottom="none"
                 color="#FFF"
-                {...(router.asPath === NavLink.url
-                  ? { textDecoration: "underline" }
-                  : {})}
+                {...(NavLink.isActive ? { textDecoration: "underline" } : {})}
               >
                 <Stack spacing={2} align="center">
                   <Icon
                     boxSize={5}
                     as={(props) => (
                       <NavLink.icon
-                        {...(router.asPath === NavLink.url
-                          ? { set: "bold" }
-                          : {})}
+                        {...(NavLink.isActive ? { set: "bold" } : {})}
                         {...props}
                       />
                     )}

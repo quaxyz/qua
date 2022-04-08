@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import prisma from "libs/prisma";
 import Link from "components/link";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 import {
@@ -27,6 +28,8 @@ import {
 } from "react-iconly";
 import { HiOutlineClock } from "react-icons/hi";
 import { OrderPaymentStatus, OrderStatus } from "components/order-pill";
+import { useRouter } from "next/router";
+import { GetServerSideProps } from "next";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -114,6 +117,8 @@ const InfoCard = (props: any) => {
 };
 
 const Page = ({ orders = [] }: any) => {
+  const { query } = useRouter();
+
   const cards = [
     {
       bgColor: "#FEEECD",
@@ -157,94 +162,6 @@ const Page = ({ orders = [] }: any) => {
   return (
     <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
       <Stack spacing={10} divider={<StackDivider />}>
-        <Stack pos="relative">
-          <Stack
-            pos="absolute"
-            w="100%"
-            h="100%"
-            zIndex="2"
-            align="center"
-            justify="center"
-          >
-            <Stack direction="row" align="center" pt={{ base: "4", md: "24" }}>
-              <HiOutlineClock fontSize="24px" />
-              <Text
-                textAlign="center"
-                margin="auto"
-                opacity="0.8"
-                fontWeight="600"
-              >
-                Analytics is coming soon...
-              </Text>
-            </Stack>
-          </Stack>
-
-          <Stack opacity="0.2" pointerEvents="none" userSelect="none">
-            <Flex justifyContent="space-between" py="2rem" alignItems="center">
-              <Heading
-                as="h2"
-                fontSize={{ base: "18px", md: "24px" }}
-                fontWeight="500"
-                color="#000"
-              >
-                Overview
-              </Heading>
-
-              <Popover matchWidth>
-                <PopoverTrigger>
-                  <Button
-                    _hover={{
-                      bg: "transparent",
-                      borderColor: "rgb(255 255 255 / 48%)",
-                    }}
-                    display="flex"
-                    bgColor="#ffffff"
-                    border="1px solid rgba(0, 0, 0, 0.08)"
-                    color="black"
-                  >
-                    <Icon
-                      as={() => <Calendar set="light" primaryColor="#000000" />}
-                    />
-                    <Text px="10px">Today</Text>
-                    <Icon
-                      as={() => (
-                        <ChevronDown set="light" primaryColor="#000000" />
-                      )}
-                    />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  w="fit-content"
-                  bgColor="transparent"
-                  border="none"
-                  boxShadow="none"
-                >
-                  <PopoverArrow />
-                  <DatePicker
-                    selected={startDate}
-                    onChange={handleChange}
-                    inline
-                  />
-                </PopoverContent>
-              </Popover>
-            </Flex>
-            <Box>
-              <Stack
-                width="100%"
-                justifyContent="space-between"
-                direction={{ base: "column", md: "row" }}
-                spacing={{ base: "1rem", md: "24px" }}
-              >
-                {cards.map((card, index) => (
-                  <Box key={index}>
-                    <InfoCard {...card} key={index} />
-                  </Box>
-                ))}
-              </Stack>
-            </Box>
-          </Stack>
-        </Stack>
-
         <Stack>
           <Stack direction="row" justify="space-between" align="center" mb={10}>
             <Heading
@@ -256,7 +173,7 @@ const Page = ({ orders = [] }: any) => {
               Activity
             </Heading>
 
-            <Link href="/orders">View all orders</Link>
+            <Link href={`/${query.store}/orders`}>View all orders</Link>
           </Stack>
 
           {!ordersIsEmpty ? (
@@ -297,7 +214,7 @@ const Page = ({ orders = [] }: any) => {
                       </Text>
 
                       <Link
-                        href={`/orders/${order.id}`}
+                        href={`/${query.store}/orders/${order.id}`}
                         fontSize="16px"
                         fontWeight={{ base: "400", md: "600" }}
                       >
@@ -373,7 +290,7 @@ const Page = ({ orders = [] }: any) => {
 
                 <Link
                   as={Button}
-                  href="/products/new"
+                  href={`/${query.store}/products/new`}
                   variant="primary"
                   colorScheme="black"
                 >
@@ -393,11 +310,32 @@ const Page = ({ orders = [] }: any) => {
   );
 };
 
-export const getServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const store = (params?.store as string) || "";
+
+  const data = await prisma.order.findMany({
+    take: 5,
+    where: {
+      store: {
+        name: store,
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: {
+      id: true,
+      customerDetails: true,
+      status: true,
+      paymentStatus: true,
+    },
+  });
+
   return {
     props: {
+      orders: data,
       layoutProps: {
-        title: "Dashboard",
+        title: `Dashboard - ${store}`,
       },
     },
   };
