@@ -64,7 +64,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return res.send(`
           <script>
             localStorage.setItem('QUA_AUTH', '${userToken}');
-            document.location = '/settings';
+            document.location = '/${store.name}/settings';
           </script>
         `);
       }

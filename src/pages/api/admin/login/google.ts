@@ -92,6 +92,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         // send user to settings page and set the token
         return res.send({
           token: userToken,
+          store: store.name,
         });
       }
       default:

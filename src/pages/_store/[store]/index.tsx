@@ -20,7 +20,6 @@ import { getLayoutProps } from "components/layouts/customer-props";
 import { useInfiniteQuery } from "react-query";
 import { useIntersection } from "react-use";
 import { formatCurrency } from "libs/currency";
-import { useGetLink } from "hooks/utils";
 import { GetServerSideProps } from "next";
 import { withSsrSession } from "libs/session";
 import { useRouter } from "next/router";

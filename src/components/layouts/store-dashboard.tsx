@@ -1,12 +1,10 @@
 import React from "react";
 import Head from "next/head";
-import _capitalize from "lodash.capitalize";
 import { useRouter } from "next/router";
 import {
   Button,
   chakra,
   CircularProgress,
-  Container,
   Grid,
   Heading,
   Icon,
@@ -14,7 +12,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Link from "components/link";
-import { AccountMenu } from "components/account";
 import { useStoreUser } from "hooks/auth";
 import { Bag, Category, Graph, User, Show } from "react-iconly";
 import { CgMore } from "react-icons/cg";
@@ -37,62 +34,22 @@ const navLinks = [
   },
 ];
 
-const walletMenuLinks = [
-  {
-    label: "Settings",
-    url: `/dashboard/settings`,
-  },
-];
-
-const AuthNotOwner = () => (
-  <Stack minH="100%" align="center" justify="center">
-    <chakra.div
-      pos="absolute"
-      top="0"
-      left="0"
-      h="100vh"
-      w="100vw"
-      backdropFilter="blur(4px)"
-      bg="rgb(0 0 0 / 12%)"
-      zIndex="2"
-    />
-
-    <Container maxW="lg" bg="#fff" pos="relative" zIndex="3" px={12} py={12}>
-      <Heading fontSize="xl" mb={10}>
-        Oops!
-      </Heading>
-
-      <Text fontWeight="400" mb={8}>
-        You are not logged in as the owner of this store
-      </Text>
-
-      <Stack direction="row" spacing={4}>
-        <Link fontSize="sm" href="/dashboard/login">
-          Login
-        </Link>
-
-        <Text fontSize="sm">Or</Text>
-
-        <Link fontSize="sm" href="/">
-          Go back to products
-        </Link>
-      </Stack>
-    </Container>
-  </Stack>
-);
-
 const DashboardLayout = ({ title, children }: any) => {
   const router = useRouter();
 
   // handle auth session here
-  const storeUser = useStoreUser();
+  const user = useStoreUser();
+
+  React.useEffect(() => {
+    if (user.isFetched && !user.data?.user) {
+      router.push("/login");
+    }
+  }, [router, user.data, user.isFetched]);
 
   return (
     <>
       <Head>
-        <title>
-          {title} - {_capitalize((router.query.store as string) || "")}
-        </title>
+        <title>{title}</title>
       </Head>
 
       <Grid
@@ -106,6 +63,7 @@ const DashboardLayout = ({ title, children }: any) => {
         }}
         minH="100vh"
       >
+        {/* topbar */}
         <chakra.nav
           gridArea="topbar"
           display={{ base: "none", md: "flex" }}
@@ -167,6 +125,7 @@ const DashboardLayout = ({ title, children }: any) => {
           </Stack>
         </chakra.nav>
 
+        {/* sidebar */}
         <chakra.aside
           gridArea="sidebar"
           py={8}
@@ -207,6 +166,7 @@ const DashboardLayout = ({ title, children }: any) => {
           </Stack>
         </chakra.aside>
 
+        {/* mobile topbar */}
         <chakra.header
           gridArea="topbar"
           borderBottom="1px solid rgba(19, 20, 21, 0.08)"
@@ -272,18 +232,18 @@ const DashboardLayout = ({ title, children }: any) => {
           </Stack>
         </chakra.header>
 
+        {/* main */}
         <chakra.main gridArea="main">
-          {storeUser.isLoading ? (
+          {user.isLoading ? (
             <Stack align="center" justify="center" minH="100%">
               <CircularProgress isIndeterminate color="black" />
             </Stack>
-          ) : storeUser.data?.user ? (
+          ) : user.data?.user ? (
             children
-          ) : (
-            <AuthNotOwner />
-          )}
+          ) : null}
         </chakra.main>
 
+        {/* mobile bottom */}
         <chakra.aside
           gridArea="bottombar"
           bg="#000000"
@@ -292,7 +252,7 @@ const DashboardLayout = ({ title, children }: any) => {
           h="4.938rem"
           w="100%"
           display={{ base: "block", md: "none" }}
-          zIndex="2"
+          zIndex="1"
         >
           <Stack
             direction="row"

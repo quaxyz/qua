@@ -68,9 +68,9 @@ const useGoogleAuth = () => {
     },
     {
       onSuccess: async ({ payload }) => {
-        await queryClient.invalidateQueries(["user"]);
+        await queryClient.invalidateQueries("user");
         localStorage.setItem("QUA_AUTH", payload.token);
-        router.push("/settings");
+        router.push(`/${payload.store}/settings`);
       },
 
       onError: (err: any) => {
@@ -114,9 +114,9 @@ const useWalletAuth = () => {
     },
     {
       onSuccess: async ({ payload }) => {
-        await queryClient.invalidateQueries(["user"]);
+        await queryClient.invalidateQueries("user");
         localStorage.setItem("QUA_AUTH", payload.token);
-        router.push("/settings");
+        router.push(`/${payload.store}/settings`);
       },
       onError: (err: any) => {
         toast({

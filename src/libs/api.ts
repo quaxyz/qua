@@ -2,11 +2,21 @@ import Router from "next/router";
 
 export default function Api() {
   const store = Router.query.store;
-  const href = `/api/` + (store ? `_store/${store}` + "/" : "");
+  const urlPrefix = `/api/`;
 
   const request: any = async (path: string, options: any = {}) => {
     const pathWithSlash = path.replace(/^\/?/, "");
-    const response = await fetch(`${href}${pathWithSlash}`, options);
+
+    // inject auth token into request
+    const authToken = localStorage.getItem("QUA_AUTH");
+    if (authToken) {
+      options.headers = {
+        Authorization: "Bearer " + authToken,
+        ...options.headers,
+      };
+    }
+
+    const response = await fetch(`${urlPrefix}${pathWithSlash}`, options);
 
     let payload;
     const contentType = response.headers.get("content-type");

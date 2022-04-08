@@ -5,16 +5,18 @@
     "dev": "next dev -p 8888",
     "build": "next build",
     "start": "next start -p 8888",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prettier": "prettier \"**/*.{ts,tsx,json,yaml,yml}\"",
+    "fix": "npm run prettier -- --write && npm run lint -- --fix",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.7.2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
-    "@fleekhq/fleek-storage-js": "^1.0.20",
+    "@fleekhq/fleek-storage-js": "1.0.21",
     "@prisma/client": "^3.10.0",
     "@sendgrid/mail": "^7.6.2",
-    "@types/coinbase-commerce-node": "^1.0.6",
     "@types/lodash.capitalize": "^4.2.6",
     "@types/lodash.clonedeep": "^4.5.6",
     "@types/lodash.omit": "^4.5.6",
@@ -28,13 +30,12 @@
     "@web3-react/network-connector": "^6.1.9",
     "@web3-react/walletconnect-connector": "6.2.0",
     "asn1.js": "^5.4.1",
+    "aws-sdk": "^2.1111.0",
     "base64-js": "^1.5.1",
     "base64url": "^3.0.1",
     "bn.js": "^5.2.0",
-    "coinbase-commerce-node": "^1.0.4",
     "date-fns": "^2.28.0",
     "ethers": "^5.5.1",
-    "formidable": "^2.0.1",
     "framer-motion": "^4",
     "google-auth-library": "^7.14.0",
     "idb-keyval": "^6.0.3",
@@ -42,7 +43,6 @@
     "jose": "^4.3.7",
     "js-cookie": "^3.0.1",
     "jsonwebtoken": "^8.5.1",
-    "jwk-to-pem": "^2.0.5",
     "lazerpay-node-sdk": "^0.1.4",
     "lodash.capitalize": "^4.2.1",
     "lodash.clonedeep": "^4.5.0",
@@ -73,6 +73,8 @@
     "@types/react": "17.0.37",
     "eslint": "7",
     "eslint-config-next": "12.0.4",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.7",
     "typescript": "4.5.2"
   }
 }
