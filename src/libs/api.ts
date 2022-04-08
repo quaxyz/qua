@@ -7,15 +7,6 @@ export default function Api() {
   const request: any = async (path: string, options: any = {}) => {
     const pathWithSlash = path.replace(/^\/?/, "");
 
-    // inject auth token into request
-    const authToken = localStorage.getItem("QUA_AUTH");
-    if (authToken) {
-      options.headers = {
-        Authorization: "Bearer " + authToken,
-        ...options.headers,
-      };
-    }
-
     const response = await fetch(`${urlPrefix}${pathWithSlash}`, options);
 
     let payload;

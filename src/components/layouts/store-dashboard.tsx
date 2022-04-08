@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import {
   Button,
   chakra,
-  CircularProgress,
   Grid,
   Heading,
   Icon,
@@ -12,7 +11,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Link from "components/link";
-import { useStoreUser } from "hooks/auth";
 import { Bag, Category, Graph, User, Show } from "react-iconly";
 import { CgMore } from "react-icons/cg";
 
@@ -46,15 +44,6 @@ const useNavLinks = () => {
 const DashboardLayout = ({ title, children }: any) => {
   const router = useRouter();
   const navLinks = useNavLinks();
-
-  // handle auth session here
-  const user = useStoreUser();
-
-  React.useEffect(() => {
-    if (user.isFetched && !user.data?.user) {
-      router.push("/login");
-    }
-  }, [router, user.data, user.isFetched]);
 
   return (
     <>
@@ -235,15 +224,7 @@ const DashboardLayout = ({ title, children }: any) => {
         </chakra.header>
 
         {/* main */}
-        <chakra.main gridArea="main">
-          {user.isLoading ? (
-            <Stack align="center" justify="center" minH="100%">
-              <CircularProgress isIndeterminate color="black" />
-            </Stack>
-          ) : user.data?.user ? (
-            children
-          ) : null}
-        </chakra.main>
+        <chakra.main gridArea="main">{children}</chakra.main>
 
         {/* mobile bottom */}
         <chakra.aside

@@ -18,6 +18,7 @@ import { Plus } from "react-iconly";
 import { OrderPaymentStatus, OrderStatus } from "components/order-pill";
 import { useInfiniteQuery } from "react-query";
 import { useRouter } from "next/router";
+import { withSsrSession } from "libs/session";
 
 const Page = ({ orders }: any) => {
   const { query } = useRouter();
@@ -206,37 +207,76 @@ const Page = ({ orders }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const store = (params?.store as string) || "";
+export const getServerSideProps: GetServerSideProps = withSsrSession(
+  async ({ params, req }) => {
+    if (!req.session.data) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
 
-  const data = await prisma.order.findMany({
-    take: 10,
-    where: {
-      store: {
-        name: store,
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    select: {
-      id: true,
-      customer: true,
-      customerDetails: true,
-      status: true,
-      paymentStatus: true,
-    },
-  });
+    const storeName = params?.store as string;
+    if (!storeName) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
 
-  return {
-    props: {
-      orders: JSON.parse(JSON.stringify(data)),
-      layoutProps: {
-        title: `Orders - ${store}`,
+    const store = await prisma.store.findFirst({
+      where: {
+        name: storeName,
+        owner: {
+          id: req.session.data.userId,
+        },
       },
-    },
-  };
-};
+      select: {
+        name: true,
+      },
+    });
+    if (!store) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+
+    const data = await prisma.order.findMany({
+      take: 10,
+      where: {
+        store: {
+          name: store.name,
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        customer: true,
+        customerDetails: true,
+        status: true,
+        paymentStatus: true,
+      },
+    });
+
+    return {
+      props: {
+        orders: JSON.parse(JSON.stringify(data)),
+        layoutProps: {
+          title: `Orders - ${store.name}`,
+        },
+      },
+    };
+  }
+);
 
 Page.Layout = StoreDashboardLayout;
 export default Page;

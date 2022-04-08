@@ -1,6 +1,6 @@
 import React from "react";
 import prisma from "libs/prisma";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { GetServerSideProps } from "next";
 import Api from "libs/api";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
 import {
@@ -14,6 +14,7 @@ import {
   Button,
   Container,
   Stack,
+  Text,
   Textarea,
   FormControl,
   Input,
@@ -24,7 +25,6 @@ import {
   InputLeftElement,
   Icon,
   FormHelperText,
-  Text,
 } from "@chakra-ui/react";
 import { useFileUpload } from "components/file-picker";
 import { defaultCategories } from "libs/constants";
@@ -32,6 +32,7 @@ import { useRouter } from "next/router";
 import { AiFillInstagram } from "react-icons/ai";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { useQueryClient, useMutation, useQuery } from "react-query";
+import { withSsrSession } from "libs/session";
 
 function useSaveSettings() {
   const { query } = useRouter();
@@ -413,52 +414,67 @@ const Page = ({ details }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const storeName = params?.store as string;
-  if (!storeName) {
+export const getServerSideProps: GetServerSideProps = withSsrSession(
+  async ({ params, req }) => {
+    if (!req.session.data) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+
+    const storeName = params?.store as string;
+    if (!storeName) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+
+    const details = await prisma.store.findFirst({
+      where: {
+        name: storeName,
+        owner: {
+          id: req.session.data.userId,
+        },
+      },
+      include: {
+        owner: {
+          select: {
+            email: true,
+            address: true,
+          },
+        },
+        image: {
+          select: {
+            url: true,
+          },
+        },
+      },
+    });
+    if (!details) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+
     return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
+      props: {
+        details: JSON.parse(JSON.stringify(details)),
+        layoutProps: {
+          title: `Settings - ${details.name}`,
+        },
       },
     };
   }
-
-  const details = await prisma.store.findUnique({
-    where: { name: storeName },
-    include: {
-      owner: {
-        select: {
-          email: true,
-          address: true,
-        },
-      },
-      image: {
-        select: {
-          url: true,
-        },
-      },
-    },
-  });
-
-  if (!details) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      details: JSON.parse(JSON.stringify(details)),
-      layoutProps: {
-        title: `Settings - ${details.name}`,
-      },
-    },
-  };
-};
+);
 
 Page.Layout = StoreDashboardLayout;
 export default Page;

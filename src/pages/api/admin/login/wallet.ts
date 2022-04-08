@@ -3,79 +3,84 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
 import { utils } from "ethers";
 import { encodeData } from "libs/jwt";
+import { withSession } from "libs/session";
 
 const LOG_TAG = "[admin-wallet-login]";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  try {
-    const { method, body } = req;
+export default withSession(
+  async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+      const { method, body } = req;
 
-    switch (method) {
-      case "POST": {
-        const { sig, address, message } = body;
+      switch (method) {
+        case "POST": {
+          const { sig, address, message } = body;
 
-        if (!sig || !address || !message) {
-          console.error(LOG_TAG, "invalid payload", method);
-          return res.status(400).send({ error: "invalid payload" });
-        }
+          if (!sig || !address || !message) {
+            console.error(LOG_TAG, "invalid payload", method);
+            return res.status(400).send({ error: "invalid payload" });
+          }
 
-        // verify signature
-        const recoveredAddress = utils.verifyMessage(message, sig);
-        if (address !== recoveredAddress) {
-          console.warn(LOG_TAG, "wrong signature", method);
-          return res.status(400).send({ error: "wrong signature" });
-        }
+          // verify signature
+          const recoveredAddress = utils.verifyMessage(message, sig);
+          if (address !== recoveredAddress) {
+            console.warn(LOG_TAG, "wrong signature", method);
+            return res.status(400).send({ error: "wrong signature" });
+          }
 
-        // store user details
-        let user = await prisma.user.findFirst({
-          where: { address },
-        });
-        if (!user) {
-          console.warn(LOG_TAG, "no user not found for provided address");
+          // store user details
+          let user = await prisma.user.findFirst({
+            where: { address },
+          });
+          if (!user) {
+            console.warn(LOG_TAG, "no user not found for provided address");
 
-          return res
-            .status(400)
-            .send({ error: "No user found for this wallet address" });
-        }
+            return res
+              .status(400)
+              .send({ error: "No user found for this wallet address" });
+          }
 
-        const store = await prisma.store.findFirst({
-          where: {
-            owner: {
-              id: user.id,
+          const store = await prisma.store.findFirst({
+            where: {
+              owner: {
+                id: user.id,
+              },
             },
-          },
-        });
-        if (!store) {
-          console.warn(LOG_TAG, "No store found for user", {
-            userId: user.id,
           });
+          if (!store) {
+            console.warn(LOG_TAG, "No store found for user", {
+              userId: user.id,
+            });
 
-          return res.status(400).send({
-            error:
-              "You haven't created any store, please create a store and try again",
+            return res.status(400).send({
+              error:
+                "You haven't created any store, please create a store and try again",
+            });
+          }
+
+          req.session.data = {
+            userId: user.id,
+            address: user.address,
+          };
+          await req.session.save();
+
+          return res.send({
+            redirect: true,
+            url: `/${store.name}/`,
           });
         }
-
-        // generate jwt token for user
-        const userToken = encodeData({ id: user.id }, { expiresIn: "60d" });
-
-        // send user to settings page and set the token
-        return res.send({
-          token: userToken,
-          store: store.name,
-        });
+        default:
+          console.error(LOG_TAG, "unauthorized method", method);
+          return res.status(500).send({ error: "unauthorized method" });
       }
-      default:
-        console.error(LOG_TAG, "unauthorized method", method);
-        return res.status(500).send({ error: "unauthorized method" });
-    }
-  } catch (error) {
-    console.error(LOG_TAG, "general error", {
-      name: (error as any).name,
-      message: (error as any).message,
-      stack: (error as any).stack,
-    });
+    } catch (error) {
+      console.error(LOG_TAG, "general error", {
+        name: (error as any).name,
+        message: (error as any).message,
+        stack: (error as any).stack,
+      });
 
-    return res.status(500).send({ error: "request failed" });
+      return res.status(500).send({ error: "request failed" });
+    }
   }
-};
+);

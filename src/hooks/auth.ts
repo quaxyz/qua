@@ -5,20 +5,6 @@ import { useWeb3React } from "@web3-react/core";
 import { COOKIE_STORAGE_NAME } from "libs/cookie";
 import { useRouter } from "next/router";
 
-export const useStoreUser = () => {
-  const router = useRouter();
-
-  return useQuery({
-    queryKey: ["user", router.query.store],
-    staleTime: 0, // always stale
-    cacheTime: 0,
-    queryFn: async () => {
-      const { payload } = await Api().get(`/admin/${router.query.store}/user`);
-      return payload;
-    },
-  });
-};
-
 export const useCustomerData = (initialData?: any) => {
   return useQuery({
     queryKey: ["customer-data"],

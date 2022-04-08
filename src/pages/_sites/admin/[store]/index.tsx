@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import prisma from "libs/prisma";
 import Link from "components/link";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
@@ -8,155 +8,19 @@ import {
   Container,
   Flex,
   Heading,
-  Icon,
   Image,
-  Popover,
-  PopoverArrow,
-  PopoverContent,
-  PopoverTrigger,
   Stack,
   StackDivider,
   Text,
 } from "@chakra-ui/react";
-import {
-  ArrowDown,
-  ArrowUp,
-  Bag,
-  Calendar,
-  ChevronDown,
-  Plus,
-} from "react-iconly";
-import { HiOutlineClock } from "react-icons/hi";
+import { Plus } from "react-iconly";
 import { OrderPaymentStatus, OrderStatus } from "components/order-pill";
 import { useRouter } from "next/router";
 import { GetServerSideProps } from "next";
-
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-
-const InfoCard = (props: any) => {
-  return (
-    <Box
-      maxW="100%"
-      border="0.5px solid rgba(0, 0, 0, 0.12)"
-      display="flex"
-      alignItems="center"
-      justifyContent="space-between"
-      p={{ base: "2.2rem", md: "4rem" }}
-      borderRadius="12px"
-      bgColor={props.bgColor || "#ffffff"}
-    >
-      <div>
-        <Box display="flex" alignItems="center">
-          <Heading
-            as="h3"
-            fontSize={{ base: "24px", md: "36px" }}
-            fontWeight="400"
-            lineHeight="43.57px"
-          >
-            {props.amount || 0}
-          </Heading>
-          <Box display="flex" alignItems="center" ml="11px">
-            {props.rate && (
-              <Icon
-                as={() =>
-                  props.rateIsNegative ? (
-                    <ArrowDown
-                      set="light"
-                      primaryColor="rgba(235, 87, 87, 1)"
-                    />
-                  ) : (
-                    <ArrowUp set="light" primaryColor="rgba(2, 120, 87, 1)" />
-                  )
-                }
-              />
-            )}
-
-            {props.rate && (
-              <Text
-                color={
-                  props.rateIsNegative
-                    ? "rgba(235, 87, 87, 1)"
-                    : "rgba(2, 120, 87, 1)"
-                }
-                fontSize="16px"
-                fontWeight="500"
-                lineHeight="19.36px"
-              >
-                {props.rate ? `${props.rate}%` : 0}
-              </Text>
-            )}
-          </Box>
-        </Box>
-        <Text
-          fontSize="15px"
-          lineHeight="18.15px"
-          letterSpacing=".15px"
-          fontWeight="400"
-          opacity=".48"
-        >
-          {props.title}
-        </Text>
-      </div>
-      {props.icon && (
-        <Box
-          h="60px"
-          w="60px"
-          ml="24px"
-          borderRadius="50%"
-          bgColor="rgba(255, 255, 255, 0.48)"
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Icon boxSize={7} as={props.icon} />
-        </Box>
-      )}
-    </Box>
-  );
-};
+import { withSsrSession } from "libs/session";
 
 const Page = ({ orders = [] }: any) => {
   const { query } = useRouter();
-
-  const cards = [
-    {
-      bgColor: "#FEEECD",
-      amount: 0,
-      rateIsNegative: true,
-      title: "Unfulfilled orders",
-      icon: (props: any) => (
-        <Bag set="light" {...props} primaryColor="rgba(251, 169, 4, 1)" />
-      ),
-    },
-    {
-      bgColor: "",
-      rate: 12,
-      amount: 0,
-      rateIsNegative: true,
-      title: "Total orders",
-    },
-    {
-      bgColor: "",
-      rate: 16,
-      amount: 0,
-      rateIsNegative: true,
-      title: "Product views",
-    },
-    {
-      bgColor: "",
-      rate: 16,
-      amount: "$0",
-      rateIsNegative: true,
-      title: "Total revenue",
-    },
-  ];
-
-  const [startDate, setStartDate] = useState(new Date());
-  const handleChange = (e: any) => {
-    setStartDate(e);
-  };
-
   const ordersIsEmpty = !orders.length;
 
   return (
@@ -310,36 +174,75 @@ const Page = ({ orders = [] }: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const store = (params?.store as string) || "";
+export const getServerSideProps: GetServerSideProps = withSsrSession(
+  async ({ params, req }) => {
+    if (!req.session.data) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
 
-  const data = await prisma.order.findMany({
-    take: 5,
-    where: {
-      store: {
-        name: store,
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    select: {
-      id: true,
-      customerDetails: true,
-      status: true,
-      paymentStatus: true,
-    },
-  });
+    const storeName = params?.store as string;
+    if (!storeName) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
 
-  return {
-    props: {
-      orders: data,
-      layoutProps: {
-        title: `Dashboard - ${store}`,
+    const store = await prisma.store.findFirst({
+      where: {
+        name: storeName,
+        owner: {
+          id: req.session.data.userId,
+        },
       },
-    },
-  };
-};
+      select: {
+        name: true,
+      },
+    });
+    if (!store) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+
+    const data = await prisma.order.findMany({
+      take: 5,
+      where: {
+        store: {
+          name: store.name,
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        customerDetails: true,
+        status: true,
+        paymentStatus: true,
+      },
+    });
+
+    return {
+      props: {
+        orders: data,
+        layoutProps: {
+          title: `Dashboard - ${store.name}`,
+        },
+      },
+    };
+  }
+);
 
 Page.Layout = StoreDashboardLayout;
 export default Page;

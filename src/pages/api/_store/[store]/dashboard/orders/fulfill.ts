@@ -21,7 +21,7 @@ export default withSession(
               query,
               session,
             });
-            return res.send({ redirect: true, url: "/dashboard/login" });
+            return res.send({ redirect: true, url: "/login" });
           }
 
           // verify store owner
@@ -39,7 +39,7 @@ export default withSession(
               session,
             });
 
-            return res.send({ redirect: true, url: "/dashboard/login" });
+            return res.send({ redirect: true, url: "/login" });
           }
 
           const storeName = query.store as string;
@@ -54,7 +54,7 @@ export default withSession(
             },
           });
           if (!order) {
-            console.log(LOG_TAG, "[warning]", "order not found", {
+            console.error(LOG_TAG, "order not found", {
               query,
               order,
             });
@@ -63,12 +63,10 @@ export default withSession(
           }
 
           if (order?.status !== "UNFULFILLED") {
-            console.log(
-              LOG_TAG,
-              "[warning]",
-              "Order is already fulfullied or cancelled",
-              { query, order }
-            );
+            console.warn(LOG_TAG, "Order is already fulfullied or cancelled", {
+              query,
+              order,
+            });
 
             return res.status(400).send({
               error: "order is already fulfullied or cancelled",
@@ -100,11 +98,11 @@ export default withSession(
           return res.status(200).send(result);
         }
         default:
-          console.log(LOG_TAG, "[error]", "unauthorized method", method);
+          console.error(LOG_TAG, "unauthorized method", method);
           return res.status(500).send({ error: "unauthorized method" });
       }
     } catch (error) {
-      console.log(LOG_TAG, "[error]", "general error", {
+      console.error(LOG_TAG, "general error", {
         name: (error as any).name,
         message: (error as any).message,
         stack: (error as any).stack,

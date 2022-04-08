@@ -3,20 +3,13 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
 import _pick from "lodash.pick";
 import { withSession } from "libs/session";
-import { decodeUserToken } from "libs/jwt";
 
 const LOG_TAG = "[admin-store-settings]";
 
 export default withSession(
   async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-      const { method, query, body, headers } = req;
-
-      let payload = decodeUserToken(headers.authorization);
-      if (!payload) {
-        console.warn(LOG_TAG, "No logged in user found");
-        return res.send({ redirect: true, url: "/login" });
-      }
+      const { method, query, body } = req;
 
       switch (method) {
         case "POST": {
@@ -25,8 +18,8 @@ export default withSession(
             body,
           });
 
-          let payload = decodeUserToken(headers.authorization);
-          if (!payload) {
+          const { data: session } = req.session;
+          if (!session || !session.userId) {
             console.warn(LOG_TAG, "No logged in user found");
             return res.send({ redirect: true, url: "/login" });
           }
@@ -36,7 +29,7 @@ export default withSession(
             where: {
               name: query.store as string,
               owner: {
-                id: payload.id,
+                id: session.userId,
               },
             },
           });
