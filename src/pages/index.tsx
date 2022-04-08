@@ -241,7 +241,7 @@ const Home: NextPage = () => {
                 >
                   We refined the experience of starting up an eCommerce store to
                   help you get up and running quickly with a beautiful brand
-                  store you can use to monetize your content anytime, anywhere.
+                  store you can use to monetize your brand anytime, anywhere.
                 </Text>
                 <NextLink href="/setup" passHref>
                   <Button
