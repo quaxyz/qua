@@ -144,12 +144,12 @@ const Home: NextPage = () => {
         </Stack>
       </Container>
 
-      <Container maxW="100%" py={{ base: "12", md: "16" }}>
+      <Container maxW="100%" py={{ base: "12", md: "24" }}>
         <Stack spacing="4">
           <Stack
             direction={{ base: "column", md: "row" }}
             px={{ base: "2", md: "24" }}
-            h={{ base: "636px", md: "536px" }}
+            h={{ base: "648px", md: "700px" }}
             spacing={{ base: "2", md: "4" }}
           >
             <Stack
@@ -160,19 +160,35 @@ const Home: NextPage = () => {
               h="100%"
               spacing={{ base: "6", md: "12" }}
             >
-              <Heading
-                color="#1D1D1F"
-                fontWeight="600"
-                fontSize={{ base: "1.125rem", md: "28px" }}
-                textAlign="center"
+              <Stack
+                align="center"
+                px={{ base: "4", md: "24" }}
+                spacing={{ base: "4", md: "6" }}
               >
-                Sell Computer & Electronics
-              </Heading>
+                <Heading
+                  color="#1D1D1F"
+                  fontWeight="600"
+                  fontSize={{ base: "1.125rem", md: "28px" }}
+                  textAlign="center"
+                >
+                  Businesses
+                </Heading>
+                <Text
+                  color="#000"
+                  fontSize={{ base: "xs", md: "1.125rem" }}
+                  opacity="72%"
+                  textAlign="center"
+                >
+                  Sell your products online with our easy eCommerce store
+                  experience carefully built to work on all devices to help you
+                  and your customers achieve your goals fast.
+                </Text>
+              </Stack>
               <chakra.figure
                 bgRepeat="no-repeat"
-                bgSize="contain"
+                bgSize="100%"
                 bgPosition="center center"
-                bgImage="url(/images/electronics.png)"
+                bgImage="url(/images/business.png)"
                 width="100%"
                 height="100%"
               ></chakra.figure>
@@ -186,20 +202,35 @@ const Home: NextPage = () => {
               h="100%"
               spacing={{ base: "6", md: "12" }}
             >
-              <Heading
-                color="#1D1D1F"
-                fontWeight="600"
-                fontSize={{ base: "1.125rem", md: "28px" }}
-                textAlign="center"
+              <Stack
+                align="center"
+                px={{ base: "4", md: "20" }}
+                spacing={{ base: "4", md: "6" }}
               >
-                Sell Wears & Cosmetics
-              </Heading>
-
+                <Heading
+                  color="#1D1D1F"
+                  fontWeight="600"
+                  fontSize={{ base: "1.125rem", md: "28px" }}
+                  textAlign="center"
+                >
+                  Creatives
+                </Heading>
+                <Text
+                  color="#000"
+                  fontSize={{ base: "xs", md: "1.125rem" }}
+                  opacity="72%"
+                  textAlign="center"
+                >
+                  We refined the experience of setting up an eCommerce store to
+                  help you get up and running quickly with a beautiful brand
+                  store you can use to monetize your content anytime, anywhere.
+                </Text>
+              </Stack>
               <chakra.figure
                 bgRepeat="no-repeat"
-                bgSize="contain"
+                bgSize="100%"
                 bgPosition="center center"
-                bgImage="url(/images/wears.png)"
+                bgImage="url(/images/creative.png)"
                 width="100%"
                 height="100%"
               ></chakra.figure>
@@ -236,7 +267,7 @@ const Home: NextPage = () => {
                   fontWeight="600"
                   fontSize={{ base: "26px", md: "46px" }}
                 >
-                  Sell Your Thing.
+                  Sell Your Own Thing.
                 </Heading>
                 <Stack align="center" spacing="2">
                   <Text
@@ -278,7 +309,7 @@ const Home: NextPage = () => {
         </Stack>
       </Container>
 
-      <Stack pt="4" borderTop="0.8px solid rgba(0, 0, 0, 0.24)" w="100%" />
+      <Stack pt="4" borderTop="0.8px solid rgba(0, 0, 0, 0.12)" w="100%" />
 
       <Container
         maxW="100%"
@@ -294,8 +325,9 @@ const Home: NextPage = () => {
             md: "url(/images/kamran-abdullayev-DvFrRwuyn88-unsplash.jpg)",
           }}
           px={{ base: "6", md: "11rem" }}
-          py={{ base: "12", md: "10rem" }}
+          py={{ base: "12", md: "15rem" }}
           spacing="2"
+          rounded="8"
         >
           <Stack maxW={{ base: "100%", md: "48rem" }} mb="8" spacing="2">
             <Heading
