@@ -150,7 +150,7 @@ const Home: NextPage = () => {
           <Stack
             direction={{ base: "column", md: "row" }}
             px={{ base: "2", md: "24" }}
-            h={{ base: "648px", md: "700px" }}
+            h={{ base: "100%", md: "100%" }}
             spacing={{ base: "2", md: "4" }}
           >
             <Stack
@@ -159,7 +159,7 @@ const Home: NextPage = () => {
               align="center"
               bg="#FAFAFA"
               h="100%"
-              spacing={{ base: "6", md: "12" }}
+              spacing={{ base: "4", md: "2" }}
             >
               <Stack
                 align="center"
@@ -176,7 +176,8 @@ const Home: NextPage = () => {
                 </Heading>
                 <Text
                   color="#000"
-                  fontSize={{ base: "xs", md: "1.125rem" }}
+                  fontSize={{ base: "13px", md: "1rem" }}
+                  fontWeight="400"
                   opacity="72%"
                   textAlign="center"
                 >
@@ -184,15 +185,31 @@ const Home: NextPage = () => {
                   experience carefully built to work on all devices to help you
                   and your customers achieve your goals fast.
                 </Text>
+                <NextLink href="/setup" passHref>
+                  <Button
+                    as={Link}
+                    borderBottom="none"
+                    variant="primary"
+                    size="sm"
+                    rounded="50px"
+                    p="4"
+                    bgColor="#000"
+                    color="#fff"
+                    _hover={{ bgColor: "#000" }}
+                    _focus={{ border: "none" }}
+                  >
+                    Start now
+                  </Button>
+                </NextLink>
               </Stack>
-              <chakra.figure
-                bgRepeat="no-repeat"
-                bgSize="100%"
-                bgPosition="center center"
-                bgImage="url(/images/business.png)"
-                width="100%"
-                height="100%"
-              ></chakra.figure>
+              <Stack align="center" justify="center" h="100%" w="100%">
+                <Image
+                  src="/images/business.png"
+                  boxSize="100%"
+                  objectFit="cover"
+                  alt="For Businesses"
+                />
+              </Stack>
             </Stack>
 
             <Stack
@@ -201,7 +218,7 @@ const Home: NextPage = () => {
               align="center"
               bg="#FAFAFA"
               h="100%"
-              spacing={{ base: "6", md: "12" }}
+              spacing={{ base: "4", md: "2" }}
             >
               <Stack
                 align="center"
@@ -218,23 +235,41 @@ const Home: NextPage = () => {
                 </Heading>
                 <Text
                   color="#000"
-                  fontSize={{ base: "xs", md: "1.125rem" }}
+                  fontSize={{ base: "13px", md: "1rem" }}
+                  fontWeight="400"
                   opacity="72%"
                   textAlign="center"
                 >
-                  We refined the experience of setting up an eCommerce store to
+                  We refined the experience of starting up an eCommerce store to
                   help you get up and running quickly with a beautiful brand
-                  store you can use to monetize your content anytime, anywhere.
+                  store you can use to monetize your brand conveniently.
                 </Text>
+                <NextLink href="/setup" passHref>
+                  <Button
+                    as={Link}
+                    borderBottom="none"
+                    variant="primary"
+                    size="sm"
+                    rounded="50px"
+                    p="4"
+                    bgColor="#000"
+                    color="#fff"
+                    _hover={{ bgColor: "#000" }}
+                    _focus={{ border: "none" }}
+                  >
+                    Start now
+                  </Button>
+                </NextLink>
               </Stack>
-              <chakra.figure
-                bgRepeat="no-repeat"
-                bgSize="100%"
-                bgPosition="center center"
-                bgImage="url(/images/creative.png)"
-                width="100%"
-                height="100%"
-              ></chakra.figure>
+
+              <Stack align="center" justify="center" h="100%" w="100%">
+                <Image
+                  src="/images/creative.png"
+                  boxSize="100%"
+                  objectFit="cover"
+                  alt="For Creatives"
+                />
+              </Stack>
             </Stack>
           </Stack>
 
@@ -267,6 +302,7 @@ const Home: NextPage = () => {
                   color="#fff"
                   fontWeight="600"
                   fontSize={{ base: "26px", md: "46px" }}
+                  textAlign="center"
                 >
                   Sell Your Own Thing.
                 </Heading>
@@ -326,7 +362,7 @@ const Home: NextPage = () => {
             md: "url(/images/kamran-abdullayev-DvFrRwuyn88-unsplash.jpg)",
           }}
           px={{ base: "6", md: "11rem" }}
-          py={{ base: "12", md: "15rem" }}
+          py={{ base: "8rem", md: "15rem" }}
           spacing="2"
           rounded="8"
         >
