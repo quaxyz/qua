@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
 import { withSession } from "libs/session";
 
-const LOG_TAG = "[store-dashboard-cancel-order]";
+const LOG_TAG = "[admin-cancel-order]";
 
 export default withSession(
   async (req: NextApiRequest, res: NextApiResponse) => {

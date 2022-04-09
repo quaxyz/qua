@@ -492,7 +492,7 @@ export const getServerSideProps: GetServerSideProps = withSsrSession(
       props: {
         order: JSON.parse(JSON.stringify(order)),
         layoutProps: {
-          title: "Order Details",
+          title: `Order #${order.id} - ${store.name} `,
         },
       },
     };

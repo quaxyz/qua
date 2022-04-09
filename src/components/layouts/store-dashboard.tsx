@@ -17,7 +17,6 @@ import { CgMore } from "react-icons/cg";
 const useNavLinks = () => {
   const router = useRouter();
   return React.useMemo(() => {
-    console.log(router.asPath);
     return [
       {
         name: "Dashboard",
