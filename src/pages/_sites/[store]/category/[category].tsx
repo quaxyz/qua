@@ -137,7 +137,10 @@ const Page = ({ products, categories }: any) => {
                       height="100%"
                       priority={idx < 4} // first images will be high priority
                       objectFit="cover"
-                      src={data.images[0].url}
+                      src={
+                        data.images[0].url ??
+                        `https://via.placeholder.com/373/e2e8f0?text=Image%20of%20${data.name}`
+                      }
                       alt={data.name}
                     />
 

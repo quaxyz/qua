@@ -3,21 +3,17 @@ import Api from "libs/api";
 import { CartContext, CartItem } from "contexts/cart";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-const useCart = (cart?: any, options?: any) => {
-  const [items, setItems] = useState<CartItem[]>(cart?.items || []);
-  const [subTotal, setSubtotal] = useState(cart?.total || 0);
+const useCart = () => {
+  const [items, setItems] = useState<CartItem[]>([]);
 
   const [loadingCart, setLoadingCart] = useState(false);
-  const [syncingCart, setSyncingCart] = useState(false);
 
   const fetchCartItems = useCallback(async () => {
     setLoadingCart(true);
     try {
       const locallyStoredCart = localStorage.getItem("cartItems");
       if (locallyStoredCart) {
-        // TODO:: merge with current cart
         setItems(JSON.parse(locallyStoredCart).items);
-        setSubtotal(JSON.parse(locallyStoredCart).subtotal);
       }
     } catch (error) {
       console.warn("Error retrieving cart. No items(s) found");
@@ -26,30 +22,8 @@ const useCart = (cart?: any, options?: any) => {
     }
   }, []);
 
-  const syncLocalCartItem = useCallback(async () => {
-    setSyncingCart(true);
-    try {
-      const locallyStoredCart = localStorage.getItem("cartItems");
-      if (!locallyStoredCart) return;
-
-      const { payload } = await Api().post(`/cart`, {
-        cart: JSON.parse(locallyStoredCart).items,
-      });
-
-      setItems(payload.items);
-      setSubtotal(payload.total);
-
-      console.log("Cart synced");
-      localStorage.removeItem("cartItems");
-    } catch (err) {
-      console.log("Error syncing cart", err);
-    } finally {
-      setSyncingCart(false);
-    }
-  }, []);
-
   const addCartItem = useCallback(
-    async (item: CartItem, price: number) => {
+    (item: CartItem) => {
       let editableItems = _cloneDeep(items);
 
       // first check if item is already added
@@ -64,59 +38,36 @@ const useCart = (cart?: any, options?: any) => {
         editableItems = [...items, item];
       }
 
-      const subtotal = subTotal + item.quantity * price;
-
       setItems(editableItems);
-      setSubtotal(subtotal);
 
-      if (options?.isLoggedIn) {
-        await Api().post(`/cart`, {
-          cart: editableItems,
-        });
-      } else {
-        localStorage.setItem(
-          "cartItems",
-          JSON.stringify({
-            items: editableItems,
-            subtotal,
-          })
-        );
-      }
+      localStorage.setItem(
+        "cartItems",
+        JSON.stringify({
+          items: editableItems,
+        })
+      );
     },
-    [items, subTotal, options?.isLoggedIn]
+    [items]
   );
 
   const removeCartItem = useCallback(
-    async (itemId: string, price: number) => {
-      const index = items.findIndex(
-        (cartItem) => cartItem.productId === itemId
-      );
-
+    (itemId: string) => {
       const newItems = items.filter((item) => item.productId !== itemId);
-      const newSubtotal = subTotal - items[index].quantity * price;
 
       setItems(newItems);
-      setSubtotal(newSubtotal);
 
-      if (options?.isLoggedIn) {
-        await Api().post(`/cart`, {
-          cart: newItems,
-        });
-      } else {
-        localStorage.setItem(
-          "cartItems",
-          JSON.stringify({
-            items: newItems,
-            subtotal: newSubtotal,
-          })
-        );
-      }
+      localStorage.setItem(
+        "cartItems",
+        JSON.stringify({
+          items: newItems,
+        })
+      );
     },
-    [options?.isLoggedIn, items, subTotal]
+    [items]
   );
 
   const updateCartItem = useCallback(
-    async (itemid: string, quantity: number, price: number) => {
+    (itemid: string, quantity: number) => {
       const index = items.findIndex(
         (cartItem) => cartItem.productId === itemid
       );
@@ -124,85 +75,44 @@ const useCart = (cart?: any, options?: any) => {
       let editableItems = _cloneDeep(items);
       editableItems[index].quantity = quantity;
 
-      const subtotal =
-        subTotal -
-        items[index].quantity * price +
-        editableItems[index].quantity * price;
-
       setItems(editableItems);
-      setSubtotal(subtotal);
 
-      if (options?.isLoggedIn) {
-        await Api().post(`/cart`, {
-          cart: editableItems,
-        });
-      } else {
-        localStorage.setItem(
-          "cartItems",
-          JSON.stringify({
-            items: editableItems,
-            subtotal,
-          })
-        );
-      }
-    },
-    [options?.isLoggedIn, items, subTotal]
-  );
-
-  const clearCart = useCallback(async () => {
-    setItems([]);
-    setSubtotal(0);
-
-    if (options?.isLoggedIn) {
-      await Api().post(`/cart`, {
-        cart: [],
-      });
-    } else {
       localStorage.setItem(
         "cartItems",
         JSON.stringify({
-          items: [],
-          subtotal: 0,
+          items: editableItems,
         })
       );
-    }
-  }, [options?.isLoggedIn]);
+    },
+    [items]
+  );
+
+  const clearCart = useCallback(() => {
+    setItems([]);
+
+    localStorage.setItem(
+      "cartItems",
+      JSON.stringify({
+        items: [],
+      })
+    );
+  }, []);
 
   useEffect(() => {
-    if (options?.isLoggedIn) syncLocalCartItem();
     fetchCartItems();
-  }, [options?.isLoggedIn, fetchCartItems, syncLocalCartItem]);
-
-  // listen for cart changes
-  useEffect(() => {
-    if (options?.isLoggedIn) {
-      setItems(cart.items);
-      setSubtotal(cart.total);
-    }
-  }, [cart, options?.isLoggedIn]);
+  }, [fetchCartItems]);
 
   return useMemo(
     () => ({
       items,
-      subTotal,
       totalInCart: items.reduce((acc, item) => acc + item.quantity, 0),
       loadingCart,
-      syncingCart,
       addCartItem,
       removeCartItem,
       updateCartItem,
       clearCart,
     }),
-    [
-      items,
-      subTotal,
-      loadingCart,
-      syncingCart,
-      addCartItem,
-      removeCartItem,
-      updateCartItem,
-      clearCart,
-    ]
+    [items, loadingCart, addCartItem, removeCartItem, updateCartItem, clearCart]
   );
 };
 

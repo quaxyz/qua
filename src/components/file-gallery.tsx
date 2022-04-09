@@ -1,4 +1,5 @@
 import React from "react";
+import NextImage from "next/image";
 import { chakra, Image, Stack, Center } from "@chakra-ui/react";
 
 type FileGalleryProps = {
@@ -11,14 +12,21 @@ export function FileGallery(props: FileGalleryProps) {
 
   return (
     <Stack w="full" flex={1} spacing={4}>
-      <chakra.section h={{ base: "sm", md: "xl" }} w="full" pos="relative">
-        <Image
+      <chakra.section
+        h={{ base: "sm", md: "xl" }}
+        w="full"
+        pos="relative"
+        bg="gray.50"
+      >
+        <NextImage
           src={activeImage}
           alt={props.alt || "product image"}
           objectFit="contain"
-          w="full"
-          height="full"
-          cursor="pointer"
+          objectPosition="top"
+          width="100%"
+          height="100%"
+          layout="responsive"
+          priority
         />
       </chakra.section>
 
@@ -28,6 +36,7 @@ export function FileGallery(props: FileGalleryProps) {
             key={idx}
             boxSize="50px"
             cursor="pointer"
+            pos="relative"
             p={activeImage === image.url ? 1 : undefined}
             border={
               activeImage === image.url
@@ -36,12 +45,13 @@ export function FileGallery(props: FileGalleryProps) {
             }
             onClick={() => setActiveImage(image.url)}
           >
-            <Image
+            <NextImage
               src={image.url}
               alt={props.alt || "product image"}
               objectFit="cover"
               objectPosition="center 70%"
-              boxSize="100%"
+              width="50px"
+              height="50px"
             />
           </Center>
         ))}

@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
 
-const LOG_TAG = "[store-products]";
+const LOG_TAG = "[store-category-products]";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -10,10 +10,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     switch (method) {
       case "GET": {
-        console.log(LOG_TAG, "fetch store products", { query });
+        console.log(LOG_TAG, "fetch store products in category", { query });
 
         if (!query.store || !query.category || !query.cursor) {
-          console.log(LOG_TAG, "[warning]", "invalid query", { query });
+          console.warn(LOG_TAG, "invalid query", { query });
           return res.status(400).send({ error: "invalid params" });
         }
 

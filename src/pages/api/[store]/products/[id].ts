@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
 
-const LOG_TAG = "[store-products]";
+const LOG_TAG = "[store-products-details]";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -10,38 +10,33 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     switch (method) {
       case "GET": {
-        console.log(LOG_TAG, "fetch store products", { query });
+        console.log(LOG_TAG, "fetch product item", { query });
 
-        if (!query.store || !query.cursor) {
+        if (
+          !query.store ||
+          !query.id ||
+          isNaN(parseInt(query.id as string, 10))
+        ) {
           console.warn(LOG_TAG, "invalid query", { query });
           return res.status(400).send({ error: "invalid params" });
         }
 
         const store = query.store as string;
-        const products = await prisma.product.findMany({
-          // pagination
-          take: 12,
-          skip: 1,
-          cursor: {
-            id: parseInt(query.cursor as string, 10),
-          },
 
-          // query
+        const product = await prisma.product.findFirst({
           where: {
+            id: parseInt(query.id as string, 10),
             Store: {
-              name: store as string,
+              name: store,
             },
           },
-          orderBy: {
-            updatedAt: "desc",
-          },
-
           select: {
             id: true,
             name: true,
             price: true,
+            totalStocks: true,
+            totalSold: true,
             images: {
-              take: 1,
               select: {
                 url: true,
               },
@@ -49,10 +44,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           },
         });
 
-        return res.status(200).send(products);
+        console.log(LOG_TAG, "returning product details", {
+          product,
+        });
+
+        if (!product) {
+          return res.status(200).send(null);
+        }
+
+        return res.status(200).send({
+          ...product,
+          availableStocks: product.totalStocks
+            ? product.totalStocks - product.totalSold
+            : Infinity,
+        });
       }
       default:
-        console.warn(LOG_TAG, "unauthorized method", method);
+        console.error(LOG_TAG, "unauthorized method", method);
         return res.status(500).send({ error: "unauthorized method" });
     }
   } catch (error) {

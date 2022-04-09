@@ -32,7 +32,7 @@ export const CostSummary = ({ data }: { data: Object }) => {
           </Text>
         ))}
 
-        <Text>${total}</Text>
+        <Text>${total || 0}</Text>
       </Stack>
     </Stack>
   );

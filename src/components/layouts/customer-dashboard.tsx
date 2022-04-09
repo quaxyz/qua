@@ -16,8 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { CartContext } from "contexts/cart";
 import { useRouter } from "next/router";
-import { Bag2, User } from "react-iconly";
-import { AccountMenu } from "components/account";
+import { Bag2 } from "react-iconly";
 
 const useNavLinks = () => {
   const router = useRouter();
