@@ -16,7 +16,6 @@ import { useMutation } from "react-query";
 import { defaultCategories } from "libs/constants";
 import { useRouter } from "next/router";
 import { FormGroup } from "components/form-group";
-import { withSsrSession } from "libs/session";
 
 const Page = () => {
   const router = useRouter();
@@ -173,24 +172,5 @@ const Page = () => {
     </>
   );
 };
-
-export const getServerSideProps = withSsrSession(async ({ req, res }: any) => {
-  const data = req.session.data;
-
-  if (data === undefined) {
-    res.setHeader("location", "/setup");
-    res.statusCode = 302;
-    res.end();
-    return {
-      props: {},
-    };
-  }
-
-  return {
-    props: {
-      ...data,
-    },
-  };
-});
 
 export default Page;

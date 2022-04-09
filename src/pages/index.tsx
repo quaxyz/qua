@@ -1,6 +1,10 @@
-import { Button } from "@chakra-ui/button";
+import React from "react";
+import type { NextPage } from "next";
+import Head from "next/head";
+import NextLink from "next/link";
 import {
   Box,
+  Button,
   chakra,
   Container,
   Heading,
@@ -9,12 +13,15 @@ import {
   Text,
   Link,
 } from "@chakra-ui/react";
-import type { NextPage } from "next";
-import Head from "next/head";
-import NextLink from "next/link";
+
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const Home: NextPage = () => {
+  const adminPath = React.useMemo(() => {
+    const proto = process.env.NODE_ENV === "production" ? "https" : "http";
+    return `${proto}://admin.${process.env.NEXT_PUBLIC_DOMAIN}`;
+  }, []);
+
   return (
     <>
       <Head>
@@ -50,8 +57,8 @@ const Home: NextPage = () => {
             </a>
           </NextLink>
 
-          <NextLink href="/setup" passHref>
-            <Link>Try Demo</Link>
+          <NextLink href={`${adminPath}/login`} passHref>
+            <Link>Login</Link>
           </NextLink>
         </Stack>
       </chakra.nav>
@@ -100,7 +107,7 @@ const Home: NextPage = () => {
             </Stack>
 
             <Stack direction="row" spacing="4">
-              <NextLink href="/setup" passHref>
+              <NextLink href={`${adminPath}/setup`} passHref>
                 <Button
                   display={{ base: "none", md: "flex" }}
                   as={Link}
@@ -120,7 +127,7 @@ const Home: NextPage = () => {
                 </Button>
               </NextLink>
 
-              <NextLink href="/setup" passHref>
+              <NextLink href={`${adminPath}/setup`} passHref>
                 <Button
                   display={{ base: "flex", md: "none" }}
                   as={Link}
@@ -185,7 +192,7 @@ const Home: NextPage = () => {
                   experience carefully built to work on all devices to help you
                   and your customers achieve your goals fast.
                 </Text>
-                <NextLink href="/setup" passHref>
+                <NextLink href={`${adminPath}/setup`} passHref>
                   <Button
                     as={Link}
                     borderBottom="none"
@@ -244,7 +251,7 @@ const Home: NextPage = () => {
                   help you get up and running quickly with a beautiful brand
                   store you can use to monetize your brand conveniently.
                 </Text>
-                <NextLink href="/setup" passHref>
+                <NextLink href={`${adminPath}/setup`} passHref>
                   <Button
                     as={Link}
                     borderBottom="none"
@@ -324,7 +331,7 @@ const Home: NextPage = () => {
                     0 competition. 100% customer loyalty.
                   </Text>
                 </Stack>
-                <NextLink href="/setup" passHref>
+                <NextLink href={`${adminPath}/setup`} passHref>
                   <Button
                     as={Link}
                     borderBottom="none"
@@ -386,7 +393,7 @@ const Home: NextPage = () => {
               shipping, and payments all in one place.
             </Text>
           </Stack>
-          <NextLink href="/setup" passHref>
+          <NextLink href={`${adminPath}/setup`} passHref>
             <Button
               as={Link}
               variant="solid"
@@ -430,12 +437,6 @@ const Home: NextPage = () => {
                 About Qua
               </Link>
             </NextLink>
-
-            {/* <NextLink href="/stores" passHref>
-              <Link fontWeight="normal" color="inherit" fontSize="xs" as="span">
-                P2P Stores
-              </Link>
-            </NextLink> */}
           </Stack>
 
           <Stack

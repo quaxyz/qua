@@ -11,14 +11,13 @@ import {
   Heading,
   Button,
   Text,
-  UnorderedList,
 } from "@chakra-ui/react";
-import { Wallet } from "components/wallet";
-import { useRouter } from "next/router";
-import base from "@emotion/styled/types/base";
 
 const WebsiteLayout: React.FC = ({ children }) => {
-  const router = useRouter();
+  const adminPath = React.useMemo(() => {
+    const proto = process.env.NODE_ENV === "production" ? "https" : "http";
+    return `${proto}://admin.${process.env.NEXT_PUBLIC_DOMAIN}`;
+  }, []);
 
   return (
     <>
@@ -50,7 +49,7 @@ const WebsiteLayout: React.FC = ({ children }) => {
           </NextLink>
 
           <Stack>
-            <NextLink href="/setup" passHref>
+            <NextLink href={`${adminPath}/setup`} passHref>
               <Link>Start selling</Link>
             </NextLink>
           </Stack>
@@ -80,15 +79,6 @@ const WebsiteLayout: React.FC = ({ children }) => {
               />
             </a>
           </NextLink>
-
-          <Wallet
-            ButtonProps={{
-              variant: "primary",
-              color: "#FFF",
-              rounded: "8px",
-              size: "md",
-            }}
-          />
         </Stack>
       </chakra.nav>
 
@@ -133,7 +123,7 @@ const WebsiteLayout: React.FC = ({ children }) => {
               spacing={{ base: "4", md: "4" }}
             >
               <Stack direction={{ base: "column", md: "row" }}>
-                <NextLink href="/setup" passHref>
+                <NextLink href={`${adminPath}/setup`} passHref>
                   <Button
                     as={Link}
                     w={{ base: "100%", md: "15.5rem" }}
