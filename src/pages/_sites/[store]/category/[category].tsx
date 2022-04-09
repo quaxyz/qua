@@ -1,5 +1,5 @@
 import React from "react";
-import { GetStaticProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import prisma from "libs/prisma";
 import Api from "libs/api";
 import NextLink from "next/link";
@@ -34,11 +34,11 @@ function useQueryProducts({ initialData }: any) {
   });
 
   const queryResp = useInfiniteQuery({
-    queryKey: ["store-products"],
+    queryKey: ["store-category", query.category],
     initialData: { pages: [initialData], pageParams: [] },
     queryFn: async ({ pageParam }) => {
       const { payload }: any = await Api().get(
-        `/${query.store}/products?cursor=${pageParam}`
+        `/${query.store}/products/category/${query.category}/?cursor=${pageParam}`
       );
       return payload;
     },
@@ -171,9 +171,42 @@ const Page = ({ products, categories }: any) => {
   );
 };
 
-export const getStaticPaths = getStorePaths;
+export const getStaticPaths: GetStaticPaths = async () => {
+  const stores = await prisma.store.findMany({
+    select: {
+      name: true,
+      products: {
+        distinct: ["category"],
+        select: {
+          category: true,
+        },
+      },
+    },
+  });
+
+  const paths = [];
+  for (let store of stores) {
+    const categories = store.products
+      .map((p) => p.category)
+      .filter((c): c is string => Boolean(c));
+
+    for (let category of categories) {
+      paths.push({
+        params: {
+          store: store.name,
+          category: category,
+        },
+      });
+    }
+  }
+
+  return {
+    paths,
+    fallback: "blocking",
+  };
+};
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  if (!params?.store) {
+  if (!params?.store || !params?.category) {
     return {
       notFound: true,
     };
@@ -182,7 +215,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const store = await prisma.store.findUnique({
     where: { name: params.store as string },
   });
-
   if (!store) {
     return {
       notFound: true,
@@ -192,6 +224,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const data = await prisma.product.findMany({
     take: 12,
     where: {
+      category: params.category as string,
       Store: {
         id: store.id,
       },
@@ -212,6 +245,12 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     },
   });
 
+  if (!data) {
+    return {
+      notFound: true,
+    };
+  }
+
   const distinctCategories = await prisma.product.findMany({
     distinct: ["category"],
     where: {
@@ -230,7 +269,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       products: JSON.parse(JSON.stringify(data)),
       categories,
       layoutProps: {
-        title: `Products - ${store.name}`,
+        title: `${params.category} - ${store.name}`,
       },
     },
   };

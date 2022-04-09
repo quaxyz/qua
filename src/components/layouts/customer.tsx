@@ -2,39 +2,33 @@ import React from "react";
 import Head from "next/head";
 import Link from "components/link";
 import useCart from "hooks/useCart";
-import _capitalize from "lodash.capitalize";
 import {
   Box,
-  Button,
   Center,
   chakra,
   Grid,
   Heading,
-  Icon,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import { CartContext } from "contexts/cart";
 import { useRouter } from "next/router";
-import { Bag2, User } from "react-iconly";
-import { AccountMenu } from "components/account";
+import { Bag2 } from "react-iconly";
 
 const useNavLinks = () => {
   const router = useRouter();
-  return React.useMemo(() => {
-    return [
-      {
-        name: "Products",
-        url: `/`,
-        isActive: router.asPath === "/",
-      },
-      {
-        name: "About",
-        url: `/about/`,
-        isActive: router.asPath === "/about/",
-      },
-    ];
-  }, [router]);
+  return [
+    {
+      name: "Products",
+      url: `/`,
+      isActive: router.asPath === "/",
+    },
+    {
+      name: "About",
+      url: `/about/`,
+      isActive: router.asPath === "/about/",
+    },
+  ];
 };
 
 const CustomerLayout = ({ title, children }: any) => {
