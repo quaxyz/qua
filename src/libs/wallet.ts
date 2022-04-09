@@ -1,11 +1,10 @@
 import * as ethers from "ethers";
 import { InjectedConnector } from "@web3-react/injected-connector";
-import { NetworkConnector } from "@web3-react/network-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 
 // CONSTANTS
-export const DEFAULT_CHAIN_ID = 1;
-export const RPC_URLS: { [chainId: number]: string } = {
+const DEFAULT_CHAIN_ID = 1;
+const RPC_URLS: { [chainId: number]: string } = {
   1: "https://mainnet.infura.io/v3/4f88abdfd94a43c684fa93091d00515e", // mainnet
   4: "https://rinkeby.infura.io/v3/4f88abdfd94a43c684fa93091d00515e", // rinkeby
   56: "https://bsc-dataseed.binance.org/", // bsc
@@ -13,11 +12,6 @@ export const RPC_URLS: { [chainId: number]: string } = {
 };
 
 // CONNECTORS
-export const network = new NetworkConnector({
-  urls: RPC_URLS,
-  defaultChainId: DEFAULT_CHAIN_ID,
-});
-
 export const injected = new InjectedConnector({
   supportedChainIds: [1, 4, 56, 97], // todo:: add more selected chain IDs
 });

@@ -1,14 +1,12 @@
 import React from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
-import NextLink from "next/link";
 import Api from "libs/api";
 import {
   chakra,
   Container,
   Stack,
   Image,
-  Link,
   Text,
   Input,
   Button,
@@ -22,25 +20,51 @@ import { FcGoogle } from "react-icons/fc";
 import { Wallet } from "react-iconly";
 import { ConnectModal } from "components/wallet";
 import { useMutation } from "react-query";
-import { useGoogleLogin } from "react-google-login";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 import { providers } from "ethers";
 import { injected, switchNetwork } from "libs/wallet";
+import { useOath2Login } from "hooks/useOauth2Login";
 
 const useGoogleAuth = () => {
   const toast = useToast();
+
+  const url = React.useMemo(() => {
+    const url = "https://accounts.google.com/o/oauth2/v2/auth";
+    const params = new URLSearchParams({
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
+      redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL || "",
+      response_type: "code",
+      access_type: "offline",
+      prompt: "consent",
+      scope: "https://www.googleapis.com/auth/userinfo.email",
+      state: global.location?.href,
+    }).toString();
+
+    return `${url}?${params}`;
+  }, []);
+
+  const googleSignIn = useOath2Login({
+    id: "google-login",
+    url,
+    redirect_origin:
+      process.env.NODE_ENV !== "production"
+        ? "http://localhost:8888"
+        : "https://www.qua.xyz",
+  });
+
   const googleAuthMutation = useMutation(
-    async (data: any) => {
-      // automatically redirect to details page
-      await Api().post("/setup/auth/google", {
-        token: data.tokenId,
+    async () => {
+      const data = await googleSignIn();
+
+      return await Api().post("/admin/setup/google", {
+        code: data.code,
       });
     },
     {
-      onError: (err) => {
+      onError: (err: any) => {
         toast({
-          title: "Error Signing up",
-          description: "Something went wrong authenicating with Google",
+          title: "Error signing in with Google",
+          description: err?.message,
           position: "bottom-right",
           status: "error",
         });
@@ -48,25 +72,7 @@ const useGoogleAuth = () => {
     }
   );
 
-  const { loaded, signIn } = useGoogleLogin({
-    clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
-    onSuccess: (resp) => googleAuthMutation.mutateAsync(resp),
-    onFailure: (err) => {
-      console.log(err);
-      toast({
-        title: "Error Signing up",
-        description: "Something went wrong authenicating with Google",
-        position: "bottom-right",
-        status: "error",
-      });
-    },
-  });
-
-  return {
-    ready: loaded,
-    loading: googleAuthMutation.isLoading,
-    signIn,
-  };
+  return googleAuthMutation;
 };
 
 const useWalletAuth = () => {
@@ -76,23 +82,35 @@ const useWalletAuth = () => {
   const { activate, library, account } = useWeb3React();
   const connectModal = useDisclosure();
 
-  const walletAuthMutation = useMutation(async (account: string) => {
-    // ask user to sign message
-    let provider: providers.Web3Provider = library;
-    const signer = provider.getSigner(account!);
+  const walletAuthMutation = useMutation(
+    async (account: string) => {
+      // ask user to sign message
+      let provider: providers.Web3Provider = library;
+      const signer = provider.getSigner(account!);
 
-    const message = "Please sign this message to confirm you own this wallet";
-    const sig = await signer.signMessage(message);
+      const message = "Please sign this message to confirm you own this wallet";
+      const sig = await signer.signMessage(message);
 
-    console.log("Sign", { sig, address: account });
+      console.log("Sign", { sig, address: account });
 
-    // redirect to details page
-    await Api().post("/setup/auth/wallet", {
-      address: account,
-      sig,
-      message,
-    });
-  });
+      // redirect to details page
+      await Api().post("/admin/setup/wallet", {
+        address: account,
+        sig,
+        message,
+      });
+    },
+    {
+      onError: (err: any) => {
+        toast({
+          title: "Error authenticating with your wallet",
+          description: err?.message,
+          position: "bottom-right",
+          status: "error",
+        });
+      },
+    }
+  );
 
   const tryActivate = async (connector?: any) => {
     if (!connector) return;
@@ -120,7 +138,7 @@ const useWalletAuth = () => {
   };
 
   React.useEffect(() => {
-    if (!account) return;
+    if (!account || walletAuthMutation.isLoading) return;
     walletAuthMutation.mutate(account);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account]);
@@ -135,11 +153,34 @@ const useWalletAuth = () => {
 };
 
 const useEmailAuth = () => {
-  return useMutation(async (email: string) => {
-    await Api().post("/setup/auth/email", {
-      email,
-    });
-  });
+  const toast = useToast();
+
+  return useMutation(
+    async (email: string) => {
+      await Api().post("/admin/setup/email", {
+        email,
+      });
+    },
+    {
+      onSuccess: () => {
+        toast({
+          title: "Login link sent",
+          description: "Please check your email for the next steps",
+          position: "top-right",
+          status: "success",
+        });
+      },
+
+      onError: (e: any) => {
+        toast({
+          title: "Error sending link",
+          description: e.message,
+          position: "bottom-right",
+          status: "error",
+        });
+      },
+    }
+  );
 };
 
 const Page: NextPage = () => {
@@ -236,9 +277,8 @@ const Page: NextPage = () => {
                     color="#131415"
                     size="lg"
                     leftIcon={<FcGoogle fontSize="24px" />}
-                    isDisabled={!googleAuth.ready}
-                    isLoading={googleAuth.loading}
-                    onClick={() => googleAuth.signIn()}
+                    isLoading={googleAuth.isLoading}
+                    onClick={() => googleAuth.mutate()}
                   >
                     Sign up with Google
                   </Button>

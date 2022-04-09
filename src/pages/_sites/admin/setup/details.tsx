@@ -26,17 +26,14 @@ const Page = () => {
   });
 
   const createStore = useMutation(async (payload: any) => {
-    return Api().post("/setup/details", payload);
+    return Api().post("/admin/setup/details", payload);
   });
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await createStore.mutateAsync(formValue);
 
-    router.push({
-      pathname: `/_store/[store]/dashboard/settings`,
-      query: { store: formValue.name.toLowerCase() },
-    });
+    router.push(`/${formValue.name.toLowerCase()}/settings`);
   };
 
   return (

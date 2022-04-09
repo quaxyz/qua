@@ -69,7 +69,6 @@ const useGoogleAuth = () => {
     {
       onSuccess: async ({ payload }) => {
         await queryClient.invalidateQueries("user");
-        localStorage.setItem("QUA_AUTH", payload.token);
         router.push(`/${payload.store}/settings`);
       },
 
@@ -88,9 +87,7 @@ const useGoogleAuth = () => {
 };
 
 const useWalletAuth = () => {
-  const queryClient = useQueryClient();
   const toast = useToast();
-  const router = useRouter();
   const [pending, setPending] = React.useState<boolean>(false);
   const { activate, library, account } = useWeb3React();
   const connectModal = useDisclosure();
@@ -113,11 +110,6 @@ const useWalletAuth = () => {
       });
     },
     {
-      onSuccess: async ({ payload }) => {
-        await queryClient.invalidateQueries("user");
-        localStorage.setItem("QUA_AUTH", payload.token);
-        router.push(`/${payload.store}/settings`);
-      },
       onError: (err: any) => {
         toast({
           title: "Error login in",

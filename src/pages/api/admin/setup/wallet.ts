@@ -1,15 +1,11 @@
 /* eslint-disable import/no-anonymous-default-export */
 import type { NextApiRequest, NextApiResponse } from "next";
-import { withSession } from "libs/session";
-import { OAuth2Client } from "google-auth-library";
 import prisma from "libs/prisma";
+import { utils } from "ethers";
+import { withSession } from "libs/session";
 
-const LOG_TAG = "[setup-auth-email]";
+const LOG_TAG = "[admin-wallet-setup]";
 
-/**
- * Since we don't plan on authenicating now, we just need to create the
- * user and in the session so a store can be created.
- */
 export default withSession(
   async (req: NextApiRequest, res: NextApiResponse) => {
     try {
@@ -17,33 +13,44 @@ export default withSession(
 
       switch (method) {
         case "POST": {
-          const { email } = body;
+          const { sig, address, message } = body;
+
+          if (!sig || !address || !message) {
+            console.error(LOG_TAG, "invalid payload", method);
+            return res.status(400).send({ error: "invalid payload" });
+          }
+
+          // verify signature
+          const recoveredAddress = utils.verifyMessage(message, sig);
+          if (address !== recoveredAddress) {
+            console.warn(LOG_TAG, "wrong signature", method);
+            return res.status(400).send({ error: "wrong signature" });
+          }
 
           // store user details
           let user = await prisma.user.upsert({
-            where: { email },
-            create: { email },
-            update: { email },
+            where: { address },
+            create: { address },
+            update: { address },
           });
 
-          // generate jwt token for user
           req.session.data = {
             userId: user.id,
-            email: user.email,
+            address: user.address,
           };
-
           await req.session.save();
+
           return res.send({
             redirect: true,
             url: `/setup/details`,
           });
         }
         default:
-          console.log(LOG_TAG, "[error]", "unauthorized method", method);
+          console.error(LOG_TAG, "unauthorized method", method);
           return res.status(500).send({ error: "unauthorized method" });
       }
     } catch (error) {
-      console.log(LOG_TAG, "[error]", "general error", {
+      console.error(LOG_TAG, "general error", {
         name: (error as any).name,
         message: (error as any).message,
         stack: (error as any).stack,

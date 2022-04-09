@@ -2,7 +2,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
 import { utils } from "ethers";
-import { encodeData } from "libs/jwt";
 import { withSession } from "libs/session";
 
 const LOG_TAG = "[admin-wallet-login]";

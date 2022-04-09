@@ -61,7 +61,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         // migrate
-        await migrateOwner();
+        // await migrateOwner();
 
         return res.status(200).send({ message: "migrated" });
       }
