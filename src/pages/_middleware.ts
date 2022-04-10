@@ -15,7 +15,7 @@ export default function middleware(req: NextRequest) {
 
   // exclude public files and api routes
   if (!url.pathname.includes(".") && !url.pathname.startsWith("/api")) {
-    const subdomains = (hostname || "").split(".").slice(0, -1);
+    const subdomains = (hostname || "").split(".").slice(0, -1).reverse();
 
     // we take the first valid site in the subdomains list
     const site =
