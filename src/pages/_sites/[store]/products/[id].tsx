@@ -17,7 +17,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { FileGallery } from "components/file-gallery";
-import CustomerLayout from "components/layouts/customer-dashboard";
+import CustomerLayout from "components/layouts/customer";
 import { Quantity } from "components/quantity";
 import { useCartStore } from "hooks/useCart";
 import { formatCurrency } from "libs/currency";

@@ -2,7 +2,7 @@ import React from "react";
 import type { GetStaticProps } from "next";
 import prisma from "libs/prisma";
 import Api from "libs/api";
-import CustomerLayout from "components/layouts/customer-dashboard";
+import CustomerLayout from "components/layouts/customer";
 import {
   Button,
   chakra,
@@ -21,7 +21,6 @@ import { useCartStore } from "hooks/useCart";
 import { Delete } from "react-iconly";
 import { useMutation, useQueries } from "react-query";
 import { useDebounce } from "react-use";
-import { getStorePaths } from "libs/store-paths";
 import { useRouter } from "next/router";
 import { formatCurrency } from "libs/currency";
 
@@ -341,7 +340,19 @@ const Page = () => {
   );
 };
 
-export const getStaticPaths = getStorePaths;
+export const getStaticPaths = async () => {
+  const stores = await prisma.store.findMany({
+    select: {
+      name: true,
+    },
+  });
+
+  return {
+    paths: stores.map((store) => ({ params: { store: store.name as string } })),
+    fallback: "blocking",
+  };
+};
+
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   if (!params?.store) {
     return {

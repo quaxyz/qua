@@ -2,7 +2,7 @@ import React from "react";
 import prisma from "libs/prisma";
 import Link from "components/link";
 import Api from "libs/api";
-import CustomerLayout from "components/layouts/customer-dashboard";
+import CustomerLayout from "components/layouts/customer";
 import { GetServerSideProps } from "next";
 import {
   Container,

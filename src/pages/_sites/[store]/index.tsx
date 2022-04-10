@@ -17,7 +17,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer";
-import { getStorePaths } from "libs/store-paths";
 import { useInfiniteQuery } from "react-query";
 import { useIntersection } from "react-use";
 import { formatCurrency } from "libs/currency";
@@ -174,7 +173,19 @@ const Page = ({ products, categories }: any) => {
   );
 };
 
-export const getStaticPaths = getStorePaths;
+export const getStaticPaths = async () => {
+  const stores = await prisma.store.findMany({
+    select: {
+      name: true,
+    },
+  });
+
+  return {
+    paths: stores.map((store) => ({ params: { store: store.name as string } })),
+    fallback: "blocking",
+  };
+};
+
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   if (!params?.store) {
     return {

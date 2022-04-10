@@ -23,9 +23,13 @@ import { FcGoogle } from "react-icons/fc";
 import { Wallet } from "react-iconly";
 import { ConnectModal } from "components/wallet";
 import { useMutation, useQueryClient } from "react-query";
-import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
+import {
+  UnsupportedChainIdError,
+  useWeb3React,
+  Web3ReactProvider,
+} from "@web3-react/core";
 import { providers } from "ethers";
-import { injected, switchNetwork } from "libs/wallet";
+import { getLibrary, injected, switchNetwork } from "libs/wallet";
 import { useOath2Login } from "hooks/useOauth2Login";
 import { useRouter } from "next/router";
 
@@ -198,7 +202,7 @@ const Page: NextPage = () => {
   const emailAuth = useEmailAuth();
 
   return (
-    <>
+    <Web3ReactProvider getLibrary={getLibrary}>
       <Head>
         <title>Login to your store</title>
       </Head>
@@ -231,6 +235,7 @@ const Page: NextPage = () => {
           </Stack>
         </Container>
       </chakra.header>
+
       <Container maxW="100%" p="0" m="0">
         <Stack direction={{ base: "column", md: "row" }} align="center">
           <chakra.aside
@@ -349,13 +354,14 @@ const Page: NextPage = () => {
           </chakra.main>
         </Stack>
       </Container>
+
       <ConnectModal
         isOpen={walletAuth.isModalOpen}
         isPending={walletAuth.isLoading}
         onClose={walletAuth.onModalClose}
         onActivate={walletAuth.activate}
       />
-    </>
+    </Web3ReactProvider>
   );
 };
 

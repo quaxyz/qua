@@ -17,7 +17,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CustomerLayout from "components/layouts/customer";
-import { getStorePaths } from "libs/store-paths";
 import { useInfiniteQuery } from "react-query";
 import { useIntersection } from "react-use";
 import { formatCurrency } from "libs/currency";

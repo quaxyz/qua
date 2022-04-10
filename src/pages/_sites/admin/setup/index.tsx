@@ -20,9 +20,13 @@ import { FcGoogle } from "react-icons/fc";
 import { Wallet } from "react-iconly";
 import { ConnectModal } from "components/wallet";
 import { useMutation } from "react-query";
-import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
+import {
+  UnsupportedChainIdError,
+  useWeb3React,
+  Web3ReactProvider,
+} from "@web3-react/core";
 import { providers } from "ethers";
-import { injected, switchNetwork } from "libs/wallet";
+import { getLibrary, injected, switchNetwork } from "libs/wallet";
 import { useOath2Login } from "hooks/useOauth2Login";
 
 const useGoogleAuth = () => {
@@ -189,7 +193,7 @@ const Page: NextPage = () => {
   const emailAuth = useEmailAuth();
 
   return (
-    <>
+    <Web3ReactProvider getLibrary={getLibrary}>
       <Head>
         <title>Setup store - Qua</title>
       </Head>
@@ -352,7 +356,7 @@ const Page: NextPage = () => {
         onClose={walletAuth.onModalClose}
         onActivate={walletAuth.activate}
       />
-    </>
+    </Web3ReactProvider>
   );
 };
 

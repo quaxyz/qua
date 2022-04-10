@@ -8,7 +8,7 @@ type FileGalleryProps = {
 };
 
 export function FileGallery(props: FileGalleryProps) {
-  const [activeImage, setActiveImage] = React.useState(props.images[0].url);
+  const [activeImage, setActiveImage] = React.useState(props.images[0]?.url);
 
   return (
     <Stack w="full" flex={1} spacing={4}>
@@ -19,7 +19,12 @@ export function FileGallery(props: FileGalleryProps) {
         bg="gray.50"
       >
         <NextImage
-          src={activeImage}
+          src={
+            activeImage ??
+            `https://via.placeholder.com/373/e2e8f0?text=Image%20of%20${
+              props.alt || "product image"
+            }`
+          }
           alt={props.alt || "product image"}
           objectFit="contain"
           objectPosition="top"
