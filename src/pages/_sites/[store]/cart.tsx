@@ -224,9 +224,10 @@ const Page = () => {
       },
     }))
   );
-  const cartProductsLoading = cartProductsQuery.every(
-    (query) => query.isLoading && !query.data
-  );
+  const cartProductsLoading = cartProductsQuery.length
+    ? cartProductsQuery.every((query) => query.isLoading && !query.data)
+    : false;
+
   const cartProducts = React.useMemo(() => {
     return cartProductsQuery
       .map((query) => {

@@ -26,6 +26,7 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  useClipboard,
 } from "@chakra-ui/react";
 import { ArrowLeft } from "react-iconly";
 import { format, parseJSON } from "date-fns";
@@ -38,6 +39,7 @@ const Page = ({ order: initialOrder, orderProducts }: any) => {
   const toast = useToast();
   const queryClient = useQueryClient();
   const cancelModal = useDisclosure();
+  const trackOrder = useClipboard(global.location?.href);
 
   const cancelOrder = useMutation(
     async (payload: any) => {
@@ -152,15 +154,24 @@ const Page = ({ order: initialOrder, orderProducts }: any) => {
               </Link>
             </Stack>
 
-            {order.status === "UNFULFILLED" && (
+            <Stack spacing={2}>
               <Button
-                onClick={() => cancelModal.onOpen()}
-                isLoading={cancelOrder.isLoading}
+                onClick={() => trackOrder.onCopy()}
                 variant="solid-outline"
               >
-                Cancel Order
+                {trackOrder.hasCopied ? "Copied" : "Track Order"}
               </Button>
-            )}
+
+              {order.status === "UNFULFILLED" && (
+                <Button
+                  onClick={() => cancelModal.onOpen()}
+                  isLoading={cancelOrder.isLoading}
+                  variant="solid-outline"
+                >
+                  Cancel Order
+                </Button>
+              )}
+            </Stack>
           </Stack>
         </chakra.section>
 

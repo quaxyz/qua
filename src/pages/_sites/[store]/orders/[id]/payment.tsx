@@ -77,9 +77,29 @@ const Page = ({ order, store }: any) => {
     phone: order.customerDetails?.phone || "",
     deliveryMethod: order.customerDetails?.deliveryMethod || "DOOR_DELIVERY",
   });
+  const [errors, setErrors] = React.useState<any>({});
+
+  const validateCustomerDetails = (state: any) => ({
+    name: !state.name || state.name.length < 1,
+    address: !state.address || state.address.length < 1,
+    email: !state.email || state.email.length < 1,
+    phone: !state.phone || state.phone.length < 1,
+  });
 
   const onSubmit = async () => {
     if (saveOrderDetails.isLoading) return;
+
+    // verify input
+    const formErrors: any = validateCustomerDetails(customerDetails);
+
+    const formHasError = Object.keys(formErrors).filter(
+      (field) => formErrors[field]
+    ).length;
+
+    if (formHasError) {
+      setErrors({ ...formErrors });
+      return;
+    }
 
     await saveOrderDetails.mutateAsync({
       customerDetails,
@@ -129,13 +149,14 @@ const Page = ({ order, store }: any) => {
                 spacing={8}
                 pb={6}
               >
-                <FormControl id="name">
+                <FormControl id="name" isRequired isInvalid={errors.name}>
                   <FormLabel htmlFor="name">Name</FormLabel>
                   <Input
                     type="text"
                     placeholder="John Doe"
                     variant="flushed"
-                    isDisabled={order.status.toLowerCase() === "fulfilled"}
+                    isRequired
+                    isDisabled={order.status !== "UNFULFILLED"}
                     value={customerDetails.name}
                     onChange={(e) =>
                       setCustomerDetails({
@@ -147,13 +168,14 @@ const Page = ({ order, store }: any) => {
                   <FormErrorMessage>Name is required</FormErrorMessage>
                 </FormControl>
 
-                <FormControl id="email">
+                <FormControl id="email" isRequired isInvalid={errors.email}>
                   <FormLabel htmlFor="email">Email</FormLabel>
                   <Input
                     type="email"
                     placeholder="youremailaddress@email.com"
                     variant="flushed"
-                    isDisabled={order.status.toLowerCase() === "fulfilled"}
+                    isRequired
+                    isDisabled={order.status !== "UNFULFILLED"}
                     value={customerDetails.email}
                     onChange={(e) =>
                       setCustomerDetails({
@@ -167,13 +189,14 @@ const Page = ({ order, store }: any) => {
               </Stack>
 
               <Stack direction="row" spacing="8">
-                <FormControl id="phone">
+                <FormControl id="phone" isRequired isInvalid={errors.phone}>
                   <FormLabel htmlFor="phone">Phone</FormLabel>
                   <Input
                     type="tel"
                     placeholder="0123456789"
                     variant="flushed"
-                    isDisabled={order.status.toLowerCase() === "fulfilled"}
+                    isRequired
+                    isDisabled={order.status !== "UNFULFILLED"}
                     value={customerDetails.phone}
                     onChange={(e) =>
                       setCustomerDetails({
@@ -185,13 +208,14 @@ const Page = ({ order, store }: any) => {
                   <FormErrorMessage>Phone is required</FormErrorMessage>
                 </FormControl>
 
-                <FormControl id="address">
+                <FormControl id="address" isRequired isInvalid={errors.address}>
                   <FormLabel htmlFor="address">Address</FormLabel>
                   <Input
                     type="tel"
                     placeholder="12 Street Name"
                     variant="flushed"
-                    isDisabled={order.status.toLowerCase() === "fulfilled"}
+                    isRequired
+                    isDisabled={order.status !== "UNFULFILLED"}
                     value={customerDetails.address}
                     onChange={(e) =>
                       setCustomerDetails({
@@ -240,7 +264,7 @@ const Page = ({ order, store }: any) => {
                     size="md"
                     value="DOOR_DELIVERY"
                     isDisabled={
-                      order.status === "FULFILLED" ||
+                      order.status !== "UNFULFILLED" ||
                       order.paymentStatus === "PAID"
                     }
                   >
@@ -250,7 +274,7 @@ const Page = ({ order, store }: any) => {
                     size="md"
                     value="PICKUP"
                     isDisabled={
-                      order.status === "FULFILLED" ||
+                      order.status !== "UNFULFILLED" ||
                       order.paymentStatus === "PAID"
                     }
                   >
@@ -280,13 +304,34 @@ const Page = ({ order, store }: any) => {
               value={paymentMethod}
             >
               <Stack spacing={4}>
-                <Radio size="md" value="BANK_TRANSFER">
+                <Radio
+                  size="md"
+                  value="BANK_TRANSFER"
+                  isDisabled={
+                    order.status !== "UNFULFILLED" ||
+                    order.paymentStatus === "PAID"
+                  }
+                >
                   Pay with Bank Transfer
                 </Radio>
-                <Radio size="md" value="CASH">
+                <Radio
+                  size="md"
+                  value="CASH"
+                  isDisabled={
+                    order.status !== "UNFULFILLED" ||
+                    order.paymentStatus === "PAID"
+                  }
+                >
                   Pay With Cash
                 </Radio>
-                <Radio size="md" value="CONTACT_SELLER">
+                <Radio
+                  size="md"
+                  value="CONTACT_SELLER"
+                  isDisabled={
+                    order.status !== "UNFULFILLED" ||
+                    order.paymentStatus === "PAID"
+                  }
+                >
                   Contact seller for more payment option
                 </Radio>
               </Stack>
@@ -386,7 +431,7 @@ const Page = ({ order, store }: any) => {
               variant="solid"
               width="100%"
               isDisabled={
-                order.status === "FULFILLED" || order.paymentStatus === "PAID"
+                order.status !== "UNFULFILLED" || order.paymentStatus === "PAID"
               }
               isLoading={saveOrderDetails.isLoading}
               onClick={onSubmit}
@@ -450,6 +495,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       notFound: true,
     };
   }
+
+  // TODO: HACK: We hide the order email if the data is already filled
 
   return {
     props: {
