@@ -102,6 +102,22 @@ export default withSession(
             ),
           ]);
 
+          // revalidate store product pages
+          try {
+            console.log(LOG_TAG, "revalidate store pages", {
+              store: store.name,
+            });
+            await res.unstable_revalidate(`/_sites/${store.name}`);
+            await res.unstable_revalidate(
+              `/_sites/${store.name}/products/${result.id}`
+            );
+          } catch (err) {
+            console.error(LOG_TAG, "error revalidating store pages", {
+              store: store.name,
+              err,
+            });
+          }
+
           console.log(LOG_TAG, "produt updated", { result });
           return res.status(200).send({ message: "product updated" });
         }
