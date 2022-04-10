@@ -21,7 +21,7 @@ const paymentStatusColor: any = {
     bgColor: "rgba(205, 254, 240, 1)",
     color: "rgba(2, 120, 87, 1)",
   },
-  contact_seller: {
+  pay_later: {
     bgColor: "rgba(254, 238, 205, 1)",
     color: "rgba(120, 81, 2, 1)",
   },

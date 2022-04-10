@@ -1,6 +1,7 @@
 import React from "react";
 import Api from "libs/api";
 import prisma from "libs/prisma";
+import { Prisma } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import {
   Box,
@@ -248,24 +249,25 @@ export const getServerSideProps: GetServerSideProps = withSsrSession(
       };
     }
 
-    const data = await prisma.order.findMany({
-      take: 10,
-      where: {
-        store: {
-          name: store.name,
+    const data = (
+      await prisma.order.findMany({
+        take: 10,
+        where: {
+          store: {
+            name: store.name,
+          },
         },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      select: {
-        id: true,
-        customer: true,
-        customerDetails: true,
-        status: true,
-        paymentStatus: true,
-      },
-    });
+        orderBy: {
+          createdAt: "desc",
+        },
+        select: {
+          id: true,
+          customerDetails: true,
+          status: true,
+          paymentStatus: true,
+        },
+      })
+    ).filter((order) => Object.keys(order.customerDetails || {}).length);
 
     return {
       props: {

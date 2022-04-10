@@ -20,10 +20,6 @@ import { getLayoutProps } from "components/layouts/customer-props";
 import { ArrowLeft } from "react-iconly";
 import { parseJSON, format } from "date-fns";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useWeb3React } from "@web3-react/core";
-import { useRouter } from "next/router";
-import { domain, schemas } from "libs/constants";
-import { providers } from "ethers";
 import { withSsrSession } from "libs/session";
 
 function useCancelOrder() {

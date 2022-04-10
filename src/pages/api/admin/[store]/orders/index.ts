@@ -30,39 +30,40 @@ export default withSession(
 
           const store = query.store as string;
           const cursor = parseInt(query.cursor as string, 10);
-          const orders = await prisma.order.findMany({
-            // pagination
-            take: 10,
-            ...(!!cursor
-              ? {
-                  skip: 1,
-                  cursor: {
-                    id: parseInt(query.cursor as string, 10),
-                  },
-                }
-              : {}),
+          const orders = (
+            await prisma.order.findMany({
+              // pagination
+              take: 10,
+              ...(!!cursor
+                ? {
+                    skip: 1,
+                    cursor: {
+                      id: parseInt(query.cursor as string, 10),
+                    },
+                  }
+                : {}),
 
-            // query
-            where: {
-              store: {
-                name: store,
-                owner: {
-                  id: session.userId,
+              // query
+              where: {
+                store: {
+                  name: store,
+                  owner: {
+                    id: session.userId,
+                  },
                 },
               },
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            select: {
-              id: true,
-              customer: true,
-              customerDetails: true,
-              status: true,
-              paymentMethod: true,
-              paymentStatus: true,
-            },
-          });
+              orderBy: {
+                createdAt: "desc",
+              },
+              select: {
+                id: true,
+                customerDetails: true,
+                status: true,
+                paymentMethod: true,
+                paymentStatus: true,
+              },
+            })
+          ).filter((order) => Object.keys(order.customerDetails || {}).length);
 
           return res.status(200).send(orders);
         }

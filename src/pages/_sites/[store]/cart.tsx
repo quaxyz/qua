@@ -4,6 +4,7 @@ import prisma from "libs/prisma";
 import Api from "libs/api";
 import CustomerLayout from "components/layouts/customer-dashboard";
 import {
+  Button,
   chakra,
   CircularProgress,
   Container,
@@ -20,7 +21,6 @@ import { useCartStore } from "hooks/useCart";
 import { Delete } from "react-iconly";
 import { useMutation, useQueries } from "react-query";
 import { useDebounce } from "react-use";
-import { AuthButton } from "components/account/login";
 import { getStorePaths } from "libs/store-paths";
 import { useRouter } from "next/router";
 import { formatCurrency } from "libs/currency";
@@ -181,9 +181,16 @@ const Page = () => {
   const items = cartStore?.items;
 
   const checkoutMutation = useMutation(
-    () => {
-      if ((items || []).length === 0) throw new Error("No items in cart");
-      return Api().get(`/checkout`);
+    async (payload: any) => {
+      if (payload.length === 0) throw new Error("No items in cart");
+
+      // check if there's existing unfinished order
+      const order = localStorage.getItem("unfinishedOrder");
+
+      return Api().post(`/${query.store}/checkout`, {
+        ...payload,
+        orderId: order || null,
+      });
     },
     {
       onError: (e: any) => {
@@ -258,71 +265,77 @@ const Page = () => {
 
   return (
     <Container maxW="100%" px={{ base: "2", md: "24" }}>
-      <Stack w="100%" align="center" p={{ base: "4", md: "8" }}>
-        <Heading fontSize={{ base: "xl", md: "3xl" }} fontWeight="300">
-          Your Cart ({cartStore?.items.length || 0} item)
-        </Heading>
-      </Stack>
-
-      <Stack>
-        <Stack
-          direction="row"
-          display={{ base: "none", md: "flex" }}
-          mb="2"
-          p="2rem"
-          borderBottom="0.5px solid rgba(0, 0, 0, 8%)"
-        >
-          <Stack w="100%">
-            <Text pl="9">Product</Text>
+      <Stack direction={{ base: "column", md: "row" }} spacing={6}>
+        <chakra.div flex={3}>
+          <Stack w="100%" align="center" p={{ base: "4", md: "8" }}>
+            <Heading fontSize={{ base: "xl", md: "3xl" }} fontWeight="300">
+              Your Cart ({cartStore?.items.length || 0} item)
+            </Heading>
           </Stack>
-          <Stack w="100%" align="center">
-            <Text>Price</Text>
-          </Stack>
-          <Stack w="100%" align="center">
-            <Text>Qty</Text>
-          </Stack>
-          <Stack w="100%" align="center">
-            <Text>Subtotal</Text>
-          </Stack>
-        </Stack>
 
-        {cartProductsLoading && (
-          <Stack align="center" justify="center" h="200px">
-            <CircularProgress isIndeterminate color="black" />
+          <Stack>
+            <Stack
+              direction="row"
+              display={{ base: "none", md: "flex" }}
+              mb="2"
+              p="2rem"
+              borderBottom="0.5px solid rgba(0, 0, 0, 8%)"
+            >
+              <Stack w="100%">
+                <Text pl="9">Product</Text>
+              </Stack>
+              <Stack w="100%" align="center">
+                <Text>Price</Text>
+              </Stack>
+              <Stack w="100%" align="center">
+                <Text>Qty</Text>
+              </Stack>
+              <Stack w="100%" align="center">
+                <Text>Subtotal</Text>
+              </Stack>
+            </Stack>
+
+            {cartProductsLoading && (
+              <Stack align="center" justify="center" h="200px">
+                <CircularProgress isIndeterminate color="black" />
+              </Stack>
+            )}
+
+            {!cartProducts.length && !cartProductsLoading && (
+              <Stack align="center" justify="center">
+                <Text>Your cart is empty</Text>
+              </Stack>
+            )}
+
+            {cartProducts.map((item: any) => (
+              <CartItem item={item} key={item.productId} />
+            ))}
           </Stack>
-        )}
+        </chakra.div>
 
-        {!cartProducts.length && (
-          <Stack align="center" justify="center">
-            <Text>Your cart is empty</Text>
+        <chakra.div flex={1} pt={{ md: 16 }}>
+          <Stack
+            width={{ base: "100%", md: "24.813rem" }}
+            p={4}
+            my={4}
+            position="relative"
+            border="0.5px solid rgba(0, 0, 0, 12%)"
+          >
+            <CostSummary data={costSummary} />
+            <Text fontSize="sm">Shipping will be calculated at next step</Text>
+
+            <Button
+              size="lg"
+              variant="solid"
+              width="100%"
+              isDisabled={!items?.length}
+              onClick={() => checkoutMutation.mutate({ items })}
+              isLoading={checkoutMutation.isLoading}
+            >
+              Proceed to checkout
+            </Button>
           </Stack>
-        )}
-
-        {cartProducts.map((item: any) => (
-          <CartItem item={item} key={item.productId} />
-        ))}
-      </Stack>
-
-      <Stack
-        width={{ base: "100%", md: "24.813rem" }}
-        p={4}
-        my={4}
-        float="right"
-        position="relative"
-        border="0.5px solid rgba(0, 0, 0, 12%)"
-      >
-        <CostSummary data={costSummary} />
-        <Text fontSize="sm">Shipping will be calculated at next step</Text>
-
-        <AuthButton
-          size="lg"
-          variant="solid"
-          width="100%"
-          onClick={() => checkoutMutation.mutate()}
-          isLoading={checkoutMutation.isLoading}
-        >
-          Proceed to checkout
-        </AuthButton>
+        </chakra.div>
       </Stack>
     </Container>
   );

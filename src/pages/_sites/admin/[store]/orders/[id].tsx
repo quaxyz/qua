@@ -311,21 +311,6 @@ const Page = (props: any) => {
                 align={{ base: "flex-start", md: "center" }}
               >
                 <Text color="#000">{order.customerDetails?.name}</Text>
-                <Box
-                  cursor="pointer"
-                  bg="rgba(0, 0, 0, 0.04)"
-                  rounded="50px"
-                  height="100%"
-                  px="0.8rem"
-                  py="0.4rem"
-                  display="inline-block"
-                  userSelect="none"
-                  textAlign="center"
-                >
-                  <Text fontSize={{ base: "sm", md: "md" }}>
-                    {truncateAddress(order.customer?.address || "", 4)}
-                  </Text>
-                </Box>
               </Stack>
             </Stack>
 
@@ -423,7 +408,6 @@ export const getServerSideProps: GetServerSideProps = withSsrSession(
     }
 
     const order = await prisma.order.findFirst({
-      take: 10,
       where: {
         id: parseInt(orderId),
         store: {
@@ -436,7 +420,6 @@ export const getServerSideProps: GetServerSideProps = withSsrSession(
       select: {
         id: true,
         createdAt: true,
-        customer: true,
         customerDetails: true,
         items: true,
         status: true,

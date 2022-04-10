@@ -13,7 +13,6 @@ model Store {
   id          Int     @id @default(autoincrement())
   name        String  @unique
   owner       User?   @relation(fields: [userId], references: [id])
-  owner_old   String? // TODO after migration
   deliveryFee Float?
   email       String?
   category    String?
@@ -49,7 +48,6 @@ model User {
 
   carts  Cart[]
   stores Store[]
-  orders Order[]
 }
 
 model Product {
@@ -84,24 +82,33 @@ model Cart {
 }
 
 model Order {
-  id               Int                @id @default(autoincrement())
-  items            Json
-  customerId       Int
-  customerDetails  Json
-  subtotal         Float
+  id Int @id @default(autoincrement())
+
+  storeId   Int
+  publicId  String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // cart data
+  items    Json
+  subtotal Float
+
+  // user data
+  customerDetails Json?
+
+  // payment data
   totalAmount      Float
   totalPaid        Float?
-  pricingBreakdown Json
-  paymentMethod    String
+  paymentMethod    String?
   paymentReference String?
   payoutHash       String?
-  status           OrderStatus
-  paymentStatus    OrderPaymentStatus
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  storeId          Int
-  customer         User               @relation(fields: [customerId], references: [id])
-  store            Store              @relation(fields: [storeId], references: [id])
+  paymentStatus    OrderPaymentStatus @default(UNPAID)
+
+  // order details
+  pricingBreakdown Json
+  status           OrderStatus @default(UNFULFILLED)
+
+  store Store @relation(fields: [storeId], references: [id])
 }
 
 model Image {
@@ -123,6 +130,5 @@ enum OrderStatus {
 enum OrderPaymentStatus {
   PAID
   UNPAID
-  CONTACT_SELLER
-  BANK_TRANSFER
+  PAY_LATER
 }

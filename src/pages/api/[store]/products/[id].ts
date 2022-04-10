@@ -54,9 +54,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         return res.status(200).send({
           ...product,
-          availableStocks: product.totalStocks
-            ? product.totalStocks - product.totalSold
-            : Infinity,
+          availableStocks: product.totalStocks,
         });
       }
       default:

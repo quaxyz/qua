@@ -280,7 +280,7 @@ const Page = ({ details }: any) => {
               <GridItem>
                 <FormControl id="location">
                   <FormLabel textTransform="uppercase" opacity="72%">
-                    Bussiness Location
+                    Business Location
                   </FormLabel>
                   <Input
                     id="location"
