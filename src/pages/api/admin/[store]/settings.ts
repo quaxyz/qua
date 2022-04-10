@@ -91,6 +91,19 @@ export default withSession(
             },
           });
 
+          // revalidate about product pages
+          try {
+            console.log(LOG_TAG, "revalidate about page", {
+              store: store.name,
+            });
+            await res.unstable_revalidate(`/_sites/${store.name}/about`);
+          } catch (err) {
+            console.error(LOG_TAG, "error revalidating about page", {
+              store: store.name,
+              err,
+            });
+          }
+
           console.log(LOG_TAG, "settings updated", { result });
           return res
             .status(200)

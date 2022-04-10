@@ -204,6 +204,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         title: `About - ${store.name}`,
       },
     },
+
+    revalidate: 24 * 60 * 60, // 24 hours
   };
 };
 
