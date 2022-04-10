@@ -44,6 +44,11 @@ const DashboardLayout = ({ title, children }: any) => {
   const router = useRouter();
   const navLinks = useNavLinks();
 
+  const publicStorePath = React.useMemo(() => {
+    const proto = process.env.NODE_ENV === "production" ? "https" : "http";
+    return `${proto}://${router.query.store}.${process.env.NEXT_PUBLIC_DOMAIN}`;
+  }, [router.query.store]);
+
   return (
     <>
       <Head>
@@ -83,7 +88,7 @@ const DashboardLayout = ({ title, children }: any) => {
           >
             <Stack
               as={Link}
-              href="/"
+              href={publicStorePath}
               direction="row"
               border="none"
               align="center"
