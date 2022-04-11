@@ -117,9 +117,9 @@ const Page = ({ products, categories }: any) => {
 
       <Grid
         gap={{ base: 4, md: 10 }}
-        alignItems="center"
+        alignItems="flex-start"
         templateColumns={{
-          base: "100%",
+          base: "repeat(2, 1fr)",
           md: "repeat(auto-fit, 12rem)",
           lg: "repeat(auto-fit, 18rem)",
         }}

@@ -30,7 +30,7 @@ export function FileGallery(props: FileGalleryProps) {
           objectPosition="top"
           width="100%"
           height="100%"
-          layout="responsive"
+          layout="fill"
           priority
         />
       </chakra.section>

@@ -50,7 +50,7 @@ const CartItem = ({ item }: any) => {
         justify="space-between"
         maxWidth="100%"
       >
-        <Stack direction="row" w="100%" spacing={6}>
+        <Stack direction="row" flex={2} spacing={6}>
           <Stack direction="row" w="25rem" align="center">
             <IconButton
               onClick={() => cart?.removeCartItem(item.productId)}
@@ -78,13 +78,13 @@ const CartItem = ({ item }: any) => {
           </Stack>
         </Stack>
 
-        <Stack w="100%" align="center">
+        <Stack flex={1} align="center">
           <Text fontSize="14px">
             <chakra.strong>{formatCurrency(item.price)}</chakra.strong>
           </Text>
         </Stack>
 
-        <Stack w="100%" align="center">
+        <Stack flex={1} align="center">
           <Quantity
             quantity={quantity}
             setQuantity={(v) => setQuantity(v)}
@@ -93,7 +93,7 @@ const CartItem = ({ item }: any) => {
           />
         </Stack>
 
-        <Stack w="100%" align="center">
+        <Stack flex={1} align="center">
           <Text fontSize="14px">
             <chakra.strong>{formatCurrency(item.subtotal)}</chakra.strong>
           </Text>
@@ -129,7 +129,7 @@ const CartItem = ({ item }: any) => {
               w="100%"
               spacing={4}
             >
-              <Heading as="h1" size="md" fontWeight="300">
+              <Heading as="h1" size="sm" fontWeight="300">
                 {item.name}
               </Heading>
               <IconButton
@@ -139,14 +139,14 @@ const CartItem = ({ item }: any) => {
                 icon={<Delete set="light" />}
               />
             </Stack>
-            <Text fontSize="0.938rem">
+            <Text fontSize="xs">
               <chakra.strong>{`$${item.price || 0}.00`}</chakra.strong>
             </Text>
 
             <Stack>
-              <Stack direction="row" align="center" w="100%" spacing={2}>
-                <Text fontSize="0.938rem">Subtotal:</Text>
-                <Text fontSize="0.938rem">
+              <Stack direction="row" align="center" w="100%" spacing={1}>
+                <Text fontSize="xs">Subtotal:</Text>
+                <Text fontSize="xs">
                   <chakra.strong>{`$${
                     item.price * quantity || 0
                   }.00`}</chakra.strong>
@@ -266,7 +266,11 @@ const Page = () => {
   return (
     <Container maxW="100%" px={{ base: "2", md: "24" }}>
       <Stack direction={{ base: "column", md: "row" }} spacing={6}>
-        <chakra.div flex={3}>
+        <chakra.div
+          flex={3}
+          border="0.5px solid rgba(0, 0, 0, 4%)"
+          mt={{ base: "1", md: "2rem" }}
+        >
           <Stack w="100%" align="center" p={{ base: "4", md: "8" }}>
             <Heading fontSize={{ base: "xl", md: "3xl" }} fontWeight="300">
               Your Cart ({cartStore?.items.length || 0} item)
@@ -281,16 +285,16 @@ const Page = () => {
               p="2rem"
               borderBottom="0.5px solid rgba(0, 0, 0, 8%)"
             >
-              <Stack w="100%">
+              <Stack flex={2}>
                 <Text pl="9">Product</Text>
               </Stack>
-              <Stack w="100%" align="center">
+              <Stack flex={1} align="center">
                 <Text>Price</Text>
               </Stack>
-              <Stack w="100%" align="center">
+              <Stack flex={1} align="center">
                 <Text>Qty</Text>
               </Stack>
-              <Stack w="100%" align="center">
+              <Stack flex={1} align="center">
                 <Text>Subtotal</Text>
               </Stack>
             </Stack>
@@ -322,7 +326,9 @@ const Page = () => {
             border="0.5px solid rgba(0, 0, 0, 12%)"
           >
             <CostSummary data={costSummary} />
-            <Text fontSize="sm">Shipping will be calculated at next step</Text>
+            <Text fontSize="sm" opacity="68%">
+              Shipping will be calculated at next step
+            </Text>
 
             <Button
               size="lg"

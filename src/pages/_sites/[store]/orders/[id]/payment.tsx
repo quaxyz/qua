@@ -119,12 +119,18 @@ const Page = ({ order, store }: any) => {
   };
 
   return (
-    <Container maxW="100%" px={{ base: "2", md: "24" }} mb={16}>
+    <Container maxW="100%" px={{ base: "4", md: "24" }} mb={16}>
       <Stack
         direction={{ base: "column", md: "row" }}
         spacing={{ base: 6, md: 12 }}
       >
-        <chakra.div flex={2}>
+        <chakra.div
+          flex={2}
+          px={{ base: "0", md: "16" }}
+          pb={{ base: "0", md: "16" }}
+          m={{ base: "0", md: "12" }}
+          border="0.5px solid rgba(0, 0, 0, 12%)"
+        >
           <Stack spacing="4">
             <chakra.header pt={{ base: "8", md: "16" }}>
               <Stack direction="row" justify="space-between">
@@ -172,7 +178,7 @@ const Page = ({ order, store }: any) => {
                   <FormLabel htmlFor="email">Email</FormLabel>
                   <Input
                     type="email"
-                    placeholder="youremailaddress@email.com"
+                    placeholder="name@email.com"
                     variant="flushed"
                     isRequired
                     isDisabled={order.status !== "UNFULFILLED"}
@@ -188,7 +194,7 @@ const Page = ({ order, store }: any) => {
                 </FormControl>
               </Stack>
 
-              <Stack direction="row" spacing="8">
+              <Stack direction={{ base: "column", md: "row" }} spacing="8">
                 <FormControl id="phone" isRequired isInvalid={errors.phone}>
                   <FormLabel htmlFor="phone">Phone</FormLabel>
                   <Input
@@ -212,7 +218,7 @@ const Page = ({ order, store }: any) => {
                   <FormLabel htmlFor="address">Address</FormLabel>
                   <Input
                     type="tel"
-                    placeholder="12 Street Name"
+                    placeholder="Enter address"
                     variant="flushed"
                     isRequired
                     isDisabled={order.status !== "UNFULFILLED"}
@@ -234,7 +240,7 @@ const Page = ({ order, store }: any) => {
             <chakra.header pt={{ base: "8", md: "8" }}>
               <Stack direction="row" justify="space-between">
                 <Heading
-                  as="h2"
+                  as="h3"
                   fontSize={{ base: "lg", md: "1xl" }}
                   color="#000"
                 >
@@ -294,7 +300,7 @@ const Page = ({ order, store }: any) => {
           </Stack>
 
           <Stack py="4" spacing={6}>
-            <Heading as="h2" fontSize={{ base: "lg", md: "1xl" }} color="#000">
+            <Heading as="h3" fontSize={{ base: "lg", md: "1xl" }} color="#000">
               Payment Method
             </Heading>
 
@@ -312,7 +318,7 @@ const Page = ({ order, store }: any) => {
                     order.paymentStatus === "PAID"
                   }
                 >
-                  Pay with Bank Transfer
+                  <Text fontSize="sm">Pay with Bank Transfer</Text>
                 </Radio>
                 <Radio
                   size="md"
@@ -322,7 +328,7 @@ const Page = ({ order, store }: any) => {
                     order.paymentStatus === "PAID"
                   }
                 >
-                  Pay With Cash
+                  <Text fontSize="sm">Pay With Cash</Text>
                 </Radio>
                 <Radio
                   size="md"
@@ -332,7 +338,9 @@ const Page = ({ order, store }: any) => {
                     order.paymentStatus === "PAID"
                   }
                 >
-                  Contact seller for more payment option
+                  <Text fontSize="sm">
+                    Contact seller for more payment option
+                  </Text>
                 </Radio>
               </Stack>
             </RadioGroup>
@@ -419,7 +427,7 @@ const Page = ({ order, store }: any) => {
 
         <chakra.div flex={1} pt={{ md: 12 }}>
           <Stack
-            p={4}
+            p={{ base: "4", md: "8" }}
             my={4}
             border="0.5px solid rgba(0, 0, 0, 12%)"
             spacing={{ base: 4, md: 8 }}
