@@ -125,7 +125,6 @@ const Page = ({ details }: any) => {
         alignItems="center"
         justifyContent="center"
         flexDirection="column"
-        // we could fetch unsplash image here based on store category
         bgImage={`linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24)),url('${
           data?.image?.url || "/images/fakurian-design-GJKx5lhwU3M-unsplash.jpg"
         }')`}
@@ -135,21 +134,21 @@ const Page = ({ details }: any) => {
         color="#fff"
       >
         <Text
-          fontSize={{ base: "sm", md: "md" }}
+          fontSize={{ base: "xs", md: "sm" }}
           textTransform="uppercase"
           fontWeight="800"
           letterSpacing="0.15px"
           color="#fff"
-          background="rgba(255, 255, 255, 0.28)"
+          background="rgba(255, 255, 255, 24%)"
           py="2"
           px="4"
           mb="2"
-          borderRadius="50"
+          rounded="full"
           userSelect="none"
         >
           {defaultCategories.find((c) => c.value === data?.category)?.label}
         </Text>
-        <Heading as="h2" opacity="48%" fontSize={{ base: "2rem", md: "4rem" }}>
+        <Heading as="h2" opacity="80%" fontSize={{ base: "2rem", md: "4rem" }}>
           <Editable
             defaultValue={data?.title || "Store Title"}
             onSubmit={(title) => {
@@ -163,7 +162,7 @@ const Page = ({ details }: any) => {
               transition=".2s"
               outline="0.5px solid"
               outlineColor="rgba(0, 0, 0, 0.80)"
-              borderRadius="0"
+              rounded="0"
             />
           </Editable>
         </Heading>
@@ -189,7 +188,7 @@ const Page = ({ details }: any) => {
         <input {...filePicker.getInputProps()} />
       </Flex>
 
-      <Container maxW="100%" px={{ base: "4", md: "12" }} py={20}>
+      <Container maxW="100%" px={{ base: "4", md: "12" }} py={16}>
         <Stack
           spacing="4rem"
           align="flex-start"
@@ -201,19 +200,23 @@ const Page = ({ details }: any) => {
             spacing={{ base: "4", md: "16" }}
             w="100%"
           >
-            <Stack w="full" spacing={6}>
-              <Heading fontSize="lg" textTransform="uppercase" opacity="80%">
+            <Stack w="full" spacing={{ base: "4", md: "6" }}>
+              <Heading
+                fontSize={{ base: "md", md: "lg" }}
+                textTransform="uppercase"
+                opacity="80%"
+              >
                 About
               </Heading>
               <Textarea
                 id="about"
-                placeholder="What should customers know about your business?"
+                placeholder="Enter store description"
                 value={formValue?.about}
                 onChange={(e) =>
                   setFormValue({ ...formValue, about: e.target.value })
                 }
                 size="md"
-                borderRadius="0"
+                rounded="0"
                 rows={10}
               />
             </Stack>
@@ -268,7 +271,7 @@ const Page = ({ details }: any) => {
           </Stack>
 
           <Stack w="full" spacing={12}>
-            <Heading fontSize="3xl" fontWeight="500">
+            <Heading fontSize="2xl" fontWeight="500">
               Settings
             </Heading>
 
@@ -366,7 +369,7 @@ const Page = ({ details }: any) => {
                         deliveryFee: e.target.value,
                       })
                     }
-                    placeholder="Enter base delivery fee"
+                    placeholder="Enter base shipping fee"
                   />
                 </FormControl>
               </GridItem>

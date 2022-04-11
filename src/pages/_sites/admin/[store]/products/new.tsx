@@ -195,21 +195,40 @@ const Page = ({ categories }: any) => {
   };
 
   return (
-    <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
+    <Container
+      maxW="100%"
+      py={{ base: "4", md: "12" }}
+      px={{ base: "6", md: "16" }}
+    >
       <Stack direction="row" justify="space-between" align="center" mb={10}>
         <Link href={`/${router.query.store}/products`} border="none">
-          <Stack border="none" direction="row" alignItems="center">
+          <Stack border="none" direction="row" alignItems="center" spacing="1">
             <ArrowLeft set="light" />
-
-            <Heading as="h2" fontSize="lg" fontWeight="600">
-              All Products
+            <Heading
+              fontSize={{ base: "md", md: "lg" }}
+              fontWeight="500"
+              color="#131415"
+            >
+              Add Product
             </Heading>
           </Stack>
         </Link>
 
         <Button
           variant="primary"
+          display={{ base: "none", md: "flex" }}
           colorScheme="black"
+          onClick={onPublish}
+          isLoading={addProductMutation.isLoading}
+        >
+          Publish
+        </Button>
+        {/* Mobile button */}
+        <Button
+          variant="primary"
+          display={{ base: "flex", md: "none" }}
+          colorScheme="black"
+          size="sm"
           onClick={onPublish}
           isLoading={addProductMutation.isLoading}
         >
@@ -235,7 +254,7 @@ const Page = ({ categories }: any) => {
                 setFormValue({ ...formValue, name: e.target.value })
               }
             />
-            <FormErrorMessage>Name is required</FormErrorMessage>
+            <FormErrorMessage>Title is required</FormErrorMessage>
           </FormControl>
 
           <FormControl id="images" isInvalid={errors.images}>
@@ -261,9 +280,9 @@ const Page = ({ categories }: any) => {
             </TabList>
 
             <TabPanels>
-              <TabPanel>
+              <TabPanel p="0" mt="4">
                 <Stack spacing={4}>
-                  <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
+                  <chakra.article p={4} border="1px solid rgb(0 0 0 / 8%)">
                     <Heading fontSize="md" fontWeight="600" mb={6}>
                       Pricing
                     </Heading>
@@ -296,7 +315,7 @@ const Page = ({ categories }: any) => {
                     <Textarea
                       rows={8}
                       fontSize={{ base: "0.9375rem", md: "1rem" }}
-                      placeholder="Tell customers more about the product..."
+                      placeholder="Enter product description..."
                       disabled={addProductMutation.isLoading}
                       value={formValue.description}
                       onChange={(e) =>
@@ -310,15 +329,15 @@ const Page = ({ categories }: any) => {
                 </Stack>
               </TabPanel>
 
-              <TabPanel>
+              <TabPanel p="0" mt="4">
                 <Stack spacing={4}>
-                  <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
+                  <chakra.article p={4} border="1px solid rgb(0 0 0 / 8%)">
                     <Heading fontSize="md" fontWeight="600" mb={6}>
                       Shipping
                     </Heading>
 
                     <Checkbox
-                      mb={6}
+                      mb={4}
                       disabled={addProductMutation.isLoading}
                       checked={formValue.physical}
                       onChange={(e) =>
@@ -333,19 +352,19 @@ const Page = ({ categories }: any) => {
 
                     {!formValue.physical && (
                       <Text fontSize="sm" color="rgb(0 0 0 / 62%)">
-                        * Customers won&apos;t enter their shipping address or
-                        choose a shipping method when buying this product.
+                        * Customers won&apos;t enter their shipping details when
+                        buying this product.
                       </Text>
                     )}
                   </chakra.article>
 
-                  <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
+                  <chakra.article p={4} border="1px solid rgb(0 0 0 / 8%)">
                     <Heading fontSize="md" fontWeight="600" mb={6}>
                       Stock
                     </Heading>
 
                     <Checkbox
-                      mb={6}
+                      mb={4}
                       disabled={addProductMutation.isLoading}
                       checked={isLimited}
                       onChange={(e) => setIsLimited(e.target.checked)}
@@ -383,13 +402,13 @@ const Page = ({ categories }: any) => {
                     )}
                   </chakra.article>
 
-                  <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
+                  <chakra.article p={4} border="1px solid rgb(0 0 0 / 8%)">
                     <Heading fontSize="md" fontWeight="600" mb={6}>
                       Variants
                     </Heading>
 
                     <Checkbox
-                      mb={8}
+                      mb={6}
                       disabled={addProductMutation.isLoading}
                       checked={hasVariant}
                       onChange={(e) => setHasVariant(e.target.checked)}
@@ -423,7 +442,7 @@ const Page = ({ categories }: any) => {
         <Stack w="full" flex={1} spacing={5}>
           <Stack
             divider={<StackDivider borderColor="rgb(0 0 0 / 8%)" />}
-            border="1px solid rgb(0 0 0 / 16%)"
+            border="1px solid rgb(0 0 0 / 8%)"
           >
             <chakra.article p={4}>
               <Heading fontSize="lg" mb={2}>

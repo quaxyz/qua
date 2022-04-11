@@ -13,6 +13,7 @@ import {
   Grid,
   GridItem,
   Heading,
+  Icon,
   IconButton,
   Image,
   Menu,
@@ -27,6 +28,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Stack,
+  StackDivider,
   Text,
   useDisclosure,
   useToast,
@@ -224,251 +226,287 @@ const Page = ({ products }: any) => {
 
   return (
     <>
-      <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
-        <Stack direction="row" justify="space-between" align="center" mb={10}>
-          <Heading
-            as="h2"
-            fontSize={{ base: "18px", md: "24px" }}
-            fontWeight="500"
-            color="#131415"
-          >
-            Products
-          </Heading>
-
-          <Link
-            href={`/${query.store}/products/new`}
-            as={Button}
-            variant="primary"
-            colorScheme="black"
-            leftIcon={<Plus set="bold" primaryColor="#ffffff" />}
-          >
-            New Product
-          </Link>
-        </Stack>
-
-        {queryResp.isLoading ? (
-          <Stack alignItems="center" justifyContent="center" minH={24}>
-            <CircularProgress isIndeterminate color="black" />
-          </Stack>
-        ) : isEmpty ? (
-          <Stack
-            direction="column"
-            alignItems="center"
-            justifyContent="center"
-            mt={{ base: "8rem", md: "16rem" }}
-          >
-            <Image
-              src="/svg/add.svg"
-              alt="Add Icon"
-              layout="fixed"
-              w={{ base: "16", md: "100" }}
-              h={{ base: "16", md: "100" }}
-              mb="4"
-            />
-
-            <Stack alignItems="center" textAlign="center" justify="center">
-              <Text
-                fontSize={{ base: "lg", md: "xl" }}
-                fontWeight="bold"
-                color="#000"
-              >
-                No Products
-              </Text>
-              <Text fontSize={{ base: "md", md: "lg" }}>
-                Add products and manage pricing here.
-              </Text>
-            </Stack>
-          </Stack>
-        ) : (
-          <Stack mt={8} spacing={5}>
-            {/* heading */}
-            <Grid
-              display={{ base: "none", md: "grid" }}
-              templateColumns="repeat(7, 1fr)"
-              gap={6}
-              alignItems="center"
-              px={3}
+      <Container
+        maxW="100%"
+        py={{ base: "4", md: "12" }}
+        px={{ base: "6", md: "16" }}
+      >
+        <Stack spacing={{ base: "4", md: "6" }} divider={<StackDivider />}>
+          <Stack direction="row" justify="space-between" align="center">
+            <Heading
+              fontSize={{ base: "lg", md: "24px" }}
+              fontWeight="500"
+              color="#131415"
             >
-              <GridItem
-                w="100%"
-                colSpan={3}
-                textTransform="uppercase"
-                fontSize="sm"
-                fontWeight="600"
+              Products
+            </Heading>
+
+            <Link
+              as={Button}
+              href={`/${query.store}/products/new`}
+              display={{ base: "none", md: "flex" }}
+              variant="primary"
+              colorScheme="black"
+              leftIcon={
+                <Icon
+                  mr="0"
+                  boxSize={5}
+                  as={(props) => <Plus set="bold" {...props} />}
+                />
+              }
+            >
+              Add Product
+            </Link>
+            {/* Mobile button */}
+            <Link
+              as={Button}
+              href={`/${query.store}/products/new`}
+              display={{ base: "flex", md: "none" }}
+              variant="primary"
+              colorScheme="black"
+              size="sm"
+              w="132px"
+              leftIcon={
+                <Icon
+                  mr="0"
+                  boxSize={5}
+                  as={(props) => <Plus set="bold" {...props} />}
+                />
+              }
+            >
+              Add Product
+            </Link>
+          </Stack>
+
+          {queryResp.isLoading ? (
+            <Stack alignItems="center" justifyContent="center" minH={24}>
+              <CircularProgress isIndeterminate color="black" />
+            </Stack>
+          ) : isEmpty ? (
+            <Stack
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+              pt={{ base: "6rem", md: "12rem" }}
+            >
+              <Image
+                src="/svg/add.svg"
+                pointerEvents="none"
+                display={{ base: "none", md: "block" }}
+                alt="Add Icon"
+                w="20"
+                h="20"
+                mb="2"
+              />
+              <Image
+                src="/svg/add.svg"
+                pointerEvents="none"
+                display={{ base: "block", md: "none" }}
+                alt="Add Icon"
+                w="12"
+                h="12"
+                mb="1"
+              />
+
+              <Stack alignItems="center" textAlign="center" justify="center">
+                <Text
+                  fontSize={{ base: "md", md: "xl" }}
+                  fontWeight="bold"
+                  textAlign="center"
+                  color="#000"
+                >
+                  No Products
+                </Text>
+                <Text fontSize={{ base: "xs", md: "md" }} opacity="72%">
+                  Add products and manage pricing here.
+                </Text>
+              </Stack>
+            </Stack>
+          ) : (
+            <Stack mt={{ base: "0", md: "8" }} spacing={5}>
+              {/* heading */}
+              <Grid
+                display={{ base: "none", md: "grid" }}
+                templateColumns="repeat(7, 1fr)"
+                gap={6}
+                alignItems="center"
+                px={3}
               >
-                Product Name
-              </GridItem>
+                <GridItem
+                  w="100%"
+                  colSpan={3}
+                  textTransform="uppercase"
+                  fontSize="sm"
+                  fontWeight="600"
+                >
+                  Product Name
+                </GridItem>
 
-              <GridItem
-                w="100%"
-                textTransform="uppercase"
-                fontSize="sm"
-                fontWeight="600"
-                textAlign="center"
-              >
-                Price
-              </GridItem>
+                <GridItem
+                  w="100%"
+                  textTransform="uppercase"
+                  fontSize="sm"
+                  fontWeight="600"
+                  textAlign="center"
+                >
+                  Price
+                </GridItem>
 
-              <GridItem
-                w="100%"
-                textTransform="uppercase"
-                fontSize="sm"
-                fontWeight="600"
-                textAlign="center"
-              >
-                In Stock
-              </GridItem>
+                <GridItem
+                  w="100%"
+                  textTransform="uppercase"
+                  fontSize="sm"
+                  fontWeight="600"
+                  textAlign="center"
+                >
+                  In Stock
+                </GridItem>
 
-              <GridItem
-                w="100%"
-                textTransform="uppercase"
-                fontSize="sm"
-                fontWeight="600"
-                textAlign="center"
-              >
-                Sold
-              </GridItem>
+                <GridItem
+                  w="100%"
+                  textTransform="uppercase"
+                  fontSize="sm"
+                  fontWeight="600"
+                  textAlign="center"
+                >
+                  Sold
+                </GridItem>
 
-              <GridItem
-                w="100%"
-                textTransform="uppercase"
-                fontSize="sm"
-                fontWeight="600"
-                textAlign="center"
-              >
-                Actions
-              </GridItem>
-            </Grid>
+                <GridItem
+                  w="100%"
+                  textTransform="uppercase"
+                  fontSize="sm"
+                  fontWeight="600"
+                  textAlign="center"
+                >
+                  Actions
+                </GridItem>
+              </Grid>
 
-            {queryResp.data?.pages?.map((page) =>
-              page.map((data: any) => (
-                <React.Fragment key={data.id}>
-                  <Stack
-                    direction="row"
-                    display={{ base: "flex", md: "none" }}
-                    py={4}
-                    px={3}
-                    spacing={4}
-                    border="1px solid rgb(0 0 0 / 8%)"
-                  >
-                    <Box>
-                      <Image
-                        src={data.images[0].url}
-                        alt={data.name}
-                        boxSize="100px"
-                        objectFit="cover"
-                      />
-                    </Box>
-
-                    <Stack flex="1" spacing={2}>
-                      <Text fontSize="sm">{data.name}</Text>
-
-                      <Stack direction="row" spacing={2}>
-                        <Text fontSize="sm">Price:</Text>
-                        <Text fontSize="sm" fontWeight="600">
-                          {formatCurrency(data.price)}
-                        </Text>
-                      </Stack>
-
-                      <Stack direction="row" spacing={2}>
-                        <Text fontSize="sm">In stock:</Text>
-                        <Text fontSize="sm" fontWeight="600">
-                          {data.totalStocks ?? "unlimited"}
-                        </Text>
-                      </Stack>
-
-                      <Stack direction="row" spacing={2}>
-                        <Text fontSize="sm">Sold:</Text>
-                        <Text fontSize="sm" fontWeight="600">
-                          {data?.sold || 0}
-                        </Text>
-                      </Stack>
-                    </Stack>
-
-                    <Box>
-                      <ActionMenu id={data?.id} />
-                    </Box>
-                  </Stack>
-
-                  <Grid
-                    display={{ base: "none", md: "grid" }}
-                    templateColumns="repeat(7, 1fr)"
-                    gap={6}
-                    alignItems="center"
-                    py={4}
-                    px={3}
-                    border="1px solid rgb(0 0 0 / 8%)"
-                  >
-                    <GridItem w="100%" colSpan={3}>
-                      <Stack direction="row" alignItems="center" spacing={4}>
+              {queryResp.data?.pages?.map((page) =>
+                page.map((data: any) => (
+                  <React.Fragment key={data.id}>
+                    <Stack
+                      direction="row"
+                      display={{ base: "flex", md: "none" }}
+                      py={3}
+                      px={3}
+                      spacing={4}
+                      border="1px solid rgb(0 0 0 / 8%)"
+                    >
+                      <Box>
                         <Image
                           src={data.images[0].url}
                           alt={data.name}
-                          boxSize="60px"
+                          boxSize="100px"
                           objectFit="cover"
                         />
+                      </Box>
 
-                        <Text
-                          textTransform="uppercase"
-                          fontSize="sm"
-                          fontWeight="normal"
-                        >
-                          {data.name}
-                        </Text>
+                      <Stack flex="1" spacing={1}>
+                        <Text fontSize="md">{data.name}</Text>
+
+                        <Stack direction="row" spacing={2}>
+                          <Text fontSize="sm">Price:</Text>
+                          <Text fontSize="sm" fontWeight="600">
+                            {formatCurrency(data.price)}
+                          </Text>
+                        </Stack>
+
+                        <Stack direction="row" spacing={2}>
+                          <Text fontSize="sm">In stock:</Text>
+                          <Text fontSize="sm" fontWeight="600">
+                            {data.totalStocks ?? "unlimited"}
+                          </Text>
+                        </Stack>
+
+                        <Stack direction="row" spacing={2}>
+                          <Text fontSize="sm">Sold:</Text>
+                          <Text fontSize="sm" fontWeight="600">
+                            {data?.sold || 0}
+                          </Text>
+                        </Stack>
                       </Stack>
-                    </GridItem>
 
-                    <GridItem
-                      w="100%"
-                      textTransform="uppercase"
-                      fontSize="sm"
-                      fontWeight="600"
-                      textAlign="center"
+                      <Box>
+                        <ActionMenu id={data?.id} />
+                      </Box>
+                    </Stack>
+
+                    <Grid
+                      display={{ base: "none", md: "grid" }}
+                      templateColumns="repeat(7, 1fr)"
+                      gap={6}
+                      alignItems="center"
+                      py={3}
+                      px={3}
+                      border="1px solid rgb(0 0 0 / 8%)"
                     >
-                      {formatCurrency(data.price)}
-                    </GridItem>
+                      <GridItem w="100%" colSpan={3}>
+                        <Stack direction="row" alignItems="center" spacing={4}>
+                          <Image
+                            src={data.images[0].url}
+                            alt={data.name}
+                            boxSize="60px"
+                            objectFit="cover"
+                          />
 
-                    <GridItem
-                      w="100%"
-                      textTransform="uppercase"
-                      fontSize="sm"
-                      fontWeight="600"
-                      textAlign="center"
-                    >
-                      {data.totalStocks ?? "unlimited"}
-                    </GridItem>
+                          <Text fontSize="md" fontWeight="500">
+                            {data.name}
+                          </Text>
+                        </Stack>
+                      </GridItem>
 
-                    <GridItem
-                      w="100%"
-                      textTransform="uppercase"
-                      fontSize="sm"
-                      fontWeight="600"
-                      textAlign="center"
-                    >
-                      {data?.totalSold || 0}
-                    </GridItem>
+                      <GridItem
+                        w="100%"
+                        fontSize="sm"
+                        fontWeight="600"
+                        textAlign="center"
+                      >
+                        {formatCurrency(data.price)}
+                      </GridItem>
 
-                    <GridItem w="100%" textAlign="center">
-                      <ActionMenu id={data?.id} />
-                    </GridItem>
-                  </Grid>
-                </React.Fragment>
-              ))
-            )}
+                      <GridItem
+                        w="100%"
+                        fontSize="sm"
+                        fontWeight="600"
+                        textAlign="center"
+                      >
+                        {data.totalStocks ?? "unlimited"}
+                      </GridItem>
 
-            {queryResp.hasNextPage && (
-              <Stack align="center">
-                <Button
-                  onClick={() => queryResp.fetchNextPage()}
-                  isLoading={queryResp.isFetchingNextPage}
-                  variant="solid-outline"
-                >
-                  Load more
-                </Button>
-              </Stack>
-            )}
-          </Stack>
-        )}
+                      <GridItem
+                        w="100%"
+                        fontSize="sm"
+                        fontWeight="600"
+                        textAlign="center"
+                      >
+                        {data?.totalSold || 0}
+                      </GridItem>
+
+                      <GridItem w="100%" textAlign="center">
+                        <ActionMenu id={data?.id} />
+                      </GridItem>
+                    </Grid>
+                  </React.Fragment>
+                ))
+              )}
+
+              {queryResp.hasNextPage && (
+                <Stack align="center">
+                  <Button
+                    onClick={() => queryResp.fetchNextPage()}
+                    isLoading={queryResp.isFetchingNextPage}
+                    variant="solid-outline"
+                    size="sm"
+                  >
+                    Load more
+                  </Button>
+                </Stack>
+              )}
+            </Stack>
+          )}
+        </Stack>
       </Container>
     </>
   );
