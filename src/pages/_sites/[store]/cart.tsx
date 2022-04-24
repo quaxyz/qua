@@ -24,7 +24,7 @@ import { useDebounce } from "react-use";
 import { useRouter } from "next/router";
 import { formatCurrency } from "libs/currency";
 
-const CartItem = ({ item }: any) => {
+const CartItem = ({ item, currency }: any) => {
   const cart = useCartStore();
   const [quantity, setQuantity] = React.useState(item.quantity);
 
@@ -80,7 +80,9 @@ const CartItem = ({ item }: any) => {
 
         <Stack w="100%" align="center">
           <Text fontSize="14px">
-            <chakra.strong>{formatCurrency(item.price)}</chakra.strong>
+            <chakra.strong>
+              {formatCurrency(item.price, currency)}
+            </chakra.strong>
           </Text>
         </Stack>
 
@@ -95,7 +97,9 @@ const CartItem = ({ item }: any) => {
 
         <Stack w="100%" align="center">
           <Text fontSize="14px">
-            <chakra.strong>{formatCurrency(item.subtotal)}</chakra.strong>
+            <chakra.strong>
+              {formatCurrency(item.subtotal, currency)}
+            </chakra.strong>
           </Text>
         </Stack>
       </Stack>
@@ -172,7 +176,7 @@ const CartItem = ({ item }: any) => {
   );
 };
 
-const Page = () => {
+const Page = ({ store }) => {
   const { query } = useRouter();
   const cartStore = useCartStore();
   const toast = useToast();
@@ -308,7 +312,11 @@ const Page = () => {
             )}
 
             {cartProducts.map((item: any) => (
-              <CartItem item={item} key={item.productId} />
+              <CartItem
+                item={item}
+                key={item.productId}
+                currency={store.currency}
+              />
             ))}
           </Stack>
         </chakra.div>
@@ -321,7 +329,7 @@ const Page = () => {
             position="relative"
             border="0.5px solid rgba(0, 0, 0, 12%)"
           >
-            <CostSummary data={costSummary} />
+            <CostSummary data={costSummary} currency={store.currency} />
             <Text fontSize="sm">Shipping will be calculated at next step</Text>
 
             <Button
@@ -372,6 +380,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   return {
     props: {
+      store: {
+        currency: store.currency,
+      },
       layoutProps: {
         title: `Cart - ${store.name}`,
       },

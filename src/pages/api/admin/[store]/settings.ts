@@ -48,6 +48,7 @@ export default withSession(
             about: body.about,
             deliveryFee: body.deliveryFee ? parseFloat(body.deliveryFee) : 0,
             location: body.location,
+            currency: body.currency,
             socialLinks: body.socialLinks,
             bankDetails: body.bankDetails,
           };

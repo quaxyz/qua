@@ -34,7 +34,7 @@ import { useRouter } from "next/router";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { formatCurrency } from "libs/currency";
 
-const Page = ({ order: initialOrder, orderProducts }: any) => {
+const Page = ({ order: initialOrder, orderProducts, store }: any) => {
   const router = useRouter();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -131,7 +131,7 @@ const Page = ({ order: initialOrder, orderProducts }: any) => {
               <Text fontSize="sm">
                 Total:{" "}
                 <chakra.span fontWeight="bold">
-                  {formatCurrency(order.totalAmount)}
+                  {formatCurrency(order.totalAmount, store.currency)}
                 </chakra.span>
               </Text>
               <Text fontSize="sm">
@@ -219,7 +219,9 @@ const Page = ({ order: initialOrder, orderProducts }: any) => {
                 >
                   QTY: {itemDetail.quantity}
                 </chakra.span>
-                <chakra.strong>${itemDetail.price}</chakra.strong>
+                <chakra.strong>
+                  {formatCurrency(itemDetail.price, store.currency)}
+                </chakra.strong>
               </Stack>
             </Stack>
           ))}
@@ -351,6 +353,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     props: {
       order: JSON.parse(JSON.stringify(order)),
       orderProducts: JSON.parse(JSON.stringify(orderProducts)),
+      store: {
+        currency: store.currency,
+      },
       layoutProps: {
         title: `Order #${order.id} - ${store.name}`,
       },

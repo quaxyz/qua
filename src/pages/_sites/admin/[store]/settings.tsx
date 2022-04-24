@@ -33,6 +33,8 @@ import { AiFillInstagram } from "react-icons/ai";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { useQueryClient, useMutation, useQuery } from "react-query";
 import { withSsrSession } from "libs/session";
+import SelectMenu from "components/select";
+import { allCurrencies } from "libs/currency";
 
 function useSaveSettings() {
   const { query } = useRouter();
@@ -79,6 +81,7 @@ const Page = ({ details }: any) => {
     bankAccountNumber: details.bankDetails?.accountNumber || "",
     bankAccountName: details.bankDetails?.accountName || "",
     deliveryFee: details.deliveryFee || 0,
+    currency: details.currency || "USD",
   });
 
   const { data } = useQuery({
@@ -102,6 +105,7 @@ const Page = ({ details }: any) => {
       about: formValue.about,
       location: formValue.location,
       deliveryFee: formValue.deliveryFee,
+      currency: formValue.currency,
       socialLinks: {
         whatsapp: formValue.whatsapp,
         instagram: formValue.instagram,
@@ -278,24 +282,6 @@ const Page = ({ details }: any) => {
               gridColumnGap={12}
             >
               <GridItem>
-                <FormControl id="location">
-                  <FormLabel textTransform="uppercase" opacity="72%">
-                    Business Location
-                  </FormLabel>
-                  <Input
-                    id="location"
-                    variant="flushed"
-                    type="text"
-                    value={formValue.location}
-                    onChange={(e) =>
-                      setFormValue({ ...formValue, location: e.target.value })
-                    }
-                    placeholder="Enter address"
-                  />
-                </FormControl>
-              </GridItem>
-
-              <GridItem>
                 <FormControl id="name">
                   <FormLabel textTransform="uppercase" opacity="72%">
                     Store Contacts
@@ -351,9 +337,27 @@ const Page = ({ details }: any) => {
               </GridItem>
 
               <GridItem>
+                <FormControl id="location">
+                  <FormLabel textTransform="uppercase" opacity="72%">
+                    Pickup Address
+                  </FormLabel>
+                  <Input
+                    id="location"
+                    variant="flushed"
+                    type="text"
+                    value={formValue.location}
+                    onChange={(e) =>
+                      setFormValue({ ...formValue, location: e.target.value })
+                    }
+                    placeholder="Enter address"
+                  />
+                </FormControl>
+              </GridItem>
+
+              <GridItem>
                 <FormControl id="deliveryFee">
                   <FormLabel textTransform="uppercase" opacity="72%">
-                    Base shipping fee ($)
+                    Base shipping fee
                   </FormLabel>
                   <Input
                     id="deliveryFee"
@@ -367,6 +371,28 @@ const Page = ({ details }: any) => {
                       })
                     }
                     placeholder="Enter base delivery fee"
+                  />
+                </FormControl>
+              </GridItem>
+
+              <GridItem>
+                <FormControl id="currency">
+                  <FormLabel textTransform="uppercase" opacity="72%">
+                    Store Currency
+                  </FormLabel>
+                  <SelectMenu
+                    title="Select Category"
+                    placeholder="Select"
+                    variant="flushed"
+                    size="md"
+                    value={formValue.currency}
+                    onChange={(item) =>
+                      setFormValue({ ...formValue, currency: item })
+                    }
+                    options={allCurrencies.map((item) => ({
+                      value: item.cc,
+                      label: `${item.symbol} ${item.cc}`,
+                    }))}
                   />
                 </FormControl>
               </GridItem>

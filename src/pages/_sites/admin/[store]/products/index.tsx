@@ -200,7 +200,7 @@ const ActionMenu = ({ id, ButtonProps }: any) => {
   );
 };
 
-const Page = ({ products }: any) => {
+const Page = ({ products, store }: any) => {
   const { query } = useRouter();
 
   const queryResp = useInfiniteQuery({
@@ -366,7 +366,7 @@ const Page = ({ products }: any) => {
                       <Stack direction="row" spacing={2}>
                         <Text fontSize="sm">Price:</Text>
                         <Text fontSize="sm" fontWeight="600">
-                          {formatCurrency(data.price)}
+                          {formatCurrency(data.price, store.currency)}
                         </Text>
                       </Stack>
 
@@ -425,7 +425,7 @@ const Page = ({ products }: any) => {
                       fontWeight="600"
                       textAlign="center"
                     >
-                      {formatCurrency(data.price)}
+                      {formatCurrency(data.price, store.currency)}
                     </GridItem>
 
                     <GridItem
@@ -504,6 +504,7 @@ export const getServerSideProps: GetServerSideProps = withSsrSession(
       },
       select: {
         name: true,
+        currency: true,
       },
     });
     if (!store) {
@@ -543,6 +544,9 @@ export const getServerSideProps: GetServerSideProps = withSsrSession(
     return {
       props: {
         products: JSON.parse(JSON.stringify(data)),
+        store: {
+          currency: store.currency,
+        },
         layoutProps: {
           title: `Products - ${store.name}`,
         },

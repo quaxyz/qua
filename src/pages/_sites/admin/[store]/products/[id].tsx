@@ -284,7 +284,7 @@ const Page = ({ product, categories }: any) => {
 
                     <Stack direction="row" justify="space-between" spacing={6}>
                       <FormControl id="price" isInvalid={errors.price}>
-                        <FormLabel htmlFor="price">Price ($)</FormLabel>
+                        <FormLabel htmlFor="price">Price</FormLabel>
                         <Input
                           isRequired
                           type="number"

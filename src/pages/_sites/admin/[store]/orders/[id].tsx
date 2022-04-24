@@ -15,7 +15,6 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
-import { truncateAddress } from "libs/utils";
 import { ArrowLeft, InfoCircle } from "react-iconly";
 import { parseJSON, format } from "date-fns";
 import { formatCurrency } from "libs/currency";
@@ -251,7 +250,9 @@ const Page = (props: any) => {
                     >
                       QTY: {item.quantity}
                     </chakra.span>
-                    <chakra.strong>{formatCurrency(item.price)}</chakra.strong>
+                    <chakra.strong>
+                      {formatCurrency(item.price, props.store.currency)}
+                    </chakra.strong>
                   </Stack>
                 </Stack>
               ))}
@@ -263,7 +264,7 @@ const Page = (props: any) => {
               Payment Summary
             </Heading>
 
-            <CostSummary data={costSummary} />
+            <CostSummary data={costSummary} currency={props.store.currency} />
 
             {order.status === "UNFULFILLED" && (
               <Stack>
@@ -389,6 +390,7 @@ export const getServerSideProps: GetServerSideProps = withSsrSession(
       },
       select: {
         name: true,
+        currency: true,
       },
     });
     if (!store) {
@@ -474,6 +476,7 @@ export const getServerSideProps: GetServerSideProps = withSsrSession(
     return {
       props: {
         order: JSON.parse(JSON.stringify(order)),
+        store,
         layoutProps: {
           title: `Order #${order.id} - ${store.name} `,
         },

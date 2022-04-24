@@ -22,7 +22,7 @@ import { Quantity } from "components/quantity";
 import { useCartStore } from "hooks/useCart";
 import { formatCurrency } from "libs/currency";
 
-const Page = ({ product }: any) => {
+const Page = ({ product, store }: any) => {
   const router = useRouter();
   const [quantity, setQuantity] = React.useState(1);
   const cart = useCartStore();
@@ -111,7 +111,9 @@ const Page = ({ product }: any) => {
                 >
                   Price:
                 </Text>
-                <Text fontWeight="700">{formatCurrency(product.price)}</Text>
+                <Text fontWeight="700">
+                  {formatCurrency(product.price, store.currency)}
+                </Text>
               </Stack>
               <Stack align="flex-start">
                 <Text
@@ -256,6 +258,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       product: JSON.parse(JSON.stringify(product)),
+      store: {
+        currency: store.currency,
+      },
       layoutProps: {
         title: `${product.name} - ${store.name}`,
       },

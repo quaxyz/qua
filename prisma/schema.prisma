@@ -19,6 +19,7 @@ model Store {
   title       String?
   about       String?
   location    String?
+  currency    String  @default("USD")
   socialLinks Json?
   bankDetails Json?
 

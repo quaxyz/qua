@@ -1,7 +1,14 @@
 import React from "react";
+import { formatCurrency } from "libs/currency";
 import { Stack, Text } from "@chakra-ui/react";
 
-export const CostSummary = ({ data }: { data: Object }) => {
+export const CostSummary = ({
+  data,
+  currency,
+}: {
+  data: Object;
+  currency?: string;
+}) => {
   const total = Object.entries(data).reduce((total, [_, amount]) => {
     return total + amount;
   }, 0);
@@ -28,11 +35,11 @@ export const CostSummary = ({ data }: { data: Object }) => {
       <Stack direction="column" fontWeight="bold" spacing={4}>
         {Object.values(data).map((v, idx) => (
           <Text textTransform="capitalize" key={idx}>
-            ${v || 0}
+            {formatCurrency(v || 0, currency)}
           </Text>
         ))}
 
-        <Text>${total || 0}</Text>
+        <Text>{formatCurrency(total || 0, currency)}</Text>
       </Stack>
     </Stack>
   );

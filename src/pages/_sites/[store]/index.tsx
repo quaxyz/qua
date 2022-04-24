@@ -59,7 +59,7 @@ function useQueryProducts({ initialData }: any) {
   };
 }
 
-const Page = ({ products, categories }: any) => {
+const Page = ({ products, categories, store }: any) => {
   const { ref, queryResp } = useQueryProducts({ initialData: products });
 
   return (
@@ -158,7 +158,7 @@ const Page = ({ products, categories }: any) => {
                     </NextLink>
 
                     <Text fontSize="sm" fontWeight="700" mt={{ md: 3 }}>
-                      {formatCurrency(data.price)}
+                      {formatCurrency(data.price, store.currency)}
                     </Text>
                   </chakra.section>
                 </LinkBox>
@@ -243,6 +243,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     props: {
       products: JSON.parse(JSON.stringify(data)),
       categories,
+      store: {
+        currency: store.currency,
+      },
       layoutProps: {
         title: `Products - ${store.name}`,
       },

@@ -424,7 +424,7 @@ const Page = ({ order, store }: any) => {
             border="0.5px solid rgba(0, 0, 0, 12%)"
             spacing={{ base: 4, md: 8 }}
           >
-            <CostSummary data={costSummary} />
+            <CostSummary data={costSummary} currency={store.currency} />
 
             <Button
               size="lg"
@@ -464,6 +464,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       email: true,
       owner: true,
       bankDetails: true,
+      currency: true,
     },
   });
   if (!store) {
