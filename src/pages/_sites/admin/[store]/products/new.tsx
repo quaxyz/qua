@@ -5,7 +5,6 @@ import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import Link from "components/link";
 import {
-  Box,
   Button,
   chakra,
   Checkbox,
@@ -14,7 +13,15 @@ import {
   FormErrorMessage,
   FormLabel,
   Heading,
+  IconButton,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Stack,
   StackDivider,
   Tab,
@@ -24,6 +31,8 @@ import {
   Tabs,
   Text,
   Textarea,
+  useBreakpointValue,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import StoreDashboardLayout from "components/layouts/store-dashboard";
@@ -33,91 +42,171 @@ import { CreateableSelectMenu } from "components/select";
 import { ArrowLeft } from "react-iconly";
 import { useMutation, useQueryClient } from "react-query";
 import { withSsrSession } from "libs/session";
+import { MdClose } from "react-icons/md";
+import { AiOutlineEdit } from "react-icons/ai";
 
-const Variants = (props: { onChange: (variants: any[]) => void }) => {
-  const [variants, setVariants] = React.useState([{ type: "", options: "" }]);
+const Variant = ({ type, options, setType, setOptions }: any) => {
+  const addVariantModal = useDisclosure();
 
-  const onVariantChange = (data: any, variantIdx: number) => {
-    setVariants(
-      variants.map((variant, idx) => {
-        if (idx === variantIdx) return data;
-        return variant;
-      })
-    );
+  const onOptionChange = (
+    data: string,
+    key: "option" | "price",
+    idx: number
+  ) => {
+    const newOptions = [...options];
 
-    props.onChange(variants);
+    const option = newOptions[idx];
+    option[key] = data;
+
+    setOptions(newOptions);
   };
 
-  const addVariant = () => {
-    setVariants(variants.concat({ type: "", options: "" }));
+  const addOption = () => {
+    setOptions(options.concat({ option: "", price: "" }));
+  };
 
-    props.onChange(variants);
+  const removeOption = (idx: number) => {
+    setOptions(options.filter((_: any, i: number) => i !== idx));
   };
 
   return (
     <>
-      {variants.map((variant, idx) => (
-        <Stack
-          key={idx}
-          direction={{ base: "column", md: "row" }}
-          justify="space-between"
-          align="flex-end"
-          spacing={5}
-          mb={6}
-        >
-          <Box flex={1}>
-            <FormGroup id="options" label="Option 1">
-              <CreateableSelectMenu
-                title="Choose Option"
-                placeholder="Choose"
-                variant="flushed"
-                value={variant.type}
-                size="sm"
-                onChange={(value) =>
-                  onVariantChange(
-                    {
-                      ...variant,
-                      type: value,
-                    },
-                    idx
-                  )
-                }
-                defaultOptions={[
-                  { value: "title", label: "Title" },
-                  { value: "color", label: "Color" },
-                  { value: "size", label: "Size" },
-                  { value: "material", label: "Material" },
-                  { value: "style", label: "Style" },
-                ]}
-              />
-            </FormGroup>
-          </Box>
-
-          <Box flex={3}>
-            <FormGroup id="discountPrice">
-              <Input
-                isRequired
-                placeholder="Seperate options with a comma"
-                variant="outline"
-                value={variant.options}
-                onChange={(e) =>
-                  onVariantChange(
-                    {
-                      ...variant,
-                      options: e.target.value,
-                    },
-                    idx
-                  )
-                }
-              />
-            </FormGroup>
-          </Box>
-        </Stack>
-      ))}
-
-      <Button onClick={addVariant} variant="solid-outline">
-        Add option
+      <Button
+        variant="primary-outline"
+        spacing={1}
+        rightIcon={<AiOutlineEdit />}
+        onClick={addVariantModal.onOpen}
+      >
+        <Text textTransform="capitalize">
+          {type || "Select Type"} - {options.length} Options
+        </Text>
       </Button>
+
+      <Modal
+        isCentered
+        isOpen={addVariantModal.isOpen}
+        onClose={addVariantModal.onClose}
+        size="md"
+        scrollBehavior="inside"
+      >
+        <ModalOverlay />
+
+        <ModalContent>
+          <ModalCloseButton
+            rounded="full"
+            bg="rgba(0, 0, 0, 0.02)"
+            fontSize="sm"
+            top={4}
+            right={5}
+          />
+
+          <ModalHeader align="flex-start" color="black" py={4}>
+            Variant
+          </ModalHeader>
+
+          <ModalBody py={5}>
+            <Stack spacing={5}>
+              <FormGroup id="category" label="Type">
+                <CreateableSelectMenu
+                  title="Select Category"
+                  placeholder="Select"
+                  variant="outline"
+                  size="md"
+                  value={type}
+                  onChange={(value) => setType(value)}
+                  defaultOptions={[
+                    { value: "color", label: "Color" },
+                    { value: "size", label: "Size" },
+                    { value: "style", label: "Style" },
+                  ]}
+                />
+              </FormGroup>
+
+              <chakra.section>
+                <Stack spacing={2} mt={2} mb={4}>
+                  <Stack direction="row" spacing={2}>
+                    <Text
+                      flex={1}
+                      fontSize="xs"
+                      textTransform="uppercase"
+                      fontWeight="600"
+                    >
+                      Option
+                    </Text>
+
+                    <Text
+                      flex={1}
+                      pl={1}
+                      fontSize="xs"
+                      textTransform="uppercase"
+                      fontWeight="600"
+                    >
+                      Price
+                    </Text>
+
+                    <chakra.div w="45px" />
+                  </Stack>
+
+                  {options.map((option: any, idx: number) => (
+                    <Stack direction="row" spacing={2} key={idx}>
+                      {/* value */}
+                      <FormGroup id="option">
+                        <Input
+                          isRequired
+                          fontSize="sm"
+                          placeholder="eg: Red, 3 liters"
+                          variant="outline"
+                          value={option.option}
+                          onChange={(e) =>
+                            onOptionChange(e.target.value, "option", idx)
+                          }
+                        />
+                      </FormGroup>
+
+                      {/* price */}
+                      <FormGroup id="price">
+                        <Input
+                          isRequired
+                          fontSize="sm"
+                          placeholder="0.00"
+                          variant="outline"
+                          value={option.price}
+                          onChange={(e) =>
+                            onOptionChange(e.target.value, "price", idx)
+                          }
+                        />
+                      </FormGroup>
+
+                      {/* remove button */}
+                      <IconButton
+                        aria-label="Remove option"
+                        variant="ghost"
+                        rounded="full"
+                        icon={<MdClose />}
+                        onClick={() => removeOption(idx)}
+                      />
+                    </Stack>
+                  ))}
+                </Stack>
+
+                <Button
+                  size="sm"
+                  variant="solid-outline"
+                  onClick={() => addOption()}
+                >
+                  Add Option
+                </Button>
+              </chakra.section>
+            </Stack>
+          </ModalBody>
+
+          <ModalFooter justifyContent="flex-start">
+            <Text fontSize="sm" fontStyle="italic" color="rgb(0 0 0 / 55%)">
+              * Only add price if option price is different from base price
+            </Text>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 };
@@ -127,7 +216,6 @@ const Page = ({ categories }: any) => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const [hasVariant, setHasVariant] = React.useState(false);
   const [isLimited, setIsLimited] = React.useState(false);
 
   const [errors, setErrors] = React.useState<any>({});
@@ -151,11 +239,13 @@ const Page = ({ categories }: any) => {
     {
       onSuccess: async ({ payload: result }) => {
         await queryClient.invalidateQueries("store-dashboard-products");
+
         toast({
           title: "Product published",
           position: "top-right",
           status: "success",
         });
+
         router.push(`/${router.query.store}/products/${result.product.id}`);
       },
       onError: (err: any) => {
@@ -173,6 +263,12 @@ const Page = ({ categories }: any) => {
     name: !state.name || state.name.length < 1,
     price: !state.price || state.price.length < 1,
     images: !state.images || state.images.length < 1 || state.images.length > 8,
+    variants: state.variants.some(
+      (v: any) =>
+        v.type === "" ||
+        v.options.length < 2 ||
+        v.options.some((o: any) => o.option === "")
+    ),
   });
 
   const onPublish = async () => {
@@ -188,10 +284,7 @@ const Page = ({ categories }: any) => {
       return;
     }
 
-    addProductMutation.mutate({
-      ...formValue,
-      variants: hasVariant ? formValue.variants : [],
-    });
+    addProductMutation.mutate(formValue);
   };
 
   return (
@@ -200,7 +293,12 @@ const Page = ({ categories }: any) => {
       py={{ base: "4", md: "12" }}
       px={{ base: "6", md: "16" }}
     >
-      <Stack direction="row" justify="space-between" align="center" mb={10}>
+      <Stack
+        direction="row"
+        justify="space-between"
+        alignItems="center"
+        mb={10}
+      >
         <Link href={`/${router.query.store}/products`} border="none">
           <Stack border="none" direction="row" alignItems="center" spacing="1">
             <ArrowLeft set="light" />
@@ -216,21 +314,10 @@ const Page = ({ categories }: any) => {
 
         <Button
           variant="primary"
-          display={{ base: "none", md: "flex" }}
           colorScheme="black"
           onClick={onPublish}
           isLoading={addProductMutation.isLoading}
-        >
-          Publish
-        </Button>
-        {/* Mobile button */}
-        <Button
-          variant="primary"
-          display={{ base: "flex", md: "none" }}
-          colorScheme="black"
-          size="sm"
-          onClick={onPublish}
-          isLoading={addProductMutation.isLoading}
+          size={useBreakpointValue({ base: "sm", md: "md" })}
         >
           Publish
         </Button>
@@ -282,35 +369,6 @@ const Page = ({ categories }: any) => {
             <TabPanels>
               <TabPanel p="0" mt="4">
                 <Stack spacing={4}>
-                  <chakra.article p={4} border="1px solid rgb(0 0 0 / 8%)">
-                    <Heading fontSize="md" fontWeight="600" mb={6}>
-                      Pricing
-                    </Heading>
-
-                    <Stack direction="row" justify="space-between" spacing={6}>
-                      <FormControl id="price" isInvalid={errors.price}>
-                        <FormLabel htmlFor="price">Price</FormLabel>
-                        <Input
-                          isRequired
-                          type="number"
-                          placeholder="0.00"
-                          variant="flushed"
-                          disabled={addProductMutation.isLoading}
-                          value={formValue.price}
-                          // @ts-ignore
-                          onWheel={(e) => e.target.blur()}
-                          onChange={(e) =>
-                            setFormValue({
-                              ...formValue,
-                              price: e.target.value,
-                            })
-                          }
-                        />
-                        <FormErrorMessage>Price is required</FormErrorMessage>
-                      </FormControl>
-                    </Stack>
-                  </chakra.article>
-
                   <FormGroup id="description">
                     <Textarea
                       rows={8}
@@ -403,35 +461,64 @@ const Page = ({ categories }: any) => {
                   </chakra.article>
 
                   <chakra.article p={4} border="1px solid rgb(0 0 0 / 8%)">
-                    <Heading fontSize="md" fontWeight="600" mb={6}>
+                    <Heading fontSize="md" fontWeight="600" mb={2}>
                       Variants
                     </Heading>
 
-                    <Checkbox
-                      mb={6}
-                      disabled={addProductMutation.isLoading}
-                      checked={hasVariant}
-                      onChange={(e) => setHasVariant(e.target.checked)}
-                    >
-                      This product has multiple options, like different sizes or
-                      colors
-                    </Checkbox>
+                    <Text color="rgb(0 0 0 / 65%)" mb={6}>
+                      Add multiple options, like different sizes or colors
+                    </Text>
 
-                    {!!hasVariant && (
-                      <Text fontSize="sm" color="rgb(0 0 0 / 62%)" mb={8}>
-                        * All variants will have the same price. If you want to
-                        change the price, you can create a new product with a
-                        different price
+                    <Stack direction="row" spacing={4}>
+                      {formValue.variants.map((variant, idx) => (
+                        <Variant
+                          key={idx}
+                          type={variant.type}
+                          options={variant.options}
+                          setType={(value: string) => {
+                            const newVariants = [...formValue.variants];
+                            newVariants[idx].type = value;
+
+                            setFormValue({
+                              ...formValue,
+                              variants: newVariants,
+                            });
+                          }}
+                          setOptions={(options: any) => {
+                            const newVariants = [...formValue.variants];
+                            newVariants[idx].options = options;
+
+                            setFormValue({
+                              ...formValue,
+                              variants: newVariants,
+                            });
+                          }}
+                        />
+                      ))}
+                    </Stack>
+
+                    {errors.variants && (
+                      <Text mt={2} color="red.400" fontSize="sm">
+                        Invalid variant: Variant type is required and each
+                        variant must have 2 options
                       </Text>
                     )}
 
-                    {hasVariant && (
-                      <Variants
-                        onChange={(variants) =>
-                          setFormValue({ ...formValue, variants })
-                        }
-                      />
-                    )}
+                    <Button
+                      mt={4}
+                      variant="solid-outline"
+                      onClick={() => {
+                        setFormValue({
+                          ...formValue,
+                          variants: formValue.variants.concat({
+                            type: "",
+                            options: [],
+                          }),
+                        });
+                      }}
+                    >
+                      Add variant
+                    </Button>
                   </chakra.article>
                 </Stack>
               </TabPanel>
@@ -440,6 +527,39 @@ const Page = ({ categories }: any) => {
         </Stack>
 
         <Stack w="full" flex={1} spacing={5}>
+          {/* pricing */}
+          <Stack border="1px solid rgb(0 0 0 / 8%)">
+            <chakra.article p={4} border="1px solid rgb(0 0 0 / 8%)">
+              <Heading fontSize="lg" mb={4}>
+                Pricing
+              </Heading>
+
+              <Stack direction="row" justify="space-between" spacing={6}>
+                <FormControl id="price" isInvalid={errors.price}>
+                  <FormLabel htmlFor="price">Price</FormLabel>
+                  <Input
+                    isRequired
+                    type="number"
+                    placeholder="0.00"
+                    variant="flushed"
+                    disabled={addProductMutation.isLoading}
+                    value={formValue.price}
+                    // @ts-ignore
+                    onWheel={(e) => e.target.blur()}
+                    onChange={(e) =>
+                      setFormValue({
+                        ...formValue,
+                        price: e.target.value,
+                      })
+                    }
+                  />
+                  <FormErrorMessage>Price is required</FormErrorMessage>
+                </FormControl>
+              </Stack>
+            </chakra.article>
+          </Stack>
+
+          {/* category */}
           <Stack
             divider={<StackDivider borderColor="rgb(0 0 0 / 8%)" />}
             border="1px solid rgb(0 0 0 / 8%)"

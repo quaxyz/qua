@@ -50,6 +50,8 @@ export default withSession(
             const invalidVariants = body.variants.filter((variant: any) => {
               if (!variant.type || !variant.type.length) return true;
               if (!variant.options || !variant.options.length) return true;
+              if (variant.options.some((o: any) => o.option === ""))
+                return true;
             });
 
             if (invalidVariants.length > 0) {
@@ -64,9 +66,7 @@ export default withSession(
             // transform object
             body.variants = body.variants.map((variant: any) => ({
               type: variant.type,
-              options: variant.options
-                .split(",")
-                .map((option: string) => option.trim()),
+              options: variant.options,
             }));
           }
 
