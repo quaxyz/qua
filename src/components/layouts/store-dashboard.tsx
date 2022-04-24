@@ -115,10 +115,13 @@ const DashboardLayout = ({ title, children }: any) => {
               size="sm"
               fontSize="15px"
               bg="rgba(19, 20, 21, 0.04)"
-              borderRadius="12px"
+              rounded="12px"
               border="1px solid rgba(19, 20, 21, 0.08)"
+              _focus={{
+                boxShadow: "0 0 0 1px rgba(19, 20, 21, 24%) !important",
+              }}
               leftIcon={
-                <Icon mr="2" as={(props) => <User set="bold" {...props} />} />
+                <Icon mr="1" as={(props) => <User set="bold" {...props} />} />
               }
               as={Link}
               href={`/${router.query.store}/settings`}
@@ -137,7 +140,7 @@ const DashboardLayout = ({ title, children }: any) => {
           borderRight="1px solid rgba(19, 20, 21, 0.08)"
           position="relative"
         >
-          <Stack spacing={8} px={10} pos="fixed" left="0" minH="100%">
+          <Stack spacing={8} px={8} pos="fixed" left="0" minH="100%">
             <Stack spacing={6}>
               {navLinks.map((navLink, idx) => (
                 <Link
@@ -172,10 +175,19 @@ const DashboardLayout = ({ title, children }: any) => {
         {/* mobile topbar */}
         <chakra.header
           gridArea="topbar"
+          bgColor="rgba(255, 255, 255, 90%)"
+          backdropFilter="blur(24px)"
           borderBottom="1px solid rgba(19, 20, 21, 0.08)"
           bg="#fff"
           px={5}
           display={{ base: "block", md: "none" }}
+          pos="fixed"
+          top="0"
+          left="0"
+          right="0"
+          zIndex="2"
+          // 60px height
+          h="3.75rem"
         >
           <Stack
             direction="row"
@@ -195,13 +207,13 @@ const DashboardLayout = ({ title, children }: any) => {
               <Heading
                 textTransform="capitalize"
                 fontWeight="800"
-                fontSize="lg"
+                fontSize="md"
                 color="#000"
               >
                 {router.query?.store}
               </Heading>
               <Icon
-                fontSize="22"
+                fontSize="md"
                 color="#131415"
                 opacity="80%"
                 as={(props) => <Show set="bold" {...props} />}
@@ -210,17 +222,23 @@ const DashboardLayout = ({ title, children }: any) => {
 
             <Button
               variant="outline"
-              rounded="8px"
               size="sm"
-              borderColor="rgb(255 255 255 / 16%)"
-              rightIcon={<Icon as={CgMore} />}
+              w="128px"
+              fontSize="sm"
+              bg="#131415"
+              color="#fff"
+              fontWeight="500"
+              rounded="full"
+              border="1px solid rgba(19, 20, 21, 2%)"
+              _focus={{
+                boxShadow: "0 0 0 1px rgba(19, 20, 21, 24%) !important",
+                bg: "#131415",
+                color: "#fff",
+              }}
+              _hover={{ bg: "#131415", color: "#fff" }}
+              leftIcon={<Icon as={(props) => <User set="bold" {...props} />} />}
               as={Link}
               href={`/${router.query.store}/settings`}
-              color="#131415"
-              _hover={{
-                bg: "transparent",
-                borderColor: "rgb(255 255 255 / 48%)",
-              }}
             >
               My Account
             </Button>
@@ -239,7 +257,7 @@ const DashboardLayout = ({ title, children }: any) => {
           h="4.938rem"
           w="100%"
           display={{ base: "block", md: "none" }}
-          zIndex="1"
+          zIndex="2"
         >
           <Stack
             direction="row"

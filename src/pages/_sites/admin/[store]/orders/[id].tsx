@@ -130,7 +130,11 @@ const Page = (props: any) => {
   };
 
   return (
-    <Container maxW="100%" px={{ base: "4", md: "16" }} mb={8}>
+    <Container
+      maxW="100%"
+      py={{ base: "4", md: "12" }}
+      px={{ base: "6", md: "16" }}
+    >
       <Link
         display="inline-block"
         href={`/${query.store}/orders`}
@@ -139,9 +143,8 @@ const Page = (props: any) => {
         <Stack
           direction="row"
           align="center"
-          spacing={2}
-          py={{ base: "4", md: "8" }}
-          mt={{ base: "0", md: "8" }}
+          spacing={1}
+          pb={{ base: "6", md: "8" }}
         >
           <ArrowLeft set="light" />
           <chakra.span display="inline-block" fontSize="md" fontWeight="600">
@@ -164,13 +167,13 @@ const Page = (props: any) => {
               alignItems="center"
               spacing={{ base: "4", md: "8" }}
             >
-              <Heading as="h4" fontSize={{ base: "md", md: "2xl" }}>
+              <Heading as="h4" fontSize={{ base: "lg", md: "2xl" }}>
                 Order #{order.id}
               </Heading>
 
               <Stack direction="row" pr={{ base: "2", md: "4" }}>
                 <OrderStatus
-                  fontSize="14px"
+                  fontSize={{ base: "xs", md: "sm" }}
                   fontWeight="500"
                   lineHeight="1.5"
                   borderRadius="8px"
@@ -181,7 +184,7 @@ const Page = (props: any) => {
                 />
 
                 <OrderPaymentStatus
-                  fontSize="14px"
+                  fontSize={{ base: "xs", md: "sm" }}
                   fontWeight="500"
                   lineHeight="1.5"
                   borderRadius="8px"
@@ -194,7 +197,7 @@ const Page = (props: any) => {
             </Stack>
 
             <Stack>
-              <Text color="#000" opacity="0.72" mt={{ base: "1", md: "2" }}>
+              <Text opacity="68%" my={{ base: "1", md: "2" }}>
                 {format(parseJSON(order.createdAt), "dd.MM.yyyy")} at{" "}
                 {format(parseJSON(order.createdAt), "hh:mm a")}
               </Text>
@@ -214,7 +217,7 @@ const Page = (props: any) => {
                   align="center"
                   w="100%"
                   p={2}
-                  spacing={{ base: "2", md: "4" }}
+                  spacing={{ base: "4", md: "4" }}
                   border="0.5px solid rgba(0, 0, 0, 12%)"
                 >
                   <Box>
@@ -245,7 +248,7 @@ const Page = (props: any) => {
                     <chakra.span
                       display="block"
                       py="0.2rem"
-                      fontSize={{ base: "xs", md: "sm" }}
+                      fontSize={{ base: "sm", md: "sm" }}
                       textTransform="uppercase"
                     >
                       QTY: {item.quantity}
@@ -259,7 +262,7 @@ const Page = (props: any) => {
             </Stack>
           </Box>
 
-          <Box>
+          <Box py={{ base: "6", md: "2" }}>
             <Heading as="h4" mb={4} fontSize={{ base: "md", md: "xl" }}>
               Payment Summary
             </Heading>
@@ -268,12 +271,13 @@ const Page = (props: any) => {
 
             {order.status === "UNFULFILLED" && (
               <Stack>
-                <Stack mt={4} direction="row" w="100%">
+                <Stack mt={4} direction="row" w="100%" spacing="4">
                   <Button
                     onClick={() => fulfillOrder.mutate({ orderId: order.id })}
                     isLoading={fulfillOrder.isLoading}
                     variant="solid"
-                    width="100%"
+                    py="7"
+                    px="16"
                   >
                     Fufill Order
                   </Button>
@@ -281,8 +285,9 @@ const Page = (props: any) => {
                   <Button
                     onClick={() => cancelOrder.mutate({ orderId: order.id })}
                     isLoading={cancelOrder.isLoading}
-                    w="24rem"
                     variant="solid-outline"
+                    py="7"
+                    px="8"
                   >
                     Cancel Order
                   </Button>
@@ -300,23 +305,26 @@ const Page = (props: any) => {
           <Stack
             direction="column"
             p={{ base: "4", md: "6" }}
+            mb="8"
             spacing={6}
             border="0.5px solid rgba(0, 0, 0, 12%)"
           >
             <Stack spacing={2}>
-              <Heading as="h4" size="lg">
+              <Heading as="h4" fontSize={{ base: "md", md: "xl" }}>
                 Customer
               </Heading>
               <Stack
                 direction={{ base: "column", md: "row" }}
                 align={{ base: "flex-start", md: "center" }}
               >
-                <Text color="#000">{order.customerDetails?.name}</Text>
+                <Text fontSize={{ base: "lg", md: "lg" }} color="#000">
+                  {order.customerDetails?.name}
+                </Text>
               </Stack>
             </Stack>
 
             <Stack spacing={2}>
-              <Heading as="h4" size="md">
+              <Heading as="h4" fontSize={{ base: "md", md: "xl" }}>
                 Contact info
               </Heading>
               <Text color="#000" opacity="0.72" mt={{ base: "1", md: "2" }}>
@@ -328,7 +336,7 @@ const Page = (props: any) => {
             </Stack>
 
             <Stack spacing={2}>
-              <Heading as="h4" size="md">
+              <Heading as="h4" fontSize={{ base: "md", md: "xl" }}>
                 Shipping Address
               </Heading>
               <Text color="#000" opacity="0.72" mt={{ base: "1", md: "2" }}>
@@ -337,7 +345,7 @@ const Page = (props: any) => {
             </Stack>
 
             <Stack spacing={2}>
-              <Heading as="h4" size="md">
+              <Heading as="h4" fontSize={{ base: "md", md: "xl" }}>
                 Payment Method
               </Heading>
               <Text color="#000" opacity="0.72" mt={{ base: "1", md: "2" }}>

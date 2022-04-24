@@ -67,7 +67,7 @@ const Page = ({ product, store }: any) => {
             align="center"
           >
             <Text fontSize="inherit" fontWeight="600">
-              Back
+              Go Back
             </Text>
           </Stack>
         </Link>

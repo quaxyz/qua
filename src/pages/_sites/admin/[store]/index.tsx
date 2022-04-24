@@ -8,6 +8,7 @@ import {
   Container,
   Flex,
   Heading,
+  Icon,
   Image,
   Stack,
   StackDivider,
@@ -24,151 +25,177 @@ const Page = ({ orders = [] }: any) => {
   const ordersIsEmpty = !orders.length;
 
   return (
-    <Container maxW="100%" py={8} px={{ base: "4", md: "12" }}>
-      <Stack spacing={10} divider={<StackDivider />}>
-        <Stack>
-          <Stack direction="row" justify="space-between" align="center" mb={10}>
-            <Heading
-              as="h2"
-              fontSize={{ base: "18px", md: "24px" }}
-              fontWeight="500"
-              color="#131415"
-            >
-              Activity
-            </Heading>
+    <Container
+      maxW="100%"
+      py={{ base: "4", md: "12" }}
+      px={{ base: "6", md: "16" }}
+    >
+      <Stack spacing={{ base: "4", md: "6" }} divider={<StackDivider />}>
+        <Stack direction="row" justify="space-between" align="center">
+          <Heading
+            fontSize={{ base: "lg", md: "24px" }}
+            fontWeight="500"
+            color="#131415"
+          >
+            Recents
+          </Heading>
 
-            <Link href={`/${query.store}/orders`}>View all orders</Link>
-          </Stack>
-
-          {!ordersIsEmpty ? (
-            <Box>
-              <Stack
-                direction="row"
-                display={{ base: "none", md: "flex" }}
-                my="8px"
-                px="1rem"
-                py="1rem"
-              >
-                <Flex w="100%">
-                  <Text>Order ID</Text>
-                </Flex>
-                <Flex w="100%">
-                  <Text>Customer</Text>
-                </Flex>
-                <Flex w="100%">
-                  <Text>Status</Text>
-                </Flex>
-                <Flex w="100%">
-                  <Text>Payment</Text>
-                </Flex>
-              </Stack>
-
-              {orders.map((order: any) => (
-                <React.Fragment key={order.id}>
-                  <Stack
-                    mb="1rem"
-                    direction={{ base: "column", md: "row" }}
-                    border="0.5px solid rgba(0, 0, 0, 0.12)"
-                    p="1.4rem"
-                    alignItems="center"
-                  >
-                    <Flex w="100%" justify="space-between">
-                      <Text display={{ base: "inline-block", md: "none" }}>
-                        Order ID
-                      </Text>
-
-                      <Link
-                        href={`/${query.store}/orders/${order.id}`}
-                        fontSize="16px"
-                        fontWeight={{ base: "400", md: "600" }}
-                      >
-                        #{order.id}
-                      </Link>
-                    </Flex>
-                    <Flex w="100%" justify="space-between">
-                      <Text display={{ base: "inline-block", md: "none" }}>
-                        Customer
-                      </Text>
-                      <Text
-                        fontSize="14px"
-                        textAlign="right"
-                        fontWeight={{ base: "600", md: "600" }}
-                        mb={{ base: "2", md: "0" }}
-                      >
-                        {order.customerDetails?.name}{" "}
-                      </Text>
-                    </Flex>
-                    <Flex w="100%" justify="space-between">
-                      <Text display={{ base: "inline-block", md: "none" }}>
-                        Status
-                      </Text>
-                      <OrderStatus
-                        fontSize="14px"
-                        fontWeight="500"
-                        lineHeight="1.5"
-                        borderRadius="8px"
-                        px="12px"
-                        py="4px"
-                        textAlign="center"
-                        status={order.status}
-                      />
-                    </Flex>
-                    <Flex w="100%" justify="space-between">
-                      <Text display={{ base: "inline-block", md: "none" }}>
-                        Payment
-                      </Text>
-                      <OrderPaymentStatus
-                        fontSize="14px"
-                        fontWeight="500"
-                        lineHeight="1.5"
-                        borderRadius="8px"
-                        px="12px"
-                        py="4px"
-                        textAlign="center"
-                        status={order.paymentStatus}
-                      />
-                    </Flex>
-                  </Stack>
-                </React.Fragment>
-              ))}
-            </Box>
-          ) : (
-            <Stack
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-              py={{ base: "4rem", md: "6rem" }}
-            >
-              <Image
-                src="/svg/Bag.svg"
-                alt="Add Icon"
-                layout="fixed"
-                w={{ base: "20", md: "100" }}
-                h={{ base: "20", md: "100" }}
-                mb="1"
-              />
-              <Stack alignItems="center" textAlign="center" justify="center">
-                <Text fontSize="xl" fontWeight="bold" color="#000">
-                  No recent orders
-                </Text>
-
-                <Link
-                  as={Button}
-                  href={`/${query.store}/products/new`}
-                  variant="primary"
-                  colorScheme="black"
-                >
-                  <Plus
-                    set="bold"
-                    primaryColor="#ffffff"
-                    style={{ marginRight: "14px" }}
-                  />
-                  Add Product
-                </Link>
-              </Stack>
-            </Stack>
-          )}
+          <Link
+            fontSize={{ base: "sm", md: "md" }}
+            href={`/${query.store}/orders`}
+          >
+            View all
+          </Link>
         </Stack>
+
+        {!ordersIsEmpty ? (
+          <Box>
+            <Stack
+              direction="row"
+              display={{ base: "none", md: "flex" }}
+              my="8px"
+              px="1rem"
+              py="1rem"
+            >
+              <Flex w="100%">
+                <Text>Order ID</Text>
+              </Flex>
+              <Flex w="100%">
+                <Text>Customer</Text>
+              </Flex>
+              <Flex w="100%">
+                <Text>Status</Text>
+              </Flex>
+              <Flex w="100%">
+                <Text>Payment</Text>
+              </Flex>
+            </Stack>
+
+            {orders.map((order: any) => (
+              <React.Fragment key={order.id}>
+                <Stack
+                  mb="1rem"
+                  direction={{ base: "column", md: "row" }}
+                  border="0.5px solid rgba(0, 0, 0, 0.12)"
+                  p="1.4rem"
+                  alignItems="center"
+                >
+                  <Flex w="100%" justify="space-between">
+                    <Text display={{ base: "inline-block", md: "none" }}>
+                      Order ID
+                    </Text>
+
+                    <Link
+                      href={`/${query.store}/orders/${order.id}`}
+                      fontSize="16px"
+                      fontWeight={{ base: "400", md: "600" }}
+                    >
+                      #{order.id}
+                    </Link>
+                  </Flex>
+                  <Flex w="100%" justify="space-between">
+                    <Text display={{ base: "inline-block", md: "none" }}>
+                      Customer
+                    </Text>
+                    <Text
+                      fontSize="14px"
+                      textAlign="right"
+                      fontWeight={{ base: "600", md: "600" }}
+                      mb={{ base: "2", md: "0" }}
+                    >
+                      {order.customerDetails?.name}{" "}
+                    </Text>
+                  </Flex>
+                  <Flex w="100%" justify="space-between">
+                    <Text display={{ base: "inline-block", md: "none" }}>
+                      Status
+                    </Text>
+                    <OrderStatus
+                      fontSize="14px"
+                      fontWeight="500"
+                      lineHeight="1.5"
+                      borderRadius="8px"
+                      px="12px"
+                      py="4px"
+                      textAlign="center"
+                      status={order.status}
+                    />
+                  </Flex>
+                  <Flex w="100%" justify="space-between">
+                    <Text display={{ base: "inline-block", md: "none" }}>
+                      Payment
+                    </Text>
+                    <OrderPaymentStatus
+                      fontSize="14px"
+                      fontWeight="500"
+                      lineHeight="1.5"
+                      borderRadius="8px"
+                      px="12px"
+                      py="4px"
+                      textAlign="center"
+                      status={order.paymentStatus}
+                    />
+                  </Flex>
+                </Stack>
+              </React.Fragment>
+            ))}
+          </Box>
+        ) : (
+          <Stack
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            pt={{ base: "6rem", md: "12rem" }}
+          >
+            <Image
+              src="/svg/Bag.svg"
+              display={{ base: "none", md: "block" }}
+              alt="Add Icon"
+              w="20"
+              h="20"
+              mb="2"
+            />
+            <Image
+              src="/svg/Bag.svg"
+              display={{ base: "block", md: "none" }}
+              alt="Add Icon"
+              w="12"
+              h="12"
+              mb="1"
+            />
+            <Stack
+              alignItems="center"
+              justify="center"
+              w="100%"
+              spacing={{ base: "4", md: "6" }}
+            >
+              <Text
+                fontSize={{ base: "md", md: "xl" }}
+                fontWeight="bold"
+                textAlign="center"
+                color="#000"
+              >
+                No recent orders
+              </Text>
+
+              <Link
+                as={Button}
+                href={`/${query.store}/products/new`}
+                variant="primary"
+                colorScheme="black"
+                leftIcon={
+                  <Icon
+                    mr="0"
+                    boxSize={5}
+                    as={(props) => <Plus set="bold" {...props} />}
+                  />
+                }
+              >
+                Add Product
+              </Link>
+            </Stack>
+          </Stack>
+        )}
       </Stack>
     </Container>
   );
