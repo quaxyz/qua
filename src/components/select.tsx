@@ -33,6 +33,7 @@ export type SelectMenuProps = {
   placeholder?: string;
   variant?: string;
   size?: string;
+  width?: string | number;
 };
 
 const SelectMenu = ({
@@ -88,6 +89,7 @@ const SelectMenu = ({
             right={5}
           />
           <ModalHeader
+            textTransform="capitalize"
             borderBottom="1px solid rgb(0 0 0 / 24%)"
             align="flex-start"
             color="black"

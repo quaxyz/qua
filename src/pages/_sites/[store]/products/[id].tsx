@@ -21,10 +21,13 @@ import CustomerLayout from "components/layouts/customer";
 import { Quantity } from "components/quantity";
 import { useCartStore } from "hooks/useCart";
 import { formatCurrency } from "libs/currency";
+import SelectMenu from "components/select";
 
 const Page = ({ product, store }: any) => {
   const router = useRouter();
   const [quantity, setQuantity] = React.useState(1);
+  const [variantData, setVariantData] = React.useState<any>({});
+  const [variantPrice, setVariantPrice] = React.useState<number | null>(null);
   const cart = useCartStore();
 
   const handleAddToCart = () => {
@@ -47,6 +50,22 @@ const Page = ({ product, store }: any) => {
     router.push({
       pathname: `/cart`,
     });
+  };
+
+  const handleVariantSelect = (type: string, value: any) => {
+    setVariantData({ [type]: value });
+
+    const variant = product.variants.find((v: any) => v.type === type);
+    const option = variant.options.find((o: any) => o.option === value);
+
+    if (
+      option.price &&
+      option.price.length &&
+      parseFloat(option.price) &&
+      option.price !== product.price
+    ) {
+      setVariantPrice(parseFloat(option.price));
+    }
   };
 
   return (
@@ -87,10 +106,11 @@ const Page = ({ product, store }: any) => {
         >
           <chakra.article p={2}>
             <Stack direction="column" py={{ base: "2", md: "4" }} spacing={4}>
-              <Heading as="h1" size="lg" mb={4} fontWeight="300">
+              <Heading as="h1" size="lg" fontWeight="300">
                 {product.name}
               </Heading>
-              {!!product.totalStocks && (
+
+              {product.totalStocks !== 0 && (
                 <Text
                   as="span"
                   fontSize="sm"
@@ -101,6 +121,7 @@ const Page = ({ product, store }: any) => {
                   In stock
                 </Text>
               )}
+
               <Stack>
                 <Text
                   as="span"
@@ -112,9 +133,13 @@ const Page = ({ product, store }: any) => {
                   Price:
                 </Text>
                 <Text fontWeight="700">
-                  {formatCurrency(product.price, store.currency)}
+                  {formatCurrency(
+                    variantPrice || product.price,
+                    store.currency
+                  )}
                 </Text>
               </Stack>
+
               <Stack align="flex-start">
                 <Text
                   as="span"
@@ -133,6 +158,36 @@ const Page = ({ product, store }: any) => {
                   min={1}
                 />
               </Stack>
+
+              {(product.variants || []).map((variant: any, idx: number) => (
+                <Stack align="flex-start" key={idx}>
+                  <Text
+                    as="span"
+                    color="#000"
+                    opacity="0.48"
+                    fontSize="sm"
+                    textTransform="uppercase"
+                  >
+                    {variant.type}:
+                  </Text>
+
+                  <SelectMenu
+                    title={variant.type}
+                    width={40}
+                    variant="outline"
+                    value={
+                      variantData[variant.type] || variant.options[0].option
+                    }
+                    onChange={(value) =>
+                      handleVariantSelect(variant.type, value)
+                    }
+                    options={(variant.options || []).map((o: any) => ({
+                      value: o.option,
+                      label: o.option,
+                    }))}
+                  />
+                </Stack>
+              ))}
             </Stack>
 
             <Stack
@@ -241,6 +296,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       price: true,
       description: true,
       totalStocks: true,
+      variants: true,
       images: {
         select: {
           url: true,
