@@ -56,7 +56,7 @@ const CustomerLayout = ({ title, children }: any) => {
           gridArea="topbar"
           pos="fixed"
           top="0"
-          zIndex="2"
+          zIndex="10"
           w="100%"
           bg="#fff"
           color="#000"
