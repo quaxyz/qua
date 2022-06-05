@@ -395,16 +395,23 @@ const Page = ({ products, store }: any) => {
                       border="1px solid rgb(0 0 0 / 8%)"
                     >
                       <Box>
-                        <Image
-                          src={data.images[0].url}
-                          alt={data.name}
-                          boxSize="100px"
-                          objectFit="cover"
-                        />
+                        {data.images[0] && (
+                          <Image
+                            src={data.images[0].url}
+                            alt={data.name}
+                            boxSize="100px"
+                            objectFit="cover"
+                          />
+                        )}
                       </Box>
 
                       <Stack flex="1" spacing={1}>
-                        <Text fontSize="md">{data.name}</Text>
+                        <Link
+                          href={`/${query.store}/products/${data.id}`}
+                          fontSize="md"
+                        >
+                          {data.name}
+                        </Link>
 
                         <Stack direction="row" spacing={2}>
                           <Text fontSize="sm">Price:</Text>
@@ -444,16 +451,22 @@ const Page = ({ products, store }: any) => {
                     >
                       <GridItem w="100%" colSpan={3}>
                         <Stack direction="row" alignItems="center" spacing={4}>
-                          <Image
-                            src={data.images[0].url}
-                            alt={data.name}
-                            boxSize="60px"
-                            objectFit="cover"
-                          />
+                          {data.images[0] && (
+                            <Image
+                              src={data.images[0].url}
+                              alt={data.name}
+                              boxSize="60px"
+                              objectFit="cover"
+                            />
+                          )}
 
-                          <Text fontSize="md" fontWeight="500">
+                          <Link
+                            href={`/${query.store}/products/${data.id}`}
+                            fontSize="md"
+                            fontWeight="500"
+                          >
                             {data.name}
-                          </Text>
+                          </Link>
                         </Stack>
                       </GridItem>
 

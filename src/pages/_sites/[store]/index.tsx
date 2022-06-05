@@ -137,7 +137,7 @@ const Page = ({ products, categories, store }: any) => {
                       priority={idx < 4} // first images will be high priority
                       objectFit="cover"
                       src={
-                        data.images[0].url ??
+                        data.images[0] ||
                         `https://via.placeholder.com/373/e2e8f0?text=Image%20of%20${data.name}`
                       }
                       alt={data.name}
@@ -217,12 +217,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       id: true,
       name: true,
       price: true,
-      images: {
-        take: 1,
-        select: {
-          url: true,
-        },
-      },
+      images: true,
     },
   });
 

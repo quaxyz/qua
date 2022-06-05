@@ -265,7 +265,6 @@ const Page = ({ product, categories }: any) => {
   const checkForErrors = (state: any) => ({
     name: !state.name || state.name.length < 1,
     price: !state.price || state.price.length < 1,
-    images: !state.images || state.images.length < 1 || state.images.length > 8,
     variants: state.variants.some(
       (v: any) =>
         v.type === "" ||
@@ -316,15 +315,27 @@ const Page = ({ product, categories }: any) => {
           </Stack>
         </Link>
 
-        <Button
-          variant="primary"
-          colorScheme="black"
-          size={useBreakpointValue({ base: "sm", md: "md" })}
-          onClick={onPublish}
-          isLoading={updateProductMutation.isLoading}
-        >
-          Update
-        </Button>
+        <Stack direction="row">
+          <Button
+            variant="primary-outline"
+            colorScheme="black"
+            size={useBreakpointValue({ base: "sm", md: "md" })}
+            as={Link}
+            href={`/${router.query.store}/products/new`}
+          >
+            Add New
+          </Button>
+
+          <Button
+            variant="primary"
+            colorScheme="black"
+            size={useBreakpointValue({ base: "sm", md: "md" })}
+            onClick={onPublish}
+            isLoading={updateProductMutation.isLoading}
+          >
+            Update
+          </Button>
+        </Stack>
       </Stack>
 
       <Stack
@@ -364,31 +375,11 @@ const Page = ({ product, categories }: any) => {
 
           <Tabs>
             <TabList>
-              <Tab>Description</Tab>
               <Tab>Details</Tab>
+              <Tab>Description</Tab>
             </TabList>
 
             <TabPanels>
-              <TabPanel p="0" mt="4">
-                <Stack spacing={4}>
-                  <FormGroup id="description">
-                    <Textarea
-                      rows={8}
-                      fontSize={{ base: "0.9375rem", md: "1rem" }}
-                      placeholder="Enter product description"
-                      disabled={updateProductMutation.isLoading}
-                      value={formValue.description}
-                      onChange={(e) =>
-                        setFormValue({
-                          ...formValue,
-                          description: e.target.value,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                </Stack>
-              </TabPanel>
-
               <TabPanel p="0" mt="4">
                 <Stack spacing={4}>
                   <chakra.article p={4} border="1px solid rgb(0 0 0 / 16%)">
@@ -522,6 +513,26 @@ const Page = ({ product, categories }: any) => {
                       Add variant
                     </Button>
                   </chakra.article>
+                </Stack>
+              </TabPanel>
+
+              <TabPanel p="0" mt="4">
+                <Stack spacing={4}>
+                  <FormGroup id="description">
+                    <Textarea
+                      rows={8}
+                      fontSize={{ base: "0.9375rem", md: "1rem" }}
+                      placeholder="Enter product description"
+                      disabled={updateProductMutation.isLoading}
+                      value={formValue.description}
+                      onChange={(e) =>
+                        setFormValue({
+                          ...formValue,
+                          description: e.target.value,
+                        })
+                      }
+                    />
+                  </FormGroup>
                 </Stack>
               </TabPanel>
             </TabPanels>

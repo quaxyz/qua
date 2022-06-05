@@ -44,7 +44,7 @@ const CustomerLayout = ({ title, children }: any) => {
 
       <Grid
         templateColumns="1fr"
-        templateRows="80px 1fr 70px"
+        templateRows="70px 1fr 70px"
         templateAreas={{
           base: `"topbar topbar" "main main" "bottombar bottombar"`,
           md: `"topbar topbar" "main main" "main main"`,

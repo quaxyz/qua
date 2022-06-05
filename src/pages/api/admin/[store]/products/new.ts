@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
 import { withSession } from "libs/session";
+import { revalidate } from "libs/revalidate";
 
 const LOG_TAG = "[admin-add-product]";
 
@@ -84,13 +85,7 @@ export default withSession(
               category: body.category,
               tags: body.tags?.split(",").map((t: string) => t.trim()) || [],
               variants: body.variants,
-
-              images: {
-                connectOrCreate: body.images.map((image: any) => ({
-                  where: { hash: image.hash },
-                  create: image,
-                })),
-              },
+              images: body.images.map((image: any) => image.url),
 
               Store: {
                 connect: {
@@ -101,19 +96,22 @@ export default withSession(
           });
 
           // revalidate store product pages
-          try {
-            console.log(LOG_TAG, "revalidate store pages", {
-              store: store.name,
-            });
-            await res.unstable_revalidate(`/_sites/${store.name}`);
-            await res.unstable_revalidate(
-              `/_sites/${store.name}/products/${result.id}`
-            );
-          } catch (err) {
-            console.error(LOG_TAG, "error revalidating store pages", {
-              store: store.name,
-              err,
-            });
+          if (process.env.NODE_ENV === "production") {
+            try {
+              console.log(LOG_TAG, "revalidate store pages", {
+                store: store.name,
+              });
+
+              await revalidate(
+                `https://${store.name}.${process.env.NEXT_PUBLIC_DOMAIN}`,
+                "/products/${result.id}"
+              );
+            } catch (err) {
+              console.error(LOG_TAG, "error revalidating store pages", {
+                store: store.name,
+                err,
+              });
+            }
           }
 
           console.log(LOG_TAG, "product created", { result });

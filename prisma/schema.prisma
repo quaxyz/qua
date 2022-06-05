@@ -68,7 +68,7 @@ model Product {
   deleted       Boolean  @default(false)
   storeId       Int
   Store         Store    @relation(fields: [storeId], references: [id])
-  images        Image[]
+  images        String[]
 }
 
 model Cart {
@@ -113,12 +113,11 @@ model Order {
 }
 
 model Image {
-  id        Int      @id @default(autoincrement())
-  hash      String   @unique
+  id        Int     @id @default(autoincrement())
+  hash      String
   key       String
   url       String
   productId Int?
-  Product   Product? @relation(fields: [productId], references: [id])
   Store     Store[]
 }
 

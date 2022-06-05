@@ -1,7 +1,35 @@
 /* eslint-disable import/no-anonymous-default-export */
 import type { NextApiRequest, NextApiResponse } from "next";
+import prisma from "libs/prisma";
+import groupBy from "lodash.groupby";
 
 const LOG_TAG = "[migrate]";
+
+// async function migrateImages() {
+//   // fetch all images with productId
+//   // convert the productId to be in the products array
+
+//   const images = await prisma.image.findMany({
+//     where: {
+//       NOT: {
+//         productId: null,
+//       },
+//     },
+//   });
+
+//   const productsId = groupBy(images, "productId");
+
+//   await Promise.all(
+//     Object.entries(productsId).map(async ([id, images]) => {
+//       await prisma.product.update({
+//         where: { id: Number(id) },
+//         data: {
+//           newImages: images.map((image) => image.url),
+//         },
+//       });
+//     })
+//   );
+// }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -14,7 +42,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         // migrate
-        // await migrateOwner();
+        // await migrateImages();
 
         return res.status(200).send({ message: "migrated" });
       }

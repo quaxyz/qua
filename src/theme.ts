@@ -3,8 +3,8 @@ import { transparentize } from "@chakra-ui/theme-tools";
 
 export default extendTheme({
   fonts: {
-    body: "Calibre, Inter, sans-serif",
-    heading: "Calibre, Inter, sans-serif",
+    body: "Inter, sans-serif",
+    heading: "Inter, sans-serif",
   },
 
   styles: {

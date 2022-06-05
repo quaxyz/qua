@@ -3,6 +3,7 @@ import { createContext } from "react";
 export type CartItem = {
   productId: string;
   quantity: number;
+  variants?: { [key: string]: string };
 };
 
 type CartContextType = {

@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
 import { withSession } from "libs/session";
+import { revalidate } from "libs/revalidate";
 
 const LOG_TAG = "[admin-update-product]";
 
@@ -68,48 +69,39 @@ export default withSession(
           }
 
           // save data and upsert images
-          const [result] = await prisma.$transaction([
-            prisma.product.update({
-              where: {
-                id: parseInt(query.id as string, 10),
-              },
-              data: {
-                name: body.name,
-                price: parseFloat(body.price),
-                physical: body.physical,
+          const result = await prisma.product.update({
+            where: {
+              id: parseInt(query.id as string, 10),
+            },
+            data: {
+              name: body.name,
+              price: parseFloat(body.price),
+              physical: body.physical,
 
-                description: body.description,
-                discountPrice: body.discountPrice
-                  ? parseFloat(body.discountPrice)
-                  : undefined,
+              description: body.description,
+              discountPrice: body.discountPrice
+                ? parseFloat(body.discountPrice)
+                : undefined,
 
-                totalStocks: body.stock ? parseInt(body.stock) : undefined,
-                category: body.category,
-                tags: body.tags?.split(",").map((t: string) => t.trim()) || [],
-                variants: body.variants,
-              },
-            }),
-
-            ...(body.images || []).map((image: any) =>
-              prisma.image.upsert({
-                where: { hash: image.hash },
-                update: { ...image },
-                create: {
-                  ...image,
-                  productId: parseInt(query.id as string, 10),
-                },
-              })
-            ),
-          ]);
+              totalStocks: body.stock ? parseInt(body.stock) : undefined,
+              category: body.category,
+              tags: body.tags?.split(",").map((t: string) => t.trim()) || [],
+              variants: body.variants,
+              images: body.images.map((image: any) => image.url),
+            },
+          });
 
           // revalidate store product pages
           try {
+            const proto =
+              process.env.NODE_ENV === "development" ? "http" : "https";
             console.log(LOG_TAG, "revalidate store pages", {
               store: store.name,
             });
-            await res.unstable_revalidate(`/_sites/${store.name}`);
-            await res.unstable_revalidate(
-              `/_sites/${store.name}/products/${result.id}`
+
+            await revalidate(
+              `${proto}://${store.name}.${process.env.NEXT_PUBLIC_DOMAIN}`,
+              "/products/${result.id}"
             );
           } catch (err) {
             console.error(LOG_TAG, "error revalidating store pages", {

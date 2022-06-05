@@ -228,6 +228,7 @@ const Page = ({ store }: any) => {
       },
     }))
   );
+
   const cartProductsLoading = cartProductsQuery.length
     ? cartProductsQuery.every((query) => query.isLoading && !query.data)
     : false;

@@ -34,6 +34,7 @@ const Page = ({ product, store }: any) => {
     cart?.addCartItem({
       productId: product.id,
       quantity,
+      variants: variantData,
     });
 
     setQuantity(1);
@@ -44,6 +45,7 @@ const Page = ({ product, store }: any) => {
       cart?.addCartItem({
         productId: product.id,
         quantity,
+        variants: variantData,
       });
     }
 
@@ -53,7 +55,10 @@ const Page = ({ product, store }: any) => {
   };
 
   const handleVariantSelect = (type: string, value: any) => {
-    setVariantData({ [type]: value });
+    setVariantData({
+      ...variantData,
+      [type]: value,
+    });
 
     const variant = product.variants.find((v: any) => v.type === type);
     const option = variant.options.find((o: any) => o.option === value);
