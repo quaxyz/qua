@@ -21,15 +21,24 @@ import {
 import { formatCurrency } from "libs/currency";
 import { Quantity } from "components/quantity";
 
-export const ProductModal = ({ product, store }: any) => {
+export const ProductModal = ({
+  store,
+  price,
+  product,
+  quantity,
+  setQuantity,
+  onAddToOrder,
+  onSelectVariant,
+  selectedVariants,
+}: any) => {
   return (
     <ModalContent
       rounded="2xl"
       overflowX="hidden"
       mb={{ base: "0", md: 14 }}
-      borderBottomRadius={{ base: "0px", md: "2xl" }}
       pos={{ base: "fixed", md: "relative" }}
       bottom={{ base: "0px", md: "initial" }}
+      borderBottomRadius={{ base: "0px", md: "2xl" }}
     >
       <ModalCloseButton
         top={4}
@@ -40,6 +49,7 @@ export const ProductModal = ({ product, store }: any) => {
         _hover={{ bg: "rgb(255 255 255 / 90%)" }}
         size={useBreakpointValue({ base: "md", md: "lg" })}
       />
+
       <ModalBody p={0}>
         {!!product.images.length ? (
           <chakra.div w="100%" bg="#000" overflow="hidden">
@@ -84,14 +94,17 @@ export const ProductModal = ({ product, store }: any) => {
                 Choose {variant.type}:
               </Heading>
 
-              <RadioGroup defaultValue="1">
+              <RadioGroup
+                onChange={(value) => onSelectVariant(variant.type, value)}
+                value={selectedVariants[variant.type].option}
+              >
                 <Stack spacing={2} w="100%">
                   {variant.options.map(
                     ({ option, price }: any, idx: number) => (
                       <Radio
                         size="lg"
                         key={idx}
-                        value="2"
+                        value={option}
                         sx={{ "& + .chakra-radio__label": { flex: 1 } }}
                       >
                         <Stack direction="row" w="100%" alignItems="center">
@@ -124,8 +137,8 @@ export const ProductModal = ({ product, store }: any) => {
       <ModalFooter justifyContent="initial" px={{ base: 3, md: 6 }}>
         <Stack w="full" direction="row" spacing={4}>
           <Quantity
-            quantity={1}
-            setQuantity={(v) => null}
+            quantity={quantity}
+            setQuantity={(v) => setQuantity(v)}
             max={product.totalStocks || Infinity}
             min={1}
           />
@@ -137,9 +150,12 @@ export const ProductModal = ({ product, store }: any) => {
             variant="primary"
             colorScheme="black"
             justifyContent="space-between"
+            onClick={() => onAddToOrder()}
           >
             <chakra.span>Add to order</chakra.span>
-            <chakra.span>$5.50</chakra.span>
+            <chakra.span>
+              {formatCurrency(price * quantity, store.currency)}
+            </chakra.span>
           </Button>
         </Stack>
       </ModalFooter>

@@ -33,7 +33,6 @@ export function Quantity(props: QuantityProps) {
       />
 
       <Text p={0} textAlign="center" border="none">
-        {" "}
         {props.quantity}
       </Text>
 
