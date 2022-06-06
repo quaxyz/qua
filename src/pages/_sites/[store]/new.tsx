@@ -185,11 +185,22 @@ const CategoryList = ({ name, store, products, setActiveCategory }: any) => {
   );
 };
 
-const Page = ({ products, store, allCategories }: any) => {
-  const categories = _groupBy<any>(products, "category");
-  const [activeCategory, setActiveCategory] = useState<string>(
-    Object.keys(categories)[0]
-  );
+const Page = ({ products, store }: any) => {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const searchFilteredProducts = searchTerm
+    ? products.filter((p: any) =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : products;
+
+  const categories = _groupBy<any>(searchFilteredProducts, "category");
+
+  const [activeCategory, setActiveCategory] = useState<string>();
+  const firstItem = Object.keys(categories)[0];
+  useEffect(() => {
+    setActiveCategory(firstItem);
+  }, [firstItem]);
 
   const onCategoryClick = (category: string) => {
     const element = document.getElementById(`#${category}`);
@@ -208,12 +219,7 @@ const Page = ({ products, store, allCategories }: any) => {
 
   return (
     <>
-      <PageHeader
-        store={store}
-        allCategories={allCategories}
-        activeCategory={activeCategory}
-        onCategoryClick={onCategoryClick}
-      />
+      <PageHeader store={store} />
 
       <Container
         px={4}
@@ -231,21 +237,23 @@ const Page = ({ products, store, allCategories }: any) => {
           boxShadow="base"
           alignContent="center"
         >
-          <chakra.form w="full" onSubmit={() => null}>
+          <chakra.form w="full" onSubmit={(e) => e.preventDefault()}>
             <InputGroup size={useBreakpointValue({ base: "sm", md: "md" })}>
               <InputLeftElement pointerEvents="none">
                 <Icon as={FiSearch} />
               </InputLeftElement>
 
               <Input
-                id="search"
-                border={{ md: "none" }}
                 w="full"
+                id="search"
+                value={searchTerm}
+                placeholder="Search"
+                border={{ md: "none" }}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 variant={useBreakpointValue({
                   base: "filled",
                   md: "outline",
                 })}
-                placeholder="Search"
               />
             </InputGroup>
           </chakra.form>
@@ -261,7 +269,7 @@ const Page = ({ products, store, allCategories }: any) => {
         >
           <chakra.div flex="1" display={{ base: "none", md: "block" }}>
             <Stack spacing={4} position="sticky" top="180px">
-              {allCategories.map((category: string) => (
+              {Object.keys(categories).map((category: string) => (
                 <Button
                   key={category}
                   fontSize="sm"
@@ -327,21 +335,23 @@ const Page = ({ products, store, allCategories }: any) => {
               alignContent="center"
               display={{ base: "flex", md: "none" }}
             >
-              <chakra.form w="full" onSubmit={() => null}>
+              <chakra.form w="full" onSubmit={(e) => e.preventDefault()}>
                 <InputGroup size={useBreakpointValue({ base: "sm", md: "md" })}>
                   <InputLeftElement pointerEvents="none">
                     <Icon as={FiSearch} />
                   </InputLeftElement>
 
                   <Input
-                    id="search"
-                    border={{ md: "none" }}
                     w="full"
+                    id="search"
+                    value={searchTerm}
+                    placeholder="Search"
+                    border={{ md: "none" }}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     variant={useBreakpointValue({
                       base: "filled",
                       md: "outline",
                     })}
-                    placeholder="Search"
                   />
                 </InputGroup>
               </chakra.form>
@@ -376,25 +386,27 @@ const Page = ({ products, store, allCategories }: any) => {
                   },
                 }}
               >
-                {allCategories.map((category: string, idx: number) => (
-                  <Button
-                    key={idx}
-                    size="xs"
-                    rounded="lg"
-                    minW="intial"
-                    display="flex"
-                    variant="ghost"
-                    colorScheme="gray"
-                    textTransform="uppercase"
-                    isActive={activeCategory === category}
-                    onClick={(e) => {
-                      e.currentTarget.scrollIntoView({ behavior: "smooth" });
-                      onCategoryClick(category);
-                    }}
-                  >
-                    {category}
-                  </Button>
-                ))}
+                {Object.keys(categories).map(
+                  (category: string, idx: number) => (
+                    <Button
+                      key={idx}
+                      size="xs"
+                      rounded="lg"
+                      minW="intial"
+                      display="flex"
+                      variant="ghost"
+                      colorScheme="gray"
+                      textTransform="uppercase"
+                      isActive={activeCategory === category}
+                      onClick={(e) => {
+                        e.currentTarget.scrollIntoView({ behavior: "smooth" });
+                        onCategoryClick(category);
+                      }}
+                    >
+                      {category}
+                    </Button>
+                  )
+                )}
               </Stack>
             </chakra.div>
 
