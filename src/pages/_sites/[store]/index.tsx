@@ -566,6 +566,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       allCategories,
       store,
       layoutProps: {
+        name: store.title || store.name,
         title: `${_capitalize(store.title || store.name)} - Qua`,
       },
     },
