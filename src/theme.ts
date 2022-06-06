@@ -333,16 +333,21 @@ export default extendTheme({
         },
         label: {
           fontWeight: "500",
+          fontSize: "md",
           ml: 4,
         },
       },
 
-      md: {
-        label: { fontSize: "sm" },
-      },
+      sizes: {
+        md: {
+          label: { fontSize: "sm" },
+        },
 
-      lg: {
-        label: { fontSize: "md" },
+        lg: {
+          label: {
+            fontSize: "md",
+          },
+        },
       },
     },
   },

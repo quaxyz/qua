@@ -5,9 +5,14 @@ export const allCurrencies = [
   { cc: "GBP", symbol: "\u00a3", name: "British pound" },
 ];
 
-export const formatCurrency = (amount: number, currency?: string) => {
+export const formatCurrency = (
+  amount: number,
+  currency?: string,
+  options?: any
+) => {
   return new Intl.NumberFormat("en", {
     style: "currency",
     currency: currency || "USD",
+    ...options,
   }).format(amount);
 };

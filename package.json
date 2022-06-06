@@ -52,7 +52,7 @@
     "lodash.pick": "^4.4.0",
     "lodash.snakecase": "^4.1.1",
     "mime-types": "^2.1.34",
-    "next": "12.1.4",
+    "next": "12.1.6",
     "next-cookies": "^2.0.3",
     "node-jose": "^2.0.0",
     "prisma": "^3.10.0",

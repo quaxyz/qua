@@ -1,175 +1,479 @@
-import React from "react";
-import { GetStaticProps } from "next";
+import React, { useEffect, useRef, useState } from "react";
 import prisma from "libs/prisma";
-import Api from "libs/api";
+import _groupBy from "lodash.groupBy";
+import _capitalize from "lodash.capitalize";
 import NextLink from "next/link";
 import NextImage from "next/image";
-import Link from "components/link";
+import CustomerLayout from "components/layouts/customer";
+import { GetStaticProps } from "next";
 import {
+  Button,
   chakra,
   Container,
-  Grid,
-  GridItem,
+  Divider,
   Heading,
+  Icon,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Link,
   LinkBox,
   LinkOverlay,
   Stack,
   Text,
+  useBreakpointValue,
 } from "@chakra-ui/react";
-import CustomerLayout from "components/layouts/customer";
-import { useInfiniteQuery } from "react-query";
-import { useIntersection } from "react-use";
+import { defaultCategories } from "libs/constants";
 import { formatCurrency } from "libs/currency";
-import { useRouter } from "next/router";
+import { FiSearch } from "react-icons/fi";
+import { mapSocialLink } from "libs/utils";
+import { AiFillInstagram } from "react-icons/ai";
+import { IoLogoWhatsapp } from "react-icons/io";
+import { ProductCard } from "components/products/card";
 
-function useQueryProducts({ initialData }: any) {
-  const { query } = useRouter();
-  const intersectionRef = React.useRef(null);
-
-  const intersection = useIntersection(intersectionRef, {
-    root: null,
-    rootMargin: "20px",
-    threshold: 0,
-  });
-
-  const queryResp = useInfiniteQuery({
-    queryKey: ["store-products"],
-    initialData: { pages: [initialData], pageParams: [] },
-    queryFn: async ({ pageParam }) => {
-      const { payload }: any = await Api().get(
-        `/${query.store}/products?cursor=${pageParam}`
-      );
-      return payload;
-    },
-    getNextPageParam: (lastPage: any) => {
-      if (lastPage?.length > 0) {
-        return lastPage[lastPage?.length - 1].id;
-      }
-    },
-  });
-
-  if (intersection && intersection.intersectionRatio > 0) {
-    if (queryResp.hasNextPage && !queryResp.isFetchingNextPage)
-      queryResp.fetchNextPage();
-  }
-
-  return {
-    queryResp,
-    ref: intersectionRef,
-  };
-}
-
-const Page = ({ products, categories, store }: any) => {
-  const { ref, queryResp } = useQueryProducts({ initialData: products });
-
+const PageHeader = ({ store }: any) => {
   return (
-    <Container
-      maxW="100%"
-      px={{ base: "4", md: "16" }}
-      mb={{ base: "8", md: "24" }}
-    >
-      <Stack direction="row" spacing={2}>
-        <Link
-          href="/"
-          borderBottom="none"
-          _hover={{ transform: "scale(1.05)" }}
-          textDecoration="underline"
-        >
-          <Stack
-            direction="row"
-            spacing={4}
-            px={4}
-            py={{ base: "4", md: "8" }}
-            align="center"
-          >
-            <Text fontSize="inherit" fontWeight="600">
-              All
-            </Text>
-          </Stack>
-        </Link>
-
-        {categories.map((category: string) => (
-          <Link
-            key={category}
-            href={`/category/${category}`}
-            borderBottom="none"
-            _hover={{ transform: "scale(1.05)" }}
-            textDecoration="underline"
-          >
-            <Stack
-              direction="row"
-              spacing={4}
-              px={4}
-              py={{ base: "4", md: "8" }}
-              align="center"
+    <chakra.header>
+      <chakra.div
+        bgImage={`linear-gradient(0deg, rgba(0, 0, 0, 0.52), rgba(0, 0, 0, 0.24)), url('${store.image?.url}')`}
+        bgPosition="center center"
+        bgRepeat="no-repeat"
+        bgSize="cover"
+        maxW="100%"
+        h={{ base: "50vh", md: "60vh" }}
+      >
+        <Container h="100%" maxW="container.xl" pb={20}>
+          <Stack h="100%" justifyContent="flex-end">
+            <Heading
+              as="h1"
+              color="#fff"
+              fontWeight="900"
+              fontSize={{ base: "2rem", md: "4rem" }}
             >
+              {store.title}
+            </Heading>
+            <Text fontWeight="600" color="#fff">
+              {store.about}
+            </Text>
+
+            <Stack w="fit-content" pt={6}>
               <Text
-                textTransform="capitalize"
-                fontSize="inherit"
-                fontWeight="600"
+                px={4}
+                py={2}
+                bg="#fff"
+                rounded="8px"
+                fontSize="xs"
+                letterSpacing="1.1px"
+                textTransform="uppercase"
               >
-                {category}
+                Delivery:{" "}
+                {formatCurrency(store.deliveryFee || 0, store.currency)}
               </Text>
             </Stack>
-          </Link>
-        ))}
-      </Stack>
+          </Stack>
+        </Container>
+      </chakra.div>
+    </chakra.header>
+  );
+};
 
-      <Grid
-        gap={{ base: 4, md: 10 }}
-        alignItems="flex-start"
-        templateColumns={{
-          base: "repeat(2, 1fr)",
-          md: "repeat(auto-fit, 12rem)",
-          lg: "repeat(auto-fit, 18rem)",
-        }}
+const CategoryList = ({ name, store, products, setActiveCategory }: any) => {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (containerRef.current && typeof IntersectionObserver === "function") {
+      const handler = (entries: IntersectionObserverEntry[]) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && entry.boundingClientRect.top < 160) {
+          setActiveCategory(entry.target.id.replace("#", ""));
+        }
+      };
+
+      const observer = new IntersectionObserver(handler, {
+        root: null,
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+      });
+
+      observer.observe(containerRef.current);
+
+      return () => {
+        observer.disconnect();
+      };
+    }
+    return () => {};
+  }, [setActiveCategory]);
+
+  return (
+    <chakra.div w="full" key={name} ref={containerRef} id={`#${name}`}>
+      <Heading
+        mb={6}
+        as="h2"
+        fontSize="2xl"
+        fontWeight="700"
+        textTransform="uppercase"
+        color="rgb(0 0 0 / 90%)"
       >
-        {queryResp.data?.pages.map((page, idx) => (
-          <React.Fragment key={idx}>
-            {page.map((data: any) => (
-              <GridItem key={data.id} mb={5}>
-                <LinkBox>
-                  <chakra.section title={data.name}>
-                    <NextImage
-                      layout="responsive"
-                      width="100%"
-                      height="100%"
-                      priority={idx < 4} // first images will be high priority
-                      objectFit="cover"
-                      src={
-                        data.images[0] ||
-                        `https://via.placeholder.com/373/e2e8f0?text=Image%20of%20${data.name}`
-                      }
-                      alt={data.name}
-                    />
+        {name}
+      </Heading>
 
-                    <NextLink href={`/products/${data.id}`} passHref>
-                      <LinkOverlay>
-                        <Heading
-                          as="h1"
-                          fontSize="md"
-                          fontWeight="normal"
-                          mt={4}
-                          noOfLines={[1, 2]}
-                        >
-                          {data.name}
-                        </Heading>
-                      </LinkOverlay>
-                    </NextLink>
+      <Stack w="full" spacing={0} alignItems="center">
+        {products.map((product: any, idx: number) => (
+          <React.Fragment key={product.id}>
+            {idx === 0 && <Divider borderColor="rgb(0 0 0 / 6%)" />}
 
-                    <Text fontSize="sm" fontWeight="700" mt={{ md: 3 }}>
-                      {formatCurrency(data.price, store.currency)}
-                    </Text>
-                  </chakra.section>
-                </LinkBox>
-              </GridItem>
-            ))}
+            <ProductCard product={product} store={store} />
+
+            {!!products.length && <Divider borderColor="rgb(0 0 0 / 6%)" />}
           </React.Fragment>
         ))}
-      </Grid>
+      </Stack>
+    </chakra.div>
+  );
+};
 
-      <div ref={ref} />
-    </Container>
+const Page = ({ products, store }: any) => {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const searchFilteredProducts = searchTerm
+    ? products.filter((p: any) =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : products;
+
+  const categories = _groupBy<any>(searchFilteredProducts, "category");
+
+  const [activeCategory, setActiveCategory] = useState<string>();
+  const firstItem = Object.keys(categories)[0];
+  useEffect(() => {
+    setActiveCategory(firstItem);
+  }, [firstItem]);
+
+  const onCategoryClick = (category: string) => {
+    const element = document.getElementById(`#${category}`);
+    if (!element) return;
+
+    const offsetPosition =
+      element.getBoundingClientRect().top + window.pageYOffset - 160;
+
+    window?.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+
+    setActiveCategory(category);
+  };
+
+  return (
+    <>
+      <PageHeader store={store} />
+
+      <Container
+        px={4}
+        mt={-9}
+        maxW="container.xl"
+        display={{ base: "none", md: "block" }}
+      >
+        <Stack
+          py={6}
+          px={6}
+          w="100%"
+          bg="#fff"
+          spacing={6}
+          rounded="lg"
+          boxShadow="base"
+          alignContent="center"
+        >
+          <chakra.form w="full" onSubmit={(e) => e.preventDefault()}>
+            <InputGroup size={useBreakpointValue({ base: "sm", md: "md" })}>
+              <InputLeftElement pointerEvents="none">
+                <Icon as={FiSearch} />
+              </InputLeftElement>
+
+              <Input
+                w="full"
+                id="search"
+                value={searchTerm}
+                placeholder="Search"
+                border={{ md: "none" }}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                variant={useBreakpointValue({
+                  base: "filled",
+                  md: "outline",
+                })}
+              />
+            </InputGroup>
+          </chakra.form>
+        </Stack>
+      </Container>
+
+      <Container my={{ base: 0, md: 14 }} maxW="container.xl">
+        <Stack
+          direction={{ base: "column", md: "row" }}
+          spacing={14}
+          w="full"
+          alignItems="stretch"
+        >
+          <chakra.div flex="1" display={{ base: "none", md: "block" }}>
+            <Stack spacing={4} position="sticky" top="180px">
+              {Object.keys(categories).map((category: string) => (
+                <Button
+                  key={category}
+                  fontSize="sm"
+                  rounded="none"
+                  variant="link"
+                  w="fit-content"
+                  fontWeight="600"
+                  borderBottom="none"
+                  flexDirection="column"
+                  alignItems="flex-start"
+                  color="rgb(0 0 0 / 55%)"
+                  textTransform="uppercase"
+                  isActive={activeCategory === category}
+                  onClick={() => onCategoryClick(category)}
+                  _hover={{
+                    transform: "none",
+                    color: "rgb(0 0 0 / 100%)",
+                    _after: {
+                      width: "100%",
+                    },
+                  }}
+                  _active={{
+                    transform: "none",
+                    color: "rgb(0 0 0 / 100%)",
+                    _after: {
+                      width: "100%",
+                    },
+                  }}
+                  _focus={{
+                    outline: "0px",
+                    boxShadow: "none !important",
+                    border: "none",
+                  }}
+                  _after={{
+                    content: '" "',
+                    mt: 1,
+                    bgColor: "#000",
+                    width: "0px",
+                    height: "2px",
+                    display: "block",
+                    transition: `all ease-in 0.3s`,
+                  }}
+                >
+                  {category}
+                </Button>
+              ))}
+            </Stack>
+          </chakra.div>
+
+          <Stack
+            flex="4"
+            spacing={16}
+            mt={{
+              base: "0px !important",
+              md: `calc(var(--chakra-space-16) * -1) !important`,
+            }}
+          >
+            <Stack
+              py={4}
+              bg="#fff"
+              spacing={6}
+              rounded="none"
+              alignContent="center"
+              display={{ base: "flex", md: "none" }}
+            >
+              <chakra.form w="full" onSubmit={(e) => e.preventDefault()}>
+                <InputGroup size={useBreakpointValue({ base: "sm", md: "md" })}>
+                  <InputLeftElement pointerEvents="none">
+                    <Icon as={FiSearch} />
+                  </InputLeftElement>
+
+                  <Input
+                    w="full"
+                    id="search"
+                    value={searchTerm}
+                    placeholder="Search"
+                    border={{ md: "none" }}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    variant={useBreakpointValue({
+                      base: "filled",
+                      md: "outline",
+                    })}
+                  />
+                </InputGroup>
+              </chakra.form>
+            </Stack>
+
+            <chakra.div
+              py={4}
+              px={4}
+              top={0}
+              w="100vw"
+              bg="white"
+              zIndex="20"
+              pos="sticky"
+              mt="0 !important"
+              ml="-1rem !important"
+              boxShadow="0 1px #0000001f"
+              display={{ base: "block", md: "none" }}
+            >
+              <Stack
+                bg="#fff"
+                spacing={2}
+                pos="sticky"
+                zIndex="20"
+                direction="row"
+                overflowX="auto"
+                flexWrap="nowrap"
+                whiteSpace="nowrap"
+                sx={{
+                  scrollbarWidth: 0,
+                  "&::-webkit-scrollbar": {
+                    display: "none",
+                  },
+                }}
+              >
+                {Object.keys(categories).map(
+                  (category: string, idx: number) => (
+                    <Button
+                      key={idx}
+                      size="xs"
+                      rounded="lg"
+                      minW="intial"
+                      display="flex"
+                      variant="ghost"
+                      colorScheme="gray"
+                      textTransform="uppercase"
+                      isActive={activeCategory === category}
+                      onClick={(e) => {
+                        e.currentTarget.scrollIntoView({ behavior: "smooth" });
+                        onCategoryClick(category);
+                      }}
+                    >
+                      {category}
+                    </Button>
+                  )
+                )}
+              </Stack>
+            </chakra.div>
+
+            {Object.keys(categories).map((categoryName) => (
+              <CategoryList
+                store={store}
+                key={categoryName}
+                name={categoryName}
+                setActiveCategory={setActiveCategory}
+                products={categories[categoryName]}
+              />
+            ))}
+          </Stack>
+
+          <chakra.div flex="2">
+            <Heading
+              mb={6}
+              as="h4"
+              fontSize="xl"
+              fontWeight="700"
+              color="rgb(0 0 0 / 90%)"
+            >
+              Store information
+            </Heading>
+
+            <Stack spacing={8}>
+              <Stack>
+                <Heading
+                  as="h6"
+                  fontSize="md"
+                  fontWeight="600"
+                  color="rgb(0 0 0 / 80%)"
+                >
+                  Address
+                </Heading>
+
+                <Text fontSize="sm">{store.location || "Not available"}</Text>
+
+                {store.location && (
+                  <Link
+                    isExternal
+                    fontSize="sm"
+                    w="fit-content"
+                    href={`https://www.google.com/maps/search/?api=1&query=${
+                      store.location || ""
+                    }`}
+                  >
+                    See map
+                  </Link>
+                )}
+              </Stack>
+
+              <Stack>
+                <Heading
+                  as="h6"
+                  pb={1}
+                  fontSize="md"
+                  fontWeight="600"
+                  color="rgb(0 0 0 / 80%)"
+                >
+                  Contact Info
+                </Heading>
+
+                {Object.entries(store.socialLinks || {})
+                  .filter(([_, value]: any) => value.length)
+                  .map(([social, link]: any) => (
+                    <Stack direction="row" alignItems="center" key={social}>
+                      <Icon
+                        aria-label={social}
+                        as={
+                          social === "whatsapp"
+                            ? IoLogoWhatsapp
+                            : social === "instagram"
+                            ? AiFillInstagram
+                            : undefined
+                        }
+                        color={
+                          social === "whatsapp"
+                            ? "whatsapp.500"
+                            : social === "instagram"
+                            ? "#E4405F"
+                            : undefined
+                        }
+                      />
+
+                      <Link
+                        key={social}
+                        href={mapSocialLink(social, link)}
+                        borderBottom="none"
+                        _hover={{ textDecoration: "underline" }}
+                        fontSize="sm"
+                        isExternal
+                      >
+                        {link}
+                      </Link>
+                    </Stack>
+                  ))}
+              </Stack>
+
+              <Stack>
+                <Heading
+                  as="h6"
+                  fontSize="md"
+                  fontWeight="600"
+                  color="rgb(0 0 0 / 80%)"
+                >
+                  Category
+                </Heading>
+
+                <Text fontSize="sm">
+                  {
+                    defaultCategories.find((c) => c.value === store.category)
+                      ?.label
+                  }
+                </Text>
+              </Stack>
+            </Stack>
+          </chakra.div>
+        </Stack>
+      </Container>
+    </>
   );
 };
 
@@ -181,7 +485,9 @@ export const getStaticPaths = async () => {
   });
 
   return {
-    paths: stores.map((store) => ({ params: { store: store.name as string } })),
+    paths: stores.map((store) => ({
+      params: { store: store.name as string, path: [] },
+    })),
     fallback: "blocking",
   };
 };
@@ -195,6 +501,22 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const store = await prisma.store.findUnique({
     where: { name: params.store as string },
+    select: {
+      id: true,
+      name: true,
+      currency: true,
+      title: true,
+      about: true,
+      deliveryFee: true,
+      socialLinks: true,
+      location: true,
+      category: true,
+      image: {
+        select: {
+          url: true,
+        },
+      },
+    },
   });
 
   if (!store) {
@@ -204,20 +526,23 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   }
 
   const data = await prisma.product.findMany({
-    take: 12,
+    take: 50,
     where: {
       Store: {
         id: store.id,
       },
     },
     orderBy: {
-      updatedAt: "desc",
+      createdAt: "asc",
     },
     select: {
       id: true,
       name: true,
+      description: true,
       price: true,
+      category: true,
       images: true,
+      variants: true,
     },
   });
 
@@ -230,19 +555,18 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       category: true,
     },
   });
-  const categories = (distinctCategories || [])
+  const allCategories = (distinctCategories || [])
     .map((p) => p.category)
     .filter(Boolean);
 
+  console.log("called me");
   return {
     props: {
       products: JSON.parse(JSON.stringify(data)),
-      categories,
-      store: {
-        currency: store.currency,
-      },
+      allCategories,
+      store,
       layoutProps: {
-        title: `Products - ${store.name}`,
+        title: `${_capitalize(store.title || store.name)} - Qua`,
       },
     },
 

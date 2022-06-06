@@ -302,11 +302,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       description: true,
       totalStocks: true,
       variants: true,
-      images: {
-        select: {
-          url: true,
-        },
-      },
+      images: true,
     },
   });
 

@@ -8,7 +8,7 @@ type FileGalleryProps = {
 };
 
 export function FileGallery(props: FileGalleryProps) {
-  const [activeImage, setActiveImage] = React.useState(props.images[0]?.url);
+  const [activeImage, setActiveImage] = React.useState(props.images[0]);
 
   return (
     <Stack w="full" flex={1} spacing={4}>
@@ -42,16 +42,14 @@ export function FileGallery(props: FileGalleryProps) {
             boxSize="50px"
             cursor="pointer"
             pos="relative"
-            p={activeImage === image.url ? 1 : undefined}
+            p={activeImage === image ? 1 : undefined}
             border={
-              activeImage === image.url
-                ? "1px solid rgb(0 0 0 / 80%)"
-                : undefined
+              activeImage === image ? "1px solid rgb(0 0 0 / 80%)" : undefined
             }
-            onClick={() => setActiveImage(image.url)}
+            onClick={() => setActiveImage(image)}
           >
             <NextImage
-              src={image.url}
+              src={image}
               alt={props.alt || "product image"}
               objectFit="cover"
               objectPosition="center 70%"
