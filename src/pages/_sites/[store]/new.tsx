@@ -30,7 +30,7 @@ import { mapSocialLink } from "libs/utils";
 import { AiFillInstagram } from "react-icons/ai";
 import { IoLogoWhatsapp } from "react-icons/io";
 
-const PageHeader = ({ store, allCategories }: any) => {
+const PageHeader = ({ store }: any) => {
   return (
     <chakra.header>
       <chakra.div
@@ -72,61 +72,6 @@ const PageHeader = ({ store, allCategories }: any) => {
           </Stack>
         </Container>
       </chakra.div>
-
-      <Container
-        h="100%"
-        maxW={{ base: "100%", md: "container.xl" }}
-        mt={{ base: -12, md: -9 }}
-        px={{ base: 0, md: 4 }}
-      >
-        <Stack
-          w="100%"
-          py={{ base: 4, md: 6 }}
-          px={{ base: 6, md: 6 }}
-          spacing={6}
-          rounded={{ base: "none", md: "lg" }}
-          bg="#fff"
-          boxShadow="base"
-          alignContent="center"
-        >
-          <chakra.form w="full" onSubmit={() => null}>
-            <InputGroup size={useBreakpointValue({ base: "sm", md: "md" })}>
-              <InputLeftElement pointerEvents="none">
-                <Icon as={FiSearch} />
-              </InputLeftElement>
-
-              <Input
-                id="search"
-                border={{ md: "none" }}
-                w="full"
-                variant={useBreakpointValue({
-                  base: "filled",
-                  md: "outline",
-                })}
-                placeholder="Search"
-              />
-            </InputGroup>
-          </chakra.form>
-
-          <chakra.div display={{ base: "block", md: "none" }}>
-            <Stack direction="row" spacing={3}>
-              {allCategories.map((category: string, idx: number) => (
-                <Button
-                  key={category}
-                  size="xs"
-                  variant="ghost"
-                  colorScheme="gray"
-                  textTransform="uppercase"
-                  rounded="lg"
-                  isActive={idx === 0}
-                >
-                  {category}
-                </Button>
-              ))}
-            </Stack>
-          </chakra.div>
-        </Stack>
-      </Container>
     </chakra.header>
   );
 };
@@ -178,14 +123,14 @@ const CategoryList = ({ name, store, products, setActiveCategory }: any) => {
             <Stack
               as={LinkBox}
               py={8}
-              px="5%"
+              px={{ md: "5%" }}
               rounded="md"
-              w="110%"
+              w={{ base: "100%", md: "110%" }}
               direction="row"
               transition="box-shadow ease-in-out 0.3s"
               justifyContent="space-between"
               _hover={{
-                boxShadow: "md",
+                boxShadow: { md: "md" },
               }}
             >
               <Stack spacing={2} flex={2}>
@@ -263,9 +208,51 @@ const Page = ({ products, store, allCategories }: any) => {
 
   return (
     <>
-      <PageHeader store={store} allCategories={allCategories} />
+      <PageHeader
+        store={store}
+        allCategories={allCategories}
+        activeCategory={activeCategory}
+        onCategoryClick={onCategoryClick}
+      />
 
-      <Container my={{ base: 7, md: 14 }} maxW="container.xl">
+      <Container
+        px={4}
+        mt={-9}
+        maxW="container.xl"
+        display={{ base: "none", md: "block" }}
+      >
+        <Stack
+          py={6}
+          px={6}
+          w="100%"
+          bg="#fff"
+          spacing={6}
+          rounded="lg"
+          boxShadow="base"
+          alignContent="center"
+        >
+          <chakra.form w="full" onSubmit={() => null}>
+            <InputGroup size={useBreakpointValue({ base: "sm", md: "md" })}>
+              <InputLeftElement pointerEvents="none">
+                <Icon as={FiSearch} />
+              </InputLeftElement>
+
+              <Input
+                id="search"
+                border={{ md: "none" }}
+                w="full"
+                variant={useBreakpointValue({
+                  base: "filled",
+                  md: "outline",
+                })}
+                placeholder="Search"
+              />
+            </InputGroup>
+          </chakra.form>
+        </Stack>
+      </Container>
+
+      <Container my={{ base: 0, md: 14 }} maxW="container.xl">
         <Stack
           direction={{ base: "column", md: "row" }}
           spacing={14}
@@ -324,7 +311,93 @@ const Page = ({ products, store, allCategories }: any) => {
             </Stack>
           </chakra.div>
 
-          <Stack flex="4" spacing={16}>
+          <Stack
+            flex="4"
+            spacing={16}
+            mt={{
+              base: "0px !important",
+              md: `calc(var(--chakra-space-16) * -1) !important`,
+            }}
+          >
+            <Stack
+              py={4}
+              bg="#fff"
+              spacing={6}
+              rounded="none"
+              alignContent="center"
+              display={{ base: "flex", md: "none" }}
+            >
+              <chakra.form w="full" onSubmit={() => null}>
+                <InputGroup size={useBreakpointValue({ base: "sm", md: "md" })}>
+                  <InputLeftElement pointerEvents="none">
+                    <Icon as={FiSearch} />
+                  </InputLeftElement>
+
+                  <Input
+                    id="search"
+                    border={{ md: "none" }}
+                    w="full"
+                    variant={useBreakpointValue({
+                      base: "filled",
+                      md: "outline",
+                    })}
+                    placeholder="Search"
+                  />
+                </InputGroup>
+              </chakra.form>
+            </Stack>
+
+            <chakra.div
+              py={4}
+              px={4}
+              top={0}
+              w="100vw"
+              bg="white"
+              zIndex="20"
+              pos="sticky"
+              mt="0 !important"
+              ml="-1rem !important"
+              boxShadow="0 1px #0000001f"
+              display={{ base: "block", md: "none" }}
+            >
+              <Stack
+                bg="#fff"
+                spacing={2}
+                pos="sticky"
+                zIndex="20"
+                direction="row"
+                overflowX="auto"
+                flexWrap="nowrap"
+                whiteSpace="nowrap"
+                sx={{
+                  scrollbarWidth: 0,
+                  "&::-webkit-scrollbar": {
+                    display: "none",
+                  },
+                }}
+              >
+                {allCategories.map((category: string, idx: number) => (
+                  <Button
+                    key={idx}
+                    size="xs"
+                    rounded="lg"
+                    minW="intial"
+                    display="flex"
+                    variant="ghost"
+                    colorScheme="gray"
+                    textTransform="uppercase"
+                    isActive={activeCategory === category}
+                    onClick={(e) => {
+                      e.currentTarget.scrollIntoView({ behavior: "smooth" });
+                      onCategoryClick(category);
+                    }}
+                  >
+                    {category}
+                  </Button>
+                ))}
+              </Stack>
+            </chakra.div>
+
             {Object.keys(categories).map((categoryName) => (
               <CategoryList
                 store={store}

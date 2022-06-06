@@ -149,15 +149,12 @@ const CustomerLayout = ({ title, children }: any) => {
         {/* mobile topbar */}
         <chakra.header
           gridArea="topbar"
-          pos="fixed"
-          top="0"
           w="100%"
           bg="#fff"
           color="#000"
           borderBottom="1px solid rgba(0, 0, 0, 0.08)"
           px={5}
           py={5}
-          zIndex="2"
           display={{ base: "block", md: "none" }}
         >
           <Stack
