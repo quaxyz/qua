@@ -3,13 +3,14 @@ import { createContext } from "react";
 export type CartItem = {
   productId: string;
   quantity: number;
-  variants?: { [key: string]: string };
+  price: number;
+  variants?: { [key: string]: any };
 };
 
 type CartContextType = {
   items: CartItem[];
-  totalInCart: number;
-  loadingCart: boolean;
+  totalItems: number;
+  totalAmount: number;
   addCartItem: (item: CartItem) => void;
   removeCartItem: (itemId: string) => void;
   updateCartItem: (itemId: string, quantity: number) => void;

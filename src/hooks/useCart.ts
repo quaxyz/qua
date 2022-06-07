@@ -1,9 +1,8 @@
 import _cloneDeep from "lodash.clonedeep";
-import Api from "libs/api";
 import { CartContext, CartItem } from "contexts/cart";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-const useCart = () => {
+export const useCartStore = () => {
   const [items, setItems] = useState<CartItem[]>([]);
 
   const [loadingCart, setLoadingCart] = useState(false);
@@ -11,9 +10,9 @@ const useCart = () => {
   const fetchCartItems = useCallback(async () => {
     setLoadingCart(true);
     try {
-      const locallyStoredCart = localStorage.getItem("cartItems");
+      const locallyStoredCart = localStorage.getItem("cart");
       if (locallyStoredCart) {
-        setItems(JSON.parse(locallyStoredCart).items);
+        setItems(JSON.parse(locallyStoredCart));
       }
     } catch (error) {
       console.warn("Error retrieving cart. No items(s) found");
@@ -24,28 +23,10 @@ const useCart = () => {
 
   const addCartItem = useCallback(
     (item: CartItem) => {
-      let editableItems = _cloneDeep(items);
+      const newCartItems = [...items, item];
 
-      // first check if item is already added
-      const index = editableItems.findIndex(
-        (cartItem) => cartItem.productId === item.productId
-      );
-
-      if (index >= 0) {
-        editableItems[index].quantity =
-          editableItems[index].quantity + item.quantity;
-      } else {
-        editableItems = [...items, item];
-      }
-
-      setItems(editableItems);
-
-      localStorage.setItem(
-        "cartItems",
-        JSON.stringify({
-          items: editableItems,
-        })
-      );
+      setItems(newCartItems);
+      localStorage.setItem("cart", JSON.stringify(newCartItems));
     },
     [items]
   );
@@ -102,23 +83,29 @@ const useCart = () => {
     fetchCartItems();
   }, [fetchCartItems]);
 
-  return useMemo(
-    () => ({
+  return useMemo(() => {
+    const totalItemsInCart = items.reduce(
+      (acc, item) => acc + item.quantity,
+      0
+    );
+
+    const totalAmountInCart = items.reduce(
+      (acc, item) => acc + Number(item.price) * item.quantity,
+      0
+    );
+    return {
       items,
-      totalInCart: items.reduce((acc, item) => acc + item.quantity, 0),
-      loadingCart,
+      totalItems: totalItemsInCart,
+      totalAmount: totalAmountInCart,
       addCartItem,
       removeCartItem,
       updateCartItem,
       clearCart,
-    }),
-    [items, loadingCart, addCartItem, removeCartItem, updateCartItem, clearCart]
-  );
+    };
+  }, [items, addCartItem, removeCartItem, updateCartItem, clearCart]);
 };
 
-export const useCartStore = () => {
+export const useCart = () => {
   const cartStore = useContext(CartContext);
   return cartStore;
 };
-
-export default useCart;

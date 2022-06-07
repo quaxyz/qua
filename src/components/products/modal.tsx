@@ -52,7 +52,7 @@ export const ProductModal = ({
 
       <ModalBody p={0}>
         {!!product.images.length ? (
-          <chakra.div w="100%" bg="#000" overflow="hidden">
+          <chakra.div w="100%" bg="gray.100" overflow="hidden">
             <NextImage
               width="100%"
               height="60%"

@@ -8,12 +8,14 @@ import {
   useDisclosure,
   Modal,
   ModalOverlay,
-  useBreakpointValue,
 } from "@chakra-ui/react";
+import { useCart } from "hooks/useCart";
 import { formatCurrency } from "libs/currency";
 import { ProductModal } from "./modal";
 
 export const ProductCard = ({ product, store }: any) => {
+  const cart = useCart();
+
   const productModal = useDisclosure();
   const [quantity, setQuantity] = React.useState(1);
   const [selectedVariants, setVariant] = React.useState<any>({});
@@ -65,7 +67,14 @@ export const ProductCard = ({ product, store }: any) => {
   };
 
   const handleOrderChange = () => {
-    console.log("Add to order");
+    cart?.addCartItem({
+      productId: product.id,
+      quantity: quantity,
+      price: price || product.price,
+      variants: selectedVariants,
+    });
+
+    productModal.onClose();
   };
 
   return (

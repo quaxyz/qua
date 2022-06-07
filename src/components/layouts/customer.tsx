@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import Link from "components/link";
-import useCart from "hooks/useCart";
+import { useCartStore } from "hooks/useCart";
 import {
   Box,
   Button,
@@ -14,11 +14,11 @@ import {
 } from "@chakra-ui/react";
 import { CartContext } from "contexts/cart";
 import { useRouter } from "next/router";
-import { Bag2 } from "react-iconly";
+import { formatCurrency } from "libs/currency";
 
-const CustomerLayout = ({ title, name, children }: any) => {
+const CustomerLayout = ({ title, store, children }: any) => {
   const router = useRouter();
-  const cartStore = useCart();
+  const cartStore = useCartStore();
 
   return (
     <CartContext.Provider value={cartStore}>
@@ -58,81 +58,45 @@ const CustomerLayout = ({ title, name, children }: any) => {
               _hover={{ transform: "scale(1.02)" }}
             >
               <Heading
+                as="h2"
                 fontWeight="700"
                 textTransform="capitalize"
                 fontSize="2xl"
-                px={3}
               >
-                {name || router.query.store}
+                {store.title || store.name || router.query.store}
               </Heading>
             </Link>
           </Stack>
 
           <Stack direction="row" spacing={12} align="center">
-            <Button
-              variant="primary"
-              colorScheme="black"
-              h={14}
-              leftIcon={
-                <Center
-                  bgColor="white"
-                  color="#000"
-                  rounded="full"
-                  boxSize="25px"
-                  p={2}
-                  mr={2}
-                >
-                  <Text fontSize="xs" lineHeight="1" color="inherit">
-                    8
+            {cartStore.totalItems && (
+              <Button
+                variant="primary"
+                colorScheme="black"
+                h={14}
+                leftIcon={
+                  <Center
+                    bgColor="white"
+                    color="#000"
+                    rounded="full"
+                    boxSize="25px"
+                    p={2}
+                    mr={2}
+                  >
+                    <Text fontSize="xs" lineHeight="1" color="inherit">
+                      {cartStore.totalItems}
+                    </Text>
+                  </Center>
+                }
+                rightIcon={
+                  <Text ml={2} fontSize="sm" lineHeight="1" color="inherit">
+                    {formatCurrency(cartStore.totalAmount || 0, store.currency)}
                   </Text>
-                </Center>
-              }
-              rightIcon={
-                <Text ml={2} fontSize="sm" lineHeight="1" color="inherit">
-                  $50.00
-                </Text>
-              }
-            >
-              View order
-            </Button>
-            {/* <Link
-              href="/cart"
-              borderBottom="none"
-              _hover={{ transform: "scale(1.05)" }}
-              {...(router.asPath.includes("/cart")
-                ? { textDecoration: "underline" }
-                : { color: "#000" })}
-            >
-              <Stack direction="row" spacing={3} align="center">
-                <Box pos="relative">
-                  <Bag2 set="light" />
-                  {!cartStore.loadingCart && (
-                    <Center
-                      boxSize="20px"
-                      pos="absolute"
-                      top="-5px"
-                      left="12px"
-                      bgColor="#000"
-                      color="#fff"
-                      rounded="50%"
-                      p={2}
-                    >
-                      <Text fontSize="xs" lineHeight="1" color="inherit">
-                        {cartStore?.totalInCart}
-                      </Text>
-                    </Center>
-                  )}
-                </Box>
-
-                <Text
-                  color="rgb(0 0 0 / 68%)"
-                  fontSize="inherit"
-                  fontWeight="600"
-                >
-                  Cart
-                </Text>
-              </Stack>
-            </Link> */}
+                }
+              >
+                View order
+              </Button>
+            )}
           </Stack>
         </chakra.nav>
 
@@ -159,8 +123,12 @@ const CustomerLayout = ({ title, name, children }: any) => {
               borderBottom="none"
               _hover={{ transform: "scale(1.05)" }}
             >
-              <Heading fontWeight="800" fontSize="xl">
-                {router.query.store}
+              <Heading
+                fontWeight="700"
+                textTransform="capitalize"
+                fontSize="xl"
+              >
+                {store.title || store.name || router.query.store}
               </Heading>
             </Link>
           </Stack>
@@ -169,7 +137,49 @@ const CustomerLayout = ({ title, name, children }: any) => {
         <chakra.main gridArea="main">{children}</chakra.main>
 
         {/* mobile bottombar */}
-        <chakra.nav gridArea="bottombar">{/*  */}</chakra.nav>
+        {cartStore.totalItems && (
+          <chakra.nav
+            py={4}
+            px={2}
+            w="100%"
+            bottom="0"
+            pos="fixed"
+            gridArea="bottombar"
+            display={{ base: "block", md: "none" }}
+          >
+            <Button
+              size="sm"
+              isFullWidth
+              variant="primary"
+              colorScheme="black"
+              justifyContent="flex-start"
+              h={12}
+              leftIcon={
+                <Center
+                  bgColor="white"
+                  color="#000"
+                  rounded="full"
+                  boxSize="25px"
+                  p={2}
+                  mr={2}
+                >
+                  <Text fontSize="xs" lineHeight="1" color="inherit">
+                    {cartStore.totalItems}
+                  </Text>
+                </Center>
+              }
+              rightIcon={
+                <Text ml={2} fontSize="sm" lineHeight="1" color="inherit">
+                  {formatCurrency(cartStore.totalAmount, store.currency)}
+                </Text>
+              }
+            >
+              <chakra.span flex="1" textAlign="left">
+                View order
+              </chakra.span>
+            </Button>
+          </chakra.nav>
+        )}
       </Grid>
     </CartContext.Provider>
   );
