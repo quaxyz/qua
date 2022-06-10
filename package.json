@@ -26,6 +26,7 @@
     "@types/mime-types": "^2.1.1",
     "@types/node-jose": "^1.1.8",
     "@types/react-datepicker": "^4.3.2",
+    "@types/uuid": "^8.3.4",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
     "@web3-react/network-connector": "^6.1.9",
@@ -67,7 +68,8 @@
     "react-icons": "^4.3.1",
     "react-query": "^3.34.0",
     "react-responsive-carousel": "^3.2.22",
-    "react-use": "^17.3.1"
+    "react-use": "^17.3.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^8.5.8",

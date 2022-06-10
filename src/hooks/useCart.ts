@@ -31,39 +31,25 @@ export const useCartStore = () => {
     [items]
   );
 
-  const removeCartItem = useCallback(
-    (itemId: string) => {
-      const newItems = items.filter((item) => item.productId !== itemId);
+  const updateCartItem = useCallback(
+    (id: string, item: CartItem) => {
+      const index = items.findIndex((cartItem) => cartItem.id === id);
 
-      setItems(newItems);
+      let editableItems = _cloneDeep(items);
+      editableItems[index] = item;
 
-      localStorage.setItem(
-        "cartItems",
-        JSON.stringify({
-          items: newItems,
-        })
-      );
+      setItems(editableItems);
+      localStorage.setItem("cart", JSON.stringify(editableItems));
     },
     [items]
   );
 
-  const updateCartItem = useCallback(
-    (itemid: string, quantity: number) => {
-      const index = items.findIndex(
-        (cartItem) => cartItem.productId === itemid
-      );
+  const removeCartItem = useCallback(
+    (itemId: string) => {
+      const newItems = items.filter((item) => item.id !== itemId);
 
-      let editableItems = _cloneDeep(items);
-      editableItems[index].quantity = quantity;
-
-      setItems(editableItems);
-
-      localStorage.setItem(
-        "cartItems",
-        JSON.stringify({
-          items: editableItems,
-        })
-      );
+      setItems(newItems);
+      localStorage.setItem("cart", JSON.stringify(newItems));
     },
     [items]
   );

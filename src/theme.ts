@@ -112,6 +112,16 @@ export default extendTheme({
           borderBottom: "1px solid rgb(0 0 0 / 20%)",
         },
       },
+
+      sizes: {
+        lg: {
+          dialog: {
+            mt: 8,
+            mb: 8,
+            maxHeight: "calc(100% - 2rem)",
+          },
+        },
+      },
     },
 
     Input: {

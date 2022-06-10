@@ -29,7 +29,7 @@ import { FiSearch } from "react-icons/fi";
 import { mapSocialLink } from "libs/utils";
 import { AiFillInstagram } from "react-icons/ai";
 import { IoLogoWhatsapp } from "react-icons/io";
-import { ProductCard } from "components/products/card";
+import { Product } from "components/product";
 
 const PageHeader = ({ store }: any) => {
   return (
@@ -110,8 +110,9 @@ const CategoryList = ({ name, store, products, setActiveCategory }: any) => {
         as="h2"
         fontSize="2xl"
         fontWeight="700"
-        textTransform="uppercase"
+        px={{ base: 4, md: 0 }}
         color="rgb(0 0 0 / 90%)"
+        textTransform="uppercase"
       >
         {name}
       </Heading>
@@ -121,7 +122,7 @@ const CategoryList = ({ name, store, products, setActiveCategory }: any) => {
           <React.Fragment key={product.id}>
             {idx === 0 && <Divider borderColor="rgb(0 0 0 / 6%)" />}
 
-            <ProductCard product={product} store={store} />
+            <Product product={product} store={store} />
 
             {!!products.length && <Divider borderColor="rgb(0 0 0 / 6%)" />}
           </React.Fragment>
@@ -206,7 +207,11 @@ const Page = ({ products, store }: any) => {
         </Stack>
       </Container>
 
-      <Container my={{ base: 0, md: 14 }} maxW="container.xl">
+      <Container
+        my={{ base: 0, md: 14 }}
+        px={{ base: 0, md: 4 }}
+        maxW="container.xl"
+      >
         <Stack
           direction={{ base: "column", md: "row" }}
           spacing={14}
@@ -279,6 +284,7 @@ const Page = ({ products, store }: any) => {
               spacing={6}
               rounded="none"
               alignContent="center"
+              px={{ base: 4, md: 0 }}
               display={{ base: "flex", md: "none" }}
             >
               <chakra.form w="full" onSubmit={(e) => e.preventDefault()}>
@@ -305,7 +311,7 @@ const Page = ({ products, store }: any) => {
 
             <chakra.div
               py={4}
-              px={4}
+              px={8}
               top={0}
               w="100vw"
               bg="white"
@@ -559,7 +565,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     .map((p) => p.category)
     .filter(Boolean);
 
-  console.log("called me");
   return {
     props: {
       products: JSON.parse(JSON.stringify(data)),

@@ -1,16 +1,16 @@
 import React from "react";
 import NextImage from "next/image";
+import { v4 as uuidv4 } from "uuid";
 import {
+  Alert,
+  AlertIcon,
   Button,
   chakra,
   Heading,
-  Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Radio,
   RadioGroup,
   Stack,
@@ -20,22 +20,104 @@ import {
 } from "@chakra-ui/react";
 import { formatCurrency } from "libs/currency";
 import { Quantity } from "components/quantity";
+import { useCart } from "hooks/useCart";
 
-export const ProductModal = ({
-  store,
-  price,
-  product,
-  quantity,
-  setQuantity,
-  onAddToOrder,
-  onSelectVariant,
-  selectedVariants,
-}: any) => {
+export const ProductModal = ({ store, product, order, onOrderChange }: any) => {
+  const cart = useCart();
+
+  const [quantity, setQuantity] = React.useState(1);
+  const [selectedVariants, setVariant] = React.useState<any>({});
+  const [price, setPrice] = React.useState<number | null>(null);
+
+  // set initial variant values
+  React.useEffect(() => {
+    if (!order && product && product.variants && product.variants.length) {
+      const initialVariants = product.variants.reduce(
+        (variants: any, variant: any) => {
+          variants[variant.type] = variant.options[0];
+          return variants;
+        },
+        {}
+      );
+
+      const price =
+        Object.values(initialVariants).reduce(
+          (total: number, option: any) => total + Number(option.price),
+          0
+        ) || product.price;
+
+      setVariant(initialVariants);
+      setPrice(price);
+    }
+  }, [product, order]);
+
+  // sync order value if available
+  React.useEffect(() => {
+    if (!order) return;
+
+    setQuantity(order.quantity);
+    setVariant(order.variants);
+    setPrice(order.price);
+  }, [order]);
+
+  const handleVariantChange = (type: string, value: any) => {
+    const option = product.variants
+      .find((v: any) => v.type === type)
+      ?.options.find((o: any) => o.option === value);
+
+    if (!option) {
+      return;
+    }
+
+    const newVariants = {
+      ...selectedVariants,
+      [type]: option,
+    };
+
+    const price =
+      Object.values(newVariants).reduce(
+        (total: number, option: any) => total + Number(option.price),
+        0
+      ) || product.price;
+
+    setVariant(newVariants);
+    setPrice(price);
+  };
+
+  const onOrder = () => {
+    if (!order) {
+      const newOrder = {
+        id: uuidv4(),
+        quantity,
+        productId: product.id,
+        price: price || product.price,
+        variants: selectedVariants,
+      };
+
+      cart?.addCartItem(newOrder);
+      return onOrderChange();
+    }
+
+    if (!quantity) {
+      cart?.removeCartItem(order.id);
+      return onOrderChange();
+    }
+
+    cart?.updateCartItem(order.id, {
+      id: order.id,
+      quantity,
+      productId: product.id,
+      price: price || product.price,
+      variants: selectedVariants,
+    });
+    return onOrderChange();
+  };
+
   return (
     <ModalContent
       rounded="2xl"
       overflowX="hidden"
-      mb={{ base: "0", md: 14 }}
+      mb={{ base: "0", md: 8 }}
       pos={{ base: "fixed", md: "relative" }}
       bottom={{ base: "0px", md: "initial" }}
       borderBottomRadius={{ base: "0px", md: "2xl" }}
@@ -81,6 +163,33 @@ export const ProductModal = ({
                 {product.description}
               </Text>
             )}
+
+            {order && (
+              <Alert
+                status="info"
+                variant="subtle"
+                rounded="md"
+                bgColor="rgb(0 0 0 / 5%)"
+              >
+                <AlertIcon />
+
+                <Stack alignItems="flex-start">
+                  <Text fontSize="sm">
+                    {"You're"} currently editing your existing selection.
+                  </Text>
+
+                  <Button
+                    w="auto"
+                    minW="auto"
+                    variant="link"
+                    size="sm"
+                    justifyContent="flex-start"
+                  >
+                    Add another with different options
+                  </Button>
+                </Stack>
+              </Alert>
+            )}
           </Stack>
 
           {(product.variants || []).map((variant: any, idx: number) => (
@@ -95,8 +204,8 @@ export const ProductModal = ({
               </Heading>
 
               <RadioGroup
-                onChange={(value) => onSelectVariant(variant.type, value)}
-                value={selectedVariants[variant.type].option}
+                onChange={(value) => handleVariantChange(variant.type, value)}
+                value={selectedVariants[variant.type]?.option}
               >
                 <Stack spacing={2} w="100%">
                   {variant.options.map(
@@ -140,7 +249,7 @@ export const ProductModal = ({
             quantity={quantity}
             setQuantity={(v) => setQuantity(v)}
             max={product.totalStocks || Infinity}
-            min={1}
+            min={order ? 0 : 1}
           />
 
           <Button
@@ -149,13 +258,25 @@ export const ProductModal = ({
             isFullWidth
             variant="primary"
             colorScheme="black"
-            justifyContent="space-between"
-            onClick={() => onAddToOrder()}
+            justifyContent={quantity ? "space-between" : "center"}
+            onClick={() => onOrder()}
           >
-            <chakra.span>Add to order</chakra.span>
             <chakra.span>
-              {formatCurrency(price * quantity, store.currency)}
+              {order
+                ? quantity
+                  ? "Update order"
+                  : "Remove order"
+                : "Add to order"}
             </chakra.span>
+
+            {!!quantity && (
+              <chakra.span>
+                {formatCurrency(
+                  (price || product.price) * quantity,
+                  store.currency
+                )}
+              </chakra.span>
+            )}
           </Button>
         </Stack>
       </ModalFooter>
