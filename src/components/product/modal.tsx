@@ -22,7 +22,13 @@ import { formatCurrency } from "libs/currency";
 import { Quantity } from "components/quantity";
 import { useCart } from "hooks/useCart";
 
-export const ProductModal = ({ store, product, order, onOrderChange }: any) => {
+export const ProductModal = ({
+  store,
+  product,
+  order,
+  onOrderChange,
+  switchToAddNewOrder,
+}: any) => {
   const cart = useCart();
 
   const [quantity, setQuantity] = React.useState(1);
@@ -184,6 +190,7 @@ export const ProductModal = ({ store, product, order, onOrderChange }: any) => {
                     variant="link"
                     size="sm"
                     justifyContent="flex-start"
+                    onClick={() => switchToAddNewOrder()}
                   >
                     Add another with different options
                   </Button>

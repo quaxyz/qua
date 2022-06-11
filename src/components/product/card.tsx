@@ -16,11 +16,28 @@ import { ProductModal } from "./modal";
 export const ProductCard = ({ product, store, cartItem }: any) => {
   const addOrderModal = useDisclosure();
   const updateOrderModal = useDisclosure();
+  let modals: any = {
+    add: addOrderModal,
+    update: updateOrderModal,
+  };
 
-  let modal = cartItem ? updateOrderModal : addOrderModal;
+  const [activeModal, setActiveModal] = React.useState<any>("add");
+  React.useEffect(() => {
+    if (cartItem?.id) setActiveModal("update");
+  }, [cartItem?.id]);
+
+  const modal = modals[activeModal];
 
   const onOrderChange = () => {
+    setActiveModal("update");
     modal.onClose();
+  };
+
+  const switchToAddNewOrder = () => {
+    setActiveModal("add");
+
+    updateOrderModal.onClose();
+    addOrderModal.onOpen();
   };
 
   return (
@@ -153,6 +170,7 @@ export const ProductCard = ({ product, store, cartItem }: any) => {
           order={cartItem}
           product={product}
           onOrderChange={onOrderChange}
+          switchToAddNewOrder={switchToAddNewOrder}
         />
       </Modal>
     </>
