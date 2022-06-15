@@ -15,6 +15,7 @@ import {
 import { CartContext } from "contexts/cart";
 import { useRouter } from "next/router";
 import { formatCurrency } from "libs/currency";
+import { CartModal } from "components/cart-modal";
 
 const CustomerLayout = ({ title, store, children }: any) => {
   const router = useRouter();
@@ -70,32 +71,37 @@ const CustomerLayout = ({ title, store, children }: any) => {
 
           <Stack direction="row" spacing={12} align="center">
             {cartStore.totalItems && (
-              <Button
-                variant="primary"
-                colorScheme="black"
-                h={14}
-                leftIcon={
-                  <Center
-                    bgColor="white"
-                    color="#000"
-                    rounded="full"
-                    boxSize="25px"
-                    p={2}
-                    mr={2}
-                  >
-                    <Text fontSize="xs" lineHeight="1" color="inherit">
-                      {cartStore.totalItems}
+              <CartModal store={store}>
+                <Button
+                  variant="primary"
+                  colorScheme="black"
+                  h={14}
+                  leftIcon={
+                    <Center
+                      bgColor="white"
+                      color="#000"
+                      rounded="full"
+                      boxSize="25px"
+                      p={2}
+                      mr={2}
+                    >
+                      <Text fontSize="xs" lineHeight="1" color="inherit">
+                        {cartStore.totalItems}
+                      </Text>
+                    </Center>
+                  }
+                  rightIcon={
+                    <Text ml={2} fontSize="sm" lineHeight="1" color="inherit">
+                      {formatCurrency(
+                        cartStore.totalAmount || 0,
+                        store.currency
+                      )}
                     </Text>
-                  </Center>
-                }
-                rightIcon={
-                  <Text ml={2} fontSize="sm" lineHeight="1" color="inherit">
-                    {formatCurrency(cartStore.totalAmount || 0, store.currency)}
-                  </Text>
-                }
-              >
-                View order
-              </Button>
+                  }
+                >
+                  View order
+                </Button>
+              </CartModal>
             )}
           </Stack>
         </chakra.nav>

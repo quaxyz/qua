@@ -2,10 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import prisma from "libs/prisma";
 import _groupBy from "lodash.groupBy";
 import _capitalize from "lodash.capitalize";
-import NextLink from "next/link";
-import NextImage from "next/image";
 import CustomerLayout from "components/layouts/customer";
 import { GetStaticProps } from "next";
+import { getQueryClient } from "libs/react-query";
 import {
   Button,
   chakra,
@@ -17,8 +16,6 @@ import {
   InputGroup,
   InputLeftElement,
   Link,
-  LinkBox,
-  LinkOverlay,
   Stack,
   Text,
   useBreakpointValue,
@@ -30,6 +27,7 @@ import { mapSocialLink } from "libs/utils";
 import { AiFillInstagram } from "react-icons/ai";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { Product } from "components/product";
+import { dehydrate } from "react-query";
 
 const PageHeader = ({ store }: any) => {
   return (
@@ -499,6 +497,15 @@ export const getStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const queryClient = getQueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: Infinity,
+        cacheTime: Infinity,
+      },
+    },
+  });
+
   if (!params?.store) {
     return {
       notFound: true,
@@ -565,11 +572,17 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     .map((p) => p.category)
     .filter(Boolean);
 
+  // add data to react-query cache
+  await queryClient.prefetchQuery("store", () => store);
+  await queryClient.prefetchQuery("products", () => data);
+  await queryClient.prefetchQuery("categories", () => allCategories);
+
   return {
     props: {
-      products: JSON.parse(JSON.stringify(data)),
-      allCategories,
       store,
+      allCategories,
+      dehydratedState: dehydrate(queryClient),
+      products: JSON.parse(JSON.stringify(data)),
       layoutProps: {
         store,
         title: `${_capitalize(store.title || store.name)} - Qua`,

@@ -1,5 +1,13 @@
 import React from "react";
-import { IconButton, Input, Stack, Text } from "@chakra-ui/react";
+import {
+  Button,
+  ButtonProps,
+  IconButton,
+  Input,
+  Stack,
+  StackProps,
+  Text,
+} from "@chakra-ui/react";
 import { FiMinus, FiPlus } from "react-icons/fi";
 
 type QuantityProps = {
@@ -7,6 +15,7 @@ type QuantityProps = {
   setQuantity: (value: number) => void;
   max: number;
   min: number;
+  ContainerProps?: StackProps;
 };
 
 export function Quantity(props: QuantityProps) {
@@ -18,6 +27,7 @@ export function Quantity(props: QuantityProps) {
       align="center"
       rounded="md"
       bgColor="rgb(0 0 0 / 4%)"
+      {...props.ContainerProps}
     >
       <IconButton
         aria-label="decrease"
@@ -48,5 +58,16 @@ export function Quantity(props: QuantityProps) {
         }
       />
     </Stack>
+  );
+}
+
+type QuantityButtonProps = QuantityProps & {
+  ButtonProps?: ButtonProps;
+};
+export function QuantityButton(props: QuantityButtonProps) {
+  return (
+    <Button size="sm" variant="outline" {...props.ButtonProps}>
+      {props.quantity}
+    </Button>
   );
 }
