@@ -4,11 +4,9 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 export const useCartStore = () => {
   const [items, setItems] = useState<CartItem[]>([]);
-
-  const [loadingCart, setLoadingCart] = useState(false);
+  const [comment, setComment] = useState<string>();
 
   const fetchCartItems = useCallback(async () => {
-    setLoadingCart(true);
     try {
       const locallyStoredCart = localStorage.getItem("cart");
       if (locallyStoredCart) {
@@ -16,8 +14,6 @@ export const useCartStore = () => {
       }
     } catch (error) {
       console.warn("Error retrieving cart. No items(s) found");
-    } finally {
-      setLoadingCart(false);
     }
   }, []);
 
@@ -65,6 +61,13 @@ export const useCartStore = () => {
     );
   }, []);
 
+  const addCartComment = useCallback(
+    (comment: string) => {
+      setComment(comment);
+    },
+    [setComment]
+  );
+
   useEffect(() => {
     fetchCartItems();
   }, [fetchCartItems]);
@@ -79,16 +82,27 @@ export const useCartStore = () => {
       (acc, item) => acc + Number(item.price) * item.quantity,
       0
     );
+
     return {
       items,
+      comment,
       totalItems: totalItemsInCart,
       totalAmount: totalAmountInCart,
       addCartItem,
       removeCartItem,
       updateCartItem,
       clearCart,
+      addCartComment,
     };
-  }, [items, addCartItem, removeCartItem, updateCartItem, clearCart]);
+  }, [
+    items,
+    comment,
+    addCartItem,
+    removeCartItem,
+    updateCartItem,
+    clearCart,
+    addCartComment,
+  ]);
 };
 
 export const useCart = () => {

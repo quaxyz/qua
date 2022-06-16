@@ -10,8 +10,10 @@ export type CartItem = {
 
 type CartContextType = {
   items: CartItem[];
+  comment?: string;
   totalItems: number;
   totalAmount: number;
+  addCartComment: (comment: string) => void;
   addCartItem: (item: CartItem) => void;
   removeCartItem: (itemId: string) => void;
   updateCartItem: (itemId: string, item: CartItem) => void;

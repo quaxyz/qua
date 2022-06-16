@@ -144,14 +144,19 @@ export const CartModal = ({ children, store }: any) => {
 
                             <Stack direction="row" alignItems="stretch">
                               <Quantity
-                                quantity={2}
-                                setQuantity={(v) => null}
-                                max={Infinity}
-                                min={0}
+                                quantity={item.quantity}
+                                setQuantity={(quantity) => {
+                                  cart?.updateCartItem(item.id, {
+                                    ...item,
+                                    quantity,
+                                  });
+                                }}
+                                max={product?.totalStocks || Infinity}
+                                min={1}
                               />
 
                               <IconButton
-                                onClick={() => null}
+                                onClick={() => cart.removeCartItem(item.id)}
                                 variant="outlined"
                                 bgColor="rgb(0 0 0 / 4%)"
                                 aria-label="Delete"
@@ -181,6 +186,8 @@ export const CartModal = ({ children, store }: any) => {
                         rounded="md"
                         variant="outline"
                         placeholder="Special requests, delivery comments, allergies..."
+                        value={cart.comment || ""}
+                        onChange={(e) => cart.addCartComment(e.target.value)}
                       />
                     </FormControl>
                   </Stack>
