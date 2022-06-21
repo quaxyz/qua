@@ -461,12 +461,7 @@ export const getServerSideProps: GetServerSideProps = withSsrSession(
         id: true,
         name: true,
         price: true,
-        images: {
-          take: 1,
-          select: {
-            url: true,
-          },
-        },
+        images: true,
       },
     });
 
@@ -475,7 +470,7 @@ export const getServerSideProps: GetServerSideProps = withSsrSession(
       acc.push({
         ...item,
         name: itemProduct?.name,
-        image: itemProduct?.images?.[0]?.url,
+        image: itemProduct?.images?.[0],
       });
 
       return acc;

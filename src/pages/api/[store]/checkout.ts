@@ -5,11 +5,16 @@ import crypto from "crypto";
 
 const LOG_TAG = "[store-checkout]";
 
-function generatePublicId() {
-  const chars = "BCDEFGHJKLMNOPQRSTVWXYZ023456789bcdefghjklmnopqrstvwxyz";
+function generateID() {
+  const numbers = "23456789";
+  const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+  const chars = letters + numbers;
 
-  let randStr = "qua";
-  while (randStr.length < 32) {
+  // SID is always starting with letter
+  const startingLetterIdx = crypto.randomInt(0, letters.length - 1);
+  let randStr = chars.substring(startingLetterIdx, startingLetterIdx + 1);
+
+  while (randStr.length < 7) {
     // eslint-disable-next-line no-await-in-loop
     const idx = crypto.randomInt(0, chars.length - 1);
     randStr += chars.substring(idx, idx + 1);
@@ -40,7 +45,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         const storeName = query.store as string;
-        const orderId = (body.orderId as string) || generatePublicId();
+        const orderId = (body.orderId as string) || generateID();
         const items = body.items;
 
         // fetch store

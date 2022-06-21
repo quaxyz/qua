@@ -1,7 +1,7 @@
 import { extendTheme } from "@chakra-ui/react";
 import { transparentize } from "@chakra-ui/theme-tools";
 
-export default extendTheme({
+const defaultTheme = extendTheme({
   fonts: {
     body: "Inter, sans-serif",
     heading: "Inter, sans-serif",
@@ -362,3 +362,23 @@ export default extendTheme({
     },
   },
 });
+
+export const customerAreaTheme = extendTheme(
+  {
+    components: {
+      Input: {
+        variants: {
+          outline: {
+            field: {
+              rounded: "md",
+              borderColor: "rgb(0 0 0 / 16%)",
+            },
+          },
+        },
+      },
+    },
+  },
+  defaultTheme
+);
+
+export default defaultTheme;
