@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import prisma from "libs/prisma";
-import _groupBy from "lodash.groupBy";
+import _groupBy from "lodash.groupby";
 import _capitalize from "lodash.capitalize";
 import CustomerLayout from "components/layouts/customer";
 import { GetStaticProps } from "next";
