@@ -14,22 +14,10 @@ import {
   useBreakpointValue,
   Spacer,
   useToast,
-  useDisclosure,
-  Link,
-  toast,
 } from "@chakra-ui/react";
 import { FormGroup } from "components/form-group";
 import { FcGoogle } from "react-icons/fc";
-import { Wallet } from "react-iconly";
-import { ConnectModal } from "components/wallet";
 import { useMutation, useQueryClient } from "react-query";
-import {
-  UnsupportedChainIdError,
-  useWeb3React,
-  Web3ReactProvider,
-} from "@web3-react/core";
-import { providers } from "ethers";
-import { getLibrary, injected, switchNetwork } from "libs/wallet";
 import { useOath2Login } from "hooks/useOauth2Login";
 import { useRouter } from "next/router";
 
@@ -90,81 +78,6 @@ const useGoogleAuth = () => {
   return googleAuthMutation;
 };
 
-const useWalletAuth = () => {
-  const toast = useToast();
-  const [pending, setPending] = React.useState<boolean>(false);
-  const { activate, library, account } = useWeb3React();
-  const connectModal = useDisclosure();
-
-  const walletAuthMutation = useMutation(
-    async (account: string) => {
-      // ask user to sign message
-      let provider: providers.Web3Provider = library;
-      const signer = provider.getSigner(account!);
-
-      const message = "Please sign this message to confirm you own this wallet";
-      const sig = await signer.signMessage(message);
-
-      console.log("Sign", { sig, address: account });
-
-      return await Api().post("/admin/login/wallet", {
-        address: account,
-        sig,
-        message,
-      });
-    },
-    {
-      onError: (err: any) => {
-        toast({
-          title: "Error login in",
-          description: err?.message,
-          position: "bottom-right",
-          status: "error",
-        });
-      },
-    }
-  );
-
-  const tryActivate = async (connector?: any) => {
-    if (!connector) return;
-    setPending(true);
-
-    // activate wallet
-    try {
-      await activate(connector, undefined, true);
-    } catch (error) {
-      if (connector === injected && error instanceof UnsupportedChainIdError) {
-        await switchNetwork();
-        await activate(injected, (err) => {
-          toast({
-            title: "Error connecting account",
-            description: err.message,
-            position: "bottom-right",
-            status: "error",
-          });
-        });
-      }
-    } finally {
-      setPending(false);
-      connectModal.onClose();
-    }
-  };
-
-  React.useEffect(() => {
-    if (!account || walletAuthMutation.isLoading) return;
-    walletAuthMutation.mutate(account);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account]);
-
-  return {
-    isLoading: pending || walletAuthMutation.isLoading,
-    isModalOpen: connectModal.isOpen,
-    onModalClose: connectModal.onClose,
-    onModalOpen: connectModal.onOpen,
-    activate: tryActivate,
-  };
-};
-
 const useEmailAuth = () => {
   const toast = useToast();
 
@@ -198,11 +111,10 @@ const useEmailAuth = () => {
 
 const Page: NextPage = () => {
   const googleAuth = useGoogleAuth();
-  const walletAuth = useWalletAuth();
   const emailAuth = useEmailAuth();
 
   return (
-    <Web3ReactProvider getLibrary={getLibrary}>
+    <>
       <Head>
         <title>Login to your store</title>
       </Head>
@@ -291,18 +203,6 @@ const Page: NextPage = () => {
                   >
                     Continue with Google
                   </Button>
-
-                  <Button
-                    flex={{ base: "block", md: "1" }}
-                    variant="solid-outline"
-                    color="#131415"
-                    size="lg"
-                    leftIcon={<Wallet set="bold" />}
-                    isLoading={walletAuth.isLoading}
-                    onClick={() => walletAuth.onModalOpen()}
-                  >
-                    Connect Wallet
-                  </Button>
                 </Stack>
 
                 <Stack direction="row" align="center" spacing={4}>
@@ -354,14 +254,7 @@ const Page: NextPage = () => {
           </chakra.main>
         </Stack>
       </Container>
-
-      <ConnectModal
-        isOpen={walletAuth.isModalOpen}
-        isPending={walletAuth.isLoading}
-        onClose={walletAuth.onModalClose}
-        onActivate={walletAuth.activate}
-      />
-    </Web3ReactProvider>
+    </>
   );
 };
 

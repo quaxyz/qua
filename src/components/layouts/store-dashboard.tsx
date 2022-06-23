@@ -1,18 +1,9 @@
 import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import {
-  Button,
-  chakra,
-  Grid,
-  Heading,
-  Icon,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { chakra, Grid, Heading, Icon, Stack, Text } from "@chakra-ui/react";
 import Link from "components/link";
-import { Bag, Category, Graph, User, Show } from "react-iconly";
-import { CgMore } from "react-icons/cg";
+import { Category, Graph, User, Show } from "react-iconly";
 
 const useNavLinks = () => {
   const router = useRouter();
