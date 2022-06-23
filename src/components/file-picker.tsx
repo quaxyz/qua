@@ -88,8 +88,7 @@ export const FilePicker = ({
   bucket,
   maxFiles,
 }: FilePickerProps) => {
-  const toast = useToast();
-  const [activeImage, setActiveImage] = useState<any>(files[0]?.url || null);
+  const [activeImage, setActiveImage] = useState<any>(files[0] || null);
   const [loading, setLoading] = useState(false);
 
   const { getRootProps, getInputProps, open } = useDropzone({
@@ -114,11 +113,7 @@ export const FilePicker = ({
             }
           );
 
-          fileData.push({
-            key: uploadedFile.key,
-            url: uploadedFile.publicUrl,
-            hash: uploadedFile.hash,
-          });
+          fileData.push(uploadedFile.publicUrl);
         } catch (e) {
           console.log("Error uploading file", e);
         } finally {
@@ -126,33 +121,18 @@ export const FilePicker = ({
         }
       }
 
-      if (fileData[0]) setActiveImage(fileData[0].url);
+      if (fileData[0]) setActiveImage(fileData[0]);
       setFiles(files.concat(...fileData));
       setLoading(false);
     },
   });
 
   const removeImage = async (fileUrl: any) => {
-    const file = files.find((file) => file.url === fileUrl);
-    setLoading(true);
+    const file = files.find((file) => file === fileUrl);
 
-    // send api request to delete image
-    try {
-      await Api().delete(`/upload?filename=${file.key}&bucket=${bucket}`);
-      const newFiles = files.filter((f: any) => f.key !== file.key);
-
-      setActiveImage(newFiles[newFiles.length - 1]?.url || null);
-      setFiles(newFiles);
-    } catch (e: any) {
-      toast({
-        title: "Error deleting file",
-        description: e.message,
-        position: "bottom-right",
-        status: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
+    const newFiles = files.filter((f: any) => f.key !== file.key);
+    setActiveImage(newFiles[newFiles.length - 1]?.url || null);
+    setFiles(newFiles);
   };
 
   return (
@@ -217,16 +197,14 @@ export const FilePicker = ({
             key={idx}
             boxSize="50px"
             cursor="pointer"
-            p={activeImage === file.url ? 1 : undefined}
+            p={activeImage === file ? 1 : undefined}
             border={
-              activeImage === file.url
-                ? "1px solid rgb(0 0 0 / 80%)"
-                : undefined
+              activeImage === file ? "1px solid rgb(0 0 0 / 80%)" : undefined
             }
-            onClick={() => setActiveImage(file.url)}
+            onClick={() => setActiveImage(file)}
           >
             <Image
-              src={file.url}
+              src={file}
               alt="Product image"
               objectFit="cover"
               objectPosition="center 70%"

@@ -31,10 +31,10 @@ const useNavLinks = () => {
         isActive: router.asPath?.includes("products"),
       },
       {
-        name: "Orders",
-        icon: (props: any) => <Bag set="light" {...props} />,
-        url: `/${router.query.store}/orders/`,
-        isActive: router.asPath?.includes("orders"),
+        name: "Settings",
+        icon: (props: any) => <User set="light" {...props} />,
+        url: `/${router.query.store}/settings/`,
+        isActive: router.asPath?.includes("settings"),
       },
     ];
   }, [router]);
@@ -109,25 +109,6 @@ const DashboardLayout = ({ title, children }: any) => {
                 as={(props) => <Show set="bold" {...props} />}
               />
             </Stack>
-
-            <Button
-              variant="outline"
-              size="sm"
-              fontSize="15px"
-              bg="rgba(19, 20, 21, 0.04)"
-              rounded="12px"
-              border="1px solid rgba(19, 20, 21, 0.08)"
-              _focus={{
-                boxShadow: "0 0 0 1px rgba(19, 20, 21, 24%) !important",
-              }}
-              leftIcon={
-                <Icon mr="1" as={(props) => <User set="bold" {...props} />} />
-              }
-              as={Link}
-              href={`/${router.query.store}/settings`}
-            >
-              My Account
-            </Button>
           </Stack>
         </chakra.nav>
 
@@ -219,29 +200,6 @@ const DashboardLayout = ({ title, children }: any) => {
                 as={(props) => <Show set="bold" {...props} />}
               />
             </Stack>
-
-            <Button
-              variant="outline"
-              size="sm"
-              w="128px"
-              fontSize="sm"
-              bg="#131415"
-              color="#fff"
-              fontWeight="500"
-              rounded="full"
-              border="1px solid rgba(19, 20, 21, 2%)"
-              _focus={{
-                boxShadow: "0 0 0 1px rgba(19, 20, 21, 24%) !important",
-                bg: "#131415",
-                color: "#fff",
-              }}
-              _hover={{ bg: "#131415", color: "#fff" }}
-              leftIcon={<Icon as={(props) => <User set="bold" {...props} />} />}
-              as={Link}
-              href={`/${router.query.store}/settings`}
-            >
-              My Account
-            </Button>
           </Stack>
         </chakra.header>
 

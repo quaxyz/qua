@@ -327,7 +327,7 @@ const Page = ({ products, store }: any) => {
               {/* heading */}
               <Grid
                 display={{ base: "none", md: "grid" }}
-                templateColumns="repeat(7, 1fr)"
+                templateColumns="repeat(5, 1fr)"
                 gap={6}
                 alignItems="center"
                 px={3}
@@ -359,26 +359,6 @@ const Page = ({ products, store }: any) => {
                   fontWeight="600"
                   textAlign="center"
                 >
-                  In Stock
-                </GridItem>
-
-                <GridItem
-                  w="100%"
-                  textTransform="uppercase"
-                  fontSize="sm"
-                  fontWeight="600"
-                  textAlign="center"
-                >
-                  Sold
-                </GridItem>
-
-                <GridItem
-                  w="100%"
-                  textTransform="uppercase"
-                  fontSize="sm"
-                  fontWeight="600"
-                  textAlign="center"
-                >
                   Actions
                 </GridItem>
               </Grid>
@@ -397,7 +377,7 @@ const Page = ({ products, store }: any) => {
                       <Box>
                         {data.images[0] && (
                           <Image
-                            src={data.images[0].url}
+                            src={data.images[0]}
                             alt={data.name}
                             boxSize="100px"
                             objectFit="cover"
@@ -419,20 +399,6 @@ const Page = ({ products, store }: any) => {
                             {formatCurrency(data.price, store.currency)}
                           </Text>
                         </Stack>
-
-                        <Stack direction="row" spacing={2}>
-                          <Text fontSize="sm">In stock:</Text>
-                          <Text fontSize="sm" fontWeight="600">
-                            {data.totalStocks ?? "unlimited"}
-                          </Text>
-                        </Stack>
-
-                        <Stack direction="row" spacing={2}>
-                          <Text fontSize="sm">Sold:</Text>
-                          <Text fontSize="sm" fontWeight="600">
-                            {data?.sold || 0}
-                          </Text>
-                        </Stack>
                       </Stack>
 
                       <Box>
@@ -442,7 +408,7 @@ const Page = ({ products, store }: any) => {
 
                     <Grid
                       display={{ base: "none", md: "grid" }}
-                      templateColumns="repeat(7, 1fr)"
+                      templateColumns="repeat(5, 1fr)"
                       gap={6}
                       alignItems="center"
                       py={3}
@@ -453,7 +419,7 @@ const Page = ({ products, store }: any) => {
                         <Stack direction="row" alignItems="center" spacing={4}>
                           {data.images[0] && (
                             <Image
-                              src={data.images[0].url}
+                              src={data.images[0]}
                               alt={data.name}
                               boxSize="60px"
                               objectFit="cover"
@@ -477,24 +443,6 @@ const Page = ({ products, store }: any) => {
                         textAlign="center"
                       >
                         {formatCurrency(data.price, store.currency)}
-                      </GridItem>
-
-                      <GridItem
-                        w="100%"
-                        fontSize="sm"
-                        fontWeight="600"
-                        textAlign="center"
-                      >
-                        {data.totalStocks ?? "unlimited"}
-                      </GridItem>
-
-                      <GridItem
-                        w="100%"
-                        fontSize="sm"
-                        fontWeight="600"
-                        textAlign="center"
-                      >
-                        {data?.totalSold || 0}
                       </GridItem>
 
                       <GridItem w="100%" textAlign="center">

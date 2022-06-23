@@ -399,33 +399,6 @@ const Page = ({ details }: any) => {
                   />
                 </FormControl>
               </GridItem>
-
-              <GridItem>
-                <FormControl id="address">
-                  <FormLabel textTransform="uppercase" opacity="72%">
-                    Crypto Wallet Address
-                  </FormLabel>
-                  <Input
-                    variant="flushed"
-                    type="text"
-                    value={formValue.ownerAddress}
-                    onChange={(e) =>
-                      setFormValue({
-                        ...formValue,
-                        ownerAddress: e.target.value,
-                      })
-                    }
-                  />
-                  <FormHelperText
-                    fontStyle="italic"
-                    fontSize="xs"
-                    color="#131415"
-                    opacity="48%"
-                  >
-                    Crypto Payments will go to this address
-                  </FormHelperText>
-                </FormControl>
-              </GridItem>
             </Grid>
           </Stack>
 

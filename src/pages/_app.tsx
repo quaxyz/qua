@@ -23,7 +23,7 @@ function QuaApp({
             <Component {...pageProps} />
           </Layout>
 
-          {/* <ReactQueryDevtools /> */}
+          <ReactQueryDevtools />
         </Hydrate>
       </QueryClientProvider>
     </ChakraProvider>
