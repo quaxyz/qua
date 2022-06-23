@@ -53,23 +53,75 @@ const PageHeader = ({ store }: any) => {
   );
 };
 
+const shareMsgTemplate = ({ items, name, deliveryInfo }: any) => `
+Hello, I want to place a new order
+
+${items.join("\n")}
+
+Name: ${name}
+${deliveryInfo}
+`;
+
 const Page = ({ store, products }: any) => {
   const router = useRouter();
+
+  // cart sync
   const cart = useCart();
+  React.useEffect(() => {
+    if (cart?.synced && !cart?.items.length) {
+      router.push("/");
+    }
+  }, [cart?.synced, cart?.items.length, router]);
 
-  // React.useEffect(() => {
-  //   if (!cart?.items.length) {
-  //     router.push("/");
-  //   }
-  // }, [cart?.items.length, router]);
+  const [contactDetails, setContactDetails] = React.useState({
+    name: "",
+    phone: "",
+  });
 
-  const cartProducts = cart;
+  const [deliveryDetails, setDeliveryDetails] = React.useState({
+    method: "DELIVERY",
+    address: "",
+  });
+
+  const onSubmit = (e: any) => {
+    e.preventDefault();
+
+    // const number = store.socialLinks.whatsapp.replace("+", "").replace(" ", "");
+    const number = "4915752244038";
+    const items = cart?.items.map((item) => {
+      const product = products.find((p: any) => p.id === item.productId);
+      const variant = Object.keys(item.variants || {})
+        .map((v) => (item.variants || {})[v]?.option)
+        .join(", ");
+
+      return `${item.quantity} ${product.name} - ${variant}`;
+    });
+
+    const deliveryInfo =
+      deliveryDetails.method === "PICKUP"
+        ? "I'll pickup myself"
+        : `Address: ${deliveryDetails.address}`;
+
+    const msg = shareMsgTemplate({
+      items,
+      name: contactDetails.name,
+      deliveryInfo,
+    });
+
+    const link = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
+    window.open(link, "_blank");
+  };
 
   return (
     <>
       <PageHeader store={store} />
 
-      <Container px={{ base: 4, md: 4 }} maxW="container.xl">
+      <Container
+        as="form"
+        px={{ base: 4, md: 4 }}
+        maxW="container.xl"
+        onSubmit={onSubmit}
+      >
         <Stack
           w="full"
           spacing={{ base: 8, md: 28 }}
@@ -106,28 +158,38 @@ const Page = ({ store, products }: any) => {
                     spacing={8}
                     direction={{ base: "column", md: "row" }}
                   >
-                    <FormControl id="name" isRequired isInvalid={false}>
+                    <FormControl id="name" isRequired>
                       <FormLabel htmlFor="name">Name</FormLabel>
                       <Input
                         type="text"
                         placeholder="John Doe"
                         variant="outline"
                         isRequired
-                        isDisabled={false}
+                        value={contactDetails.name}
+                        onChange={(e) =>
+                          setContactDetails({
+                            ...contactDetails,
+                            name: e.target.value,
+                          })
+                        }
                       />
-                      <FormErrorMessage>Name is required</FormErrorMessage>
                     </FormControl>
 
-                    <FormControl id="name" isRequired isInvalid={false}>
-                      <FormLabel htmlFor="name">Phone</FormLabel>
+                    <FormControl id="phone">
+                      <FormLabel htmlFor="phone">Phone</FormLabel>
                       <Input
-                        type="text"
-                        placeholder="+12 345678901"
+                        type="tel"
+                        pattern="^\+?\d{0,13}"
                         variant="outline"
-                        isRequired
-                        isDisabled={false}
+                        placeholder="+12 345678901"
+                        value={contactDetails.phone}
+                        onChange={(e) =>
+                          setContactDetails({
+                            ...contactDetails,
+                            phone: e.target.value,
+                          })
+                        }
                       />
-                      <FormErrorMessage>Phone is required</FormErrorMessage>
                     </FormControl>
                   </Stack>
                 </Stack>
@@ -156,9 +218,18 @@ const Page = ({ store, products }: any) => {
                     How?
                   </Heading>
 
-                  <RadioGroup name="Delivery Method">
+                  <RadioGroup
+                    name="delivery-method"
+                    value={deliveryDetails.method}
+                    onChange={(value) =>
+                      setDeliveryDetails({
+                        ...deliveryDetails,
+                        method: value,
+                      })
+                    }
+                  >
                     <Stack spacing={8}>
-                      <Radio size="lg" value="DOOR_DELIVERY">
+                      <Radio size="lg" value="DELIVERY">
                         <Stack spacing={0} ml={2}>
                           <Text fontWeight="600">Delivery</Text>
                           <Text
@@ -187,31 +258,39 @@ const Page = ({ store, products }: any) => {
                   </RadioGroup>
                 </Stack>
 
-                <Stack
-                  pt={2}
-                  pb={6}
-                  spacing={4}
-                  borderBottom="1px solid rgba(0, 0, 0, 15%)"
-                >
-                  <Heading
-                    as="h4"
-                    color="rgb(0 0 0 / 70%)"
-                    fontSize={{ base: "md", md: "lg" }}
+                {deliveryDetails.method === "DELIVERY" && (
+                  <Stack
+                    pt={2}
+                    pb={6}
+                    spacing={4}
+                    borderBottom="1px solid rgba(0, 0, 0, 15%)"
                   >
-                    Where?
-                  </Heading>
+                    <Heading
+                      as="h4"
+                      color="rgb(0 0 0 / 70%)"
+                      fontSize={{ base: "md", md: "lg" }}
+                    >
+                      Where?
+                    </Heading>
 
-                  <FormControl id="address" isRequired isInvalid={false}>
-                    <Input
-                      type="text"
-                      placeholder="Where you want the delivery"
-                      variant="outline"
-                      isRequired
-                      isDisabled={false}
-                    />
-                    <FormErrorMessage>Addrss is required</FormErrorMessage>
-                  </FormControl>
-                </Stack>
+                    <FormControl id="address" isRequired isInvalid={false}>
+                      <Input
+                        type="text"
+                        placeholder="Where you want the delivery"
+                        variant="outline"
+                        isRequired
+                        value={deliveryDetails.address || ""}
+                        onChange={(e) =>
+                          setDeliveryDetails({
+                            ...deliveryDetails,
+                            address: e.target.value,
+                          })
+                        }
+                      />
+                      <FormErrorMessage>Addrss is required</FormErrorMessage>
+                    </FormControl>
+                  </Stack>
+                )}
               </Stack>
 
               {/* items */}
@@ -286,22 +365,39 @@ const Page = ({ store, products }: any) => {
 
               <Stack py={6}>
                 <Stack direction="row" justify="space-between">
-                  <Text>Item Subtotal (2) </Text>
-                  <Text>{formatCurrency(40, store.currency)}</Text>
+                  <Text>Item Subtotal ({cart?.totalItems}) </Text>
+                  <Text>
+                    {formatCurrency(cart?.totalAmount || 0, store.currency)}
+                  </Text>
                 </Stack>
 
-                <Stack direction="row" justify="space-between">
-                  <Text>Delivery </Text>
-                  <Text>{formatCurrency(100, store.currency)}</Text>
-                </Stack>
+                {store.deliveryFee && (
+                  <Stack direction="row" justify="space-between">
+                    <Text>Delivery </Text>
+                    <Text>
+                      {formatCurrency(store.deliveryFee, store.currency)}
+                    </Text>
+                  </Stack>
+                )}
               </Stack>
 
               <Stack py={4} direction="row" justify="space-between">
                 <Text fontWeight="600">Total</Text>
-                <Text>{formatCurrency(140, store.currency)}</Text>
+                <Text>
+                  {formatCurrency(
+                    (store.deliveryFee || 0) + (cart?.totalAmount || 0),
+                    store.currency
+                  )}
+                </Text>
               </Stack>
 
-              <Button h={14} variant="primary" colorScheme="black" isFullWidth>
+              <Button
+                h={14}
+                isFullWidth
+                type="submit"
+                variant="primary"
+                colorScheme="black"
+              >
                 Send order via WhatsApp
               </Button>
             </chakra.div>

@@ -9,6 +9,7 @@ export type CartItem = {
 };
 
 type CartContextType = {
+  synced: boolean;
   items: CartItem[];
   comment?: string;
   totalItems: number;

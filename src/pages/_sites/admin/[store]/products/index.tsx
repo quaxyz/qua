@@ -583,12 +583,7 @@ export const getServerSideProps: GetServerSideProps = withSsrSession(
         price: true,
         totalStocks: true,
         totalSold: true,
-        images: {
-          take: 1,
-          select: {
-            url: true,
-          },
-        },
+        images: true,
       },
     });
 

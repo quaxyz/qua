@@ -3,6 +3,7 @@ import { CartContext, CartItem } from "contexts/cart";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 export const useCartStore = () => {
+  const [hasSyncedCart, setHasSyncedCart] = useState(false);
   const [items, setItems] = useState<CartItem[]>([]);
   const [comment, setComment] = useState<string>();
 
@@ -14,6 +15,8 @@ export const useCartStore = () => {
       }
     } catch (error) {
       console.warn("Error retrieving cart. No items(s) found");
+    } finally {
+      setHasSyncedCart(true);
     }
   }, []);
 
@@ -86,6 +89,7 @@ export const useCartStore = () => {
     return {
       items,
       comment,
+      synced: hasSyncedCart,
       totalItems: totalItemsInCart,
       totalAmount: totalAmountInCart,
       addCartItem,
@@ -97,6 +101,7 @@ export const useCartStore = () => {
   }, [
     items,
     comment,
+    hasSyncedCart,
     addCartItem,
     removeCartItem,
     updateCartItem,

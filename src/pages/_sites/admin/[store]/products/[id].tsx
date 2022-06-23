@@ -674,15 +674,6 @@ export const getServerSideProps: GetServerSideProps = withSsrSession(
     }
 
     const product = await prisma.product.findFirst({
-      include: {
-        images: {
-          select: {
-            key: true,
-            url: true,
-            hash: true,
-          },
-        },
-      },
       where: {
         id: parseInt(id, 10),
         Store: {
