@@ -86,8 +86,7 @@ const Page = ({ store, products }: any) => {
   const onSubmit = (e: any) => {
     e.preventDefault();
 
-    // const number = store.socialLinks.whatsapp.replace("+", "").replace(" ", "");
-    const number = "4915752244038";
+    const number = store.socialLinks.whatsapp.replace("+", "").replace(" ", "");
     const items = cart?.items.map((item) => {
       const product = products.find((p: any) => p.id === item.productId);
       const variant = Object.keys(item.variants || {})
