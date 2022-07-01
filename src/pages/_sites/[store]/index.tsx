@@ -371,7 +371,7 @@ const Page = ({ products, store }: any) => {
             ))}
           </Stack>
 
-          <chakra.div flex="2">
+          <chakra.div flex="2" px={{ base: 4, md: 0 }}>
             <Heading
               mb={6}
               as="h4"

@@ -147,7 +147,7 @@ const CustomerLayout = ({ title, store, hideOrderBtn, children }: any) => {
           <chakra.main gridArea="main">{children}</chakra.main>
 
           {/* mobile bottombar */}
-          {!hideOrderBtn && cartStore.totalItems && (
+          {!hideOrderBtn && !!cartStore.totalItems && (
             <chakra.nav
               py={4}
               px={2}
