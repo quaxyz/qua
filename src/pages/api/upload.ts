@@ -2,7 +2,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import mime from "mime-types";
 import fleekStorage from "@fleekhq/fleek-storage-js";
-import AWS from "aws-sdk";
 
 const LOG_TAG = "[upload]";
 
@@ -49,22 +48,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             .status(415)
             .send({ error: "file is too large. Max limit is 5mb" });
         }
-
-        // const s3 = new AWS.S3({
-        //   apiVersion: "2006-03-01",
-        //   accessKeyId: process.env.FLEEK_API_KEY || "",
-        //   secretAccessKey: process.env.FLEEK_API_SECRET || "",
-        //   endpoint: "https://storageapi2.fleek.co",
-        //   region: "us-east-1",
-        //   s3ForcePathStyle: true,
-        // });
-
-        // const request = s3.putObject({
-        //   Bucket: "marvinkome-team-bucket",
-        //   Key: filename,
-        //   Body: content,
-        //   ACL: "public-read",
-        // });
 
         const uploadedFile = await fleekStorage.upload({
           apiKey: process.env.FLEEK_API_KEY || "",
