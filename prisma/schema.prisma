@@ -19,6 +19,7 @@ model Store {
   title       String?
   about       String?
   location    String?
+  image       String?
   currency    String  @default("USD")
   socialLinks Json?
   bankDetails Json?
@@ -26,13 +27,11 @@ model Store {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  image    Image?    @relation(fields: [imageId], references: [id])
   carts    Cart[]
   orders   Order[]
   products Product[]
 
-  imageId Int?
-  userId  Int?
+  userId Int?
 }
 
 model User {
@@ -110,15 +109,6 @@ model Order {
   status           OrderStatus @default(UNFULFILLED)
 
   store Store @relation(fields: [storeId], references: [id])
-}
-
-model Image {
-  id        Int     @id @default(autoincrement())
-  hash      String
-  key       String
-  url       String
-  productId Int?
-  Store     Store[]
 }
 
 enum OrderStatus {

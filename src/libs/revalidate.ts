@@ -1,5 +1,5 @@
-export async function revalidate(domain?: string | null, slug?: string) {
-  const urlPaths = [`/${slug}`, `/`];
+export async function revalidate(domain?: string | null) {
+  const urlPaths = [`/`];
 
   // refer to https://solutions-on-demand-isr.vercel.app/ for more info on bulk/batch revalidate
   try {

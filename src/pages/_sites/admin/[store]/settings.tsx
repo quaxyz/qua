@@ -130,7 +130,7 @@ const Page = ({ details }: any) => {
         justifyContent="center"
         flexDirection="column"
         bgImage={`linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24)),url('${
-          data?.image?.url || "/images/fakurian-design-GJKx5lhwU3M-unsplash.jpg"
+          data?.image || "/images/fakurian-design-GJKx5lhwU3M-unsplash.jpg"
         }')`}
         bgPosition="center center"
         bgRepeat="no-repeat"
@@ -449,11 +449,6 @@ export const getServerSideProps: GetServerSideProps = withSsrSession(
           select: {
             email: true,
             address: true,
-          },
-        },
-        image: {
-          select: {
-            url: true,
           },
         },
       },

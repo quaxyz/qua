@@ -18,7 +18,7 @@ import { HiUpload } from "react-icons/hi";
 type useFileUploadProps = {
   bucket: string;
   disabled?: boolean;
-  onUpload: (files: any[]) => void;
+  onUpload: (files: string[]) => void;
 };
 
 export function useFileUpload({
@@ -33,7 +33,7 @@ export function useFileUpload({
     maxFiles: 8,
     disabled: disabled || loading,
     onDrop: async (acceptedFiles) => {
-      const fileData: any[] = [];
+      const fileData: string[] = [];
       setLoading(true);
 
       for (let file of acceptedFiles) {
@@ -48,11 +48,7 @@ export function useFileUpload({
             }
           );
 
-          fileData.push({
-            key: uploadedFile.key,
-            url: uploadedFile.publicUrl,
-            hash: uploadedFile.hash,
-          });
+          fileData.push(uploadedFile.publicUrl);
         } catch (e) {
           console.log("Error uploading file", e);
         } finally {

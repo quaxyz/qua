@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "libs/prisma";
 import _pick from "lodash.pick";
 import { withSession } from "libs/session";
+import { revalidate } from "libs/revalidate";
 
 const LOG_TAG = "[admin-store-settings]";
 
@@ -51,21 +52,13 @@ export default withSession(
             currency: body.currency,
             socialLinks: body.socialLinks,
             bankDetails: body.bankDetails,
+            image: body.image,
           };
 
           if (body.address) {
             dbPayload.owner = {
               update: {
                 address: body.address,
-              },
-            };
-          }
-
-          if (body.image) {
-            dbPayload.image = {
-              connectOrCreate: {
-                create: body.image,
-                where: _pick(body.image, ["hash"]),
               },
             };
           }
@@ -84,25 +77,25 @@ export default withSession(
                   address: true,
                 },
               },
-              image: {
-                select: {
-                  url: true,
-                },
-              },
             },
           });
 
           // revalidate about product pages
-          try {
-            console.log(LOG_TAG, "revalidate about page", {
-              store: store.name,
-            });
-            await res.unstable_revalidate(`/_sites/${store.name}/about`);
-          } catch (err) {
-            console.error(LOG_TAG, "error revalidating about page", {
-              store: store.name,
-              err,
-            });
+          if (process.env.NODE_ENV === "production") {
+            try {
+              console.log(LOG_TAG, "revalidate about page", {
+                store: store.name,
+              });
+
+              await revalidate(
+                `https://${store.name}.${process.env.NEXT_PUBLIC_DOMAIN}`
+              );
+            } catch (err) {
+              console.error(LOG_TAG, "error revalidating store", {
+                store: store.name,
+                err,
+              });
+            }
           }
 
           console.log(LOG_TAG, "settings updated", { result });

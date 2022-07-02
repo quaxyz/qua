@@ -92,22 +92,21 @@ export default withSession(
           });
 
           // revalidate store product pages
-          try {
-            const proto =
-              process.env.NODE_ENV === "development" ? "http" : "https";
-            console.log(LOG_TAG, "revalidate store pages", {
-              store: store.name,
-            });
+          if (process.env.NODE_ENV === "production") {
+            try {
+              console.log(LOG_TAG, "revalidate store pages", {
+                store: store.name,
+              });
 
-            await revalidate(
-              `${proto}://${store.name}.${process.env.NEXT_PUBLIC_DOMAIN}`,
-              "/products/${result.id}"
-            );
-          } catch (err) {
-            console.error(LOG_TAG, "error revalidating store pages", {
-              store: store.name,
-              err,
-            });
+              await revalidate(
+                `https://${store.name}.${process.env.NEXT_PUBLIC_DOMAIN}`
+              );
+            } catch (err) {
+              console.error(LOG_TAG, "error revalidating store pages", {
+                store: store.name,
+                err,
+              });
+            }
           }
 
           console.log(LOG_TAG, "produt updated", { result });

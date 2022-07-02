@@ -29,7 +29,7 @@ const PageHeader = ({ store }: any) => {
   return (
     <chakra.header>
       <chakra.div
-        bgImage={`linear-gradient(0deg, rgba(0, 0, 0, 0.52), rgba(0, 0, 0, 0.24)), url('${store.image?.url}')`}
+        bgImage={`linear-gradient(0deg, rgba(0, 0, 0, 0.52), rgba(0, 0, 0, 0.24)), url('${store.image}')`}
         bgPosition="center center"
         bgRepeat="no-repeat"
         bgSize="cover"
@@ -450,11 +450,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       socialLinks: true,
       location: true,
       category: true,
-      image: {
-        select: {
-          url: true,
-        },
-      },
+      image: true,
     },
   });
 
