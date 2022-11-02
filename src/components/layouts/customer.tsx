@@ -157,37 +157,39 @@ const CustomerLayout = ({ title, store, hideOrderBtn, children }: any) => {
               gridArea="bottombar"
               display={{ base: "block", md: "none" }}
             >
-              <Button
-                size="sm"
-                isFullWidth
-                variant="primary"
-                colorScheme="black"
-                justifyContent="flex-start"
-                h={12}
-                leftIcon={
-                  <Center
-                    bgColor="white"
-                    color="#000"
-                    rounded="full"
-                    boxSize="25px"
-                    p={2}
-                    mr={2}
-                  >
-                    <Text fontSize="xs" lineHeight="1" color="inherit">
-                      {cartStore.totalItems}
+              <CartModal store={store}>
+                <Button
+                  size="sm"
+                  isFullWidth
+                  variant="primary"
+                  colorScheme="black"
+                  justifyContent="flex-start"
+                  h={12}
+                  leftIcon={
+                    <Center
+                      bgColor="white"
+                      color="#000"
+                      rounded="full"
+                      boxSize="25px"
+                      p={2}
+                      mr={2}
+                    >
+                      <Text fontSize="xs" lineHeight="1" color="inherit">
+                        {cartStore.totalItems}
+                      </Text>
+                    </Center>
+                  }
+                  rightIcon={
+                    <Text ml={2} fontSize="sm" lineHeight="1" color="inherit">
+                      {formatCurrency(cartStore.totalAmount, store.currency)}
                     </Text>
-                  </Center>
-                }
-                rightIcon={
-                  <Text ml={2} fontSize="sm" lineHeight="1" color="inherit">
-                    {formatCurrency(cartStore.totalAmount, store.currency)}
-                  </Text>
-                }
-              >
-                <chakra.span flex="1" textAlign="left">
-                  View order
-                </chakra.span>
-              </Button>
+                  }
+                >
+                  <chakra.span flex="1" textAlign="left">
+                    View order
+                  </chakra.span>
+                </Button>
+              </CartModal>
             </chakra.nav>
           )}
         </Grid>

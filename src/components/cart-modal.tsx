@@ -1,5 +1,6 @@
 import React from "react";
 import NextImage from "next/image";
+import Link from "components/link";
 import {
   Button,
   Center,
@@ -195,7 +196,9 @@ export const CartModal = ({ children, store }: any) => {
               </ModalBody>
 
               <ModalFooter justifyContent="initial" px={{ base: 3, md: 6 }}>
-                <Button
+                <Link
+                  href="/checkout"
+                  as={Button}
                   h={14}
                   flex={1}
                   isFullWidth
@@ -224,7 +227,7 @@ export const CartModal = ({ children, store }: any) => {
                   }
                 >
                   <chakra.span flex={1}>Go to checkout</chakra.span>
-                </Button>
+                </Link>
               </ModalFooter>
             </>
           ) : (
