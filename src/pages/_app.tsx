@@ -15,19 +15,21 @@ function QuaApp({ Component, pageProps = {} }: AppProps) {
   const layoutProps = pageProps.layoutProps || {};
 
   return (
-    <ChakraProvider theme={theme}>
-      <QueryClientProvider client={queryClient}>
-        <Hydrate state={dehydratedState}>
-          <Layout {...layoutProps}>
-            <Component {...rest} />
-          </Layout>
+    <>
+      <ChakraProvider theme={theme}>
+        <QueryClientProvider client={queryClient}>
+          <Hydrate state={dehydratedState}>
+            <Layout {...layoutProps}>
+              <Component {...rest} />
+            </Layout>
 
-          <ReactQueryDevtools />
-        </Hydrate>
-      </QueryClientProvider>
+            <ReactQueryDevtools />
+          </Hydrate>
+        </QueryClientProvider>
+      </ChakraProvider>
 
       <Analytics />
-    </ChakraProvider>
+    </>
   );
 }
 
