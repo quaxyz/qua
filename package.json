@@ -25,6 +25,7 @@
     "@types/lodash.snakecase": "^4.1.6",
     "@types/mime-types": "^2.1.1",
     "@types/uuid": "^8.3.4",
+    "@vercel/analytics": "^0.1.5",
     "framer-motion": "^4",
     "google-auth-library": "^7.14.0",
     "iron-session": "^6.0.5",

@@ -5,6 +5,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { Hydrate, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { getQueryClient } from "libs/react-query";
+import { Analytics } from "@vercel/analytics/react";
 
 function QuaApp({
   Component,
@@ -26,6 +27,8 @@ function QuaApp({
           <ReactQueryDevtools />
         </Hydrate>
       </QueryClientProvider>
+
+      <Analytics />
     </ChakraProvider>
   );
 }
