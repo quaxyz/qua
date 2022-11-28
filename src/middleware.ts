@@ -14,7 +14,11 @@ export default function middleware(req: NextRequest) {
   const hostname = req.headers.get("host");
 
   // exclude public files and api routes
-  if (!url.pathname.includes(".") && !url.pathname.startsWith("/api")) {
+  if (
+    !url.pathname.includes(".") &&
+    !url.pathname.startsWith("/api") &&
+    !req.headers.has("x-prerender-revalidate")
+  ) {
     const subdomains = (hostname || "").split(".").slice(0, -1).reverse();
 
     // we take the first valid site in the subdomains list
