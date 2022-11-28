@@ -20,7 +20,13 @@ import { useRouter } from "next/router";
 import { formatCurrency } from "libs/currency";
 import { CartModal } from "components/cart-modal";
 
-const CustomerLayout = ({ title, store, hideOrderBtn, children }: any) => {
+const CustomerLayout = ({
+  title,
+  description,
+  store,
+  hideOrderBtn,
+  children,
+}: any) => {
   const router = useRouter();
   const cartStore = useCartStore();
 
@@ -29,6 +35,7 @@ const CustomerLayout = ({ title, store, hideOrderBtn, children }: any) => {
       <CartContext.Provider value={cartStore}>
         <Head>
           <title>{title}</title>
+          <meta name="description" content={description} />
         </Head>
 
         <Grid

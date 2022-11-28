@@ -26,6 +26,10 @@ const Home: NextPage = () => {
     <>
       <Head>
         <title>Qua | Decentralized P2P eCommerce</title>
+        <meta
+          name="description"
+          content="Your unique store link to sell products directly to your customers"
+        />
       </Head>
 
       <chakra.nav position="relative">

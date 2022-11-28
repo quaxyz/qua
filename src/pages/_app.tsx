@@ -28,7 +28,7 @@ function QuaApp({ Component, pageProps = {} }: AppProps) {
     return () => {
       router.events.off("routeChangeComplete", pageView);
     };
-  }, []);
+  }, [router]);
 
   return (
     <>

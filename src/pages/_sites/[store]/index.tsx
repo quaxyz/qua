@@ -582,6 +582,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       layoutProps: {
         store,
         title: `${_capitalize(store.title || store.name)} - Qua`,
+        description: store.about || "",
       },
     },
 

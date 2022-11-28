@@ -495,6 +495,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         store,
         hideOrderBtn: true,
         title: `Checkout - ${_capitalize(store.title || store.name)} - Qua`,
+        description: store.about || "",
       },
     },
 
