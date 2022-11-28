@@ -7,21 +7,19 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import { getQueryClient } from "libs/react-query";
 import { Analytics } from "@vercel/analytics/react";
 
-function QuaApp({
-  Component,
-  pageProps: { dehydratedState, ...pageProps },
-}: AppProps) {
+function QuaApp({ Component, pageProps = {} }: AppProps) {
   const [queryClient] = React.useState(() => getQueryClient());
+  const { dehydratedState, ...rest } = pageProps;
 
   const Layout = (Component as any).Layout || React.Fragment;
-  const layoutProps = pageProps.layoutProps;
+  const layoutProps = pageProps.layoutProps || {};
 
   return (
     <ChakraProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
         <Hydrate state={dehydratedState}>
           <Layout {...layoutProps}>
-            <Component {...pageProps} />
+            <Component {...rest} />
           </Layout>
 
           <ReactQueryDevtools />

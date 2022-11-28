@@ -85,7 +85,7 @@ export default withSession(
               category: body.category,
               tags: body.tags?.split(",").map((t: string) => t.trim()) || [],
               variants: body.variants,
-              images: body.images.map((image: any) => image.url),
+              images: body.images.map((image: any) => image.url || image),
 
               Store: {
                 connect: {
