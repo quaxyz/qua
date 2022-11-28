@@ -103,7 +103,8 @@ export default withSession(
               });
 
               await revalidate(
-                `https://${store.name}.${process.env.NEXT_PUBLIC_DOMAIN}`
+                `https://${store.name}.${process.env.NEXT_PUBLIC_DOMAIN}`,
+                store.name
               );
             } catch (err) {
               console.error(LOG_TAG, "error revalidating store pages", {
