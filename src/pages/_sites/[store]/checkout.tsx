@@ -498,8 +498,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         description: store.about || "",
       },
     },
-
-    revalidate: 24 * 60 * 60, // 24 hours
   };
 };
 

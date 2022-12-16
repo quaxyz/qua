@@ -250,7 +250,11 @@ export const ProductModal = ({
         </Stack>
       </ModalBody>
 
-      <ModalFooter justifyContent="initial" px={{ base: 3, md: 6 }}>
+      <ModalFooter
+        justifyContent="initial"
+        px={{ base: 3, md: 6 }}
+        mb={{ base: 6, md: 0 }}
+      >
         <Stack w="full" direction="row" spacing={4}>
           <Quantity
             quantity={quantity}

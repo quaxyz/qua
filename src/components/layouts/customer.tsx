@@ -1,14 +1,14 @@
 import React from "react";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "components/link";
+import _capitalize from "lodash.capitalize";
 import { customerAreaTheme } from "theme";
 import { useCartStore } from "hooks/useCart";
 import {
-  Box,
   Button,
   Center,
   chakra,
-  Container,
   Grid,
   Heading,
   Stack,
@@ -34,13 +34,18 @@ const CustomerLayout = ({
     <ChakraProvider theme={customerAreaTheme}>
       <CartContext.Provider value={cartStore}>
         <Head>
-          <title>{title}</title>
+          <title>
+            {title
+              .split(" ")
+              .map((w: string) => _capitalize(w))
+              .join(" ")}
+          </title>
           <meta name="description" content={description} />
         </Head>
 
         <Grid
           templateColumns="1fr"
-          templateRows="70px 1fr 70px"
+          templateRows="60px 1fr 70px"
           templateAreas={{
             base: `"topbar topbar" "main main" "bottombar bottombar"`,
             md: `"topbar topbar" "main main" "main main"`,
@@ -57,13 +62,26 @@ const CustomerLayout = ({
             bg="#fff"
             color="#000"
             px={16}
-            py={5}
+            py={4}
             alignItems="center"
             justifyContent="space-between"
             display={{ base: "none", md: "flex" }}
             borderBottom="1px solid rgba(0, 0, 0, 0.08)"
           >
-            <Stack direction="row" align="center" spacing={24}>
+            <Stack direction="row" alignItems="center" justifyContent="center">
+              <Link
+                href="https://qua.xyz"
+                borderBottom="none"
+                display="inherit"
+              >
+                <Image
+                  src="/svg/qua_mark_black.svg"
+                  alt="Qua logo"
+                  layout="fixed"
+                  width={40}
+                  height={40}
+                />
+              </Link>
               <Link
                 href="/"
                 borderBottom="none"
@@ -125,16 +143,25 @@ const CustomerLayout = ({
             color="#000"
             borderBottom="1px solid rgba(0, 0, 0, 0.08)"
             px={5}
-            py={5}
+            py={4}
             display={{ base: "block", md: "none" }}
           >
-            <Stack
-              direction="row"
-              alignItems="center"
-              justify="space-between"
-              h="100%"
-              w="100%"
-            >
+            <Stack direction="row" alignItems="center" h="100%" w="100%">
+              <Link
+                href="https://qua.xyz"
+                borderBottom="none"
+                display="inherit"
+                ml="-4px !important"
+              >
+                <Image
+                  src="/svg/qua_mark_black.svg"
+                  alt="Qua logo"
+                  layout="fixed"
+                  width={35}
+                  height={35}
+                />
+              </Link>
+
               <Link
                 href="/"
                 borderBottom="none"

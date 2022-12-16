@@ -89,6 +89,7 @@ const CategoryList = ({ name, store, products, setActiveCategory }: any) => {
 
       const observer = new IntersectionObserver(handler, {
         root: null,
+        rootMargin: "-250px 0px",
         threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
       });
 
@@ -294,6 +295,7 @@ const Page = ({ products, store }: any) => {
                   <Input
                     w="full"
                     id="search"
+                    fontSize="md"
                     value={searchTerm}
                     placeholder="Search"
                     border={{ md: "none" }}
@@ -309,14 +311,12 @@ const Page = ({ products, store }: any) => {
 
             <chakra.div
               py={4}
-              px={8}
+              px={4}
               top={0}
-              w="100vw"
               bg="white"
               zIndex="20"
               pos="sticky"
               mt="0 !important"
-              ml="-1rem !important"
               boxShadow="0 1px #0000001f"
               display={{ base: "block", md: "none" }}
             >
@@ -365,8 +365,8 @@ const Page = ({ products, store }: any) => {
                 store={store}
                 key={categoryName}
                 name={categoryName}
-                setActiveCategory={setActiveCategory}
                 products={categories[categoryName]}
+                setActiveCategory={setActiveCategory}
               />
             ))}
           </Stack>
@@ -585,8 +585,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         description: store.about || "",
       },
     },
-
-    revalidate: 24 * 60 * 60, // 24 hours
   };
 };
 
