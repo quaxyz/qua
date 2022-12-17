@@ -6,17 +6,8 @@ const pageView = (url: string) => {
   global.gtag("config", process.env.NEXT_PUBLIC_GA_ID, { page_path: url });
 };
 
-const event = (opts: {
-  action: string;
-  category: string;
-  label?: string;
-  value?: string;
-}) => {
-  global.gtag("event", opts.action, {
-    event_category: opts.category,
-    event_label: opts.category,
-    value: opts.value,
-  });
+const event = (name: string, opts: any) => {
+  global.gtag("event", name, opts);
 };
 
 const GA = {

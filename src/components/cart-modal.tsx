@@ -1,6 +1,7 @@
 import React from "react";
 import NextImage from "next/image";
 import Link from "components/link";
+import GA from "libs/ga";
 import {
   Button,
   Center,
@@ -33,12 +34,36 @@ export const CartModal = ({ children, store }: any) => {
   const cart = useCart();
 
   const products = useQuery("products", () => []);
+  const onClick = () => {
+    cartModal.onOpen();
+    GA.event("view_cart", {
+      store: store.name,
+      currency: store.currency,
+      value: cart?.totalAmount || 0,
+      items: (cart?.items || []).map((i) => {
+        const p: any = (products.data || []).find(
+          (p: any) => p.id === i.productId
+        );
+
+        return {
+          item_id: i.id,
+          item_name: p?.name,
+          quantity: i.quantity,
+          ...(i.variants
+            ? {
+                item_variant: Object.keys(i.variants || {}).map(
+                  (v) => `${v}:${i.variants?.[v]?.option}`
+                ),
+              }
+            : {}),
+        };
+      }),
+    });
+  };
 
   return (
     <>
-      {React.cloneElement(children, {
-        onClick: () => cartModal.onOpen(),
-      })}
+      {React.cloneElement(children, { onClick })}
 
       <Modal
         size="lg"
