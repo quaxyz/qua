@@ -40,11 +40,14 @@ function QuaApp({ Component, pageProps = {} }: AppProps) {
             </Layout>
 
             <ReactQueryDevtools />
-            <Script
-              strategy="afterInteractive"
-              async
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
-            ></Script>
+            {process.env.NODE_ENV === "production" && (
+              <Script
+                strategy="afterInteractive"
+                async
+                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+              ></Script>
+            )}
+
             <Script
               id="google-analytics"
               strategy="afterInteractive"

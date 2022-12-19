@@ -1,5 +1,6 @@
 import React from "react";
 import prisma from "libs/prisma";
+import GA from "libs/ga";
 import _capitalize from "lodash.capitalize";
 import CustomerLayout from "components/layouts/customer";
 import { GetStaticProps } from "next";
@@ -109,6 +110,30 @@ const Page = ({ store, products }: any) => {
 
     const link = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
     window.open(link, "_blank");
+
+    GA.event("begin_checkout", {
+      store: store.name,
+      currency: store.currency,
+      value:
+        (deliveryDetails.method === "DELIVERY" ? store.deliveryFee || 0 : 0) +
+        (cart?.totalAmount || 0),
+      items: (cart?.items || []).map((i) => {
+        const p: any = products.find((p: any) => p.id === i.productId);
+
+        return {
+          item_id: i.id,
+          item_name: p?.name,
+          quantity: i.quantity,
+          ...(i.variants
+            ? {
+                item_variant: Object.keys(i.variants || {}).map(
+                  (v) => `${v}:${i.variants?.[v]?.option}`
+                ),
+              }
+            : {}),
+        };
+      }),
+    });
   };
 
   return (
@@ -370,7 +395,7 @@ const Page = ({ store, products }: any) => {
                   </Text>
                 </Stack>
 
-                {store.deliveryFee && (
+                {store.deliveryFee && deliveryDetails.method === "DELIVERY" && (
                   <Stack direction="row" justify="space-between">
                     <Text>Delivery </Text>
                     <Text>
@@ -384,7 +409,9 @@ const Page = ({ store, products }: any) => {
                 <Text fontWeight="600">Total</Text>
                 <Text>
                   {formatCurrency(
-                    (store.deliveryFee || 0) + (cart?.totalAmount || 0),
+                    (deliveryDetails.method === "DELIVERY"
+                      ? store.deliveryFee || 0
+                      : 0) + (cart?.totalAmount || 0),
                     store.currency
                   )}
                 </Text>
@@ -416,7 +443,7 @@ export const getStaticPaths = async () => {
 
   return {
     paths: stores.map((store) => ({
-      params: { store: store.name as string, path: [] },
+      params: { store: store.name as string },
     })),
     fallback: "blocking",
   };
@@ -494,7 +521,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       layoutProps: {
         store,
         hideOrderBtn: true,
-        title: `Checkout - ${_capitalize(store.title || store.name)} - Qua`,
+        title: `Checkout - ${store.title || store.name} - Qua`,
         description: store.about || "",
       },
     },
